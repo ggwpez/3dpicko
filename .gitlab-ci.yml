@@ -1,0 +1,9 @@
+stages:
+    - build
+    - test
+
+build_main:
+    - mkdir build
+    - cd build
+    - qmake ..
+    - make
