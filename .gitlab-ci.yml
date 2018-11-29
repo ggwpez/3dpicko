@@ -1,7 +1,7 @@
 before_script:
     - apt update
-    - apt install qt5-default
-    - apt install g++
+    - apt -y install qt5-default
+    - apt -y install g++
 
 stages:
 - build
