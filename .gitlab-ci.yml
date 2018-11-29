@@ -4,7 +4,6 @@ before_script:
     
 stages:
 - build
-- doc
 - test
 
 build_main:
@@ -15,11 +14,8 @@ build_main:
     - qmake ..
     - make
     - make check
+    - cd ..
+    - doxygen Doxyfile
   tags:
     - qt
     - c++
-
-doc_main:
-  stage: doc
-  script:
-    - doxygen Doxyfile
