@@ -1,5 +1,7 @@
 before_script:
-    - apt install git
+    - apt update
+    - apt install qt5-default
+    - apt install g++
 
 stages:
 - build
