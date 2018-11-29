@@ -1,9 +1,14 @@
 stages:
-    - build
-    - test
+- build
+- test
 
 build_main:
+  stage: build
+  script:
     - mkdir build
     - cd build
     - qmake ..
     - make
+  tags:
+    - qt
+    - c++
