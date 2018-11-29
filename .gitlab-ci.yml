@@ -1,3 +1,6 @@
+before_script:
+    - apt install git
+
 stages:
 - build
 - test
@@ -5,14 +8,10 @@ stages:
 build_main:
   stage: build
   script:
-    - echo "#0"
     - mkdir build
     - cd build
-    - echo "#1"
     - qmake ..
-    - echo "#2"
     - make
-    - echo "#3"
   tags:
     - qt
     - c++
