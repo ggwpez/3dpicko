@@ -2,6 +2,7 @@ before_script:
     - apt update
     - apt -y install qt5-default
     - apt -y install g++
+    - apt -y install build-essential
 
 stages:
 - build
