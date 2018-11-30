@@ -12,7 +12,7 @@ build_main:
     - mkdir build
     - cd build
     - qmake ..
-    - make
+    - make -j4
     - make check
     - cd ..
     - doxygen Doxyfile
