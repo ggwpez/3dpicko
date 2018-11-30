@@ -26,8 +26,6 @@ test:linux:
     - cd build
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
-  dependencies:
-    - build:linux
   tags:
     - test
     - qt
