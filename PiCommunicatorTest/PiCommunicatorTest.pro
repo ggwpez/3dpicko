@@ -4,13 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += testlib
+QT       += testlib core network
+CONFIG += qt console warn_on depend_includepath testcase
 
 QT       -= gui
-QT += network core
 
-CONFIG += testcase
-TARGET = tst_json
+#TARGET = tst_json
 CONFIG   -= app_bundle
 
 TEMPLATE = app
@@ -36,5 +35,6 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PiCommunicator/rele
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../PiCommunicator/debug/ -lPiCommunicator
 else:unix: LIBS += -L$$OUT_PWD/../PiCommunicator/ -lPiCommunicator
 
-INCLUDEPATH += $$PWD/../PiCommunicator $$PWD/../PiCommunicator/include
+INCLUDEPATH += $$PWD/../PiCommunicator $$PWD/../PiCommunicator/include/
 DEPENDPATH += $$PWD/../PiCommunicator
+QMAKE_RPATHDIR += $$PWD/../PiCommunicator

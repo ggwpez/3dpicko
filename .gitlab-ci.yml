@@ -6,7 +6,7 @@ stages:
 - build
 - test
 
-build_main:
+build:linux:
   stage: build
   script:
     - mkdir build
@@ -20,3 +20,15 @@ build_main:
     - qt
     - c++
     
+
+test:linux:
+  stage: test
+  script:
+    - cd build
+    - make check
+  dependencies:
+    - build:linux
+  tags:
+    - test
+    - qt
+    - c++
