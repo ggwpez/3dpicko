@@ -1,15 +1,17 @@
 #include <QCoreApplication>
 #include <QDebug>
-#include "commands/arbitrary_command.h"
+#include "commands/get_all_files.h"
 #include "octoprint.h"
 
 using namespace c3picko;
 using namespace c3picko::commands;
 
 static void OnStatusOk(int status, Command::Response* answer) {
-  auto* rep = static_cast<ArbitraryCommand::Reply*>(answer);
-  qDebug() << "Status ok: " << status << "\n"
-           << "Data1: " << rep->data1 << " data2: " << rep->data2;
+  auto* rep = static_cast<GetAllFiles::Response*>(answer);
+  qDebug() << "Status ok: " << status;
+
+  for (auto const& file : rep->files)
+	  qDebug() << "File: " << file.name;
 }
 
 static void OnStatusErr(QVariant status, Command::Response* answer) {
@@ -22,9 +24,9 @@ static void OnNetworkErr(QString error) {
 
 int main(int argc, char** argv) {
   QCoreApplication a(argc, argv);
-  c3picko::OctoPrint printer("localhost:8080", "<KEY>");
+  c3picko::OctoPrint printer("127.0.0.1:8080", "<KEY>");
 
-  c3picko::commands::ArbitraryCommand cmd({"M17", "M106 S0"});
+  c3picko::commands::GetAllFiles cmd(true);
 
   QObject::connect(&cmd, &Command::OnStatusOk, &OnStatusOk);
   QObject::connect(&cmd, &Command::OnStatusErr, &OnStatusErr);

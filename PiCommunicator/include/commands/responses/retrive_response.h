@@ -1,8 +1,8 @@
 #ifndef RETRIVE_RESPONSE_H_
 #define RETRIVE_RESPONSE_H_
 
-#include "include/commands/responses/file_information.h"
-#include "include/commands/responses/response.h"
+#include "commands/responses/file_information.h"
+#include "commands/responses/response.h"
 
 #include <QVector>
 

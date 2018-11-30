@@ -6,17 +6,17 @@
 namespace c3picko {
 
 commands::ArbitraryCommand::ArbitraryCommand(QString command)
-    : Command("printer/command", QJsonObject({{"command", command}}),  // ugly
-              {204}) {}
+	: Command("printer/command", QJsonObject({{"command", command}}),  // ugly
+			  {204}) {}
 
 commands::ArbitraryCommand::ArbitraryCommand(QStringList commands)
-    : Command("printer/command",
-              QJsonObject({{"commands",
-                            QJsonArray::fromStringList(commands)}}),  // ugly
-              {204}) {}
+	: Command("printer/command",
+			  QJsonObject({{"commands",
+							QJsonArray::fromStringList(commands)}}),  // ugly
+			  {204}) {}
 
 void commands::ArbitraryCommand::OnReplyFinished(QNetworkReply* reply) {
-  Reply* test = new Reply();
+  Response* test = new Response();
   test->data1 = "asdf";
   test->data2 = 123;
 

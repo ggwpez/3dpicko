@@ -12,9 +12,9 @@ class ArbitraryCommand : public Command {
   ArbitraryCommand(QString command);
   ArbitraryCommand(QStringList commands);
 
-  struct Reply : Command::Response {
-    QString data1;
-    int data2;
+  struct Response : Command::Response {
+	QString data1;
+	int data2;
   };
 
  public slots:
