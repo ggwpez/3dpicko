@@ -1,12 +1,11 @@
-before_script:
-    - apt update
-    - apt -y install qt5-default g++ build-essential doxygen
-    
 stages:
 - build
 - test
 
 build:linux:
+  before_script:
+    - apt update
+    - apt -y install qt5-default g++ build-essential doxygen
   stage: build
   script:
     - mkdir build
@@ -15,18 +14,18 @@ build:linux:
     - make -j4
     - cd ..
     - doxygen Doxyfile
+  artifacts:
+    paths:
+      - build/
+
   tags:
     - qt
     - c++
-    
 
 test:linux:
   stage: test
   script:
-    - mkdir build
     - cd build
-    - qmake ..
-    - make -j4
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   tags:
