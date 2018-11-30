@@ -23,14 +23,13 @@ build:linux:
 test:linux:
   stage: test
   script:
+    - mkdir build
     - cd build
+    - qmake ..
+    - make -j4
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   tags:
     - test
     - qt
     - c++
-
-cache:
-  paths:
-  - build/
