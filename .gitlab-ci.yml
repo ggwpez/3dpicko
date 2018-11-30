@@ -30,3 +30,7 @@ test:linux:
     - test
     - qt
     - c++
+
+cache:
+  paths:
+  - build/
