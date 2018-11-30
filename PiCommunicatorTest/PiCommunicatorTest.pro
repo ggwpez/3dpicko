@@ -38,4 +38,3 @@ else:unix: LIBS += -L$$OUT_PWD/../PiCommunicator/ -lPiCommunicator
 
 INCLUDEPATH += $$PWD/../PiCommunicator $$PWD/../PiCommunicator/include
 DEPENDPATH += $$PWD/../PiCommunicator
-QMAKE_LFLAGS += -static
