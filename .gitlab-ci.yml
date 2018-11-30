@@ -1,0 +1,22 @@
+before_script:
+    - apt update
+    - apt -y install qt5-default g++ build-essential doxygen
+    
+stages:
+- build
+- test
+
+build_main:
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - qmake ..
+    - make -j4
+    - make check
+    - cd ..
+    - doxygen Doxyfile
+  tags:
+    - qt
+    - c++
+    
