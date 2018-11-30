@@ -13,7 +13,6 @@ build:linux:
     - cd build
     - qmake ..
     - make -j4
-    - make check
     - cd ..
     - doxygen Doxyfile
   tags:
@@ -25,6 +24,7 @@ test:linux:
   stage: test
   script:
     - cd build
+    - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   dependencies:
     - build:linux
