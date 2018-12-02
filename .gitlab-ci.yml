@@ -9,9 +9,10 @@ format:linux:
     - apt update
     - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
   script:
+    - git remote set-url origin git@github.com:ggwpez/3cpicko.git
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
-    - git diff --exit-code || (git commit -m="Auto formating" && git push origin HEAD)
+    - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD)
     - cppcheck --error-exitcode=1 . > /dev/null
 
 build:linux:
