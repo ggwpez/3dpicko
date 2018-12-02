@@ -14,15 +14,17 @@ Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok)
 }
 
 Command::~Command() {
-  if (answer_) delete answer_;
+  if (answer_)
+    delete answer_;
 }
 
 QString Command::GetApiUrl() const { return api_url_; }
 
 QByteArray Command::GetPostData() const { return data_; }
 
-void Command::CheckStatusCode(QNetworkReply* reply, Command::Response* answer) {
-  if (this->answer_) emit OnNetworkErr("Cant sent same command twice");
+void Command::CheckStatusCode(QNetworkReply *reply, Command::Response *answer) {
+  if (this->answer_)
+    emit OnNetworkErr("Cant sent same command twice");
   answer_ = answer;
   // Webservers can return various types as status code
   QVariant status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
@@ -40,7 +42,7 @@ void Command::CheckStatusCode(QNetworkReply* reply, Command::Response* answer) {
                      answer);
 }
 
-void Command::OnReplyFinished(QNetworkReply* reply) {
+void Command::OnReplyFinished(QNetworkReply *reply) {
   CheckStatusCode(reply);
 
   // The default case is that commands dont have Reply data, so we just ignore
@@ -52,4 +54,4 @@ void Command::OnReplyError(QNetworkReply::NetworkError error) {
 
   emit OnNetworkErr(menum.valueToKey(error));
 }
-}
+} // namespace c3picko

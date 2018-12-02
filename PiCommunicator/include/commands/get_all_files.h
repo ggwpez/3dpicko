@@ -9,7 +9,7 @@ namespace commands {
 class GetAllFiles : public Command {
   Q_OBJECT
 
- public:
+public:
   /**
    * @brief @link http://docs.octoprint.org/en/master/api/files.html#id2
    * @endlink
@@ -18,10 +18,10 @@ class GetAllFiles : public Command {
 
   typedef responses::RetriveResponse Response;
 
- public slots:
-  virtual void OnReplyFinished(QNetworkReply* reply) override;
+public slots:
+  virtual void OnReplyFinished(QNetworkReply *reply) override;
 };
-}
-}
+} // namespace commands
+} // namespace c3picko
 
-#endif  // GET_ALL_FILES_H_
+#endif // GET_ALL_FILES_H_

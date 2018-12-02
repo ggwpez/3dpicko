@@ -18,20 +18,20 @@ namespace c3picko {
 class OctoPrint : public QObject {
   Q_OBJECT
 
- public:
-  OctoPrint(QString ip, ApiKey key, QObject* _parent = nullptr);
+public:
+  OctoPrint(QString ip, ApiKey key, QObject *_parent = nullptr);
 
- public slots:
-  void SendCommand(Command* cmd);
+public slots:
+  void SendCommand(Command *cmd);
 
- signals:
+signals:
 
- private:
+private:
   QString ip_;
   ApiKey apikey_;
-  QNetworkAccessManager* network_;
+  QNetworkAccessManager *network_;
 };
-}
+} // namespace c3picko
 
 // TODO QNetworkAccessManager::networkAccessibleChanged()
-#endif  // OCTOPRINT_H_
+#endif // OCTOPRINT_H_

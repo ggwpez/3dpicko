@@ -21,8 +21,8 @@ struct FileInformation {
   QString name, display, path, type;
   QStringList type_path;
 };
-}
-}
-}
+} // namespace responses
+} // namespace commands
+} // namespace c3picko
 
-#endif  // FILE_INFORMATION_H_
+#endif // FILE_INFORMATION_H_

@@ -11,8 +11,8 @@ struct Response {
   inline Response(QJsonObject) {}
   virtual inline ~Response() {}
 };
-}
-}
-}
+} // namespace responses
+} // namespace commands
+} // namespace c3picko
 
-#endif  // RESPONSE_H_
+#endif // RESPONSE_H_
