@@ -8,7 +8,8 @@ OctoPrint::OctoPrint(QString ip, ApiKey key, QObject *_parent)
     : QObject(_parent), ip_("http://" + ip), apikey_(key),
       network_(new QNetworkAccessManager(this)) {}
 
-void OctoPrint::SendCommand(Command *cmd) {
+void OctoPrint::SendCommand(Command *cmd)
+{
   QNetworkRequest request(ip_ + "/api/" + cmd->GetApiUrl());
   request.setHeader(QNetworkRequest::ContentTypeHeader,
                     "application/json; charset=utf-8");
