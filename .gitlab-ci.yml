@@ -8,13 +8,13 @@ format:linux:
   before_script:
     - apt update
     - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
-    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+    - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
   script:
     - git remote set-url origin git@gitlab.com:ggwpez/3cpicko.git
     - git branch -d `echo $CI_COMMIT_REF_NAME-format` || true
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
-    - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD)
+    - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
     - cppcheck --error-exitcode=1 . > /dev/null
 
 build:linux:
