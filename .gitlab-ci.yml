@@ -2,8 +2,8 @@ stages:
   - dependencies
   - build
   - test
-  - format
   - check
+  - format
   - document
 
 dependencies:linux:
