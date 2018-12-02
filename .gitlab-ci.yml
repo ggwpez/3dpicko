@@ -8,7 +8,7 @@ format:linux:
   before_script:
     - apt update
     - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
-    - sssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
   script:
     - git remote set-url origin ssh@github.com:ggwpez/3cpicko.git
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
