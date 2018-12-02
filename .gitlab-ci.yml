@@ -7,6 +7,7 @@ stages:
   - build
   - test
   - format
+  - check
   - document
 
 build:linux:
@@ -39,6 +40,10 @@ format:linux:
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
     - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
+
+check:linux:
+  stage: check
+  script:
     - cppcheck --error-exitcode=1 . > /dev/null
 
 document:linux:
