@@ -1,7 +1,7 @@
 stages:
-- format
 - build
 - test
+- format
 
 format:linux:
   stage: format
