@@ -1,11 +1,19 @@
 stages:
+- format
 - build
 - test
 
-build:linux:
+format:linux:
+  stage: format
   before_script:
     - apt update
-    - apt -y install qt5-default g++ build-essential doxygen
+    - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
+  script:
+    - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
+    - git diff --exit-code
+    - cppcheck --error-exitcode=1 . > /dev/null
+
+build:linux:
   stage: build
   script:
     - mkdir build
