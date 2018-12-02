@@ -10,7 +10,7 @@ format:linux:
     - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
     - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
   script:
-    - git remote set-url origin ssh@github.com:ggwpez/3cpicko.git
+    - git remote set-url origin ssh@gitlab.com:ggwpez/3cpicko.git
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
     - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD)
