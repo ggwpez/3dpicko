@@ -1,14 +1,17 @@
-before_script:
-  - apt update
-  - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
-  - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
-
 stages:
+  - dependencies
   - build
   - test
   - format
   - check
   - document
+
+dependencies:linux:
+  stage: dependencies
+  script:
+    - apt update -qq
+    - apt -y -qq install qt5-default g++ build-essential doxygen cppcheck clang-format
+    - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
 
 build:linux:
   stage: build
