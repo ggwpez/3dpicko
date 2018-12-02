@@ -4,9 +4,10 @@ before_script:
   - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
 
 stages:
-- build
-- test
-- format
+  - build
+  - test
+  - format
+  - document
 
 build:linux:
   stage: build
@@ -16,14 +17,9 @@ build:linux:
     - qmake ..
     - make -j4
     - cd ..
-    - doxygen Doxyfile
   artifacts:
     paths:
       - build/
-
-  tags:
-    - qt
-    - c++
 
 test:linux:
   stage: test
@@ -34,11 +30,6 @@ test:linux:
     - make -j4
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
-  tags:
-    - test
-    - qt
-    - c++
-
 
 format:linux:
   stage: format
@@ -49,3 +40,8 @@ format:linux:
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
     - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
     - cppcheck --error-exitcode=1 . > /dev/null
+
+document:linux:
+  stage: document
+  script:
+    - doxygen Doxyfile
