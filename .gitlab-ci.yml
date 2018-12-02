@@ -9,8 +9,9 @@ format:linux:
     - apt update
     - apt -y install qt5-default g++ build-essential doxygen cppcheck clang-format
   script:
+    - git checkout -b `echo \`git symbolic-ref --short HEAD\`-format`
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
-    - git diff --exit-code
+    - git diff --exit-code || (git commit -m="Auto formating" && git push origin HEAD)
     - cppcheck --error-exitcode=1 . > /dev/null
 
 build:linux:
