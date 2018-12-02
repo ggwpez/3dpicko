@@ -8,19 +8,19 @@ namespace commands {
 class ArbitraryCommand : public Command {
   Q_OBJECT
 
- public:
+public:
   ArbitraryCommand(QString command);
   ArbitraryCommand(QStringList commands);
 
   struct Response : Command::Response {
-	QString data1;
-	int data2;
+    QString data1;
+    int data2;
   };
 
- public slots:
-  virtual void OnReplyFinished(QNetworkReply* reply) override;
+public slots:
+  virtual void OnReplyFinished(QNetworkReply *reply) override;
 };
-}
-}
+} // namespace commands
+} // namespace c3picko
 
-#endif  // ARBITRARY_COMMAND_H_
+#endif // ARBITRARY_COMMAND_H_

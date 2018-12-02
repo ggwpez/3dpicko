@@ -1,18 +1,18 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
 
+#include "commands/responses/response.h"
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QObject>
 #include <QSet>
 #include <QUrlQuery>
-#include "commands/responses/response.h"
 
 namespace c3picko {
 class Command : public QObject {
   Q_OBJECT
 
- public:
+public:
   Command(QString api_url, QByteArray data, QSet<int> status_ok);
   Command(QString api_url, QJsonObject data, QSet<int> status_ok);
   ~Command();
@@ -27,26 +27,26 @@ class Command : public QObject {
 
   typedef commands::responses::Response Response;
 
- public slots:
+public slots:
   QByteArray GetPostData() const;
 
-  virtual void OnReplyFinished(QNetworkReply*);
+  virtual void OnReplyFinished(QNetworkReply *);
   virtual void OnReplyError(QNetworkReply::NetworkError);
 
- protected slots:
-  void CheckStatusCode(QNetworkReply* reply, Response* answer = nullptr);
+protected slots:
+  void CheckStatusCode(QNetworkReply *reply, Response *answer = nullptr);
 
- signals:
-  void OnStatusOk(int status, Response*);
-  void OnStatusErr(QVariant status, Response*);
+signals:
+  void OnStatusOk(int status, Response *);
+  void OnStatusErr(QVariant status, Response *);
   void OnNetworkErr(QString error);
 
- protected:
+protected:
   QString api_url_;
   QByteArray data_;
   QSet<int> status_ok_;
-  Response* answer_ = nullptr;
+  Response *answer_ = nullptr;
 };
-}
+} // namespace c3picko
 
-#endif  // COMMAND_H_
+#endif // COMMAND_H_

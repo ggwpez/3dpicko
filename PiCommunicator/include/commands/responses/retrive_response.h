@@ -20,8 +20,8 @@ struct RetriveResponse : Response {
   QVector<FileInformation> files;
   QString free;
 };
-}
-}
-}
+} // namespace responses
+} // namespace commands
+} // namespace c3picko
 
-#endif  // RETRIVE_RESPONSE_H_
+#endif // RETRIVE_RESPONSE_H_

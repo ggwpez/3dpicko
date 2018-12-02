@@ -18,10 +18,10 @@ typedef int JobId;
 class PiCommunicator : public QObject {
   Q_OBJECT
 
- public:
-  PiCommunicator(QString ip, ApiKey key, QObject* _parent = nullptr);
+public:
+  PiCommunicator(QString ip, ApiKey key, QObject *_parent = nullptr);
 
- public slots:
+public slots:
   void Connect();
   void Disconnect();
 
@@ -32,7 +32,7 @@ class PiCommunicator : public QObject {
    */
   void StartJob(GCode);
 
- signals:
+signals:
   void OnConnected();
   void OnConnectionError(QString error);
   void OnDisconnected();
@@ -41,9 +41,9 @@ class PiCommunicator : public QObject {
   void OnStartedJob(JobId);
   void OnStartingJobError(JobId, QString error);
 
- private:
+private:
   OctoPrint printer_;
 };
-}
+} // namespace c3picko
 
-#endif  // PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_
+#endif // PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_

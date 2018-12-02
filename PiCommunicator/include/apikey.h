@@ -7,4 +7,4 @@ namespace c3picko {
 typedef QString ApiKey;
 }
 
-#endif  // APIKEY_H_
+#endif // APIKEY_H_

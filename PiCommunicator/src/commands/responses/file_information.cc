@@ -11,9 +11,9 @@ FileInformation::FileInformation(QJsonObject obj) {
   path = obj["path"].toString();
   type = obj["type"].toString();
 
-  for (QJsonValue const& value : obj["typePath"].toArray())
+  for (QJsonValue const &value : obj["typePath"].toArray())
     type_path.append(value.toString());
 }
-}
-}
-}
+} // namespace responses
+} // namespace commands
+} // namespace c3picko
