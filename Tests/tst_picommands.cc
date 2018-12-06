@@ -51,6 +51,7 @@ void PiCommands::initTestCase()
 	QByteArray data = file.readAll();
 
 	netcat.write(data);
+	QVERIFY(netcat.waitForBytesWritten());
 	netcat.closeWriteChannel();
 }
 
@@ -85,7 +86,7 @@ void PiCommands::UploadFile1()
 	QCOMPARE(data, expect);
 }
 
-void PiCommands::cleanupTestCase() { netcat.waitForFinished(1000); }
+void PiCommands::cleanupTestCase() { netcat.waitForFinished(); }
 
 void PiCommands::OnStatusOk(int, Command::Response* response)
 {
