@@ -6,24 +6,20 @@
 
 #include <QVector>
 
-namespace c3picko
-{
-namespace commands
-{
-	namespace responses
-	{
-		/**
-		 * @brief
-		 * [API](http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse)
-		 */
-		struct RetriveResponse : Response
-		{
-			RetriveResponse(QJsonObject);
+namespace c3picko {
+namespace commands {
+namespace responses {
+/**
+ * @brief
+ * [API](http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse)
+ */
+struct RetriveResponse : Response {
+  RetriveResponse(QJsonObject);
 
-			QVector<FileOrFolderInfo> files;
-			QString					  free;
-		};
-	} // namespace responses
+  QVector<FileOrFolderInfo> files;
+  QString free;
+};
+} // namespace responses
 } // namespace commands
 } // namespace c3picko
 

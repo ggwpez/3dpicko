@@ -3,23 +3,21 @@
 
 #include "command.h"
 
-namespace c3picko
-{
-namespace commands
-{
-	/**
-	 * @brief Allows to send arbitraty commands to the printer.
-	 *
-	 * Use with care, this can break current jobs, since the commands are executed immediately.
-	 */
-	class ArbitraryCommand : public Command
-	{
-		Q_OBJECT
+namespace c3picko {
+namespace commands {
+/**
+ * @brief Allows to send arbitraty commands to the printer.
+ *
+ * Use with care, this can break current jobs, since the commands are executed
+ * immediately.
+ */
+class ArbitraryCommand : public Command {
+  Q_OBJECT
 
-	  public:
-		ArbitraryCommand(QString command);
-		ArbitraryCommand(QStringList commands);
-	};
+public:
+  ArbitraryCommand(QString command);
+  ArbitraryCommand(QStringList commands);
+};
 } // namespace commands
 } // namespace c3picko
 
