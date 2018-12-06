@@ -20,8 +20,9 @@ namespace commands
 		};
 
 		Origin OriginFromString(QString str);
-	}
-}
-}
+
+	} // namespace responses
+} // namespace commands
+} // namespace c3picko
 
 #endif // ORIGIN_H
