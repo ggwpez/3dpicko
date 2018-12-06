@@ -1,9 +1,7 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
-
 SUBDIRS += \
 	PiCommunicator \
-	PiCommunicatorTest
+	Tests
 
-PiCommunicatorTest.depends = PiCommunicator
+Tests.depends = PiCommunicator

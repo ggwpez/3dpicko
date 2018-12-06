@@ -8,15 +8,15 @@ namespace c3picko
 {
 namespace commands
 {
+	/**
+	 * @brief [API](http://docs.octoprint.org/en/master/api/files.html#id2)
+	 * @endlink
+	 */
 	class GetAllFiles : public Command
 	{
 		Q_OBJECT
 
 	  public:
-		/**
-		 * @brief @link http://docs.octoprint.org/en/master/api/files.html#id2
-		 * @endlink
-		 */
 		GetAllFiles(bool recursive);
 
 		typedef responses::RetriveResponse Response;

@@ -7,6 +7,11 @@ namespace c3picko
 {
 namespace commands
 {
+	/**
+	 * @brief Allows to send arbitraty commands to the printer.
+	 *
+	 * Use with care, this can break current jobs, since the commands are executed immediately.
+	 */
 	class ArbitraryCommand : public Command
 	{
 		Q_OBJECT

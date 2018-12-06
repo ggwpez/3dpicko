@@ -13,14 +13,28 @@ namespace commands
 		Q_OBJECT
 
 	  public:
-		/// Uploads a new file with content #data to the location #file_path
-		/// [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
-		/// \param path Must be either local or sdcard FIXME
+		/**
+		 * @brief Uploads a new file with content @p data to the location @p file_path
+		 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
+		 * @param data File content
+		 * @param path Folder path of file
+		 * @param file_name Name of file to create
+		 * @param select Should the file be selected?
+		 * @param print Should the file be printed?
+		 */
 		UploadFile(QByteArray data, QString path, QString file_name, bool select, bool print);
-		/// Creates a new folder #folder_path
-		/// [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
-		/// Local or SD card? FIXME
+
+		/**
+		 * @brief UploadFile Creates a new folder @p folder_path
+		 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
+		 * @param folder_name Name of the folder to create
+		 * @param path Path to the folder location
+		 *
+		 * Local of SD card? FIXME
+		 */
 		UploadFile(QString folder_name, QString path);
+
+		typedef responses::UploadResponse Response;
 
 	  protected:
 		QByteArray BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print);

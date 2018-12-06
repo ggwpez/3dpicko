@@ -28,7 +28,9 @@ SOURCES += \
 	src/commands/responses/upload_response.cc \
 	src/commands/responses/abridged_file_info.cc \
 	src/commands/responses/datamodel/reference.cc \
-    src/commands/responses/file_or_folder_info.cc
+    src/commands/responses/file_or_folder_info.cc \
+    src/commands/responses/datamodel/origin.cc \
+    src/commands/responses/datamodel/file_type.cc
 
 HEADERS += \
 	include/pi_communicator.h \

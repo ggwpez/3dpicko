@@ -37,21 +37,22 @@ class Command : public QObject
 	virtual void OnReplyError(QNetworkReply::NetworkError);
 
   protected slots:
-	///
-	/// \brief Checks whether the status code from the reply is in the #status_ok_ set
-	/// Emits #OnStatusOk or #OnStatusErr
-	/// \param reply Network reply received by OnReplyFinished
-	/// \param response Response or nothing if the command has no response
-	///
+	/**
+	 * @brief Checks whether the status code from the reply is in the Command::status_ok_ set
+	 * Emits #OnStatusOk or @p reply
+	 * @param reply Network reply received by Command::OnReplyFinished()
+	 * @param response Response or nothing if the command has no response
+	 */
 	void CheckStatusCode(QNetworkReply* reply, Response* response = nullptr);
 
   protected:
-	///
-	/// \brief Reads all data from \a reply, parses it as JSON and construct a new Object of Type T from it.
-	/// Then passes the Object to Check status code.
-	/// \tparam T Type of the Response, is then passed to #CheckStatusCode
-	/// \param reply Network reply received by OnReplyFinished
-	///
+	/**
+	 * @brief Reads all data from @p reply, parses it as JSON and construct a new Object of Type @p T from it.
+	 * Then passes the Object to Check status code.
+	 * @tparam T Type of the Response, is then passed to #CheckStatusCode
+	 * @param reply Network reply received by #OnReplyFinished
+	 *
+	 */
 	template <typename T> inline void OnReplyFinishedDefault(QNetworkReply* reply);
 
   signals:

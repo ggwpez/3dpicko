@@ -15,9 +15,8 @@ namespace commands
 	namespace responses
 	{
 		/**
-		 * @brief @link
-		 * http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file
-		 * @endlink
+		 * @brief
+		 * [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
 		 * TODO there may be additional properties see link above
 		 */
 		struct AbridgedFileInfo

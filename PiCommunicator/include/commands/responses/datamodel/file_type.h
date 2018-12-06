@@ -20,17 +20,7 @@ namespace commands
 			FOLDER
 		};
 
-		inline FileType FileTypeFromString(QString str)
-		{
-			if (str == "model")
-				return FileType::MODEL;
-			if (str == "machinecode")
-				return FileType::MACHINECODE;
-			if (str == "folder")
-				return FileType::FOLDER;
-			else
-				throw std::runtime_error("Unknown FileType");
-		}
+		FileType FileTypeFromString(QString str);
 	}
 }
 }

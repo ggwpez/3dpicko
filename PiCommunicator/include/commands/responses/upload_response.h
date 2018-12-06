@@ -14,9 +14,8 @@ namespace commands
 	namespace responses
 	{
 		/**
-		 * @brief @link
-		 * http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse
-		 * @endlink
+		 * @brief
+		 * [API](http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse)
 		 */
 		struct UploadResponse : Response
 		{

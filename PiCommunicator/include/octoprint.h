@@ -1,12 +1,8 @@
 #ifndef OCTOPRINT_H_
 #define OCTOPRINT_H_
 
-#include <QByteArray>
-#include <QJsonObject>
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QObject>
-#include <QUrlQuery>
 
 #include "apikey.h"
 #include "command.h"

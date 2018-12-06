@@ -13,16 +13,15 @@ namespace commands
 	namespace responses
 	{
 		/**
-		 * @brief @link
-		 * http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse
-		 * @endlink
+		 * @brief
+		 * [API](http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse)
 		 */
 		struct RetriveResponse : Response
 		{
 			RetriveResponse(QJsonObject);
 
 			QVector<FileOrFolderInfo> files;
-			QString			  free;
+			QString					  free;
 		};
 	} // namespace responses
 } // namespace commands
