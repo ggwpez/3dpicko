@@ -9,88 +9,84 @@
 #include "octoprint.h"
 
 using namespace c3picko;
-class Json : public QObject
-{
-	Q_OBJECT
+class Json : public QObject {
+  Q_OBJECT
 
-  public:
-	Json();
+public:
+  Json();
 
-  signals:
-	void done();
+signals:
+  void done();
 
-  private Q_SLOTS:
-	void initTestCase();
-	void testcase1();
-	void cleanupTestCase();
+private Q_SLOTS:
+  void initTestCase();
+  void testcase1();
+  void cleanupTestCase();
 
-	void OnStatusOk(int status, Command::Response* response);
-	void OnStatusErr(QVariant status, Command::Response* response);
-	void OnNetworkErr(QString error);
+  void OnStatusOk(int status, Command::Response *response);
+  void OnStatusErr(QVariant status, Command::Response *response);
+  void OnNetworkErr(QString error);
 
-  private:
-	QProcess netcat;
+private:
+  QProcess netcat;
 
-	QVector<QString> const file_names_;
+  QVector<QString> const file_names_;
 };
 
-Json::Json() : netcat(this), file_names_{"whistle_v2.gcode", "whistle_.gco", "folderA"} {}
-
-void Json::initTestCase()
-{
-	QString filename = QFINDTESTDATA("retrive_response.html");
-	netcat.start("/bin/nc -l 8080 -w1");
-	QVERIFY(netcat.waitForStarted());
-
-	QFile file(filename);
-
-	QVERIFY(file.open(QIODevice::ReadOnly));
-	QByteArray data = file.readAll();
-
-	netcat.write(data);
-	netcat.closeWriteChannel();
+Json::Json()
+    : netcat(this), file_names_{"whistle_v2.gcode", "whistle_.gco", "folderA"} {
 }
 
-void Json::testcase1()
-{
-	int				   argc = 0;
-	QCoreApplication   a(argc, nullptr);
-	c3picko::OctoPrint printer("127.0.0.1:8080", "<KEY>");
+void Json::initTestCase() {
+  QString filename = QFINDTESTDATA("retrive_response.html");
+  netcat.start("/bin/nc -l 8080 -w1");
+  QVERIFY(netcat.waitForStarted());
 
-	c3picko::commands::GetAllFiles cmd(true);
+  QFile file(filename);
 
-	QObject::connect(&cmd, &Command::OnStatusOk, this, &Json::OnStatusOk);
-	QObject::connect(&cmd, &Command::OnStatusErr, this, &Json::OnStatusErr);
-	QObject::connect(&cmd, &Command::OnNetworkErr, this, &Json::OnNetworkErr);
-	QObject::connect(this, &Json::done, &a, &QCoreApplication::quit);
+  QVERIFY(file.open(QIODevice::ReadOnly));
+  QByteArray data = file.readAll();
 
-	printer.SendCommand(&cmd);
-	a.exec();
+  netcat.write(data);
+  netcat.closeWriteChannel();
+}
+
+void Json::testcase1() {
+  int argc = 0;
+  QCoreApplication a(argc, nullptr);
+  c3picko::OctoPrint printer("127.0.0.1:8080", "<KEY>");
+
+  c3picko::commands::GetAllFiles cmd(true);
+
+  QObject::connect(&cmd, &Command::OnStatusOk, this, &Json::OnStatusOk);
+  QObject::connect(&cmd, &Command::OnStatusErr, this, &Json::OnStatusErr);
+  QObject::connect(&cmd, &Command::OnNetworkErr, this, &Json::OnNetworkErr);
+  QObject::connect(this, &Json::done, &a, &QCoreApplication::quit);
+
+  printer.SendCommand(&cmd);
+  a.exec();
 }
 
 void Json::cleanupTestCase() { netcat.waitForFinished(1000); }
 
-void Json::OnStatusOk(int, Command::Response* response)
-{
-	auto* rep = static_cast<commands::GetAllFiles::Response*>(response);
+void Json::OnStatusOk(int, Command::Response *response) {
+  auto *rep = static_cast<commands::GetAllFiles::Response *>(response);
 
-	QVERIFY(rep->files.size() == file_names_.size());
-	for (int i = 0; i < rep->files.size(); ++i)
-		QCOMPARE(rep->files[i].name, file_names_[i]);
+  QVERIFY(rep->files.size() == file_names_.size());
+  for (int i = 0; i < rep->files.size(); ++i)
+    QCOMPARE(rep->files[i].name, file_names_[i]);
 
-	emit done();
+  emit done();
 }
 
-void Json::OnStatusErr(QVariant status, Command::Response*)
-{
-	qDebug() << "Status err: " << status;
-	emit done();
+void Json::OnStatusErr(QVariant status, Command::Response *) {
+  qDebug() << "Status err: " << status;
+  emit done();
 }
 
-void Json::OnNetworkErr(QString error)
-{
-	qDebug() << "Network error: " << error;
-	emit done();
+void Json::OnNetworkErr(QString error) {
+  qDebug() << "Network error: " << error;
+  emit done();
 }
 
 QTEST_MAIN(Json)

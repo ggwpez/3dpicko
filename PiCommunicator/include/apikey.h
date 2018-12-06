@@ -3,8 +3,7 @@
 
 #include <QString>
 
-namespace c3picko
-{
+namespace c3picko {
 typedef QString ApiKey;
 }
 
