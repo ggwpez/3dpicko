@@ -4,26 +4,23 @@
 #include "command.h"
 #include "responses/retrive_response.h"
 
-namespace c3picko
-{
-namespace commands
-{
-	/**
-	 * @brief [API](http://docs.octoprint.org/en/master/api/files.html#id2)
-	 * @endlink
-	 */
-	class GetAllFiles : public Command
-	{
-		Q_OBJECT
+namespace c3picko {
+namespace commands {
+/**
+ * @brief [API](http://docs.octoprint.org/en/master/api/files.html#id2)
+ * @endlink
+ */
+class GetAllFiles : public Command {
+  Q_OBJECT
 
-	  public:
-		GetAllFiles(bool recursive);
+public:
+  GetAllFiles(bool recursive);
 
-		typedef responses::RetriveResponse Response;
+  typedef responses::RetriveResponse Response;
 
-	  public slots:
-		virtual void OnReplyFinished(QNetworkReply* reply) override;
-	};
+public slots:
+  virtual void OnReplyFinished(QNetworkReply *reply) override;
+};
 } // namespace commands
 } // namespace c3picko
 

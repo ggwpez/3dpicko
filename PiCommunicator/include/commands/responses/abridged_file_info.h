@@ -8,27 +8,23 @@
 #include <QStringList>
 #include <QVector>
 
-namespace c3picko
-{
-namespace commands
-{
-	namespace responses
-	{
-		/**
-		 * @brief
-		 * [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
-		 * TODO there may be additional properties see link above
-		 */
-		struct AbridgedFileInfo
-		{
-			AbridgedFileInfo() = default;
-			AbridgedFileInfo(QJsonObject obj);
+namespace c3picko {
+namespace commands {
+namespace responses {
+/**
+ * @brief
+ * [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
+ * TODO there may be additional properties see link above
+ */
+struct AbridgedFileInfo {
+  AbridgedFileInfo() = default;
+  AbridgedFileInfo(QJsonObject obj);
 
-			QString   name, display, path;
-			Origin	origin;
-			Reference ref;
-		};
-	} // namespace responses
+  QString name, display, path;
+  Origin origin;
+  Reference ref;
+};
+} // namespace responses
 } // namespace commands
 } // namespace c3picko
 
