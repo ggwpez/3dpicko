@@ -3,18 +3,15 @@
 
 #include "command.h"
 
-namespace c3picko
-{
-namespace commands
-{
-	class ArbitraryCommand : public Command
-	{
-		Q_OBJECT
+namespace c3picko {
+namespace commands {
+class ArbitraryCommand : public Command {
+  Q_OBJECT
 
-	  public:
-		ArbitraryCommand(QString command);
-		ArbitraryCommand(QStringList commands);
-	};
+public:
+  ArbitraryCommand(QString command);
+  ArbitraryCommand(QStringList commands);
+};
 } // namespace commands
 } // namespace c3picko
 

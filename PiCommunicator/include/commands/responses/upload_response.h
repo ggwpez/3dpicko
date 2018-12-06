@@ -7,30 +7,26 @@
 
 #include <QVector>
 
-namespace c3picko
-{
-namespace commands
-{
-	namespace responses
-	{
-		/**
-		 * @brief @link
-		 * http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse
-		 * @endlink
-		 */
-		struct UploadResponse : Response
-		{
-			UploadResponse(QJsonObject obj);
+namespace c3picko {
+namespace commands {
+namespace responses {
+/**
+ * @brief @link
+ * http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse
+ * @endlink
+ */
+struct UploadResponse : Response {
+  UploadResponse(QJsonObject obj);
 
-			AbridgedFileInfo local, sdcard, folder;
-			bool			 done;
+  AbridgedFileInfo local, sdcard, folder;
+  bool done;
 
-			/// Not in the documentation but needed to remember the type
-			Origin origin;
-			/// Is it a folder? Otherwise its a file
-			bool is_folder;
-		};
-	} // namespace responses
+  /// Not in the documentation but needed to remember the type
+  Origin origin;
+  /// Is it a folder? Otherwise its a file
+  bool is_folder;
+};
+} // namespace responses
 } // namespace commands
 } // namespace c3picko
 

@@ -11,27 +11,25 @@
 #include "apikey.h"
 #include "command.h"
 
-namespace c3picko
-{
+namespace c3picko {
 /**
  * @brief API for OctoPrint printer
  */
-class OctoPrint : public QObject
-{
-	Q_OBJECT
+class OctoPrint : public QObject {
+  Q_OBJECT
 
-  public:
-	OctoPrint(QString ip, ApiKey key, QObject* _parent = nullptr);
+public:
+  OctoPrint(QString ip, ApiKey key, QObject *_parent = nullptr);
 
-  public slots:
-	void SendCommand(Command* cmd);
+public slots:
+  void SendCommand(Command *cmd);
 
-  signals:
+signals:
 
-  private:
-	QString				   ip_;
-	ApiKey				   apikey_;
-	QNetworkAccessManager* network_;
+private:
+  QString ip_;
+  ApiKey apikey_;
+  QNetworkAccessManager *network_;
 };
 } // namespace c3picko
 
