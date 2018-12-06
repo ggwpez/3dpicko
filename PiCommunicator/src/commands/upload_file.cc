@@ -33,7 +33,7 @@ namespace commands
 		query.append(data);
 		query.append("\n--" + boundry1 + "\nContent-Disposition: form-data; name=\"select\"" + "\n\n" + (select ? "true" : "false")
 					 + '\n');
-		query.append("--" + boundry1 + "\nContent-Disposition: form-data; name=\"print\" " + "\n\n" + (print ? "true" : "false") + '\n');
+		query.append("--" + boundry1 + "\nContent-Disposition: form-data; name=\"print\"" + "\n\n" + (print ? "true" : "false") + '\n');
 		query.append("--" + boundry1 + "--");
 
 		return query;

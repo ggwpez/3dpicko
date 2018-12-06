@@ -23,6 +23,7 @@ class PiCommands : public QObject
 	void initTestCase();
 	void GetAllFiles();
 	void UploadFile1();
+	void UploadFile2();
 	void cleanupTestCase();
 
 	void OnStatusOk(int status, Command::Response* response);
@@ -77,6 +78,20 @@ void PiCommands::UploadFile1()
 	c3picko::commands::UploadFile cmd("subfolder", "folder/");
 
 	QString	filename = QFINDTESTDATA("upload_response1.http");
+	QByteArray data		= cmd.GetPostData();
+
+	QFile file(filename);
+	QVERIFY(file.open(QIODevice::ReadOnly));
+	QByteArray expect = file.readAll();
+
+	QCOMPARE(data, expect);
+}
+
+void PiCommands::UploadFile2()
+{
+	c3picko::commands::UploadFile cmd("M109 T0 S220.000000\nT0\nG21\nG90\n...", "sdcard", "whistle_v2.gcode", true, true);
+
+	QString	filename = QFINDTESTDATA("upload_response2.http");
 	QByteArray data		= cmd.GetPostData();
 
 	QFile file(filename);
