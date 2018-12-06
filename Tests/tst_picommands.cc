@@ -75,8 +75,8 @@ void PiCommands::UploadFile1()
 {
 	c3picko::commands::UploadFile cmd("subfolder", "folder/");
 
-	QString filename = QFINDTESTDATA("upload_response1.http");
-	QString data	 = cmd.GetPostData();
+	QString	filename = QFINDTESTDATA("upload_response1.http");
+	QByteArray data		= cmd.GetPostData();
 
 	QFile file(filename);
 	QVERIFY(file.open(QIODevice::ReadOnly));
