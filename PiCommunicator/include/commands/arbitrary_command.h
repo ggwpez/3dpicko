@@ -3,23 +3,18 @@
 
 #include "command.h"
 
-namespace c3picko {
-namespace commands {
-class ArbitraryCommand : public Command {
-  Q_OBJECT
+namespace c3picko
+{
+namespace commands
+{
+	class ArbitraryCommand : public Command
+	{
+		Q_OBJECT
 
-public:
-  ArbitraryCommand(QString command);
-  ArbitraryCommand(QStringList commands);
-
-  struct Response : Command::Response {
-    QString data1;
-    int data2;
-  };
-
-public slots:
-  virtual void OnReplyFinished(QNetworkReply *reply) override;
-};
+	  public:
+		ArbitraryCommand(QString command);
+		ArbitraryCommand(QStringList commands);
+	};
 } // namespace commands
 } // namespace c3picko
 

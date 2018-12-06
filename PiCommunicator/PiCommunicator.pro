@@ -24,7 +24,11 @@ SOURCES += \
 	src/commands/arbitrary_command.cc \
 	src/commands/responses/retrive_response.cc \
 	src/commands/get_all_files.cc \
-	src/commands/responses/file_information.cc
+	src/commands/upload_file.cc \
+	src/commands/responses/upload_response.cc \
+	src/commands/responses/abridged_file_info.cc \
+	src/commands/responses/datamodel/reference.cc \
+    src/commands/responses/file_or_folder_info.cc
 
 HEADERS += \
 	include/pi_communicator.h \
@@ -35,7 +39,15 @@ HEADERS += \
 	include/commands/get_all_files.h \
 	include/commands/responses/retrive_response.h \
 	include/commands/responses/response.h \
-	include/commands/responses/file_information.h
+	include/commands/upload_file.h \
+	include/commands/responses/upload_response.h \
+	include/commands/responses/abridged_file_info.h \
+	include/commands/responses/datamodel/origin.h \
+	include/commands/responses/datamodel/reference.h \
+    include/commands/responses/datamodel/gcode_analysis.h \
+    include/commands/responses/datamodel/file_type.h \
+    include/commands/responses/file_or_folder_info.h \
+    include/command.inc.h
 
 INCLUDEPATH += include/
 
