@@ -6,7 +6,8 @@
 namespace c3picko {
 namespace commands {
 GetAllFiles::GetAllFiles(bool recursive)
-	: Command("files" +QString(recursive ? "?recursive=true" : ""), QJsonObject(), {200}, Command::Type::GET) {}
+    : Command("files" + QString(recursive ? "?recursive=true" : ""),
+              QJsonObject(), {200}, Command::Type::GET) {}
 
 void GetAllFiles::OnReplyFinished(QNetworkReply *reply) {
   OnReplyFinishedDefault<Response>(reply);
