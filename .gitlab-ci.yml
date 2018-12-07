@@ -53,7 +53,7 @@ format:linux:
     - git branch -D `echo $CI_COMMIT_REF_NAME-format` || true
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\)' -exec clang-format -style=file -i {} \;
-    - git diff --exit-code || (git add -u && git commit -m="Auto formating" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
+    - git diff --exit-code || (git add -u && git commit -m"=Auto formatting=" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
   except:
     - /^.*-format$/
 
