@@ -2,6 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
 	PiCommunicator \
-	Tests
+	Tests \
+	Main
 
 Tests.depends = PiCommunicator
+Main.depends = PiCommunicator

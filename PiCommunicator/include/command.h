@@ -13,11 +13,16 @@ class Command : public QObject {
   Q_OBJECT
 
 public:
-  Command(QString api_url, QByteArray data, QSet<int> status_ok,
-          QString content_type = "application/json; charset=utf-8");
-  Command(QString api_url, QJsonObject data, QSet<int> status_ok,
-          QString content_type = "application/json; charset=utf-8");
-  ~Command();
+	enum class Type
+	{
+		GET,
+		POST
+	};
+
+  Command(QString api_url, QByteArray data, QSet<int> status_ok, Type type_,
+		  QString content_type = "application/json; charset=utf-8");
+  Command(QString api_url, QJsonObject data, QSet<int> status_ok, Type type_,
+		  QString content_type = "application/json; charset=utf-8");
 
   /**
    * @brief Returns the API-URL for the Post request
@@ -28,6 +33,8 @@ public:
   QString GetApiUrl() const;
 
   typedef commands::responses::Response Response;
+
+  Type type() const;
 
 public slots:
   QByteArray GetPostData() const;
@@ -62,11 +69,11 @@ signals:
   void OnNetworkErr(QString error);
 
 protected:
-  QString api_url_;
+  QString const api_url_;
   QByteArray data_;
-  QSet<int> status_ok_;
-  Response *answer_ = nullptr;
-  QString content_type_;
+  QSet<int> const status_ok_;
+  QString const content_type_;
+  Type const type_;
 };
 } // namespace c3picko
 
