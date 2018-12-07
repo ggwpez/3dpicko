@@ -13,16 +13,12 @@ class Command : public QObject {
   Q_OBJECT
 
 public:
-	enum class Type
-	{
-		GET,
-		POST
-	};
+  enum class Type { GET, POST };
 
   Command(QString api_url, QByteArray data, QSet<int> status_ok, Type type_,
-		  QString content_type = "application/json; charset=utf-8");
+          QString content_type = "application/json; charset=utf-8");
   Command(QString api_url, QJsonObject data, QSet<int> status_ok, Type type_,
-		  QString content_type = "application/json; charset=utf-8");
+          QString content_type = "application/json; charset=utf-8");
 
   /**
    * @brief Returns the API-URL for the Post request

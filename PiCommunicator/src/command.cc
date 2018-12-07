@@ -2,16 +2,17 @@
 #include <QMetaEnum>
 
 namespace c3picko {
-Command::Command(QString api_url, QByteArray data, QSet<int> status_ok, Type type,
-				 QString content_type)
-	: api_url_(api_url), data_(data), status_ok_(status_ok), type_(type),
-	  content_type_(content_type) {}
+Command::Command(QString api_url, QByteArray data, QSet<int> status_ok,
+                 Type type, QString content_type)
+    : api_url_(api_url), data_(data), status_ok_(status_ok), type_(type),
+      content_type_(content_type) {}
 
-Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok, Type type,
-				 QString content_type)
-	: api_url_(api_url), status_ok_(status_ok), type_(type), content_type_(content_type) {
-	if (data.isEmpty())
-		return;
+Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok,
+                 Type type, QString content_type)
+    : api_url_(api_url), status_ok_(status_ok), type_(type),
+      content_type_(content_type) {
+  if (data.isEmpty())
+    return;
 
   QJsonDocument doc(data);
   data_ = doc.toJson();
@@ -28,22 +29,19 @@ void Command::CheckStatusCode(QNetworkReply *reply, Command::Response *answer) {
   QVariant status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
   if (status.canConvert<int>()) {
-	int code = status.toInt();
+    int code = status.toInt();
 
-	if (status_ok_.contains(code))
-	  emit OnStatusOk(code, answer);
-	else
-	  emit OnStatusErr(code, answer);
+    if (status_ok_.contains(code))
+      emit OnStatusOk(code, answer);
+    else
+      emit OnStatusErr(code, answer);
   } else
-	emit OnStatusErr("The webserver returned a non int HTTP status code " +
-						 status.toString(),
-					 answer);
+    emit OnStatusErr("The webserver returned a non int HTTP status code " +
+                         status.toString(),
+                     answer);
 }
 
-Command::Type Command::type() const
-{
-	return type_;
-}
+Command::Type Command::type() const { return type_; }
 
 void Command::OnReplyFinished(QNetworkReply *reply) {
   CheckStatusCode(reply);
