@@ -17,20 +17,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-	#main.cpp \
 	src/pi_communicator.cc \
 	src/octoprint.cc \
 	src/command.cc \
 	src/commands/arbitrary_command.cc \
-	src/commands/responses/retrive_response.cc \
+	src/responses/retrive_response.cc \
 	src/commands/get_all_files.cc \
 	src/commands/upload_file.cc \
-	src/commands/responses/upload_response.cc \
-	src/commands/responses/abridged_file_info.cc \
-	src/commands/responses/datamodel/reference.cc \
-    src/commands/responses/file_or_folder_info.cc \
-    src/commands/responses/datamodel/origin.cc \
-    src/commands/responses/datamodel/file_type.cc
+	src/responses/upload_response.cc \
+	src/responses/abridged_file_info.cc \
+	src/datamodel/reference.cc \
+	src/responses/file_or_folder_info.cc \
+	src/datamodel/file_type.cc \
+	src/commands/delete_file.cc \
+	src/datamodel/location.cc \
+	src/commands/connection.cc \
+	src/datamodel/connection_type.cc \
+	src/datamodel/connection_info.cc \
+    src/print_job.cc
 
 HEADERS += \
 	include/pi_communicator.h \
@@ -39,21 +43,28 @@ HEADERS += \
 	include/command.h \
 	include/commands/arbitrary_command.h \
 	include/commands/get_all_files.h \
-	include/commands/responses/retrive_response.h \
-	include/commands/responses/response.h \
+	include/responses/retrive_response.h \
+	include/responses/response.h \
 	include/commands/upload_file.h \
-	include/commands/responses/upload_response.h \
-	include/commands/responses/abridged_file_info.h \
-	include/commands/responses/datamodel/origin.h \
-	include/commands/responses/datamodel/reference.h \
-    include/commands/responses/datamodel/gcode_analysis.h \
-    include/commands/responses/datamodel/file_type.h \
-    include/commands/responses/file_or_folder_info.h \
-    include/command.inc.h
+	include/responses/upload_response.h \
+	include/responses/abridged_file_info.h \
+	include/datamodel/reference.h \
+	include/datamodel/gcode_analysis.h \
+	include/datamodel/file_type.h \
+	include/responses/file_or_folder_info.h \
+	include/command.inc.h \
+	include/commands/delete_file.h \
+	include/datamodel/location.h \
+	include/commands/connection.h \
+	include/datamodel/connection_type.h \
+	include/responses/connection_info.h \
+    include/commands/all.h \
+    include/print_job.h \
+    include/gcode.h
 
 INCLUDEPATH += include/
 
-#QMAKE_CXXFLAGS += -Werror -Wall -Wextra -Wno-return
+QMAKE_CXXFLAGS += -Werror
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

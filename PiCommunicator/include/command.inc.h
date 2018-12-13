@@ -5,16 +5,33 @@
 #include <QJsonObject>
 #include <QJsonParseError>
 
-namespace c3picko {
-template <typename T>
-inline void Command::OnReplyFinishedDefault(QNetworkReply *reply) {
-  QByteArray data = reply->readAll();
+namespace c3picko
+{
+namespace pi
+{
+	template <typename T> inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply)
+	{
+		QByteArray data = reply->readAll();
 
-  QJsonParseError error;
-  QJsonDocument doc = QJsonDocument::fromJson(data, &error);
-  T *response = new T(doc.object());
+		if (data.size() == 0)
+		{
+			emit OnNetworkErr("Empty response body");
+			return;
+		}
 
-  CheckStatusCode(reply, response);
-}
+		QJsonParseError error;
+		QJsonDocument   doc		 = QJsonDocument::fromJson(data, &error); // FIXME check error
+
+		if (error.error != QJsonParseError::NoError)
+		{
+			emit OnNetworkErr("Json parsing failed: " +error.errorString());
+			return;
+		}
+
+		T*				response = new T(doc.object());
+
+		CheckStatusCode(reply, response);
+	}
+} // namespace pi
 } // namespace c3picko
 #endif // COMMAND_INC_H_

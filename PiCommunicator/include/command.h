@@ -1,77 +1,94 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
 
-#include "commands/responses/response.h"
+#include "responses/response.h"
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QObject>
 #include <QSet>
 #include <QUrlQuery>
 
-namespace c3picko {
-class Command : public QObject {
-  Q_OBJECT
+namespace c3picko
+{
+namespace pi
+{
+	class Command : public QObject
+	{
+		Q_OBJECT
 
-public:
-  enum class Type { GET, POST };
+	  public:
+		enum class HTTPType
+		{
+			GET,
+			POST,
+			PUT,
+			PATCH,
+			DELETE
+		};
+		typedef responses::Response Response;
 
-  Command(QString api_url, QByteArray data, QSet<int> status_ok, Type type_,
-          QString content_type = "application/json; charset=utf-8");
-  Command(QString api_url, QJsonObject data, QSet<int> status_ok, Type type_,
-          QString content_type = "application/json; charset=utf-8");
+		Command(QString api_url, QSet<int> status_ok, HTTPType type);
+		Command(QString api_url, QByteArray data, QSet<int> status_ok, HTTPType type_,
+				QString content_type = "application/json; charset=utf-8");
+		Command(QString api_url, QJsonObject data, QSet<int> status_ok, HTTPType type_,
+				QString content_type = "application/json; charset=utf-8");
 
-  /**
-   * @brief Returns the API-URL for the Post request
-   *
-   * Eg: http://localhost/api/start_print
-   * Here start_print would be returned
-   */
-  QString GetApiUrl() const;
+		/**
+		 * @brief Returns the API-URL for the Post request
+		 *
+		 * Eg: http://localhost/api/start_print
+		 * Here start_print would be returned
+		 */
+		QString GetApiUrl() const;
+		HTTPType type() const;
 
-  typedef commands::responses::Response Response;
+	  public slots:
+		QByteArray		GetPostData() const;
+		virtual QString GetContentType() const;
 
-  Type type() const;
+		virtual void OnReplyFinished(QNetworkReply*);
+		virtual void OnReplyError(QNetworkReply::NetworkError);
 
-public slots:
-  QByteArray GetPostData() const;
-  virtual QString GetContentType() const;
+	  protected slots:
+		/**
+		 * @brief Checks whether the status code from the reply is in the
+		 * Command::status_ok_ set. Emits #OnStatusOk or @p reply
+		 * @param reply Network reply received by Command::OnReplyFinished()
+		 * @param response Response or nothing if the command has no response
+		 */
+		void CheckStatusCode(QNetworkReply* reply, Response* response = nullptr);
 
-  virtual void OnReplyFinished(QNetworkReply *);
-  virtual void OnReplyError(QNetworkReply::NetworkError);
+	  protected:
+		/**
+		 * @brief Reads all data from @p reply, parses it as JSON and construct a new
+		 * Object of Type @p T from it. Then passes the Object to Check status code.
+		 * @tparam T Type of the Response, is then passed to #CheckStatusCode
+		 * @param reply Network reply received by #OnReplyFinished
+		 *
+		 */
+		template <typename T> inline void CheckStatusCodeAndResponse(QNetworkReply* reply);
 
-protected slots:
-  /**
-   * @brief Checks whether the status code from the reply is in the
-   * Command::status_ok_ set Emits #OnStatusOk or @p reply
-   * @param reply Network reply received by Command::OnReplyFinished()
-   * @param response Response or nothing if the command has no response
-   */
-  void CheckStatusCode(QNetworkReply *reply, Response *response = nullptr);
+	  signals:
+		void OnStatusOk(int status, Response*);
+		void OnStatusErr(QVariant status, Response*);
+		void OnNetworkErr(QString error);
+		/**
+		 * @brief This will be always emitted after one of the above was raised.
+		 * Use it for cleanup.
+		 */
+		void OnFinised();
 
-protected:
-  /**
-   * @brief Reads all data from @p reply, parses it as JSON and construct a new
-   * Object of Type @p T from it. Then passes the Object to Check status code.
-   * @tparam T Type of the Response, is then passed to #CheckStatusCode
-   * @param reply Network reply received by #OnReplyFinished
-   *
-   */
-  template <typename T>
-  inline void OnReplyFinishedDefault(QNetworkReply *reply);
+	private slots:
+		void SetUpSignals();
 
-signals:
-  void OnStatusOk(int status, Response *);
-  void OnStatusErr(QVariant status, Response *);
-  void OnNetworkErr(QString error);
-
-protected:
-  QString const api_url_;
-  QByteArray data_;
-  QSet<int> const status_ok_;
-  QString const content_type_;
-  Type const type_;
-};
+	  protected:
+		QString const   api_url_;
+		QByteArray		data_;
+		QSet<int> const status_ok_;
+		HTTPType const	type_;
+		QString const   content_type_;
+	};
+} // namespace pi
 } // namespace c3picko
-
 #include "command.inc.h"
 #endif // COMMAND_H_

@@ -3,14 +3,18 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 
-namespace c3picko {
-namespace commands {
-GetAllFiles::GetAllFiles(bool recursive)
-    : Command("files" + QString(recursive ? "?recursive=true" : ""),
-              QJsonObject(), {200}, Command::Type::GET) {}
+namespace c3picko
+{
+namespace pi
+{
+	namespace commands
+	{
+		GetAllFiles::GetAllFiles(bool recursive)
+			: Command("files" + QString(recursive ? "?recursive=true" : ""), QJsonObject(), {200}, Command::HTTPType::GET)
+		{
+		}
 
-void GetAllFiles::OnReplyFinished(QNetworkReply *reply) {
-  OnReplyFinishedDefault<Response>(reply);
+		void GetAllFiles::OnReplyFinished(QNetworkReply* reply) { CheckStatusCodeAndResponse<Response>(reply); }
+	} // namespace commands
 }
-} // namespace commands
 } // namespace c3picko

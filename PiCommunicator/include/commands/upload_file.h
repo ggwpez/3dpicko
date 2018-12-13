@@ -2,49 +2,52 @@
 #define UPLOAD_COMMAND_H_
 
 #include "command.h"
-#include "commands/responses/upload_response.h"
+#include "datamodel/location.h"
+#include "responses/upload_response.h"
 
-namespace c3picko {
-namespace commands {
-class UploadFile : public Command {
-  Q_OBJECT
+namespace c3picko
+{
+namespace pi
+{
+	namespace commands
+	{
+		class UploadFile : public Command
+		{
+			Q_OBJECT
 
-public:
-  /**
-   * @brief Uploads a new file with content @p data to the location @p file_path
-   * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
-   * @param data File content
-   * @param path Folder path of file
-   * @param file_name Name of file to create
-   * @param select Should the file be selected?
-   * @param print Should the file be printed?
-   */
-  UploadFile(QByteArray data, QString path, QString file_name, bool select,
-             bool print);
+		  public:
+			/**
+			 * @brief Uploads a new file with content @p data to @p file_name in @p location
+			 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
+			 * @param content File content
+			 * @param location SdCard or local
+			 * @param file_name Name of file to create
+			 * @param select Should the file be selected?
+			 * @param print Should the file be printed?
+			 */
+			UploadFile(QByteArray content, data::Location location, QString file_name, bool select, bool print);
 
-  /**
-   * @brief UploadFile Creates a new folder @p folder_path
-   * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
-   * @param folder_name Name of the folder to create
-   * @param path Path to the folder location
-   *
-   * Local of SD card? FIXME
-   */
-  UploadFile(QString folder_name, QString path);
+			/**
+			 * @brief UploadFile Creates a new folder @p folder_path on location local.
+			 * NOTE SdCard else is not supported by octoprint yet
+			 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
+			 * @param folder_name Name of the folder to create
+			 */
+			UploadFile(QString folder_name);
 
-  typedef responses::UploadResponse Response;
+			typedef responses::UploadResponse Response;
 
-protected:
-  QByteArray BuildFileUploadPacket(QByteArray data, QString file_name,
-                                   bool select, bool print);
-  QByteArray BuildFolderCreatePacket(QString folder_name, QString path);
+		  protected:
+			QByteArray BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print);
+			QByteArray BuildFolderCreatePacket(QString folder_name);
 
-public slots:
-  virtual void OnReplyFinished(QNetworkReply *reply) override;
+		  public slots:
+			virtual void OnReplyFinished(QNetworkReply* reply) override;
 
-private:
-};
-} // namespace commands
+		  private:
+		};
+	} // namespace commands
+}
 } // namespace c3picko
 
 #endif // UPLOAD_COMMAND_H_

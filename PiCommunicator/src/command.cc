@@ -1,58 +1,80 @@
 #include "command.h"
 #include <QMetaEnum>
+#include <QVariant>
 
-namespace c3picko {
-Command::Command(QString api_url, QByteArray data, QSet<int> status_ok,
-                 Type type, QString content_type)
-    : api_url_(api_url), data_(data), status_ok_(status_ok), type_(type),
-      content_type_(content_type) {}
+namespace c3picko
+{
+namespace pi
+{
+	Command::Command(QString api_url, QSet<int> status_ok, Command::HTTPType type)
+		: api_url_(api_url), data_(QByteArray()), status_ok_(status_ok), type_(type), content_type_("")
+	{
+		SetUpSignals();
+	}
 
-Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok,
-                 Type type, QString content_type)
-    : api_url_(api_url), status_ok_(status_ok), type_(type),
-      content_type_(content_type) {
-  if (data.isEmpty())
-    return;
+	Command::Command(QString api_url, QByteArray data, QSet<int> status_ok, HTTPType type, QString content_type)
+		: api_url_(api_url), data_(data), status_ok_(status_ok), type_(type), content_type_(content_type)
+	{
+		SetUpSignals();
+	}
 
-  QJsonDocument doc(data);
-  data_ = doc.toJson();
-}
+	Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok, HTTPType type, QString content_type)
+		: api_url_(api_url), status_ok_(status_ok), type_(type), content_type_(content_type)
+	{
+		SetUpSignals();
+		if (data.isEmpty())
+			return;
 
-QString Command::GetApiUrl() const { return api_url_; }
+		QJsonDocument doc(data);
+		data_ = doc.toJson();
+	}
 
-QByteArray Command::GetPostData() const { return data_; }
+	void Command::SetUpSignals()
+	{
+		connect(this, SIGNAL(OnStatusOk(int, Response*)), this, SIGNAL(OnFinised()));
+		connect(this, SIGNAL(OnStatusErr(QVariant, Response*)), this, SIGNAL(OnFinished()));
+		connect(this, SIGNAL(OnNetworkErr(QString)), this, SIGNAL(OnFinished()));
+	}
 
-QString Command::GetContentType() const { return content_type_; }
+	QString Command::GetApiUrl() const { return api_url_; }
 
-void Command::CheckStatusCode(QNetworkReply *reply, Command::Response *answer) {
-  // Webservers can return various types as status code
-  QVariant status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+	QByteArray Command::GetPostData() const { return data_; }
 
-  if (status.canConvert<int>()) {
-    int code = status.toInt();
+	QString Command::GetContentType() const { return content_type_; }
 
-    if (status_ok_.contains(code))
-      emit OnStatusOk(code, answer);
-    else
-      emit OnStatusErr(code, answer);
-  } else
-    emit OnStatusErr("The webserver returned a non int HTTP status code " +
-                         status.toString(),
-                     answer);
-}
+	void Command::CheckStatusCode(QNetworkReply* reply, Command::Response* answer)
+	{
+		// Hhe Webserver can return various types as status code
+		QVariant status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
-Command::Type Command::type() const { return type_; }
+		if (status.canConvert<int>())
+		{
+			int code = status.toInt();
 
-void Command::OnReplyFinished(QNetworkReply *reply) {
-  CheckStatusCode(reply);
+			if (status_ok_.contains(code))
+				emit OnStatusOk(code, answer);
+			else
+				emit OnStatusErr(code, answer);
+		}
+		else
+			emit OnStatusErr("The webserver returned a non int HTTP status code " + status.toString(), answer);
+	}
 
-  // The default case is that commands dont have Reply data, so we just
-  // ignore the data from reply->readAll()
-}
+	Command::HTTPType Command::type() const { return type_; }
 
-void Command::OnReplyError(QNetworkReply::NetworkError error) {
-  QMetaEnum menum = QMetaEnum::fromType<QNetworkReply::NetworkError>();
+	void Command::OnReplyFinished(QNetworkReply* reply)
+	{
+		CheckStatusCode(reply);
 
-  emit OnNetworkErr(menum.valueToKey(error));
+		// The default case is that commands dont have Reply data, so we just
+		// ignore the data from reply->readAll()
+	}
+
+	void Command::OnReplyError(QNetworkReply::NetworkError error)
+	{
+		QMetaEnum menum = QMetaEnum::fromType<QNetworkReply::NetworkError>();
+
+		emit OnNetworkErr(menum.valueToKey(error));
+	}
 }
 } // namespace c3picko
