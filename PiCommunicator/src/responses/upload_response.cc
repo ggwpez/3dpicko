@@ -13,7 +13,7 @@ namespace pi
 			if (obj.contains("files"))
 			{
 				QJsonObject files = obj["files"].toObject();
-				local			  = AbridgedFileInfo(files["local"].toObject());
+				local			  = data::AbridgedFileInfo(files["local"].toObject());
 
 				if (files.contains("sdcard"))
 				{

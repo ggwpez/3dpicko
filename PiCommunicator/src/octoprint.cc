@@ -25,8 +25,13 @@ namespace pi
 				reply = network_->get(request);
 				break;
 			case Command::HTTPType::POST:
-				reply = network_->post(request, cmd->GetPostData());
-				break;
+			{
+				if (cmd->IsQuery())
+					reply = network_->post(request, cmd->GetPostQuery());
+				else
+					reply = network_->post(request, cmd->GetPostData());
+			}
+			break;
 			case Command::HTTPType::DELETE:
 				reply = network_->deleteResource(request);
 				break;

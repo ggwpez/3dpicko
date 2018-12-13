@@ -2,8 +2,9 @@
 #define PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_
 
 #include <QObject>
+#include <QQueue>
 #include <QString>
-#include <QVector>
+#include <QTimer>
 
 #include "include/apikey.h"
 #include "include/gcode.h"
@@ -15,7 +16,9 @@ namespace c3picko
 namespace pi
 {
 	/**
-	 * @brief Connect and send GCode to an Octoprint printer
+	 * @brief Connect and send GCode to an Octoprint printer.
+	 *
+	 * Only use one Instance per printer.
 	 */
 	class PiCommunicator : public QObject
 	{
@@ -41,9 +44,13 @@ namespace pi
 		 * @brief Starts the given job
 		 *
 		 * Status updates by @link OnStartedJob and @link OnStartingJobError
-		 * @return The created job, must be deleted my caller.
+		 * @return The created job, DONT DELETE IT
 		 */
-		PrintJob* StartJob(GCode gcode);
+		PrintJob const* StartJob(GCode gcode);
+		/**
+		 * @brief TODO rethink this, not optimal
+		 */
+		void CancelJob(PrintJob*);
 
 	  signals:
 		void OnConnected();
@@ -51,15 +58,32 @@ namespace pi
 		void OnDisconnected();
 		void OnDisconnectionError(QString error);
 
+		void OnTransition(State from, State to);
+
 	  protected:
 		/**
 		 * @brief Generates distinct filenames for naming the uploaded files
 		 * @return Filename
 		 */
-		QString gen_filename() const;
+		QString GenerateFilename() const;
+		void Transition(State t);
+
+	  private slots:
+		void Tick();
+		void StartNextJob();
+		void SendCommand(Command* cmd);
 
 	  private:
-		OctoPrint printer_;
+		/**
+		 * @brief OctoPrint only allows one active job at a time
+		 */
+		PrintJob*		  current_job_;
+		QQueue<PrintJob*> waiting_jobs_;
+
+		State			state_;
+		OctoPrint const printer_;
+		QTimer			ticker_;
+		const int		tick_time_ms_ = 1000;
 	};
 }
 } // namespace c3picko

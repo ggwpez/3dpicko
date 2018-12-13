@@ -2,6 +2,7 @@
 #define COMMAND_H_
 
 #include "responses/response.h"
+#include <QHttpMultiPart>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QObject>
@@ -32,6 +33,9 @@ namespace pi
 				QString content_type = "application/json; charset=utf-8");
 		Command(QString api_url, QJsonObject data, QSet<int> status_ok, HTTPType type_,
 				QString content_type = "application/json; charset=utf-8");
+		Command(QString api_url, QHttpMultiPart* query, QSet<int> status_ok, HTTPType type_,
+				QString content_type = "application/json; charset=utf-8");
+		~Command();
 
 		/**
 		 * @brief Returns the API-URL for the Post request
@@ -39,13 +43,15 @@ namespace pi
 		 * Eg: http://localhost/api/start_print
 		 * Here start_print would be returned
 		 */
-		QString GetApiUrl() const;
+		QString  GetApiUrl() const;
 		HTTPType type() const;
 
-	  public slots:
 		QByteArray		GetPostData() const;
+		QHttpMultiPart* GetPostQuery() const;
 		virtual QString GetContentType() const;
+		bool			IsQuery() const;
 
+	  public slots:
 		virtual void OnReplyFinished(QNetworkReply*);
 		virtual void OnReplyError(QNetworkReply::NetworkError);
 
@@ -76,16 +82,18 @@ namespace pi
 		 * @brief This will be always emitted after one of the above was raised.
 		 * Use it for cleanup.
 		 */
-		void OnFinised();
+		void OnFinished();
 
-	private slots:
-		void SetUpSignals();
+	  private:
+		void SetupSlots();
 
 	  protected:
-		QString const   api_url_;
+		QString const api_url_;
+		// TODO bad style
 		QByteArray		data_;
+		QHttpMultiPart* query_ = nullptr;
 		QSet<int> const status_ok_;
-		HTTPType const	type_;
+		HTTPType const  type_;
 		QString const   content_type_;
 	};
 } // namespace pi

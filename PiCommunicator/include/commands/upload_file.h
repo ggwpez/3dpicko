@@ -33,13 +33,13 @@ namespace pi
 			 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
 			 * @param folder_name Name of the folder to create
 			 */
-			UploadFile(QString folder_name);
+			UploadFile(QString folder_name, data::Location location);
 
 			typedef responses::UploadResponse Response;
 
 		  protected:
-			QByteArray BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print);
-			QByteArray BuildFolderCreatePacket(QString folder_name);
+			QHttpMultiPart* BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print);
+			QHttpMultiPart* BuildFolderCreatePacket(QString folder_name);
 
 		  public slots:
 			virtual void OnReplyFinished(QNetworkReply* reply) override;

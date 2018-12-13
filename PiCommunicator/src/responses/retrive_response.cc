@@ -1,5 +1,7 @@
 #include "responses/retrive_response.h"
 #include <QJsonArray>
+#include <QJsonValue>
+#include <QVariant>
 
 namespace c3picko
 {
@@ -17,7 +19,10 @@ namespace pi
 				files.append(FileOrFolderInfo(file_obj));
 			}
 
-			free = obj["free"].toString();
+			if (obj.contains("total"))
+				total = obj["total"].toVariant().toLongLong(); // this is why i have Qt Json
+
+			free = obj["free"].toVariant().toLongLong();
 		}
 	} // namespace responses
 } // namespace commands

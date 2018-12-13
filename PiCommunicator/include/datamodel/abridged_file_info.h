@@ -13,13 +13,13 @@ namespace c3picko
 {
 namespace pi
 {
-	namespace responses
+	namespace data
 	{
 		/**
 		 * @brief
 		 * [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
 		 */
-		struct AbridgedFileInfo : public Response
+		struct AbridgedFileInfo
 		{
 			AbridgedFileInfo() = default;
 			AbridgedFileInfo(QJsonObject obj);
@@ -28,7 +28,7 @@ namespace pi
 			data::Location  origin;
 			data::Reference ref;
 		};
-	} // namespace responses
+	} // namespace data
 } // namespace commands
 } // namespace c3picko
 

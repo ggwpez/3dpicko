@@ -80,7 +80,7 @@ void PiCommands::GetAllFiles()
 
 void PiCommands::UploadFile1()
 {
-	c3picko::pi::commands::UploadFile cmd("subfolder");
+	c3picko::pi::commands::UploadFile cmd("subfolder", data::Location::LOCAL);
 
 	QString	filename = QFINDTESTDATA("upload_response1.http");
 	QByteArray data		= cmd.GetPostData();

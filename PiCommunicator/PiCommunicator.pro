@@ -25,7 +25,7 @@ SOURCES += \
 	src/commands/get_all_files.cc \
 	src/commands/upload_file.cc \
 	src/responses/upload_response.cc \
-	src/responses/abridged_file_info.cc \
+	src/datamodel/abridged_file_info.cc \
 	src/datamodel/reference.cc \
 	src/responses/file_or_folder_info.cc \
 	src/datamodel/file_type.cc \
@@ -34,7 +34,13 @@ SOURCES += \
 	src/commands/connection.cc \
 	src/datamodel/connection_type.cc \
 	src/datamodel/connection_info.cc \
-    src/print_job.cc
+	src/print_job.cc \
+	src/commands/job.cc \
+	src/datamodel/job_action.cc \
+	src/datamodel/job_pause_action.cc \
+	src/datamodel/progress_info.cc \
+	src/datamodel/job_general_info.cc \
+	src/responses/job_info.cc
 
 HEADERS += \
 	include/pi_communicator.h \
@@ -47,7 +53,7 @@ HEADERS += \
 	include/responses/response.h \
 	include/commands/upload_file.h \
 	include/responses/upload_response.h \
-	include/responses/abridged_file_info.h \
+	include/datamodel/abridged_file_info.h \
 	include/datamodel/reference.h \
 	include/datamodel/gcode_analysis.h \
 	include/datamodel/file_type.h \
@@ -58,13 +64,19 @@ HEADERS += \
 	include/commands/connection.h \
 	include/datamodel/connection_type.h \
 	include/responses/connection_info.h \
-    include/commands/all.h \
-    include/print_job.h \
-    include/gcode.h
+	include/commands/all.h \
+	include/print_job.h \
+	include/gcode.h \
+	include/commands/job.h \
+	include/datamodel/job_pause_action.h \
+	include/datamodel/job_action.h \
+	include/responses/job_info.h \
+	include/datamodel/progress_info.h \
+	include/datamodel/job_general_info.h
 
 INCLUDEPATH += include/
 
-QMAKE_CXXFLAGS += -Werror
+# QMAKE_CXXFLAGS += -Werror
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

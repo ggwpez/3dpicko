@@ -14,7 +14,7 @@ namespace pi
 		 * [API](http://docs.octoprint.org/en/master/api/datamodel.html#gcode-analysis-information)
 		 */
 		typedef QString GCodeAnalysis; // TODO
-	}								   // namespace responses
+	}								   // namespace data
 } // namespace commands
 } // namespace c3picko
 

@@ -1,6 +1,7 @@
 #ifndef PRINT_JOB_H
 #define PRINT_JOB_H
 
+#include "include/datamodel/progress_info.h"
 #include "include/gcode.h"
 #include <QObject>
 
@@ -11,6 +12,27 @@ namespace pi
 	class PrintJob : public QObject
 	{
 		Q_OBJECT
+
+	  public:
+		enum class State
+		{
+			// Start state
+			NEW,
+
+			UPLOADED,
+			RUNNING,
+			PAUSED,
+
+			// Accepting states
+			CANCELED,
+			DONE
+		};
+		typedef qreal ProgressType;
+
+		PrintJob(GCode gcode);
+
+	  public slots:
+		void UpdateProgress(data::ProgressInfo new_info);
 
 	  signals:
 		void OnError(QString);
@@ -23,12 +45,17 @@ namespace pi
 		 * @brief Job started printing
 		 */
 		void OnStarted();
-		/**
-		 * @brief Job finished printing.
-		 *
-		 * Use for cleanup.
-		 */
-		void OnFinished();
+		void OnCanceled();
+		void OnRestarted();
+		void OnPaused();
+		void OnResumed();
+		void OnToggled();
+		void OnProgressUpdate(data::ProgressInfo);
+
+	  public:
+		State			   state;
+		GCode const		   gcode;
+		data::ProgressInfo progress;
 	};
 }
 }

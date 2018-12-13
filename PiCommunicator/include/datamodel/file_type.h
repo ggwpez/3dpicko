@@ -21,7 +21,7 @@ namespace pi
 		};
 
 		FileType FileTypeFromString(QString str);
-	} // namespace responses
+	} // namespace data
 } // namespace commands
 } // namespace c3picko
 

@@ -1,11 +1,11 @@
-#include "responses/abridged_file_info.h"
+#include "datamodel/abridged_file_info.h"
 #include <QJsonArray>
 
 namespace c3picko
 {
 namespace pi
 {
-	namespace responses
+	namespace data
 	{
 		AbridgedFileInfo::AbridgedFileInfo(QJsonObject obj)
 		{
@@ -17,6 +17,6 @@ namespace pi
 			if (obj.contains("refs"))
 				ref = obj["refs"].toObject();
 		}
-	} // namespace responses
+	} // namespace data
 } // namespace commands
 } // namespace c3picko

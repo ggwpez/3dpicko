@@ -21,7 +21,7 @@ namespace pi
 
 			QUrl resource, download, model;
 		};
-	} // namespace responses
+	} // namespace data
 } // namespace commands
 } // namespace c3picko
 

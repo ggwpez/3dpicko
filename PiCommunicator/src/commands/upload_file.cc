@@ -12,7 +12,7 @@ namespace pi
 	namespace commands
 	{
 		static QString const boundry1 = "----WebKitFormBoundaryDeC2E3iWbTv1PwMC";
-		static QString const boundry2 = "----WebKitFormBoundaryDeC2E3iWbTv1PwMD";
+		static QString const boundry2 = "----WebKitFormBoundaryDeC2E3iWbTv1PwMC";
 
 		UploadFile::UploadFile(QByteArray content, data::Location location, QString file_name, bool select, bool print)
 			: Command("files/" + data::ToString(location), BuildFileUploadPacket(content, file_name, select, print), {201},
@@ -20,15 +20,15 @@ namespace pi
 		{
 		}
 
-		UploadFile::UploadFile(QString folder_name)
-			: Command("files", BuildFolderCreatePacket(folder_name), {201}, Command::HTTPType::POST,
+		UploadFile::UploadFile(QString folder_name, data::Location location)
+			: Command("files/" + data::ToString(location), BuildFolderCreatePacket(folder_name), {201}, Command::HTTPType::POST,
 					  "multipart/form-data; boundary=" + boundry2)
 		{
 		}
 
-		QByteArray UploadFile::BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print)
+		QHttpMultiPart* UploadFile::BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print)
 		{
-			QByteArray query;
+			/*QByteArray query;
 
 			query.append("--" + boundry1 + "\nContent-Disposition: form-data; name=\"file\"; filename=\"" + file_name + "\"\n"
 						 + "Content-Type: application/octet-stream\n\n");
@@ -38,48 +38,62 @@ namespace pi
 						 + '\n');
 			query.append("--" + boundry1 + "\nContent-Disposition: form-data; name=\"print\"" + "\n\n" + (print ? "true" : "false")
 						 + '\n');
-			query.append("--" + boundry1 + "--");
+			query.append("--" + boundry1 + "--\n");
 
-			return query;
+			return query;*/
 
 			// TODO this does sadly not work, since QHttpPart is not serializable
 			// maybe it is in the future?
-			/*QHttpMultiPart query(QHttpMultiPart::FormDataType);
-			QHttpPart file_part, select_part, print_part;
+			QHttpMultiPart* query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+			QHttpPart		file_part, select_part, print_part;
 
 			{
-							file_part.setHeader(QNetworkRequest::ContentDispositionHeader,
-			"form-data; name=\"file\"; filename=" + file_path + '"');
-							file_part.setHeader(QNetworkRequest::ContentTypeHeader,
-			"application/octet-stream"); file_part.setBody(data);
+				file_part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"file\"; filename=" + file_name + '"');
+				file_part.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+				file_part.setBody(data);
 
-							select_part.setHeader(QNetworkRequest::ContentDispositionHeader,
-			"form-data; name=\"select\""); select_part.setBody(select ? "true"	:
-			"false");
+				select_part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"select\"");
+				select_part.setBody(select ? "true" : "false");
 
-							print_part.setHeader(QNetworkRequest::ContentDispositionHeader,
-			"form-data; name=\"print\""); print_part.setBody(print ? "true" : "false");
+				print_part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"print\"");
+				print_part.setBody(print ? "true" : "false");
 			}
 
-			query.append(file_part);
-			query.append(select_part);
-			query.append(print_part);
+			query->append(file_part);
+			query->append(select_part);
+			query->append(print_part);
 
-			return query.da*/
+			return query;
 		}
 
-		QByteArray UploadFile::BuildFolderCreatePacket(QString folder_name)
+		QHttpMultiPart* UploadFile::BuildFolderCreatePacket(QString folder_name)
 		{
-			QString query;
+			QHttpMultiPart* query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+			QHttpPart		file_part, select_part;
+
+			{
+				file_part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"" + folder_name + "\"");
+				file_part.setBody("subfolder");
+
+				select_part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"path\"");
+				select_part.setBody("folder/");
+			}
+
+			query->append(file_part);
+			query->append(select_part);
+
+			return query;
+
+			/*QString query;
 
 			query.append("--" + boundry2 + "\nContent-Disposition: form-data; name=\"foldername\"\n\n");
 			query.append(folder_name);
 
 			query.append("\n--" + boundry2 + "\nContent-Disposition: form-data; name=\"path\"" + "\n\n");
 			query.append("local");
-			query.append("\n--" + boundry2 + "--");
+			query.append("\n--" + boundry2 + "--\n");
 
-			return query.toUtf8();
+			return query.toUtf8();*/
 		}
 
 		void UploadFile::OnReplyFinished(QNetworkReply* reply) { CheckStatusCodeAndResponse<Response>(reply); }

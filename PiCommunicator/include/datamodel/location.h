@@ -20,7 +20,7 @@ namespace pi
 
 		Location LocationFromString(QString str);
 		QString ToString(Location val);
-	} // namespace responses
+	} // namespace data
 } // namespace commands
 } // namespace c3picko
 

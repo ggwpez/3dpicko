@@ -21,7 +21,11 @@ namespace pi
 			RetriveResponse(QJsonObject);
 
 			QVector<FileOrFolderInfo> files;
-			QString					  free;
+			/**
+			 * @brief Not in the documentation
+			 */
+			qint64 total;
+			qint64 free;
 		};
 	} // namespace responses
 } // namespace commands

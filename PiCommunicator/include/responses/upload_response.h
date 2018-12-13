@@ -1,8 +1,8 @@
 #ifndef UPLOAD_RESPONSE_H_
 #define UPLOAD_RESPONSE_H_
 
+#include "datamodel/abridged_file_info.h"
 #include "datamodel/location.h"
-#include "responses/abridged_file_info.h"
 #include "responses/response.h"
 
 #include <QVector>
@@ -21,8 +21,8 @@ namespace pi
 		{
 			UploadResponse(QJsonObject obj);
 
-			AbridgedFileInfo local, sdcard, folder;
-			bool			 done;
+			data::AbridgedFileInfo local, sdcard, folder;
+			bool				   done;
 
 			/// Not in the documentation but needed to remember the type
 			data::Location origin;

@@ -9,19 +9,30 @@ namespace pi
 	Command::Command(QString api_url, QSet<int> status_ok, Command::HTTPType type)
 		: api_url_(api_url), data_(QByteArray()), status_ok_(status_ok), type_(type), content_type_("")
 	{
-		SetUpSignals();
+		SetupSlots();
 	}
 
 	Command::Command(QString api_url, QByteArray data, QSet<int> status_ok, HTTPType type, QString content_type)
 		: api_url_(api_url), data_(data), status_ok_(status_ok), type_(type), content_type_(content_type)
 	{
-		SetUpSignals();
+		SetupSlots();
+	}
+
+	Command::Command(QString api_url, QHttpMultiPart* query, QSet<int> status_ok, HTTPType type, QString content_type)
+		: api_url_(api_url), query_(query), status_ok_(status_ok), type_(type), content_type_(content_type)
+	{
+	}
+
+	Command::~Command()
+	{
+		if (query_)
+			delete query_;
 	}
 
 	Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok, HTTPType type, QString content_type)
 		: api_url_(api_url), status_ok_(status_ok), type_(type), content_type_(content_type)
 	{
-		SetUpSignals();
+		SetupSlots();
 		if (data.isEmpty())
 			return;
 
@@ -29,9 +40,9 @@ namespace pi
 		data_ = doc.toJson();
 	}
 
-	void Command::SetUpSignals()
+	void Command::SetupSlots()
 	{
-		connect(this, SIGNAL(OnStatusOk(int, Response*)), this, SIGNAL(OnFinised()));
+		connect(this, SIGNAL(OnStatusOk(int, Response*)), this, SIGNAL(OnFinished()));
 		connect(this, SIGNAL(OnStatusErr(QVariant, Response*)), this, SIGNAL(OnFinished()));
 		connect(this, SIGNAL(OnNetworkErr(QString)), this, SIGNAL(OnFinished()));
 	}
@@ -40,7 +51,11 @@ namespace pi
 
 	QByteArray Command::GetPostData() const { return data_; }
 
+	QHttpMultiPart* Command::GetPostQuery() const { return query_; }
+
 	QString Command::GetContentType() const { return content_type_; }
+
+	bool Command::IsQuery() const { return query_; }
 
 	void Command::CheckStatusCode(QNetworkReply* reply, Command::Response* answer)
 	{
@@ -64,6 +79,7 @@ namespace pi
 
 	void Command::OnReplyFinished(QNetworkReply* reply)
 	{
+		qDebug() << "base";
 		CheckStatusCode(reply);
 
 		// The default case is that commands dont have Reply data, so we just
