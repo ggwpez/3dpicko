@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/custom.css">
+
+
+  <title>3CPickO</title>
+</head>
+<body>
+ <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+  <div class="container align-items-end">
+    <a class="navbar-brand p-0" style="font-size: 2rem" href="index.html">
+      <img src="img/icon_notext.png" width="70px" height="70px" alt="">
+      3CPickO
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse"  id="navigation">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="createpickjob.html">Neuer Pickjob</a>
+        <a class="nav-item nav-link" href="pickjobs.html">Alle Pickjobs</a>
+        <a class="nav-item nav-link active" href="config.html">Konfiguration</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <h1>Konfiguration der Anwendung</h1>
+  Anpassen der zentralen config Datei für alle Einstellungen? oder jeweils seperate Datei/Seite?<br>
+  <ul>
+    <li>Auslesen der config datei(?)</li>
+    <li>Anzeige direkt in passenden Formular-Elementen</li>
+    <li>Voreingestellte Auswahl anpassen und Abspeichern</li>
+  </ul>
+  Einstellungen:
+  <ul>
+    <li>Druckereinstellungen</li>
+    <code>
+     <ul>
+      <li>Point cut_filament_position_ the xy position, in the coordinate system of the printer, the nozzle needs to move to in order to have the filament cut</li>
+      <li>float filament_extrusion_length_ the length up to which the filament shall be extruded, in millimeter</li>
+      <li>float z_coordinate_extruded_filament_above_plates_ the z coordinate, in the coordinate system of the printer, the extruded filament can be moved above the plates without touching them or anything else, in millimeter</li>
+      <li>float z_coordinate_extruded_filament_inside_source_plate_ the z coordinate, in the coordinate system of the printer, the extruded filament touches a colony on the source plate, in millimeter</li>
+      <li>float z_coordinate_extruded_filament_inside_master_plate_ the z coordinate, in the coordinate system of the printer, the extruded filament touches the culture medium on the master plate, in millimeter</li>
+      <li>float z_coordinate_extruded_filament_inside_goal_plate_ the z coordinate, in the coordinate system of the printer, the extruded filament touches the liqour inside the well of the goal plate, in millimeter</li>
+    </ul>
+  </code>
+  <li>Einstellung für die Schablone</li>
+  <code>
+    <ul>
+      <li>Point global_origin_of_source_plate_ the origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket</li>
+      <li>Point global_origin_of_master_plate_ the origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket</li>
+      <li>Point global_origin_of_goal_plate_ the origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket</li>
+      <li>GoalPlateOrientation orientation_of_goal_plate_ the orientation of the goal plate compared to the cutout it is lying in.</li>
+      <ul><li>???</li></ul>
+      <li>float socket_origin_offset_x_ the offset of the origin of the socket to the origin of the printers coordinate system in x direction</li>
+      <li>float socket_origin_offset_y_ the offset of the origin of the socket to the origin of the printers coordinate system in y direction</li>
+    </ul>
+  </code>
+  <li>Einstellungen für Master- und Zielplatte</li>
+  <code>
+     <ul>
+      <li>int number_of_rows_ The number of rows the goal plate has.</li>
+      <li>int number_of_columns_ The number of columns the goal plate has.</li>
+      <li>int number_of_wells_ The number of wells the goal plate has.</li>
+      <li>float a1_row_offset_ The offset of the center of the first well A1 to the upper edge of the goal plate.</li>
+      <li>float a1_column_offset_ The offset of the center of the first well A1 to the left edge of the goal plate.</li>
+      <li>float well_spacing_center_to_center_ The distance between the center of a well to the center of any directly adjacent wells.</li>
+    </ul>
+  </ul>
+
+</code>
+
+<li>Netzwerkeinstellungen?</li>
+<li>...</li>
+</ul>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+</body>
+</html>
