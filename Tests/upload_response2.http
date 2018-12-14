@@ -1,0 +1,18 @@
+------WebKitFormBoundaryDeC2E3iWbTv1PwMC
+Content-Disposition: form-data; name="file"; filename="whistle_v2.gcode"
+Content-Type: application/octet-stream
+
+M109 T0 S220.000000
+T0
+G21
+G90
+...
+------WebKitFormBoundaryDeC2E3iWbTv1PwMC
+Content-Disposition: form-data; name="select"
+
+true
+------WebKitFormBoundaryDeC2E3iWbTv1PwMC
+Content-Disposition: form-data; name="print"
+
+true
+------WebKitFormBoundaryDeC2E3iWbTv1PwMC--
