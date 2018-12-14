@@ -42,6 +42,13 @@ class GcodeGenerator {
 
  private:
   /**
+   * @brief Creates a gcode instruction for initializing the printer.
+   * This includes setting the positioning of nozzle and extrusion
+   * to absolute and the homing of the nozzle.
+   * @return a gcode instruction of the form " "
+   */
+  std::vector<GcodeInstruction> Init();
+  /**
    * @brief MapLocalColonyCoordinateToGlobal transforms a local colony
    * coordinate into a global (socket) coordinate.
    * @param local_colony the local colony coordinate to be transformed into

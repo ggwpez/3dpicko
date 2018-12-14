@@ -20,7 +20,7 @@ TestGcodeInstruction::TestGcodeInstruction() {}
 TestGcodeInstruction::~TestGcodeInstruction() {}
 
 void TestGcodeInstruction::test_case1() {
-  qDebug() << "hi" << c3picko::GcodeInstruction::Init().ToString().c_str();
+  // qDebug() << "hi" << c3picko::GcodeInstruction::Init().ToString().c_str();
 }
 
 QTEST_APPLESS_MAIN(TestGcodeInstruction)

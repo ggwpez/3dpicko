@@ -16,13 +16,31 @@ namespace c3picko {
 class GcodeInstruction {
  public:
   /**
-   * @brief Creates a gcode instruction for initializing the printer.
-   * This includes setting the positioning of nozzle and extrusion
-   * to absolute and the homing of the nozzle.
-   * @return a gcode instruction of the form " "
+   * @brief Home Creates a gcode instruction for homing all axes
+   * @return a gcode instruction of the form "G28"
    */
-  static GcodeInstruction Init();
+  static GcodeInstruction Home();
 
+  /**
+   * @brief Home Creates a gcode instruction for setting the units
+   * of all coordinates to millimeter
+   * @return a gcode instruction of the form "G21"
+   */
+  static GcodeInstruction SetUnit();
+
+  /**
+   * @brief Home Creates a gcode instruction for setting the
+   * positioning of the nozzle to absolute
+   * @return a gcode instruction of the form "G90"
+   */
+  static GcodeInstruction AbsolutePositioning();
+
+  /**
+   * @brief Home Creates a gcode instruction for setting the
+   * extrusion to absolute mode.
+   * @return a gcode instruction of the form "M82"
+   */
+  static GcodeInstruction ExtrusionModeAbsolute();
   /**
    * @brief Creates a gcode instruction for moving the nozzle
    * to a new xyz Coordinate. The length of filament and
