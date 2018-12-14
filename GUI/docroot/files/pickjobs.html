@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/custom.css">
+
+
+  <title>3CPickO</title>
+</head>
+<body>
+ <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+  <div class="container align-items-end">
+    <a class="navbar-brand p-0" style="font-size: 2rem" href="index.html">
+      <img src="img/icon_notext.png" width="70px" height="70px" alt="">
+      3CPickO
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse"  id="navigation">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="createpickjob.html">Neuer Pickjob</a>
+        <a class="nav-item nav-link active" href="pickjobs.html">Alle Pickjobs</a>
+        <a class="nav-item nav-link" href="config.html">Konfiguration</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <h1>Übersicht aller gespeicherten Pickjobs</h1>
+  <form class="form-inline">
+    <input class="form-control my-2 mr-2" type="search" placeholder="Suchbegriff">
+    <button class="btn btn-dark my-2" type="submit">Filtern</button>
+  </form>
+  <div class="card-deck">
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select('card2')">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-8</h5>
+        <img class="card-img" src="img/colony.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Nein</li></ul>Virus mit dem ich die Menschheit ausrotten werde. Mir fehlt nur noch ein automatischer Colony-Picker. Mit Drag&Drop.</p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-7</h5>
+        <img class="card-img" src="img/colony2.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Ja</li></ul>Siebter Test</p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+    <!-- hässlicher Hack, teilt card-deck für kleiner als large displays -->
+    <div class="w-100 d-block d-lg-none"></div>
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-6</h5>
+        <img class="card-img" src="img/colony.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Nein</li></ul></p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-5</h5>
+        <img class="card-img" src="img/colony2.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Nein</li></ul></p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-deck">
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-4</h5>
+        <img class="card-img" src="img/colony.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li></p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-3</h5>
+        <img class="card-img" src="img/colony2.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li></p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+    <!-- hässlicher Hack, teilt card-deck für "kleiner als large" displays -->
+    <div class="w-100 d-block d-lg-none"></div>
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-2</h5>
+        <img class="card-img" src="img/colony2.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 22.11.18</li><li>Gepickt: Nein</li></ul></p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+    <div class="card m-1">
+      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog">&times;</button>
+      <div class="card-body pb-0">
+        <h5 class="card-title">SuperVirus V-1</h5>
+        <img class="card-img" src="img/colony2.jpg" alt="Bild der Agarplatte">
+        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 22.11.18</li><li>Gepickt: Nein</li></ul></p>
+      </div>
+      <div class="card-footer bg-white">
+        <a href="#" class="btn btn-dark ">bearbeiten</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete-Dialog -->
+  <div class="modal fade" id="deleteDialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Löschen?</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          Soll der Pickjob vom Server gelöscht werden?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-dismiss="modal">Abbrechen</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="del()">Löschen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+</body>
+</html>
