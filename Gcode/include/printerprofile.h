@@ -14,12 +14,12 @@ namespace c3picko {
  */
 class PrinterProfile {
  public:
-  explicit PrinterProfile(const Point& cut_filament_position,
-                          float filament_extrusion_length,
-                          float z_coordinate_filament_above_plates,
-                          float z_coordinate_filament_inside_source_plate,
-                          float z_coordinate_extruded_filament_inside_master_plate_,
-                          float z_coordinate_filament_inside_goal_plate);
+  explicit PrinterProfile(
+      const Point& cut_filament_position, float filament_extrusion_length,
+      float z_coordinate_extruded_filament_above_plates,
+      float z_coordinate_extruded_filament_inside_source_plate,
+      float z_coordinate_extruded_filament_inside_master_plate,
+      float z_coordinate_extruded_filament_inside_goal_plate);
 
   Point cutFilamentPosition() const;
   float filamentExtrusionLength() const;
@@ -31,7 +31,8 @@ class PrinterProfile {
  private:
   /**
    * @brief cut_filament_position_ the xy position, in the coordinate system
-   * of the printer, the nozzle needs to move to in order to have the filament cut
+   * of the printer, the nozzle needs to move to in order to have the filament
+   * cut
    */
   const Point cut_filament_position_;
 
@@ -42,8 +43,8 @@ class PrinterProfile {
   const float filament_extrusion_length_;
 
   /**
-   * @brief z_coordinate_extruded_filament_above_plates_ the z coordinate, in the
-   * coordinate system of the printer, the extruded filament can be moved
+   * @brief z_coordinate_extruded_filament_above_plates_ the z coordinate, in
+   * the coordinate system of the printer, the extruded filament can be moved
    * above the plates without touching them or anything else, in millimeter
    */
   const float z_coordinate_extruded_filament_above_plates_;
@@ -56,9 +57,9 @@ class PrinterProfile {
   const float z_coordinate_extruded_filament_inside_source_plate_;
 
   /**
-   * @brief z_coordinate_extruded_filament_inside_master_plate_ the z coordinate,
-   * in the coordinate system of the printer, the extruded filament touches
-   * the culture medium on the master plate, in millimeter
+   * @brief z_coordinate_extruded_filament_inside_master_plate_ the z
+   * coordinate, in the coordinate system of the printer, the extruded filament
+   * touches the culture medium on the master plate, in millimeter
    */
   const float z_coordinate_extruded_filament_inside_master_plate_;
 
@@ -69,5 +70,5 @@ class PrinterProfile {
    */
   const float z_coordinate_extruded_filament_inside_goal_plate_;
 };
-} // namespace c3picko
-#endif // PRINTERPROFILE_H
+}  // namespace c3picko
+#endif  // PRINTERPROFILE_H
