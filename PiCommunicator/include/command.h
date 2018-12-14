@@ -94,7 +94,7 @@ namespace pi
 		QHttpMultiPart* query_ = nullptr;
 		QSet<int> const status_ok_;
 		HTTPType const  type_;
-		QString const   content_type_;
+		QString			content_type_;
 	};
 } // namespace pi
 } // namespace c3picko

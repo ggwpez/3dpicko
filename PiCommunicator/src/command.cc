@@ -7,7 +7,7 @@ namespace c3picko
 namespace pi
 {
 	Command::Command(QString api_url, QSet<int> status_ok, Command::HTTPType type)
-		: api_url_(api_url), data_(QByteArray()), status_ok_(status_ok), type_(type), content_type_("")
+		: api_url_(api_url), data_(QByteArray()), status_ok_(status_ok), type_(type), content_type_("application/json; charset=utf-8")
 	{
 		SetupSlots();
 	}
@@ -21,6 +21,7 @@ namespace pi
 	Command::Command(QString api_url, QHttpMultiPart* query, QSet<int> status_ok, HTTPType type, QString content_type)
 		: api_url_(api_url), query_(query), status_ok_(status_ok), type_(type), content_type_(content_type)
 	{
+		SetupSlots();
 	}
 
 	Command::~Command()

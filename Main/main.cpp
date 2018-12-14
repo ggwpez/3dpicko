@@ -22,11 +22,12 @@ int main(int argc, char** argv)
 	QCoreApplication app(argc, argv);
 
 	c3picko::pi::OctoPrint printer("192.168.2.100", "CB46ACB8E7314CA5A41044F004DC6CE8");
-	// c3picko::pi::commands::UploadFile cmd("M109 T0 S220.000000\nT0\nG21\nG90\n...", data::Location::LOCAL, "whistle_v2.gcode", false,
-	//							  false);
-	c3picko::pi::commands::UploadFile cmd("foldername", data::Location::LOCAL);
+	// c3picko::pi::commands::UploadFile cmd("Hey xD", data::Location::LOCAL, "test.gcode", false, false);
 
-	QObject::connect(&cmd, &Command::OnStatusOk, &OnStatusOk);
+	// c3picko::pi::commands::UploadFile cmd("subsub", "subfolder/", data::Location::LOCAL);
+	c3picko::pi::commands::DeleteFile cmd(data::Location::LOCAL, "test.gcode");
+
+	// QObject::connect(&cmd, &Command::OnStatusOk, &OnStatusOk);
 	QObject::connect(&cmd, &Command::OnStatusErr, &OnStatusErr);
 	QObject::connect(&cmd, &Command::OnNetworkErr, &OnNetworkErr);
 	QObject::connect(&cmd, SIGNAL(OnFinished()), &app, SLOT(quit()));
