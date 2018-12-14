@@ -1,11 +1,11 @@
 ﻿#ifndef GCODEGENERATOR_H
 #define GCODEGENERATOR_H
 
-#include "include/point.h"
-#include "include/platesocketprofile.h"
-#include "include/printerprofile.h"
-#include "include/masterandgoalplateprofile.h"
 #include "include/gcodeinstruction.h"
+#include "include/masterandgoalplateprofile.h"
+#include "include/platesocketprofile.h"
+#include "include/point.h"
+#include "include/printerprofile.h"
 
 namespace c3picko {
 
@@ -18,34 +18,32 @@ namespace c3picko {
  *
  */
 class GcodeGenerator {
-
  public:
-
-  explicit GcodeGenerator(const PlateSocketProfile& plate_socket_profile,
-                          const PrinterProfile& printer_profile,
-                          const MasterAndGoalPlateProfile& master_and_goal_plate_profile);
+  explicit GcodeGenerator(
+      const PlateSocketProfile& plate_socket_profile,
+      const PrinterProfile& printer_profile,
+      const MasterAndGoalPlateProfile& master_and_goal_plate_profile);
 
   /**
-  * @brief Creates the gcode for an entire picking process.
-  * This process includes transfering colony by colony
-  * to the master and the goal plate.
-  * @param local_colony_coordinates The coordinates of the colonies
-  * @param starting_row The row number of the well the first
-  * colony should be transferred to.
-  * @param starting_column The column number of the well the first
-  * colony should be transferred to.
-  * to be picked in their respective local cordinate system.
-  * @return The gcode for the entire picking process.
-  */
+   * @brief Creates the gcode for an entire picking process.
+   * This process includes transfering colony by colony
+   * to the master and the goal plate.
+   * @param local_colony_coordinates The coordinates of the colonies
+   * @param starting_row The row number of the well the first
+   * colony should be transferred to.
+   * @param starting_column The column number of the well the first
+   * colony should be transferred to.
+   * to be picked in their respective local cordinate system.
+   * @return The gcode for the entire picking process.
+   */
   std::vector<GcodeInstruction> CreateGcodeForTheEntirePickingProcess(
-      int starting_row,
-      int starting_column,
+      int starting_row, int starting_column,
       std::vector<LocalColonyCoordinates> local_colony_coordinates);
 
  private:
   /**
-   * @brief MapLocalColonyCoordinateToGlobal transforms a local colony coordinate
-   * into a global (socket) coordinate.
+   * @brief MapLocalColonyCoordinateToGlobal transforms a local colony
+   * coordinate into a global (socket) coordinate.
    * @param local_colony the local colony coordinate to be transformed into
    * a coordinate of the used socket's coordinate system
    * @return the colony coordinate in the socket's coordinate system
@@ -75,29 +73,34 @@ class GcodeGenerator {
    * ComputeGlobalWellCoordinates() and ComputeGlobalMasterCoordinates()
    * call this function providing the necessary arguments.
    */
-  std::vector<Point> ComputeGlobalWellAndMasterCoordinates(const Point& origin_of_plate);
+  std::vector<Point> ComputeGlobalWellAndMasterCoordinates(
+      const Point& origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
-   * the coordinate system of the socket, considering that the corner of the goal plate
-   * where well A1 is at lies at the origin of the corresponding cutout for the goal plate
-   * @param global_well_coordintes The vector that is to be filled with the global xy coordinates
-   * of the wells.
+   * the coordinate system of the socket, considering that the corner of the
+   * goal plate where well A1 is at lies at the origin of the corresponding
+   * cutout for the goal plate
+   * @param global_well_coordintes The vector that is to be filled with the
+   * global xy coordinates of the wells.
    */
-  void ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
+  void ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
+      std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
-   * the coordinate system of the socket, considering that the corner of the goal plate
-   * where the well in the last row, first column is at lies at the origin of the corresponding cutout for the goal plate
-   * @param global_well_coordintes The vector that is to be filled with the global xy coordinates
-   * of the wells.
+   * the coordinate system of the socket, considering that the corner of the
+   * goal plate where the well in the last row, first column is at lies at the
+   * origin of the corresponding cutout for the goal plate
+   * @param global_well_coordintes The vector that is to be filled with the
+   * global xy coordinates of the wells.
    */
-  void ComputeGlobalCoordinatesLastRowFirstColumnOrientation(std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
+  void ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
+      std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
 
   /**
    * @brief ComputeStartingWell computes the first well
-   * the first column is transferred to, considering columnwise
+   * the first colony is transferred to, considering columnwise
    * ordering.
    */
   int ComputeStartingWell(int row, int column) const;
@@ -126,7 +129,8 @@ class GcodeGenerator {
 
   /**
    * @brief gcode_lower_filament_onto_master_ the gcode instruction for lowering
-   * the nozzle onto the master plate touching the culture medium on the current xy position.
+   * the nozzle onto the master plate touching the culture medium on the current
+   * xy position.
    */
   GcodeInstruction gcode_lower_filament_onto_master_;
 
@@ -169,7 +173,6 @@ class GcodeGenerator {
    * of the used socket.
    */
   std::vector<GlobalMasterCoordinates> global_master_xy_coordinates_;
-
 };
-} // namespace c3picko
-#endif // GCODEGENERATOR_H
+}  // namespace c3picko
+#endif  // GCODEGENERATOR_H
