@@ -1,8 +1,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "responses/response.h"
-#include <QJsonObject>
+#include "response.h"
 #include <QPair>
 #include <QSet>
 
@@ -20,7 +19,7 @@ namespace pi
 		 */
 		struct ConnectionInfo : public Response
 		{
-			ConnectionInfo(QJsonObject obj);
+			ConnectionInfo(QJsonObject const& obj);
 
 			struct
 			{

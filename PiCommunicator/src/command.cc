@@ -80,7 +80,6 @@ namespace pi
 
 	void Command::OnReplyFinished(QNetworkReply* reply)
 	{
-		qDebug() << "base";
 		CheckStatusCode(reply);
 
 		// The default case is that commands dont have Reply data, so we just

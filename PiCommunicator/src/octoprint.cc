@@ -29,7 +29,11 @@ namespace pi
 				if (cmd->IsQuery())
 					reply = network_->post(request, cmd->GetPostQuery());
 				else
+				{
 					reply = network_->post(request, cmd->GetPostData());
+					qDebug() << request.url();
+					qDebug() << qPrintable(cmd->GetPostData());
+				}
 			}
 			break;
 			case Command::HTTPType::DELETE:

@@ -6,7 +6,7 @@ namespace pi
 {
 	namespace responses
 	{
-		UploadResponse::UploadResponse(QJsonObject obj)
+		UploadResponse::UploadResponse(const QJsonObject& obj) : Response(obj)
 		{
 			is_folder = false;
 

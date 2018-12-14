@@ -2,7 +2,8 @@
 #define JOBGENERALINFO_H
 
 #include "datamodel/abridged_file_info.h"
-#include <QJsonObject>
+
+class QJsonObject;
 
 namespace c3picko
 {
@@ -16,7 +17,7 @@ namespace pi
 		struct JobGeneralInfo
 		{
 			JobGeneralInfo() = default;
-			JobGeneralInfo(QJsonObject);
+			JobGeneralInfo(QJsonObject const&);
 
 			AbridgedFileInfo file;
 			qint32			 estimated_print_time;

@@ -5,9 +5,7 @@
 #include "datamodel/gcode_analysis.h"
 #include "datamodel/location.h"
 #include "datamodel/reference.h"
-#include "responses/response.h"
-#include <QJsonObject>
-#include <QString>
+#include "response.h"
 #include <QStringList>
 #include <QVector>
 
@@ -25,7 +23,7 @@ namespace pi
 		struct FileOrFolderInfo : public Response
 		{
 			FileOrFolderInfo() = default;
-			FileOrFolderInfo(QJsonObject obj);
+			FileOrFolderInfo(QJsonObject const& obj);
 
 			QString		   name, display, path;
 			data::FileType type;
@@ -45,8 +43,8 @@ namespace pi
 			qint64 size;
 
 		  private:
-			void ReadFileMember(QJsonObject obj);
-			void ReadFolderMember(QJsonObject obj);
+			void ReadFileMember(QJsonObject const& obj);
+			void ReadFolderMember(QJsonObject const& obj);
 		};
 	} // namespace responses
 } // namespace commands

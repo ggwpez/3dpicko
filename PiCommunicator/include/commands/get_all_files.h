@@ -18,10 +18,14 @@ namespace pi
 		{
 			Q_OBJECT
 
-		  public:
-			GetAllFiles(bool recursive);
+			GetAllFiles() = delete;
+			using Command::Command;
 
+		  public:
 			typedef responses::RetriveResponse Response;
+
+			static GetAllFiles* AllFiles();
+			static GetAllFiles* AllFilesRecursive();
 
 		  public slots:
 			virtual void OnReplyFinished(QNetworkReply* reply) override;

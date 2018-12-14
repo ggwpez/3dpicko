@@ -7,7 +7,7 @@ namespace pi
 {
 	namespace responses
 	{
-		FileOrFolderInfo::FileOrFolderInfo(QJsonObject obj)
+		FileOrFolderInfo::FileOrFolderInfo(const QJsonObject& obj) : Response(obj)
 		{
 			name	= obj["name"].toString();
 			display = obj["display"].toString();
@@ -23,7 +23,7 @@ namespace pi
 				ReadFileMember(obj);
 		}
 
-		void FileOrFolderInfo::ReadFileMember(QJsonObject obj)
+		void FileOrFolderInfo::ReadFileMember(QJsonObject const& obj)
 		{
 			if (obj.contains("hash"))
 				hash = obj["hash"].toString();
@@ -43,7 +43,7 @@ namespace pi
 				gcode_analysis = obj["gcodeAnalysis"].toString();
 		}
 
-		void FileOrFolderInfo::ReadFolderMember(QJsonObject obj)
+		void FileOrFolderInfo::ReadFolderMember(const QJsonObject& obj)
 		{
 			if (obj.contains("children"))
 			{

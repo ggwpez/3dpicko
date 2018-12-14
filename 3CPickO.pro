@@ -5,7 +5,7 @@ SUBDIRS += \
 	Tests \
 	Main \
 	Gcode \
-	GUI \
+	GUI
 
 Tests.depends = PiCommunicator
 Main.depends = PiCommunicator

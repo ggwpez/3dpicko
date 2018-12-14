@@ -1,4 +1,5 @@
 #include "datamodel/location.h"
+#include <QString>
 
 namespace c3picko
 {
@@ -6,10 +7,8 @@ namespace pi
 {
 	namespace data
 	{
-		Location LocationFromString(QString str)
+		Location LocationFromString(const QString& str)
 		{
-			str = str.toLower();
-
 			if (str == "local")
 				return Location::LOCAL;
 			if (str == "sdcard")
