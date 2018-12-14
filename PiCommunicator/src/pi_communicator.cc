@@ -1,6 +1,5 @@
 #include "pi_communicator.h"
 #include "commands/all.h"
-#include <QRandomGenerator64>
 #include <QString>
 
 namespace c3picko
@@ -98,9 +97,9 @@ namespace pi
 
 	QString PiCommunicator::GenerateFilename() const
 	{
-		static QRandomGenerator64 gen(quint32(std::time(nullptr))); // FIXME
 		QByteArray				  data(16, 0);
-		gen.generate(data.begin(), data.end());
+		for (int i = 0; i < data.length(); ++i)
+			data[i] = (qrand() % 26) +'a';
 
 		return "_3cpicko-" + QString(data.toHex()) + ".gcode";
 	}

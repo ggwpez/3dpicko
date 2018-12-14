@@ -18,7 +18,7 @@ namespace pi
 		struct JobInfo : public Response
 		{
 			JobInfo() = default;
-			JobInfo(QJsonValue);
+			JobInfo(QJsonObject);
 
 			data::JobGeneralInfo job;
 			data::ProgressInfo   progress;

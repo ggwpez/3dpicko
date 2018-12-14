@@ -1,6 +1,6 @@
 TEMPLATE = lib
 QT -= gui
-QT += network
+QT += network core
 
 CONFIG += c++11
 CONFIG -= app_bundle
