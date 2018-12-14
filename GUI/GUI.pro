@@ -2,7 +2,7 @@ QT  += core
 QT  -= gui
 QT  += network
 
-TARGET = MyFirstWebApp_6
+TARGET = GUIWebserver
 
 CONFIG   += console
 
@@ -12,16 +12,16 @@ SOURCES += src/main.cpp \
 	src/helloworldcontroller.cpp \
 	src/listdatacontroller.cpp \
 	src/requestmapper.cpp \
-	src/logincontroller.cpp \
-	src/cookietestcontroller.cpp
+	src/cookietestcontroller.cpp \
+    src/apicontroller.cc
 
 HEADERS += \
-	src/helloworldcontroller.h \
-	src/listdatacontroller.h \
-	src/requestmapper.h \
-	src/logincontroller.h \
-	src/cookietestcontroller.h \
-    src/global.h
+	include/helloworldcontroller.h \
+	include/listdatacontroller.h \
+	include/requestmapper.h \
+	include/cookietestcontroller.h \
+	include/global.h \
+    include/apicontroller.h
 
 OTHER_FILES += etc/webapp1.ini \
 	 docroot/files/hello.html
