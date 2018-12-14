@@ -172,6 +172,7 @@ void GcodeGenerator::ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
 }
 
 int GcodeGenerator::ComputeStartingWell(int row, int column) const {
-  return (column - 1) * master_and_goal_plate_profile_.numberOfRows() + row;
+  return (column - 1) * master_and_goal_plate_profile_.numberOfRows() + row -
+         1;  // -1 to accomodate to vector iterating starting from 0
 }
 }  // namespace c3picko
