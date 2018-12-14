@@ -126,15 +126,15 @@ GcodeInstruction GcodeInstruction::Home() {
 }
 
 GcodeInstruction GcodeInstruction::SetUnit() {
-  GcodeInstruction({GcodeField::Command::G21()});
+  return GcodeInstruction({GcodeField::Command::G21()});
 }
 
 GcodeInstruction GcodeInstruction::AbsolutePositioning() {
-  GcodeInstruction({GcodeField::Command::G90()});
+  return GcodeInstruction({GcodeField::Command::G90()});
 }
 
 GcodeInstruction GcodeInstruction::ExtrusionModeAbsolute() {
-  GcodeInstruction({GcodeField::Command::M82()});
+  return GcodeInstruction({GcodeField::Command::M82()});
 }
 
 GcodeInstruction GcodeInstruction::MoveToXYZ(const float x_coordinate,
