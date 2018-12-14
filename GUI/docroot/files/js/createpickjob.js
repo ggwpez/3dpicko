@@ -8,13 +8,13 @@ var processed = false;
 function startImageProcessing(){
 	$("#settings-tab").removeClass("disabled");
 	//if(!processed) alert('Request wird an Server gesendet... (nicht implementiert)'); processed=true;
-	if(chosenImageName) document.getElementById('settingsImg').src = "images/"+chosenImageName;
+	if(chosenImageName) document.getElementById('settingsImg').src = chosenImageName;
 	$('#steps a[href="#settings"]').tab('show');
 }
 
 function cutTab(){
 	if(chosenImageName){
-		document.getElementById('cutImg').src = "images/"+chosenImageName;
+		document.getElementById('cutImg').src = chosenImageName;
 		$('#steps a[href=\'#cut\']').tab('show');
 	}
 }
@@ -22,7 +22,7 @@ function cutTab(){
 function selectionTab(){
 	if(chosenImageName){
 		$("#selection-tab").removeClass("disabled");
-		document.getElementById('photograph').src = "images/"+chosenImageName;
+		document.getElementById('photograph').src = chosenImageName;
 		$('#steps a[href=\'#selection\']').tab('show')
 	}
 }
@@ -64,7 +64,7 @@ function addImageToList(filename, date){
 	<button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select(\''+filename+'\')">&times;</button>\
 	<div href="link.html" class="card-body p-1" onclick="setChosen(\''+filename+'\',\''+date+'\')" style="cursor: pointer;">\
 	<h5 class="card-title mr-3">'+filename+'</h5>\
-	<img class="card-img" src="images/'+filename+'" alt="Bild der Agarplatte">\
+	<img class="card-img" src="'+filename+'" alt="Bild der Agarplatte">\
 	<p class="card-text">Upload-Datum: '+date+'</li></p>\
 	</div>\
 	</div>';
@@ -89,7 +89,7 @@ function setChosen(filename, date){
 	<button class="btn btn-dark" onclick="cutTab()">Pickjob erstellen</button>\
 	';
 	chosenDiv.style.display = "block";
-	$(".dropzone").css('background-image', 'url(images/' + filename + ')');
+	$(".dropzone").css('background-image', 'url(' + filename + ')');
 	//window.scrollTo(0,0);
 	$("html, body").animate({ scrollTop: 0 }, "slow");
 }

@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QDir>
 #include <QString>
+#include "global.h"
 #include "httplistener.h"
 #include "requestmapper.h"
 
@@ -14,10 +15,8 @@ using namespace stefanfrings;
  * @return The valid filename
  */
 QString searchConfigFile() {
-	QString binDir=QCoreApplication::applicationDirPath();
-	QString appName=QCoreApplication::applicationName();
 	QFile file;
-    file.setFileName(binDir+"/../../etc/webapp1.ini");
+	file.setFileName(Etc() +"webapp1.ini");
 
 	if (file.exists()) {
 		QString configFileName=QDir(file.fileName()).canonicalPath();
@@ -31,6 +30,7 @@ QString searchConfigFile() {
 
 int main(int argc, char *argv[])
 {
+	Setup();
 	QCoreApplication app(argc, argv);
 	QString configFileName=searchConfigFile();
 
