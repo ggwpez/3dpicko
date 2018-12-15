@@ -1,8 +1,8 @@
 #ifndef RETRIVE_RESPONSE_H_
 #define RETRIVE_RESPONSE_H_
 
+#include "response.h"
 #include "responses/file_or_folder_info.h"
-#include "responses/response.h"
 
 #include <QVector>
 
@@ -18,7 +18,7 @@ namespace pi
 		 */
 		struct RetriveResponse : public Response
 		{
-			RetriveResponse(QJsonObject);
+			RetriveResponse(QJsonObject const&);
 
 			QVector<FileOrFolderInfo> files;
 			/**

@@ -2,7 +2,6 @@
 #define RESPONSE_H_
 
 #include <QJsonObject>
-#include <QJsonDocument>
 
 namespace c3picko
 {
@@ -13,16 +12,12 @@ namespace pi
 		struct Response
 		{
 			Response() = default;
-			inline Response(QJsonObject) {}
-			virtual inline QString ToString()
-			{
-				QJsonDocument doc(raw);
-				return doc.toJson();
-			}
+			Response(QJsonObject const& obj);
+			virtual QString ToString();
 
 			virtual inline ~Response() {}
 
-		protected:
+		  protected:
 			QJsonObject raw;
 		};
 	} // namespace responses

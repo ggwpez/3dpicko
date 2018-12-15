@@ -13,9 +13,9 @@ SOURCES += \
     source/masterandgoalplateprofile.cpp
 
 HEADERS += \
-    include/gcodeinstruction.h \
-    include/gcodegenerator.h \
-    include/point.h \
-    include/printerprofile.h \
-    include/platesocketprofile.h \
-    include/masterandgoalplateprofile.h
+	include/gcodeinstruction.h \
+	include/gcodegenerator.h \
+	include/point.h \
+	include/printerprofile.h \
+	include/platesocketprofile.h \
+	include/masterandgoalplateprofile.h

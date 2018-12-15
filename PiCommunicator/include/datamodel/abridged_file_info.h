@@ -3,11 +3,10 @@
 
 #include "datamodel/location.h"
 #include "datamodel/reference.h"
-#include "responses/response.h"
-#include <QJsonObject>
+#include "response.h"
 #include <QString>
-#include <QStringList>
-#include <QVector>
+
+class QJsonObject;
 
 namespace c3picko
 {
@@ -16,19 +15,24 @@ namespace pi
 	namespace data
 	{
 		/**
-		 * @brief
-		 * [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
+		 * @brief [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
+		 *
+		 * Sadly this is a datamodel and a response, so it needs to be both…
 		 */
-		struct AbridgedFileInfo
+		struct AbridgedFileInfo : public responses::Response
 		{
 			AbridgedFileInfo() = default;
-			AbridgedFileInfo(QJsonObject obj);
+			AbridgedFileInfo(QJsonObject const& obj);
 
 			QString			name, display, path;
 			data::Location  origin;
 			data::Reference ref;
 		};
 	} // namespace data
+	namespace responses
+	{
+		typedef data::AbridgedFileInfo AbridgedFileInfo;
+	}
 } // namespace commands
 } // namespace c3picko
 

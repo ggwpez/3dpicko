@@ -6,9 +6,9 @@ namespace pi
 {
 	namespace commands
 	{
-		DeleteFile::DeleteFile(data::Location location, QString path)
-			: Command("files/" + data::ToString(location) + '/' + path, {204}, HTTPType::DELETE)
+		DeleteFile* DeleteFile::Delete(data::Location location, QString path)
 		{
+			return new DeleteFile("files/" + data::ToString(location) + '/' + path, {204}, HTTPType::DELETE);
 		}
 	}
 }

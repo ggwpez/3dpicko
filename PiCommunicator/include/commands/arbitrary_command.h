@@ -19,9 +19,12 @@ namespace pi
 		{
 			Q_OBJECT
 
+			ArbitraryCommand() = delete;
+			using Command::Command;
+
 		  public:
-			ArbitraryCommand(QString command);
-			ArbitraryCommand(QStringList commands);
+			static ArbitraryCommand* SingleCommand(QString command);
+			static ArbitraryCommand* MultiCommand(QStringList commands);
 		};
 	} // namespace commands
 } // namespace pi

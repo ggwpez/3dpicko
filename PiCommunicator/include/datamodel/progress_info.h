@@ -1,7 +1,8 @@
 #ifndef PROGRESS_INFO_H
 #define PROGRESS_INFO_H
 
-#include <QJsonObject>
+#include <QtGlobal>
+class QJsonObject;
 
 namespace c3picko
 {
@@ -15,7 +16,7 @@ namespace pi
 		struct ProgressInfo
 		{
 			ProgressInfo() = default;
-			ProgressInfo(QJsonObject);
+			ProgressInfo(QJsonObject const&);
 			bool operator!=(ProgressInfo const& other);
 
 			qreal  completion;

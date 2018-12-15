@@ -19,7 +19,7 @@ namespace pi
 			return emit OnConnectionError("Connect() can only be called in State::DISCONNECTED");
 
 		Transition(State::CONNECTING);
-		commands::Connection* cmd = new commands::Connection;
+		commands::Connection* cmd = commands::Connection::GetInfo();
 
 		connect(cmd, SIGNAL(OnStatusOk(int, Response*)), this, SIGNAL(OnConnected));
 		connect(cmd, &Command::OnStatusErr, this /* ctx */,
@@ -39,19 +39,19 @@ namespace pi
 
 	void PiCommunicator::StartNextJob() {}
 
-	void PiCommunicator::SendCommand(Command* cmd) {}
+	void PiCommunicator::SendCommand(Command* cmd) { (void)cmd; }
 
 	void PiCommunicator::Tick()
 	{
 		if (current_job_ && current_job_->state == PrintJob::State::RUNNING)
 		{
-			commands::Job* cmd = new commands::Job;
+			// commands::JobOperation* cmd = new commands::JobOperation;
 
-			connect(cmd, &Command::OnStatusErr, [this](QVariant, Command::Response* response_base) {
-				commands::Job::Response* response = static_cast<commands::Job::Response*>(response_base);
+			// connect(cmd, &Command::OnStatusErr, [this](QVariant, Command::Response* response_base) {
+			// commands::JobOperation::Response* response = static_cast<commands::JobOperation::Response*>(response_base);
 
-				// current_job_-> FIXME here
-			});
+			// current_job_-> FIXME here
+			//	});
 		}
 	}
 
@@ -97,9 +97,9 @@ namespace pi
 
 	QString PiCommunicator::GenerateFilename() const
 	{
-		QByteArray				  data(16, 0);
-		for (int i = 0; i < data.length(); ++i)
-			data[i] = (qrand() % 26) +'a';
+		QByteArray data(16, 0);
+		for (int i  = 0; i < data.length(); ++i)
+			data[i] = (qrand() % 26) + 'a';
 
 		return "_3cpicko-" + QString(data.toHex()) + ".gcode";
 	}

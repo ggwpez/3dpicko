@@ -7,7 +7,7 @@ namespace pi
 {
 	namespace responses
 	{
-		ConnectionInfo::ConnectionInfo(QJsonObject obj)
+		ConnectionInfo::ConnectionInfo(const QJsonObject& obj) : Response(obj)
 		{
 			QJsonObject current_json = obj["current"].toObject(), options_json = obj["options"].toObject();
 

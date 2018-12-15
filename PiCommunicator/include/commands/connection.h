@@ -2,7 +2,6 @@
 #define CONNECT_H_
 
 #include "command.h"
-#include "datamodel/connection_type.h"
 #include "responses/connection_info.h"
 
 namespace c3picko
@@ -21,25 +20,23 @@ namespace pi
 		{
 			Q_OBJECT
 
+			Connection() = delete;
+			using Command::Command;
+
 		  public:
 			typedef responses::ConnectionInfo Response;
-			/**
-			 * @brief Connection Get connection settings
-			 */
-			Connection();
-			Connection(data::ConnectionType type);
 
-			/**
-			 * @brief Connect with arguments. If you dont want arguments use the ConnectionType overload
-			 * [API](http://docs.octoprint.org/en/master/api/connection.html#get-connection-settings)
-			 */
-			Connection(QString port, qint32 baudrate = -1, QString printer_profile = "", bool save = false, bool autoconnect = false);
+			static Connection* GetInfo();
+			static Connection* Connect(QString port, qint32 baudrate = -1, QString printer_profile = "", bool save = false,
+									   bool autoconnect = false);
+			static Connection* Disconnect();
+			static Connection* FakeAck();
 
-		public slots:
-		  virtual void OnReplyFinished(QNetworkReply* reply) override;
+		  public slots:
+			virtual void OnReplyFinished(QNetworkReply* reply) override;
 
 		  private:
-			QJsonObject CreateConnectJson(QString port, qint32 baudrate, QString printer_profile, bool safe, bool autoconnect);
+			static QJsonObject CreateConnectJson(QString port, qint32 baudrate, QString printer_profile, bool safe, bool autoconnect);
 		};
 	} // namespace commands
 } // namespace pi
