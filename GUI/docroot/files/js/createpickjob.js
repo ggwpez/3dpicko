@@ -1,5 +1,5 @@
-// name of chosen image (with extension) 
-var chosenImageName;
+// path to chosen image 
+var chosenImagePath;
 // valid steps
 //var steps = {choose: false, cut: false, selection: false};
 
@@ -8,21 +8,21 @@ var processed = false;
 function startImageProcessing(){
 	$("#settings-tab").removeClass("disabled");
 	//if(!processed) alert('Request wird an Server gesendet... (nicht implementiert)'); processed=true;
-	if(chosenImageName) document.getElementById('settingsImg').src = chosenImageName;
+	if(chosenImagePath) document.getElementById('settingsImg').src = chosenImagePath;
 	$('#steps a[href="#settings"]').tab('show');
 }
 
 function cutTab(){
-	if(chosenImageName){
-		document.getElementById('cutImg').src = chosenImageName;
+	if(chosenImagePath){
+		document.getElementById('cutImg').src = chosenImagePath;
 		$('#steps a[href=\'#cut\']').tab('show');
 	}
 }
 
 function selectionTab(){
-	if(chosenImageName){
+	if(chosenImagePath){
 		$("#selection-tab").removeClass("disabled");
-		document.getElementById('photograph').src = chosenImageName;
+		document.getElementById('photograph').src = chosenImagePath;
 		$('#steps a[href=\'#selection\']').tab('show')
 	}
 }
@@ -47,24 +47,23 @@ function settingsTab(){
 	$('#steps a[href=\'#settings\']').tab('show')
 }
 
-
 (function loadImages(){
-	$.getJSON( "/getImageList", function(data) {
+	$.getJSON( "/api/getImageList", function(data) {
 		var items = [];
 		$.each( data, function( key, val ) {
-			addImageToList(val[0], val[1])
+			addImageToList(val[0], val[1], val[2]);
 		});
 	});
 })();
 
-function addImageToList(filename, date){
+function addImageToList(path, filename, date){
 	imagesDiv = document.getElementById('images');
 	html = '\
 	<div class="card m-1 float-left" id="'+filename+'" style="max-width: 200px;">\
 	<button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select(\''+filename+'\')">&times;</button>\
-	<div href="link.html" class="card-body p-1" onclick="setChosen(\''+filename+'\',\''+date+'\')" style="cursor: pointer;">\
+	<div href="link.html" class="card-body p-1" onclick="setChosen(\''+path+'\',\''+date+'\'); $(&quot;html, body&quot;).animate({ scrollTop: 0 }, &quot;slow&quot;);" style="cursor: pointer;">\
 	<h5 class="card-title mr-3">'+filename+'</h5>\
-	<img class="card-img" src="'+filename+'" alt="Bild der Agarplatte">\
+	<img class="card-img" src="'+path+'" alt="Bild der Agarplatte">\
 	<p class="card-text">Upload-Datum: '+date+'</li></p>\
 	</div>\
 	</div>';
@@ -79,24 +78,21 @@ function del(){
 	selectedCard.style.display = "none";
 }
 
-function setChosen(filename, date){
+function setChosen(path, date){
 	$("#cut-tab").removeClass("disabled");
-	chosenImageName = filename;
+	chosenImagePath = path;
 	chosenDiv = document.getElementById('chosen');
-	//<button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select(\'chosen\')">&times;</button>\
 	chosenDiv.innerHTML = '\
 	<ul><li>Upload-Datum: '+date+'</li></ul>\
-	<button class="btn btn-dark" onclick="cutTab()">Pickjob erstellen</button>\
+	<button class="btn btn-dark" onclick="cutTab()">Bild auswählen ></button>\
 	';
 	chosenDiv.style.display = "block";
-	$(".dropzone").css('background-image', 'url(' + filename + ')');
-	//window.scrollTo(0,0);
-	$("html, body").animate({ scrollTop: 0 }, "slow");
+	$(".dropzone").css('background-image', 'url(' + path + ')');
 }
 
 (function() {
 	$(".dropzone").dropzone({
-		url: '/imageUpload',
+		url: '/api/imageUpload',
 		margin: 20,
 		allowedFileTypes: 'jpg, png',
 		params:{
@@ -105,8 +101,8 @@ function setChosen(filename, date){
 		dataType: 'json',
 		success: function(data, index){
 			var array = JSON.parse(data.responseText);
-			addImageToList(array[0], array[1]);
-			setChosen(array[0], array[1]);
+			addImageToList(array[0], array[1] , array[2]);
+			setChosen(array[0], array[2]);
 		}
 	});
 }());

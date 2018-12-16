@@ -17,10 +17,10 @@
     // Create the defaults once
     var pluginName = 'dropzone',
     defaults = {
-            width:                  "100%",                            //width of the div
-            height:                 "20rem",                            //height of the div
-            progressBarWidth:       "100%",                            //width of the progress bars
-            url:                    '/imageUpload',                             //url for the ajax to post
+            width:                  "100%",                         //width of the div
+            height:                 "20rem",                        //height of the div
+            progressBarWidth:       "100%",                         //width of the progress bars
+            url:                    '/api/imageUpload',             //url for the ajax to post
             filesName:              'files',                        //name for the form submit
             margin:                 0,                              //margin added if needed
             border:                 '2px dashed #ccc',              //border property
@@ -99,9 +99,9 @@
         });
 
         $(this.element).hover(function() {
-            $(this).css("cursor", "pointer");
+            $(this).css({cursor: "pointer", color: "#000", 'border-color': "#000"});
         }, function() {
-            $(this).css("cursor", "default");
+            $(this).css({cursor: "default", color: "#ccc", 'border-color': "#ccc"});
         });
 
         $(this.element).html(this.options.text);

@@ -16,7 +16,7 @@ using namespace stefanfrings;
  */
 QString searchConfigFile() {
 	QFile file;
-	file.setFileName(Etc() +"webapp1.ini");
+    file.setFileName(Etc() +"serverconfig.ini");
 
 	QFileInfo info(file);
 	qDebug() << info.absolutePath();

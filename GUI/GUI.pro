@@ -10,14 +10,13 @@ TEMPLATE = app
 
 SOURCES += src/main.cpp \
 	src/requestmapper.cpp \
-    src/apicontroller.cc
+    src/apicontroller.cpp
 
 HEADERS += \
 	include/requestmapper.h \
 	include/global.h \
     include/apicontroller.h
 
-OTHER_FILES += etc/webapp1.ini \
-	 docroot/files/hello.html
-
+OTHER_FILES += etc/serverconfig.ini \
+	 
 include(../QtWebApp/httpserver/httpserver.pri)

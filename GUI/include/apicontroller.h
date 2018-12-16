@@ -11,7 +11,7 @@ using namespace stefanfrings;
 class APIController: public HttpRequestHandler {
 	Q_OBJECT
 public:
-	APIController(QObject* parent=0);
+    APIController(QObject* parent=nullptr);
 	void service(HttpRequest& request, HttpResponse& response);
 };
 

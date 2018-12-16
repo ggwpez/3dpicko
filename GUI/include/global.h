@@ -6,7 +6,7 @@
 
 inline QString Root()
 {
-	return "../../3cpicko/GUI/";
+    return "../../../3cpicko/GUI/";
 }
 
 inline QString Etc()

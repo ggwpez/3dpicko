@@ -10,7 +10,7 @@ using namespace stefanfrings;
 class RequestMapper : public HttpRequestHandler {
 	Q_OBJECT
 public:
-	RequestMapper(StaticFileController* file_controller, QObject* parent=0);
+    RequestMapper(StaticFileController* file_controller, QObject* parent=nullptr);
 	void service(HttpRequest& request, HttpResponse& response);
 private:
 	StaticFileController* staticFileController;
