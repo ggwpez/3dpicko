@@ -20,7 +20,7 @@
             width:                  "100%",                         //width of the div
             height:                 "20rem",                        //height of the div
             progressBarWidth:       "100%",                         //width of the progress bars
-            url:                    '/api/imageUpload',             //url for the ajax to post
+            url:                    '/api/uploadimage',             //url for the ajax to post
             filesName:              'files',                        //name for the form submit
             margin:                 0,                              //margin added if needed
             border:                 '2px dashed #ccc',              //border property
@@ -99,9 +99,9 @@
         });
 
         $(this.element).hover(function() {
-            $(this).css({cursor: "pointer", color: "#000", 'border-color': "#000"});
+            $(this).css({cursor: "pointer", color: "#000", "border-color": "#000", "background-color": "rgba(255, 255, 255, 0.4)", "background-blend-mode": "screen"});
         }, function() {
-            $(this).css({cursor: "default", color: "#ccc", 'border-color': "#ccc"});
+            $(this).css({cursor: "default", color: "#ccc", "border-color": "#ccc", "background-color": "transparent"});
         });
 
         $(this.element).html(this.options.text);
@@ -162,7 +162,9 @@
                 e.stopPropagation();
                 $(this.element).css({
                     color: '#000',
-                    'border-color': '#000'
+                    'border-color': '#000',
+                    'background-color': 'rgba(255, 255, 255, 0.4)', 
+                    'background-blend-mode': 'screen'
                 });
             }.bind(this),
             dragleave: function(e){
@@ -222,7 +224,8 @@ function dragLeave(that){
     if(borderCheck.length == 3) borderColor = borderCheck[2];
     $(that.element).css({
         color: that.options.textColor,
-        'border-color': borderColor
+        'border-color': borderColor,
+        'background-color': 'transparent'
     });
 }
 

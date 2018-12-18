@@ -4,6 +4,8 @@
 #include <QString>
 #include <QDir>
 
+namespace c3picko {
+
 inline QString Root()
 {
     return "../../../3cpicko/GUI/";
@@ -11,12 +13,12 @@ inline QString Root()
 
 inline QString Etc()
 {
-	return Root() +"etc/";
+    return Root() + "etc/";
 }
 
 inline QString DocRoot()
 {
-	return Root() +"docroot/";
+    return Root() + "docroot/";
 }
 
 inline QString UploadFolderName()
@@ -26,7 +28,7 @@ inline QString UploadFolderName()
 
 inline QString UploadFolder()
 {
-	return DocRoot() +UploadFolderName() +"/";
+    return DocRoot() + UploadFolderName() + "/";
 }
 
 inline void Setup()
@@ -34,5 +36,5 @@ inline void Setup()
 	if (! QDir(UploadFolder()).exists())
 		QDir().mkdir(UploadFolder());
 }
-
+} // namespace c3picko
 #endif // GLOBAL_H

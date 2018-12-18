@@ -4,13 +4,10 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="css/bootstrap.css">
 	<!-- Custom CSS -->
 	<link rel="stylesheet" href="css/custom.css">
-
-
 	<title>3CPickO</title>
 </head>
 <body>
@@ -51,13 +48,24 @@
 			<div class="col-sm-8 col-md-9 col-lg-10" >
 				<div class="tab-content" id="tabContent">
 					<div class="tab-pane fade show active" id="browse">
-						<div class="float-left" style="width: 35%; min-width: 300px">
-							<h2>Bild auswählen</h2>
-							<div class="dropzone"></div>
-							<div id="chosen"></div>
+						<div class="row mb-4">
+							<div class="col-md-6 col-lg-4">
+								<h2>Bild auswählen</h2>
+								<div class="dropzone"></div>
+								<div id="chosen-image"></div>
+							</div>
+							<div class="col-md-6 col-lg-8"">
+								<h2>Eigene Bilder</h2>
+								<div id="user-images" style="max-height: 30rem; overflow: auto;"></div>
+							</div>
 						</div>
-						<h2>Hochgeladene Bilder</h2>
-						<div id="images"></div>
+						<div class="row">
+							<div class="col" >
+								<h2>Alle Bilder</h2>
+								<!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
+								<div id="all-images" style="display: none;"></div>	
+							</div>
+						</div>
 					</div>
 					<div class="tab-pane fade col-md-8" id="cut">
 						<h1>Bild manuell zuschneiden</h1>
@@ -114,7 +122,6 @@
 	<!-- Delete-Dialog -->
 	<div class="modal fade" id="deleteDialog" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered" role="document">
-
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Löschen?</h5>
@@ -125,7 +132,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-dark" data-dismiss="modal">Abbrechen</button>
-					<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="del()">Löschen</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="DeleteImage()">Löschen</button>
 				</div>
 			</div>
 		</div>
@@ -137,5 +144,6 @@
 	<script src="js/bootstrap.bundle.js"></script>
 	<script type="text/javascript" src="js/dropzone.js"></script>
 	<script type="text/javascript" src="js/createpickjob.js"></script>
+	<script type="text/javascript" src="js/imagerecognition.js"></script>
 </body>
 </html>

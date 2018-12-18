@@ -3,6 +3,8 @@
 #include "httpsession.h"
 #include <QCoreApplication>
 
+namespace c3picko {
+
 RequestMapper::RequestMapper(StaticFileController* file_controller, QObject* parent)
 	: HttpRequestHandler(parent), staticFileController(file_controller), api(this) {
 	// empty
@@ -14,8 +16,8 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response) {
 
 	if (path.startsWith("/api"))
 		api.service(request, response);
-	else if (path.startsWith("/files") || path.startsWith(("/" +UploadFolderName()).toUtf8())) {
-		staticFileController->service(request,response);
+    else if (path.startsWith("/files") || path.startsWith(("/" + UploadFolderName()).toUtf8())) {
+        staticFileController->service(request,response);
 	}
 	else {
 		response.setStatus(404, "Not found");
@@ -24,4 +26,4 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response) {
 
 	qDebug("RequestMapper: finished request");
 }
-
+} // namespace c3picko

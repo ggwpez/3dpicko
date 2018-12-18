@@ -7,6 +7,8 @@
 
 using namespace stefanfrings;
 
+namespace c3picko {
+
 class RequestMapper : public HttpRequestHandler {
 	Q_OBJECT
 public:
@@ -16,5 +18,5 @@ private:
 	StaticFileController* staticFileController;
 	APIController api;
 };
-
+} // namespace c3picko
 #endif // REQUESTMAPPER_H

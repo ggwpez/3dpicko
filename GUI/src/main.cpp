@@ -8,6 +8,7 @@
 #include "include/requestmapper.h"
 
 using namespace stefanfrings;
+using namespace c3picko;
 
 /**
  * Search the configuration file.
@@ -16,7 +17,7 @@ using namespace stefanfrings;
  */
 QString searchConfigFile() {
 	QFile file;
-    file.setFileName(Etc() +"serverconfig.ini");
+    file.setFileName(Etc() + "serverconfig.ini");
 
 	QFileInfo info(file);
 	qDebug() << info.absolutePath();

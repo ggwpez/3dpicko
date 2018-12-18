@@ -5,10 +5,6 @@ body {
 	*/
 }
 
-.custom-file-label::after {
-	content: "Durchsuchen";
-}
-
 .navbar{
 	margin-bottom: 20px;
 }
@@ -42,6 +38,11 @@ body {
 	color: #DDDDDD;
 }
 
+.dropzone{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
 
 #clickArea {
 	width: 900px;
@@ -62,8 +63,3 @@ body {
 	z-index: 20;
 }
 
-.dropzone{
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center bottom;
-}

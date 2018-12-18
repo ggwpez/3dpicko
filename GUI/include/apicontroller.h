@@ -8,11 +8,13 @@
 
 using namespace stefanfrings;
 
+namespace c3picko {
+
 class APIController: public HttpRequestHandler {
 	Q_OBJECT
 public:
     APIController(QObject* parent=nullptr);
 	void service(HttpRequest& request, HttpResponse& response);
 };
-
+} // namespace c3picko
 #endif // APICONTROLLER_HPP
