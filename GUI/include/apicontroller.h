@@ -13,8 +13,16 @@ namespace c3picko {
 class APIController: public HttpRequestHandler {
 	Q_OBJECT
 public:
-    APIController(QObject* parent=nullptr);
-	void service(HttpRequest& request, HttpResponse& response);
+	APIController(QObject* parent=nullptr);
+
+	// HTTP Versions
+	void service(HttpRequest& request, QJsonObject& response);
+
+	// WS Version
+	void service(QJsonObject& request, QJsonObject& response);
+
+signals:
+	void OnNewFile(QString);
 };
 } // namespace c3picko
 #endif // APICONTROLLER_HPP

@@ -34,15 +34,14 @@
 			<div class="col-sm-4 col-md-3 col-lg-2">
 				<div class="nav flex-column nav-pills" id="steps">
 					<h2>Schritte:</h2>
-					<!-- class "disabled" removed for debugging -->
 					<a class="nav-link active" id="browse-tab" data-toggle="pill" href="#browse">Bild auswählen</a>
-					<a class="nav-link" id="cut-tab" data-toggle="pill" href="#cut" onclick="cutTab()">Bild zuschneiden</a>
-					<a class="nav-link" id="attributes-tab" data-toggle="pill" href="#attributes">Attribute angeben</a>
+					<a class="nav-link disabled" id="cut-tab" data-toggle="pill" href="#cut"">Bild zuschneiden</a>
+					<a class="nav-link disabled" id="attributes-tab" data-toggle="pill" href="#attributes">Attribute angeben</a>
 					<!--<a class="nav-link" id="settings-tab" data-toggle="pill" href="#settings" onclick="startImageProcessing()">Parameter anpassen</a>-->
-					<a class="nav-link" id="selection-tab" data-toggle="pill" href="#selection" onclick="selectionTab()">Kolonien auswählen</a>
-					<a class="nav-link" id="strategy-tab" data-toggle="pill" href="#strategy">Pickstrategie wählen</a>
-					<a class="nav-link" id="overview-tab" data-toggle="pill" href="#overview">Übersicht</a>
-					<a class="nav-link" id="execute-tab" data-toggle="pill" href="#execute">Pickjob starten</a>
+					<a class="nav-link disabled" id="selection-tab" data-toggle="pill" href="#selection">Kolonien auswählen</a>
+					<a class="nav-link disabled" id="strategy-tab" data-toggle="pill" href="#strategy">Pickstrategie wählen</a>
+					<a class="nav-link disabled" id="overview-tab" data-toggle="pill" href="#overview">Übersicht</a>
+					<a class="nav-link disabled" id="execute-tab" data-toggle="pill" href="#execute">Pickjob starten</a>
 				</div>
 			</div>
 			<div class="col-sm-8 col-md-9 col-lg-10" >
@@ -51,7 +50,7 @@
 						<div class="row mb-4">
 							<div class="col-md-6 col-lg-4">
 								<h2>Bild auswählen</h2>
-								<div class="dropzone"></div>
+								<div id="dropZone" style="width: 200px; height: 200px; background-color: grey"></div>
 								<div id="chosen-image"></div>
 							</div>
 							<div class="col-md-6 col-lg-8"">
@@ -74,11 +73,23 @@
 						<button class="btn btn-dark m-2" onclick="attributesTab()">Speichern ></button>
 					</div>
 					<div class="tab-pane fade" id="attributes">
-						"...danach soll der Nutzer auf einer Seite Pickjob-Parameter wie Name des Jobs, 
-						optionale Beschreibung, Auswahl von angelegten Plattenfassung- und Druckerprofil und
-						Anlegen dieser angezeigt werden."
+						
+					<form>
+						<div class="form-group row">
+							<label class="col-sm-2 col-form-label">Bild Name</label>
+							<div class="col-sm-10">
+								<input type="text" readonly class="form-control-plaintext" id="staticImgName" value="">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-2 col-form-label">Job Name</label>
+							<div class="col-sm-10">
+    							<input type="text" class="form-control" id="inputJobName" aria-describedby="jobNameHelp">
+    							<small id="jobNameHelp" class="form-text text-muted">Optionaler Name</small>
+    						</div>
+						</div>
+					</form>
 
-						<br>
 						<button class="btn btn-dark m-2" onclick="selectionTab()">Kolonien auswählen ></button>
 					</div>
 					<div class="tab-pane fade col-md-8" id="settings">

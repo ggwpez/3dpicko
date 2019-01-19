@@ -2,8 +2,9 @@
 var images_list = {}, user_images = {};
 var chosen_image = {};
 var user_id;
+var ws;
 
-(function LoadAllImages(){
+/*(function LoadAllImages(){
 	$.getJSON( "/api/getimagelist", function(response) {
 		div_images = document.getElementById('all-images');
 		$.each( response, function( key, image_object ) {
@@ -11,9 +12,67 @@ var user_id;
 		});
 		div_images.style.display = "block";
 	});
+})();*/
+
+(function WsSetup() {
+	ws = new WebSocket("ws://" +window.location.hostname +":8888/");
+
+	ws.onopen = function()
+	{
+    	api("getimagelist");
+	};
+	ws.onmessage = function(evt)
+	{
+		var msg = JSON.parse(evt.data);
+		console.log(msg);
+
+		if (msg.type == "getimagelist")
+		{
+			div_images = document.getElementById('all-images');
+			console.log("adding image list");
+			msg.data.images.forEach(AddImageToList);
+			div_images.style.display = "block";
+		}
+		else if (msg.type == "deleteimage")
+		{
+			msg.data.deleted.forEach(function (id)
+			{
+				if(id == chosen_image.id) SetChosen(false);
+				delete user_images[id];
+				delete images_list[id];
+			});
+		}
+		else if (msg.type == "uploadimage")
+		{
+			AddImageToList(msg.data);
+			SetChosen(msg.data.id);
+		}
+		else if (msg.type == "createjob")
+		{
+			alert(msg.data.id);
+		}
+		else
+		{
+			alert("Unknown message type " +msg.type);
+		}
+	};
+	ws.onerror = function (errorEvent)
+	{
+    	alert("Error! Die Verbindung wurde unerwartet geschlossen");
+	};
+	ws.onclose = function()
+	{
+
+	};
 })();
 
+function api(query, data)
+{
+	ws.send(JSON.stringify({request: /*"/apiv2/" +*/query, data: data}));
+}
+
 function AddImageToList(image_object){
+	console.log("Adding image " +image_object.path);
 	html = '\
 	<div class="card m-1" id="'+image_object.id+'" style="display: inline-block; vertical-align:top; max-width: 200px;" min-height: 250px;"">\
 	<button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="MarkForDeletion(\''+image_object.id+'\')">&times;</button>\
@@ -44,57 +103,34 @@ function MarkForDeletion(image_id) {
 }
 function DeleteImage(){
 	document.getElementById(image_id_marked_for_deletion).style.display = "none";
-	$.post('/api/deleteimage', images_list[image_id_marked_for_deletion], function (response) {
-		if(image_id_marked_for_deletion == chosen_image.id) SetChosen(false);
-		delete user_images[image_id_marked_for_deletion];
-		delete images_list[image_id_marked_for_deletion];
-	}).fail(function () {
-		alert("Fehler beim Löschen");
-	});
+
+	api("deleteimage", images_list[image_id_marked_for_deletion]);
 }
 
 function SetChosen(image_id){
 	div_chosen = document.getElementById('chosen-image');
-	class_dropzone = $(".dropzone");
+	class_dropzone = document.getElementById('dropZone');
+
 	if(image_id){
-		$("#cut-tab").removeClass("disabled");
 		chosen_image = images_list[image_id];
 		div_chosen.innerHTML = '\
 		<ul><li>Dateiname: '+chosen_image.filename+'</li><li>Upload-Datum: '+chosen_image.upload_date+'</li></ul>\
 		<button class="btn btn-dark" onclick="cutTab()">Bild auswählen ></button>\
 		';
-		div_chosen.style.display = "block";
-		class_dropzone.css('background-image', 'url(' + chosen_image.path + ')');
+		class_dropzone.innerHTML = '<img style="height: 100%; width: 100%; object-fit: contain" src="' + chosen_image.path +'"/>';
+		class_dropzone.style.backgroundColor = 'transparent';
 	}
 	else{
-		$("#cut-tab").addClass("disabled");
 		chosen_image = false;
-		div_chosen.style.display = "none";
-		class_dropzone.css('background-image', '');
+		class_dropzone.innerHTML = '';
+		class_dropzone.style.backgroundColor = 'grey';
 	}
 }
-
-(function() {
-	$(".dropzone").dropzone({
-		url: '/api/uploadimage',
-		margin: 20,
-		allowedFileTypes: 'jpg, png',
-		params:{
-			'action': 'save'
-		},
-		dataType: 'json',
-		success: function(response){
-			var image = JSON.parse(response.responseText);
-			image.user_id = user_id; // debug
-			AddImageToList(image);
-			SetChosen(image.id);
-		}
-	});
-}());
 
 //Navigation
 function cutTab(){
 	if(chosen_image){
+		$("#cut-tab").removeClass("disabled");
 		document.getElementById('cutImg').src = chosen_image.path;
 		$('#steps a[href=\'#cut\']').tab('show');
 	}
@@ -103,7 +139,9 @@ function selectionTab(){
 	if(chosen_image){
 		$("#selection-tab").removeClass("disabled");
 		document.getElementById('photograph').src = chosen_image.path;
-		$('#steps a[href=\'#selection\']').tab('show')
+		$('#steps a[href=\'#selection\']').tab('show');
+
+		api("createjob", {name: document.getElementById('inputJobName').value});
 	}
 }
 function strategyTab(){
@@ -112,13 +150,14 @@ function strategyTab(){
 }
 function overviewTab(){
 	$("#overview-tab").removeClass("disabled");
-	$('#steps a[href=\'#overview\']').tab('show')
+	$('#steps a[href=\'#overview\']').tab('show');
 }
 function attributesTab(){
 	$("#attributes-tab").removeClass("disabled");
-	$('#steps a[href=\'#attributes\']').tab('show')
+	document.getElementById('staticImgName').value = chosen_image.filename;
+	$('#steps a[href=\'#attributes\']').tab('show');
 }
 function settingsTab(){
 	$("#settings-tab").removeClass("disabled");
-	$('#steps a[href=\'#settings\']').tab('show')
+	$('#steps a[href=\'#settings\']').tab('show');
 }

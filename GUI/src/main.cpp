@@ -6,6 +6,7 @@
 #include "include/global.h"
 #include "httplistener.h"
 #include "include/requestmapper.h"
+#include "include/ws_server.hpp"
 
 using namespace stefanfrings;
 using namespace c3picko;
@@ -17,7 +18,7 @@ using namespace c3picko;
  */
 QString searchConfigFile() {
 	QFile file;
-    file.setFileName(Etc() + "serverconfig.ini");
+	file.setFileName(Etc() + "serverconfig.ini");
 
 	QFileInfo info(file);
 	qDebug() << info.absolutePath();
@@ -37,6 +38,9 @@ int main(int argc, char *argv[])
 	QCoreApplication app(argc, argv);
 	QString configFileName=searchConfigFile();
 
+	// API Controller
+	APIController* apiController = new APIController(&app);
+
 	// Static file controller
 	QSettings* fileSettings=new QSettings(configFileName,QSettings::IniFormat,&app);
 	fileSettings->beginGroup("files");
@@ -45,7 +49,10 @@ int main(int argc, char *argv[])
 	// HTTP server
 	QSettings* listenerSettings=new QSettings(configFileName,QSettings::IniFormat,&app);
 	listenerSettings->beginGroup("listener");
-	HttpListener listener(listenerSettings,new RequestMapper(staticFileController, &app),&app);
+	HttpListener listener(listenerSettings,new RequestMapper(staticFileController, apiController, &app),&app);
+
+	// WS server
+	WsServer _ws(apiController, &app);
 
 	return app.exec();
 }

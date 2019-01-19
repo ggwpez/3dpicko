@@ -8,17 +8,17 @@ namespace c3picko {
 
 inline QString Root()
 {
-    return "../../../3cpicko/GUI/";
+	return "../../3cpicko/GUI/";
 }
 
 inline QString Etc()
 {
-    return Root() + "etc/";
+	return Root() + "etc/";
 }
 
 inline QString DocRoot()
 {
-    return Root() + "docroot/";
+	return Root() + "docroot/";
 }
 
 inline QString UploadFolderName()
@@ -28,7 +28,7 @@ inline QString UploadFolderName()
 
 inline QString UploadFolder()
 {
-    return DocRoot() + UploadFolderName() + "/";
+	return DocRoot() + UploadFolderName() + "/";
 }
 
 inline void Setup()
