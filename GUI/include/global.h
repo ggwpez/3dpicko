@@ -3,12 +3,20 @@
 
 #include <QString>
 #include <QDir>
+#include <QJsonValue>
+#include <QDateTime>
+#include <QVariant>
 
 namespace c3picko {
 
+inline QDateTime parseDateTime(QJsonValue obj)
+{
+	return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
+}
+
 inline QString Root()
 {
-	return "../../3cpicko/GUI/";
+	return "";
 }
 
 inline QString Etc()
@@ -23,7 +31,7 @@ inline QString DocRoot()
 
 inline QString UploadFolderName()
 {
-	return "images";
+	return "uploads";
 }
 
 inline QString UploadFolder()
@@ -35,6 +43,8 @@ inline void Setup()
 {
 	if (! QDir(UploadFolder()).exists())
 		QDir().mkdir(UploadFolder());
+
+
 }
 } // namespace c3picko
 #endif // GLOBAL_H

@@ -98,12 +98,6 @@ function printPositions(){
 	}
 }
 
-// Erstelle pickjob
-function recPositions(){
-	$("#strategy-tab").removeClass("disabled");
-	$('#steps a[href=\'#strategy\']').tab('show');
-}
-
 // Wandelt Koordinaten um
 function convertCoordinates(){
 
