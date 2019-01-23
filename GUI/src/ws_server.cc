@@ -11,7 +11,7 @@ WsServer::WsServer(APIController* api, QObject* _parent)
 	  server_(new QWebSocketServer(QStringLiteral("Echo Server"),
 								   QWebSocketServer::NonSecureMode, this))
 {
-	if (server_->listen(QHostAddress("172.18.83.95"), 8888))
+    if (server_->listen(QHostAddress::LocalHost, 8888))
 	{
 		qDebug() << "Echoserver listening on port" << 8888;
 

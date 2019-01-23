@@ -3,6 +3,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QRandomGenerator>
 
 namespace c3picko {
 
@@ -81,6 +82,19 @@ void APIController::service(QJsonObject& request, QJsonObject& response)
 
 		OnNewFile(output.fileName());
 	}
+    else if (path.startsWith("createsettingsprofile")){
+        QJsonObject json_profile_object = request["data"].toObject();
+        // TODO create new profile
+        // TODO create unique id
+        QString newId = QString::number(QRandomGenerator::global()->generate());
+        json_profile_object["id"] = newId;
+        response = json_profile_object;
+    }
+    else if (path.startsWith("updatesettingsprofile")){
+        QJsonObject json_profile_object = request["data"].toObject();
+        // TODO update profile
+        response = json_profile_object;
+    }
 	else if (path.startsWith("createjob"))
 	{
 		response = QJsonObject({{"id", 123}});
