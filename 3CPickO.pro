@@ -8,4 +8,4 @@ SUBDIRS += \
 	GUI \
 
 Tests.depends = PiCommunicator
-Main.depends = PiCommunicator
+Main.depends = PiCommunicator GUI Gcode

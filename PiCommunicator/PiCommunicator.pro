@@ -2,8 +2,7 @@ TEMPLATE = lib
 QT -= gui
 QT += network core
 
-CONFIG += c++11
-CONFIG -= app_bundle
+CONFIG += c++11 staticlib
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -74,6 +73,7 @@ HEADERS += \
 	include/datamodel/progress_info.h \
 	include/datamodel/job_general_info.h
 
+LIBS =
 INCLUDEPATH += include/
 
 # QMAKE_CXXFLAGS += -Werror

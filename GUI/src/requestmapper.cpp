@@ -15,9 +15,9 @@ RequestMapper::RequestMapper(StaticFileController* file_controller, APIControlle
 
 void RequestMapper::service(HttpRequest& request, HttpResponse& response) {
 	QByteArray path=request.getPath();
-	qDebug("RequestMapper: path=%s",path.data());
+	qInfo("RequestMapper: path=%s",path.data());
 
-	if (path.startsWith("/files") || path.startsWith(("/" + UploadFolderName()).toUtf8())) {
+	if (path.startsWith("/")) {
 		staticFileController->service(request,response);
 	}
 	else {
@@ -25,6 +25,6 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response) {
 		response.write("The URL is wrong, no such document.");
 	}
 
-	qDebug("RequestMapper: finished request");
+	qInfo("RequestMapper: finished request");
 }
 } // namespace c3picko

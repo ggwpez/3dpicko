@@ -21,7 +21,7 @@ dropZone.addEventListener('drop', function(e) {
         // finished reading file data.
         rawData = e.target.result;
         var base64result = rawData.substr(rawData.indexOf(',') + 1);
-        api("uploadimage", {filename: file.name, file: base64result});
+        api("uploadimage", {  original_filename: file.name, file: base64result});
     }
 
     reader.readAsDataURL(file); // start reading the file data.
