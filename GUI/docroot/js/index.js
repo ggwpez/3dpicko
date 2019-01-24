@@ -25,6 +25,7 @@ var user_id;
 		(type, data) =>
 		{
 			console.log("Message type: '" +type +"'");
+			console.log(data);
 
 			if ("error" in data)				// TODO unclean
 				alert(data.error);
@@ -86,11 +87,22 @@ var user_id;
 					AddPrinterProfile(profile_object);
 					printer_profiles[profile_object.id] = profile_object;
 					break;
+					case "socket-profile": 
+					AddSocketProfile(profile_object);
+					socket_profiles[profile_object.id] = profile_object;
+					break;
+					case "plate-profile": 
+					AddPlateProfile(profile_object);
+					plate_profiles[profile_object.id] = profile_object;
+					break;
 				}
 				$('#form-new'+profile_object.type)[0].reset();
 				$('#collapse-new'+profile_object.type).collapse('hide');
-				$('#info-dialog-title').text(profile_object.profile_name+" erfolgreich hinzugefügt.");
-				$('#info-dialog').modal('show');
+				$('#info-dialog-title').text(profile_object.profile_name+" added.");
+				// $('#info-dialog').modal('show');
+				let card = $('#card-header-'+profile_object.id);
+				card.animate({backgroundColor: 'rgba(0,255,0,0.4)'}, "fast", "linear");
+				
 			}
 			else if(type == "updatesettingsprofile"){
 				const profile_object = data; 
@@ -98,10 +110,16 @@ var user_id;
 					case "printer-profile": 
 					printer_profiles[profile_object.id] = profile_object;
 					break;
+					case "socket-profile": 
+					socket_profiles[profile_object.id] = profile_object;
+					break;
+					case "plate-profile": 
+					plate_profiles[profile_object.id] = profile_object;
+					break;
 				}
 				$('#link-'+profile_object.id).text(profile_object.profile_name);
 				$('#collapse-'+profile_object.id).collapse('hide');
-				$('#info-dialog-title').text(profile_object.profile_name+" erfolgreich aktualisiert.");
+				$('#info-dialog-title').text(profile_object.profile_name+" updated.");
 				$('#info-dialog').modal('show');
 			}
 			else if (type == "debug")
@@ -261,8 +279,9 @@ function selectionTab(){
 	if(chosen_image){
 		tabEnter(3);
 		document.getElementById('photograph').src = chosen_image.path;
-
-		api("createjob", { img_id: chosen_image.id, name: document.getElementById('inputJobName').value});
+		const printer_selection = document.getElementById('select-printer-profile');
+		const socket_selection = document.getElementById('select-socket-profile');
+		api("createjob", { img_id: chosen_image.id, name: document.getElementById('inputJobName').value, printer: printer_selection.options[printer_selection.selectedIndex].value, socket: socket_selection.options[socket_selection.selectedIndex].value});
 	}
 }
 function strategyTab(){
