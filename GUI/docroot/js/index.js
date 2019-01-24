@@ -108,6 +108,11 @@ var user_id;
 			{
 				addDebugOutputLine(data.line);
 			}
+			else if (type == "getpositions")
+			{
+				console.log("Positions\n" +JSON.stringify(data));
+				drawPositions(data);
+			}
 			else
 			{
 				console.warn("Ignoring message of type '" +type +"'");

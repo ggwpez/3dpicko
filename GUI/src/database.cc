@@ -3,7 +3,6 @@
 #include <QDebug>
 
 namespace c3picko {
-
 	Database::Database(QString file_path, QObject* parent)
 		: QObject(parent), file_path_(file_path)
 	{
@@ -53,7 +52,7 @@ namespace c3picko {
 		return image_table_;
 	}
 
-	void Database::read(const QJsonObject& obj)
+	void Database::read(QJsonObject const& obj)
 	{
 		job_table_.read(obj["jobs"].toObject());
 		image_table_.read(obj["images"].toObject());

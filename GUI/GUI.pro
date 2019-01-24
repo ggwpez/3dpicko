@@ -24,10 +24,13 @@ HEADERS += \
 	include/json_convertable.h \
 	include/table.hpp \
 	include/database.hpp \
-	include/types/image.hpp
+	include/types/image.hpp \
+	include/json_constructable.hpp
 
 LIBS =
 DEFINES += QT_NO_INFO_OUTPUT
 OTHER_FILES += etc/serverconfig.ini
+
+INCLUDEPATH += $$PWD/../ImageRecognition
 
 include(../QtWebApp/httpserver/httpserver.pri)

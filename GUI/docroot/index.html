@@ -94,12 +94,12 @@
                   <p>
                      <div id="clickArea">
                         <img id="photograph" src="" />
-                        <canvas id="drawArea" width="900 "height="600"></canvas>
+                        <canvas id="drawArea" width="900" height="600"></canvas>
                      </div>
                   </p>
                   <p>
                      <div id="buttons">
-                        <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
+                        <button class="btn btn-dark" onclick="getPositions(chosen_image.id)">Automatische Kolonieerkennung</button>
                         <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
                         <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
                         <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
@@ -246,7 +246,8 @@
 <script type="text/javascript" src="js/api.js"></script>
 <script type="text/javascript" src="js/dropzone.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
-<script type="text/javascript" src="js/imagerecognition.js"></script>
+<script type="text/javascript" src="js/colonydetection.js"></script>
+<!-- <script type="text/javascript" src="js/imagerecognition.js"></script> -->
 <script type="text/javascript" src="js/config.js"></script>
 </body>
 </html>

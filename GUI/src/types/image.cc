@@ -2,25 +2,30 @@
 
 namespace c3picko {
 
-	Image::Image(ID id, QString original_name, QString description, QString path, QDateTime uploaded)
-		: id_(id), original_name_(original_name), description_(description), path_(path), uploaded_(uploaded)
+	Image::Image(const QJsonObject& obj)
+	 : JsonConstructable(obj), id_(obj["id"].toString()),
+	   original_name_(obj["original_name"].toString()),
+	  description_(obj["description"].toString()),
+	  path_(obj["path"].toString()),
+	  uploaded_(parseDateTime(obj["uploaded"]))
 	{
 
-		}
-
-		Image::ID Image::id() const
-		{
-			return id_;
-		}
-
-		QString Image::path() const
-		{
-			return path_;
 	}
 
-	void Image::read(const QJsonObject& obj)
+	Image::Image(ID id, QString original_name, QString description, QString path, QDateTime uploaded)
+		: JsonConstructable(QJsonObject()), id_(id), original_name_(original_name), description_(description), path_(path), uploaded_(uploaded)
 	{
-		*this = Image(obj["id"].toString(), obj["original_name"].toString(), obj["description"].toString(), obj["path"].toString(), parseDateTime(obj["uploaded"]));
+
+	}
+
+	Image::ID Image::id() const
+	{
+		return id_;
+	}
+
+	QString Image::path() const
+	{
+		return path_;
 	}
 
 	void Image::write(QJsonObject& obj) const
