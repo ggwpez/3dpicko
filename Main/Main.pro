@@ -2,9 +2,10 @@
 
 TEMPLATE = app
 CONFIG += console c++11
-QT += network core websockets
+QT = network core websockets
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    global.cc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../GUI/release/ -lGUIWebserver
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../GUI/debug/ -lGUIWebserver
@@ -63,6 +64,11 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/libImageRecognition.a
 
 INCLUDEPATH += ../QtWebApp/httpserver/
 DEPENDPATH += ../QtWebApp/httpserver/
+
+HEADERS += \
+	include/json_constructable.hpp \
+	include/json_convertable.h \
+	include/global.h
 
 LIBS += -lopencv_core \
 		-lopencv_imgproc \

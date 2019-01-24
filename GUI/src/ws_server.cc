@@ -8,19 +8,24 @@
 
 namespace c3picko {
 
-WsServer::WsServer(APIController* api, QObject* _parent)
+WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* api, QObject* _parent)
 	: QObject(_parent), api_(api),
 	  server_(new QWebSocketServer(QStringLiteral("Echo Server"),
-								   QWebSocketServer::NonSecureMode, this))
+								   (ssl ? QWebSocketServer::SecureMode :
+										  QWebSocketServer::NonSecureMode), this))
 {
-    if (server_->listen(QHostAddress::LocalHost, 8888))
+	if (ssl)
+		server_->setSslConfiguration(*ssl);
+
+	QString host = settings->value("host").toString();
+	if (server_->listen((host.isEmpty() ? QHostAddress::Any : QHostAddress(host)), 8888))
 	{
 		qDebug() << "WebSocket server listening on port" << 8888;
 
+		connect(server_, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(SslErrors(const QList<QSslError> &)));
 		connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
 		connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
 		emit OnStarted();
-
 	}
 
 	connect(api_, &APIController::OnNewFile, this, &WsServer::NewFile);
@@ -145,6 +150,12 @@ void WsServer::NewDebugLine(QString line)
 {
 	for (auto client : clients_)
 		SendToClient("debug", {{"line", line}}, client);
+}
+
+void WsServer::SslErrors(const QList<QSslError>& errors)
+{
+	for (QSslError error : errors)
+		qWarning() << "Ssl error:" << error.errorString();
 }
 
 void WsServer::SendToClient(QJsonValue type, JsonConvertable& data, QWebSocket* client)

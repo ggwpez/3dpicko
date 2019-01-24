@@ -1,13 +1,16 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#pragma once
 
 #include <QString>
 #include <QDir>
 #include <QJsonValue>
 #include <QDateTime>
 #include <QVariant>
+#include <QSettings>
 
+class QSslConfiguration;
 namespace c3picko {
+
+QSslConfiguration* LoadSslConfig(QSettings* settings);
 
 inline QDateTime parseDateTime(QJsonValue obj)
 {
@@ -47,4 +50,3 @@ inline void Setup()
 
 }
 } // namespace c3picko
-#endif // GLOBAL_H

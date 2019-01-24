@@ -8,6 +8,7 @@
    <link rel="stylesheet" href="css/bootstrap.css">
    <!-- Custom CSS -->
    <link rel="stylesheet" href="css/custom.css">
+   <link rel="stylesheet" href="css/cropper.css">
    <title>3CPickO</title>
 </head>
 <body>
@@ -53,7 +54,7 @@
                   <div class="row mb-4">
                      <div class="col-md-6 col-lg-4">
                         <h2>Bild auswählen</h2>
-                        <div id="dropZone" style="width: 200px; height: 200px; background-color: grey"></div>
+                        <div id="dropZone" style="width: 300px; height: 300px; background-color: grey"></div>
                         <div id="chosen-image"></div>
                      </div>
                   </div>
@@ -67,7 +68,11 @@
                </div>
                <div class="tab-pane fade col-md-8" id="cut">
                   <h1>Bild manuell zuschneiden</h1>
-                  <img id="cutImg" src="" width="70%" alt="Bild der Agarplatte">
+                  <div class="crop_container">
+                        <div>
+                          <img id="cutImg" src="" alt="Picture">
+                        </div>
+                      </div>
                   <br>
                   <button class="btn btn-dark m-2" onclick="attributesTab()">Weiter</button>
                </div>
@@ -249,5 +254,6 @@
 <script type="text/javascript" src="js/colonydetection.js"></script>
 <!-- <script type="text/javascript" src="js/imagerecognition.js"></script> -->
 <script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/cropper.js"></script>
 </body>
 </html>

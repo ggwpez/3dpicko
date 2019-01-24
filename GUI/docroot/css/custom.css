@@ -5,6 +5,18 @@ body {
 	*/
 }
 
+img {
+  max-width: 100%; /* cropper: This rule is very important, please do not ignore this! */
+}
+
+.cropper_container {
+      max-width: 640px;
+      margin: 20px auto;
+    }
+    img {
+      width: 100%;
+    }
+
 .navbar{
 	margin-bottom: 20px;
 }

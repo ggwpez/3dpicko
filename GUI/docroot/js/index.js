@@ -247,12 +247,24 @@ function tabEnter(tabId)
 	$("#" +tabOrder[tabId] +"-tab").tab('show');
 }
 
+var cropper;
 //Navigation
 function cutTab(){
 	if(chosen_image){
 		tabEnter(1);
 
-		document.getElementById('cutImg').src = chosen_image.path;
+		cutImg = document.querySelector('#cutImg');
+		cutImg.src = chosen_image.path;
+
+		setTimeout(() => {
+			console.log("Image loaded ###########");
+			cropper = new Cropper(cutImg, {
+			        aspectRatio: 1.5/1
+		});}, 1000);
+
+
+	    
+    //setTimeout(function() {cropper.replace(chosen_image.path);}, 1000);
 	}
 }
 

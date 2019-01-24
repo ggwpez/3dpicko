@@ -14,7 +14,7 @@ namespace c3picko {
 			QJsonObject json = QJsonDocument::fromJson(data).object();
 			read(json);
 
-
+			qDebug() << "Loaded database form file" << file_path_;
 		}
 		else
 			qCritical() << "Error reading database from file" << file_path_;
@@ -60,12 +60,7 @@ namespace c3picko {
 
 	void Database::write(QJsonObject& obj) const
 	{
-		QJsonObject jobs, images;
-
-		job_table_.write(jobs);
-		image_table_.write(images);
-
-		obj["jobs"] = jobs;
-		obj["images"] = images;
+		obj["jobs"] = (QJsonObject)job_table_;
+		obj["images"] = (QJsonObject)image_table_;
 	}
 }
