@@ -3,7 +3,6 @@
 #include <QDebug>
 
 namespace c3picko {
-
 	Database::Database(QString file_path, QObject* parent)
 		: QObject(parent), file_path_(file_path)
 	{
@@ -15,7 +14,7 @@ namespace c3picko {
 			QJsonObject json = QJsonDocument::fromJson(data).object();
 			read(json);
 
-
+			qDebug() << "Loaded database form file" << file_path_;
 		}
 		else
 			qCritical() << "Error reading database from file" << file_path_;
@@ -53,7 +52,7 @@ namespace c3picko {
 		return image_table_;
 	}
 
-	void Database::read(const QJsonObject& obj)
+	void Database::read(QJsonObject const& obj)
 	{
 		job_table_.read(obj["jobs"].toObject());
 		image_table_.read(obj["images"].toObject());
@@ -61,12 +60,7 @@ namespace c3picko {
 
 	void Database::write(QJsonObject& obj) const
 	{
-		QJsonObject jobs, images;
-
-		job_table_.write(jobs);
-		image_table_.write(images);
-
-		obj["jobs"] = jobs;
-		obj["images"] = images;
+		obj["jobs"] = (QJsonObject)job_table_;
+		obj["images"] = (QJsonObject)image_table_;
 	}
 }

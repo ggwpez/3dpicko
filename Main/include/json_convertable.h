@@ -9,8 +9,15 @@ namespace c3picko {
 	class JsonConvertable
 	{
 	public:
-		virtual ~JsonConvertable() { }
+		//inline JsonConvertable(QJsonObject const&) { }
+		inline virtual ~JsonConvertable() { }
 
+		virtual inline explicit operator QJsonObject() const
+		{
+			QJsonObject json;
+			this->write(json);
+			return json;
+		}
 		virtual void read(const QJsonObject&) = 0;
 		virtual void write(QJsonObject&) const = 0;
 	};

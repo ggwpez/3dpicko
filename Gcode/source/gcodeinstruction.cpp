@@ -13,42 +13,49 @@ class GcodeInstruction::GcodeField::Command {
    * Creates and returns the g-code command G1 used for moving the nozzle.
    */
   static GcodeField G1() {
-    return GcodeInstruction::GcodeField('G', 1);
+	return GcodeInstruction::GcodeField('G', 1);
   }
   /**
    * Creates and returns the g-code command G4 used for having the nozzle
    * wait on the spot.
    */
   static GcodeField G4() {
-    return GcodeInstruction::GcodeField('G', 4);
+	return GcodeInstruction::GcodeField('G', 4);
   }
   /**
    * Creates and returns the g-code command G21 used for setting
    * the units of all coordinates to millimeter.
    */
   static GcodeField G21() {
-    return GcodeInstruction::GcodeField('G', 21);
+	return GcodeInstruction::GcodeField('G', 21);
   }
   /**
    * Creates and returns the g-code command G28 used for homing
    * all axes.
    */
   static GcodeField G28() {
-    return GcodeInstruction::GcodeField('G', 28);
+	return GcodeInstruction::GcodeField('G', 28);
   }
   /**
    * Creates and returns the g-code command G90 used for setting the
    * positioning of the nozzle to absolute.
    */
   static GcodeField G90() {
-    return GcodeInstruction::GcodeField('G', 90);
+	return GcodeInstruction::GcodeField('G', 90);
   }
   /**
    * Creates and returns the g-code command M82 used for setting the
    * extrusion to absolute mode.
    */
   static GcodeField M82() {
-    return GcodeInstruction::GcodeField('M', 82);
+	return GcodeInstruction::GcodeField('M', 82);
+  }
+  /**
+   * Creates and returns the g-code command M82 used for setting the
+   * extrusion to absolute mode.
+   */
+  static GcodeField M302() {
+	return GcodeInstruction::GcodeField('M', 302);
   }
 };
 
@@ -65,7 +72,7 @@ class GcodeInstruction::GcodeField::Parameter {
   * @return the g-code field Xnnn
   */
   static GcodeField X(const float x_coordinate) {
-    return GcodeInstruction::GcodeField('X', x_coordinate);
+	return GcodeInstruction::GcodeField('X', x_coordinate);
   }
 
   /**
@@ -76,7 +83,7 @@ class GcodeInstruction::GcodeField::Parameter {
   * @return the g-code field Ynnn
   */
   static GcodeField Y(const float y_coordinate) {
-    return GcodeInstruction::GcodeField('Y', y_coordinate);
+	return GcodeInstruction::GcodeField('Y', y_coordinate);
   }
 
   /**
@@ -87,7 +94,7 @@ class GcodeInstruction::GcodeField::Parameter {
   * @return the g-code field Znnn
   */
   static GcodeField Z(const float z_coordinate) {
-    return GcodeInstruction::GcodeField('Z', z_coordinate);
+	return GcodeInstruction::GcodeField('Z', z_coordinate);
   }
 
   /**
@@ -98,7 +105,7 @@ class GcodeInstruction::GcodeField::Parameter {
   * @return the g-code field Ennn
   */
   static GcodeField E(const float e_filament_extrusion_length) {
-    return GcodeInstruction::GcodeField('E', e_filament_extrusion_length);
+	return GcodeInstruction::GcodeField('E', e_filament_extrusion_length);
   }
 
   /**
@@ -109,7 +116,7 @@ class GcodeInstruction::GcodeField::Parameter {
   * @return the g-code field Fnnn
   */
   static GcodeField F(const int f_nozzle_movement_speed) {
-    return GcodeInstruction::GcodeField('F', f_nozzle_movement_speed);
+	return GcodeInstruction::GcodeField('F', f_nozzle_movement_speed);
   }
 
   /**
@@ -120,7 +127,11 @@ class GcodeInstruction::GcodeField::Parameter {
   * @return the g-code field Snnn
   */
   static GcodeField S(const int s_waiting_time) {
-    return GcodeInstruction::GcodeField('S', s_waiting_time);
+	return GcodeInstruction::GcodeField('S', s_waiting_time);
+  }
+
+  static GcodeField P(const bool cold_extrusion_allowed) {
+	return GcodeInstruction::GcodeField('P', (cold_extrusion_allowed ? '0' : '1'));
   }
 };
 
@@ -138,57 +149,59 @@ GcodeInstruction::GcodeField::GcodeField(char letter, float number) : letter_(le
 
 GcodeInstruction GcodeInstruction::Init() {
   return GcodeInstruction({
-    GcodeField::Command::G28(),
-    GcodeField::Command::G90(),
-    GcodeField::Command::M82(),
-    GcodeField::Command::G21()
+	GcodeField::Command::M302(),
+	GcodeField::P
+	GcodeField::Command::G28(),
+	GcodeField::Command::G90(),
+	GcodeField::Command::M82(),
+	GcodeField::Command::G21()
   });
 }
 
 GcodeInstruction GcodeInstruction::MoveToXYZ(const float x_coordinate,
-                                             const float y_coordinate, const float z_coordinate) {
+											 const float y_coordinate, const float z_coordinate) {
 
   return GcodeInstruction({
-    GcodeField::Command::G1(),
-    GcodeField::Parameter::X(x_coordinate),
-    GcodeField::Parameter::Y(y_coordinate),
-    GcodeField::Parameter::Z(z_coordinate)
+	GcodeField::Command::G1(),
+	GcodeField::Parameter::X(x_coordinate),
+	GcodeField::Parameter::Y(y_coordinate),
+	GcodeField::Parameter::Z(z_coordinate)
   });
 }
 
 GcodeInstruction GcodeInstruction::MoveToXY(const float x_coordinate, const float y_coordinate) {
   return GcodeInstruction({
-    GcodeField::Command::G1(),
-    GcodeField::Parameter::X(x_coordinate),
-    GcodeField::Parameter::Y(y_coordinate),
+	GcodeField::Command::G1(),
+	GcodeField::Parameter::X(x_coordinate),
+	GcodeField::Parameter::Y(y_coordinate),
   });
 }
 
 GcodeInstruction GcodeInstruction::MoveToZ(const float z_coordinate) {
   return GcodeInstruction({
-    GcodeField::Command::G1(),
-    GcodeField::Parameter::Z(z_coordinate)
+	GcodeField::Command::G1(),
+	GcodeField::Parameter::Z(z_coordinate)
   });
 }
 
 GcodeInstruction GcodeInstruction::ExtrudeFilament(const float e_filament_extrusion_length) {
   return GcodeInstruction({
-    GcodeField::Command::G1(),
-    GcodeField::Parameter::E(e_filament_extrusion_length)
+	GcodeField::Command::G1(),
+	GcodeField::Parameter::E(e_filament_extrusion_length)
   });
 }
 
 GcodeInstruction GcodeInstruction::SetMovementSpeed(const int f_nozzle_movement_speed) {
   return GcodeInstruction({
-    GcodeField::Command::G1(),
-    GcodeField::Parameter::F(f_nozzle_movement_speed)
+	GcodeField::Command::G1(),
+	GcodeField::Parameter::F(f_nozzle_movement_speed)
   });
 }
 
 GcodeInstruction GcodeInstruction::Wait(const int s_waiting_time) {
   return GcodeInstruction({
-    GcodeField::Command::G4(),
-    GcodeField::Parameter::S(s_waiting_time)
+	GcodeField::Command::G4(),
+	GcodeField::Parameter::S(s_waiting_time)
   });
 }
 
@@ -200,7 +213,7 @@ GcodeInstruction::GcodeInstruction(std::vector<GcodeField> fields)
 std::string GcodeInstruction::ToString() const {
   std::stringstream ss;
   for (const GcodeField& field : fields_)
-    ss << field.ToString() << " ";
+	ss << field.ToString() << " ";
   return ss.str();
 }
 } // namespace c3picko

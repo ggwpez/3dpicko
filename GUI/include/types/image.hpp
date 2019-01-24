@@ -1,14 +1,15 @@
 #pragma once
 
-#include "include/json_convertable.h"
+#include "include/json_constructable.hpp"
 #include <QDateTime>
 
 namespace c3picko {
-	class Image : public JsonConvertable
+	class Image : public JsonConstructable
 	{
 	public:
 		typedef QString ID;
 		Image() = default;
+		Image(QJsonObject const&);
 		Image(ID id, QString original_name, QString description, QString path, QDateTime uploaded);
 
 	private:
@@ -23,7 +24,6 @@ namespace c3picko {
 		QString path() const;
 		ID id() const;
 
-		void read(const QJsonObject&) override;
 		void write(QJsonObject&) const override;
 	};
 }

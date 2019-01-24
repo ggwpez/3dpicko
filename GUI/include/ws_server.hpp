@@ -1,7 +1,9 @@
 #ifndef WS_SERVER_HPP
 #define WS_SERVER_HPP
 
+#include <QSslConfiguration>
 #include <QObject>
+#include <QSslError>
 #include "include/apicontroller.h"
 
 using namespace stefanfrings;
@@ -14,7 +16,7 @@ class WsServer : public QObject
 {
 	Q_OBJECT
 public:
-	WsServer(APIController* api, QObject* _parent = nullptr);
+	WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* api, QObject* _parent = nullptr);
 	~WsServer();
 
 private slots:
@@ -33,6 +35,7 @@ public slots:
 	void FileDeleteError(QString path, QObject* client);
 	void JobDeleteError(QString path, QObject* client);
 	void NewDebugLine(QString line);
+	void SslErrors(const QList<QSslError> &errors);
 
 public:
 	void SendToClient(QJsonValue type, JsonConvertable& data, QWebSocket* client);

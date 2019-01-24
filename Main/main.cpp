@@ -7,6 +7,7 @@
 #include <QMetaObject>
 #include <QObject>
 #include <csignal>
+#include <QSslKey>
 #include "include/global.h"
 #include "httplistener.h"
 #include "include/requestmapper.h"
@@ -51,7 +52,7 @@ int main(int argc, char** argv)
  */
 QString searchConfigFile() {
 	QFile file;
-    file.setFileName(Etc() + "serverconfig.ini");
+	file.setFileName(Etc() + "serverconfig.ini");
 
 	QFileInfo info(file);
 	if (file.exists()) {
@@ -90,24 +91,38 @@ int start(int argc, char** argv)
 
 	Setup();
 	QCoreApplication app(argc, argv);
-	QString configFileName=searchConfigFile();
+	QString configFileName = searchConfigFile();
 
 	Database db("database.json", &app);
 	// API Controller
 	APIController* apiController = new APIController(db, &app);
 
 	// Static file controller
-	QSettings* fileSettings=new QSettings(configFileName,QSettings::IniFormat,&app);
+	QSettings* fileSettings = new QSettings(configFileName,QSettings::IniFormat,&app);
 	fileSettings->beginGroup("files");
 	StaticFileController* staticFileController=new StaticFileController(fileSettings,&app);
 
-	// HTTP server
-	QSettings* listenerSettings=new QSettings(configFileName,QSettings::IniFormat,&app);
+	QSslConfiguration* ssl = nullptr;
+	QSettings* listenerSettings = new QSettings(configFileName,QSettings::IniFormat,&app);
 	listenerSettings->beginGroup("listener");
-	HttpListener listener(listenerSettings,new RequestMapper(staticFileController, apiController, &app),&app);
 
+	if (listenerSettings->value("ssl").toBool())
+	{
+		ssl = LoadSslConfig(listenerSettings);
+		if (! ssl)
+		{
+			qCritical() << "SSL setup failed";
+			return 1;
+		}
+		qDebug() << "SSL setup complete";
+	}
+	else
+		qDebug() << "SSL disabled";
+
+	// HTTP server
+	HttpListener listener(listenerSettings, ssl, new RequestMapper(staticFileController, apiController, &app),&app);
 	// WS server
-	WsServer _ws(apiController, &app);
+	WsServer _ws(listenerSettings, ssl, apiController, &app);
 	ws_ptr = &_ws;
 
 	QObject::connect(&app, &QCoreApplication::aboutToQuit, []{ qInstallMessageHandler(nullptr); ws_ptr = nullptr; });

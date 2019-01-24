@@ -14,7 +14,9 @@ function connect()
 {
 	if (! ws || ws.readyState == ws.CLOSED)
 	{
-		ws = new WebSocket("ws://" +window.location.hostname +":8888/");
+		const is_ssl = (location.protocol === 'https:');
+
+		ws = new WebSocket((is_ssl ? "wss" : "ws") +"://" +window.location.hostname +":8888/");
 		console.log("Setting up WebSockets");
 
 		ws.onopen = function()

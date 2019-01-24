@@ -4,7 +4,8 @@
 #include <QMap>
 #include <QJsonObject>
 #include <QJsonValue>
-#include <include/json_convertable.h>
+#include "include/json_constructable.hpp"
+#include "include/json_convertable.h"
 
 namespace c3picko {
 	/**
@@ -15,7 +16,7 @@ namespace c3picko {
 	template<typename Value>
 	class Table : public JsonConvertable
 	{
-		static_assert (std::is_base_of<JsonConvertable, Value>(), "Value type must implement interface JsonConvertable");
+		static_assert (std::is_base_of<JsonConstructable, Value>(), "Value type must implement interface JsonConvertable");
 	public:
 		typedef QString Key;
 		typedef QMap<Key, Value> MapType;
@@ -36,10 +37,7 @@ namespace c3picko {
 
 		inline void addAsJson(Key const& key, QJsonObject const& json)
 		{
-			Value value;
-			value.read(json);
-
-			add(key, value);
+			add(key, Value(json));
 		}
 
 		inline bool exists(Key const& key) const
@@ -88,7 +86,7 @@ namespace c3picko {
 		}
 
 	public:
-		inline void read(const QJsonObject& obj) override
+		inline void read(QJsonObject const& obj) override
 		{
 			for (auto it = obj.begin(); it != obj.end(); ++it)
 				addAsJson(it.key(), it.value().toObject());

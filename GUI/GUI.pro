@@ -17,17 +17,19 @@ SOURCES += src/main.cpp \
 
 HEADERS += \
 	include/requestmapper.h \
-	include/global.h \
 	include/apicontroller.h \
 	include/ws_server.hpp \
 	include/types/job.hpp \
-	include/json_convertable.h \
 	include/table.hpp \
 	include/database.hpp \
 	include/types/image.hpp
 
+INCLUDEPATH += $$PWD/../Main
+
 LIBS =
 DEFINES += QT_NO_INFO_OUTPUT
 OTHER_FILES += etc/serverconfig.ini
+
+INCLUDEPATH += $$PWD/../ImageRecognition
 
 include(../QtWebApp/httpserver/httpserver.pri)

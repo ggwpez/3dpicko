@@ -1,7 +1,6 @@
 TEMPLATE = lib
 CONFIG += c++11 staticlib
-CONFIG -= app_bundle
-CONFIG -= qt
+QT += core
 
 SOURCES += \
 	source/main.cpp \
@@ -20,4 +19,5 @@ HEADERS += \
 	include/platesocketprofile.h \
 	include/masterandgoalplateprofile.h
 
+INCLUDEPATH += $$PWD/../Main
 LIBS =
