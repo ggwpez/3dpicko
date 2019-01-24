@@ -79,6 +79,31 @@ var user_id;
 				data.jobs.forEach(AddJobToList);
 				console.log("Jobs:\n" +data +"\ncount: " +data.jobs.length);
 			}
+			else if (type == "createsettingsprofile"){
+				const profile_object = data; 
+				switch(profile_object.type){
+					case "printer-profile": 
+					AddPrinterProfile(profile_object);
+					printer_profiles[profile_object.id] = profile_object;
+					break;
+				}
+				$('#form-new'+profile_object.type)[0].reset();
+				$('#collapse-new'+profile_object.type).collapse('hide');
+				$('#info-dialog-title').text(profile_object.profile_name+" erfolgreich hinzugefügt.");
+				$('#info-dialog').modal('show');
+			}
+			else if(type == "updatesettingsprofile"){
+				const profile_object = data; 
+				switch(profile_object.type){
+					case "printer-profile": 
+					printer_profiles[profile_object.id] = profile_object;
+					break;
+				}
+				$('#link-'+profile_object.id).text(profile_object.profile_name);
+				$('#collapse-'+profile_object.id).collapse('hide');
+				$('#info-dialog-title').text(profile_object.profile_name+" erfolgreich aktualisiert.");
+				$('#info-dialog').modal('show');
+			}
 			else if (type == "debug")
 			{
 				addDebugOutputLine(data.line);
@@ -107,21 +132,21 @@ function AddJobToList(job)
 
 		var name = (job.step == 7) ? "Job" : "Entwurf";
 		var html = '<div class="card m-1" id="job-' +job.id +'">\
-				      <button type="button" class="close" data-toggle="modal" data-target="#deleteJobDialog" onclick="MarkJobForDeletion(\''+job.id+'\')">&times;</button>\
-				      <div class="card-body pb-0">\
-				        <h5 class="card-title">' +name +' ' +job.name +'</h5>\
-				        <img class="card-img" src="' +images_list[job.img_id].path +'" alt="Bild der Agarplatte">\
-				        <p class="card-text"><ul>\
-				        <li>ID: ' +job.id +'</li>\
-				        <li>Erstellt: ' +job.job_created +'</li>\
-				        <li>Schritt: ' +job.step +'</li>\
-				        ' +job.description +'\
-				        </p>\
-				      </div>\
-				      <div class="card-footer bg-white">\
-				        <a href="#" class="btn btn-dark ">bearbeiten</a>\
-				      </div>\
-				    </div>';
+		<button type="button" class="close" data-toggle="modal" data-target="#deleteJobDialog" onclick="MarkJobForDeletion(\''+job.id+'\')">&times;</button>\
+		<div class="card-body pb-0">\
+		<h5 class="card-title">' +name +' ' +job.name +'</h5>\
+		<img class="card-img" src="' +images_list[job.img_id].path +'" alt="Bild der Agarplatte">\
+		<p class="card-text"><ul>\
+		<li>ID: ' +job.id +'</li>\
+		<li>Erstellt: ' +job.job_created +'</li>\
+		<li>Schritt: ' +job.step +'</li>\
+		' +job.description +'\
+		</p>\
+		</div>\
+		<div class="card-footer bg-white">\
+		<a href="#" class="btn btn-dark ">bearbeiten</a>\
+		</div>\
+		</div>';
 
 		document.getElementById('allJobList').insertAdjacentHTML('beforeend', html);
 		all_jobs[job.id] = job;
