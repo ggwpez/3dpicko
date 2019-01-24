@@ -88,4 +88,22 @@ img {
 	z-index: 20;
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none; 
+	margin: 0; 
+}
 
+input[type="number"]{
+	max-width: 30px;
+	text-align: right;
+}
+
+#group h2 {
+	text-align: center;
+}
+
+.card-header{
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
