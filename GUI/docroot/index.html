@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="de">
 <head>
-   <!-- Required meta tags -->
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-   <!-- Bootstrap CSS -->
-   <link rel="stylesheet" href="css/bootstrap.css">
-   <!-- Custom CSS -->
-   <link rel="stylesheet" href="css/custom.css">
-   <link rel="stylesheet" href="css/cropper.css">
-   <title>3CPickO</title>
+ <!-- Required meta tags -->
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ <!-- Bootstrap CSS -->
+ <link rel="stylesheet" href="css/bootstrap.css">
+ <!-- Custom CSS -->
+ <link rel="stylesheet" href="css/custom.css">
+ <link rel="stylesheet" href="css/cropper.css">
+ <title>3CPickO</title>
 </head>
 <body>
  <nav>
@@ -48,98 +48,41 @@
      <a class="nav-link disabled" id="execute-tab" data-toggle="pill" href="#execute">7. Pickjob starten</a>
    </div>
  </div>
- <div class="tab-pane fade show active" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-sm-4 col-md-3 col-lg-2">
-            <div class="nav flex-column nav-pills" id="steps">
-               <h4 id ="headertag">Entwurf</h4>
-               <a class="nav-link active" id="browse-tab" data-toggle="pill" href="#browse">1. Bild auswählen</a>
-               <a class="nav-link disabled" id="cut-tab" data-toggle="pill" href="#cut">2. Bild zuschneiden</a>
-               <a class="nav-link disabled" id="attributes-tab" data-toggle="pill" href="#attributes">3. Attribute angeben</a>
-               <!--<a class="nav-link disabled" id="settings-tab" data-toggle="pill" href="#settings" onclick="startImageProcessing()">Parameter anpassen</a>-->
-               <a class="nav-link disabled" id="selection-tab" data-toggle="pill" href="#selection">4. Kolonien auswählen</a>
-               <a class="nav-link disabled" id="strategy-tab" data-toggle="pill" href="#strategy">5. Pickstrategie wählen</a>
-               <a class="nav-link disabled" id="overview-tab" data-toggle="pill" href="#overview">6. Übersicht</a>
-               <a class="nav-link disabled" id="execute-tab" data-toggle="pill" href="#execute">7. Pickjob starten</a>
-            </div>
-         </div>
-         <div class="col-sm-8 col-md-9 col-lg-10" >
-            <div class="tab-content" id="tabContent">
-               <div class="tab-pane fade show active" id="browse">
-                  <div class="row mb-4">
-                     <div class="col-md-6 col-lg-4">
-                        <h2>Bild auswählen</h2>
-                        <div id="dropZone" style="width: 300px; height: 300px; background-color: grey"></div>
-                        <div id="chosen-image"></div>
-                     </div>
-                  </div>
-                  <div class="row">
-                     <div class="col" >
-                        <h2>Alle Bilder</h2>
-                        <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
-                        <div id="all-images" style="display: none;"></div>
-                     </div>
-                  </div>
-               </div>
-               <div class="tab-pane fade col-md-8" id="cut">
-                  <h1>Bild manuell zuschneiden</h1>
-                  <div class="crop_container">
+ <div class="col-sm-8 col-md-9 col-lg-10" >
+  <div class="tab-content" id="tabContent">
+   <div class="tab-pane fade show active" id="browse">
+    <div class="row mb-4">
+     <div class="col-md-6 col-lg-4">
+      <h2>Bild auswählen</h2>
+      <div id="dropZone" style="width: 200px; height: 200px; background-color: grey"></div>
+      <div id="chosen-image"></div>
+    </div>
+  </div>
+  <div class="row">
+   <div class="col" >
+    <h2>Alle Bilder</h2>
+    <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
+    <div id="all-images" style="display: none;"></div>
+  </div>
+</div>
+</div>
+<div class="tab-pane fade col-md-8" id="cut">
+  <h1>Bild manuell zuschneiden</h1>
+  <div class="crop_container">
                         <div>
                           <img id="cutImg" src="" alt="Picture">
                         </div>
                       </div>
-                  <br>
-                  <button class="btn btn-dark m-2" onclick="attributesTab()">Weiter</button>
-               </div>
-               <div class="tab-pane fade" id="attributes">
-                  <form>
-                     <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Bild Name</label>
-                        <div class="col-sm-10">
-                           <input type="text" readonly class="form-control-plaintext" id="staticImgName" value="">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Job Name</label>
-                        <div class="col-sm-10">
-                           <input type="text" class="form-control" id="inputJobName" aria-describedby="jobNameHelp">
-                           <small id="jobNameHelp" class="form-text text-muted">Optionaler Name</small>
-                        </div>
-                     </div>
-                  </form>
-                  <button class="btn btn-dark m-2" onclick="selectionTab()">Weiter3</button>
-               </div>
-               <div class="tab-pane fade col-md-8" id="selection">
-                  <h1>Kolonien auswählen/abwählen</h1>
-                  <p>
-                     <div id="clickArea">
-                        <img id="photograph" src="" />
-                        <canvas id="drawArea" width="900" height="600"></canvas>
-                     </div>
-                  </p>
-                  <p>
-                     <div id="buttons">
-                        <button class="btn btn-dark" onclick="getPositions(chosen_image.id)">Automatische Kolonieerkennung</button>
-                        <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
-                        <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
-                        <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
-                     </div>
-                  </p>
-                  <p id="showCoordinates"></p>
-               </div>
-               <div class="tab-pane fade col-md-8" id="strategy">
-                  "...danach soll der Nutzer auf einer Seite die Pickstrategie festlegen können.<br>
-                  <br>
-                  <button class="btn btn-dark m-2" onclick="overviewTab()">Übersicht ></button>
-               </div>
-               <div class="tab-pane fade col-md-8" id="overview">
-                  <h2>Übersicht über alle Attribute</h2>
-                  <button class="btn btn-dark m-2 disabled" onclick="alert('noch nicht alle nötigen Angaben gemacht')">Pickjob starten ></button>
-               </div>
-            </div>
-         </div>
-      </div>
+
+  <br>
+  <button class="btn btn-dark m-2" onclick="attributesTab()">Weiter</button>
+</div>
+<div class="tab-pane fade" id="attributes">
+  <form id="attributes-form" name="attributes-form">
+   <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Bild Name</label>
+    <div class="col-sm-10">
+     <input type="text" readonly class="form-control-plaintext" id="staticImgName" value="">
    </div>
  </div>
  <div class="form-group row">
@@ -206,16 +149,16 @@
      <button class="btn btn-dark my-2" type="submit">Filtern</button>
    </form>
    <div class="card-deck" id="allJobList">
-			    <!--<div class="card m-1">
-			      <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select('card2')">&times;</button>
-			      <div class="card-body pb-0">
-			        <h5 class="card-title">SuperVirus V-8</h5>
-			        <img class="card-img" src="img/colony.jpg" alt="Bild der Agarplatte">
-			        <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Nein</li></ul>Virus mit dem ich die Menschheit ausrotten werde. Mir fehlt nur noch ein automatischer Colony-Picker. Mit Drag&Drop.</p>
-			      </div>
-			      <div class="card-footer bg-white">
-			        <a href="#" class="btn btn-dark ">bearbeiten</a>
-			      </div>
+             <!--<div class="card m-1">
+               <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select('card2')">&times;</button>
+               <div class="card-body pb-0">
+                 <h5 class="card-title">SuperVirus V-8</h5>
+                 <img class="card-img" src="img/colony.jpg" alt="Bild der Agarplatte">
+                 <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Nein</li></ul>Virus mit dem ich die Menschheit ausrotten werde. Mir fehlt nur noch ein automatischer Colony-Picker. Mit Drag&Drop.</p>
+               </div>
+               <div class="card-footer bg-white">
+                 <a href="#" class="btn btn-dark ">bearbeiten</a>
+               </div>
           </div>
        </div>
       hässlicher Hack, teilt card-deck für "kleiner als large" displays
@@ -325,8 +268,7 @@
 <script type="text/javascript" src="js/api.js"></script>
 <script type="text/javascript" src="js/dropzone.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
-<script type="text/javascript" src="js/colonydetection.js"></script>
-<!-- <script type="text/javascript" src="js/imagerecognition.js"></script> -->
+<script type="text/javascript" src="js/imagerecognition.js"></script>
 <script type="text/javascript" src="js/config.js"></script>
 <script type="text/javascript" src="js/cropper.js"></script>
 </body>
