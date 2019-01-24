@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<html>
+	<head>
+        <meta charset="utf-8"/>
+		<title>c3picko</title>
+        <link rel="stylesheet" href="css/colonydetection.css">
+	</head>
+	<body>
+        <p>
+			<div id="clickArea">
+				<img id="photograph" src="RoteKolonien.jpg" />
+				<canvas id="drawArea" class="add"></canvas>
+			</div>
+		</P>
+		<p>
+			<div id="buttons">
+				<button type="button" onclick="getPositions()">Automatische Kolonieerkennung</button>
+				<button type="button" onclick="editColonyMode('add')">Fuege Kolinie hinzu</button>
+				<button type="button" onclick="editColonyMode('del')">Loesche Kolinie</button>
+				<button type="button" onclick="recPositions()">fertig</button>
+			</div>
+		</p>
+			<p id="showCoordinates">
+		</p>
+		<script type="text/javascript" src="js/colonydetection.js"></script> 
+  </body>
+</html>
