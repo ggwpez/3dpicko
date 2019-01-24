@@ -5,10 +5,6 @@ body {
 	*/
 }
 
-.custom-file-label::after {
-	content: "Durchsuchen";
-}
-
 .navbar{
 	margin-bottom: 20px;
 }
@@ -42,28 +38,42 @@ body {
 	color: #DDDDDD;
 }
 
+.dropzone{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+.add {
+	cursor: copy;
+}
+
+.del
+	{
+	cursor: no-drop;
+}
 
 #clickArea {
 	width: 900px;
 	height: 600px;
-	border: 2px black solid;
+	border: 2px white solid;
 	overflow: hidden;
 	background-color: #transparent;
 	cursor: pointer;
 }
+
 #photograph {
 	width: 900px;
 	height: 600px;
 	position: absolute;
 	z-index:1;
 }
+
 #drawArea {
+	width: 900px;
+	height: 600px;
 	position: absolute;
 	z-index: 20;
 }
 
-.dropzone{
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center bottom;
-}
+

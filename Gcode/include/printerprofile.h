@@ -15,11 +15,11 @@ namespace c3picko {
 class PrinterProfile {
  public:
   explicit PrinterProfile(
-      const Point& cut_filament_position, float filament_extrusion_length,
-      float z_coordinate_extruded_filament_above_plates,
-      float z_coordinate_extruded_filament_inside_source_plate,
-      float z_coordinate_extruded_filament_inside_master_plate,
-      float z_coordinate_extruded_filament_inside_goal_plate);
+	  const Point& cut_filament_position, float filament_extrusion_length,
+	  float z_coordinate_extruded_filament_above_plates,
+	  float z_coordinate_extruded_filament_inside_source_plate,
+	  float z_coordinate_extruded_filament_inside_master_plate,
+	  float z_coordinate_extruded_filament_inside_goal_plate);
 
   Point cutFilamentPosition() const;
   float filamentExtrusionLength() const;
