@@ -16,7 +16,7 @@ inline QDateTime parseDateTime(QJsonValue obj)
 
 inline QString Root()
 {
-	return "/home/vados/Code/Projects/3cpicko/GUI/";
+    return "";
 }
 
 inline QString Etc()

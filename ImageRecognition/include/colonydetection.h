@@ -8,6 +8,7 @@
 #include "conversion.h"
 #include "detectionsettings.h"
 #include "preprocessing.h"
+#include "test.h"
 
 namespace c3picko {
 

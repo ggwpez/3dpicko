@@ -3,6 +3,7 @@
 TEMPLATE = app
 CONFIG += console c++11
 QT += network core websockets
+QT -=gui
 
 SOURCES += main.cpp
 

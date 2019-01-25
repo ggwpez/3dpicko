@@ -10,17 +10,17 @@ SOURCES += \
 	src/detectionsettings.cpp \
 	src/dishdetection.cpp \
 	src/imageediting.cpp \
-	src/main.cpp \
-	src/preprocessing.cpp
+	src/preprocessing.cpp \
+    src/test.cpp
 
 HEADERS += \
-	include/colonydetection.h \
-	include/conversion.h \
-	include/detectionsettings.h \
-	include/dishdetection.h \
-	include/imageediting.h \
-	include/main.h \
-	include/preprocessing.h
+    include/colonydetection.h \
+    include/conversion.h \
+    include/detectionsettings.h \
+    include/dishdetection.h \
+    include/imageediting.h \
+    include/preprocessing.h \
+    include/test.h
 
 INCLUDEPATH += /usr/local/include/opencv
 

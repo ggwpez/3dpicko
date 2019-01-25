@@ -103,7 +103,7 @@ std::vector<cv::Vec3f> ColonyDetection::algorithmFindContours(cv::Mat src, std::
         // start preprocessing
         Preprocessing::preprocessing(src, working, settings);
 
-    //    Test::imagePrint(working);
+        //Test::imagePrint(working);
 
         // use the hough circle algorithmn
         cv::HoughCircles(dest, positions, CV_HOUGH_GRADIENT, 1, 100, 20, 20, 0, 30);
@@ -135,8 +135,6 @@ std::vector<cv::Vec3f> ColonyDetection::algorithmFindContours(cv::Mat src, std::
 
         cv::waitKey(0);
         cv::destroyWindow("dest");
-
-
 
         // convert the positions of the colonies in procent
         return Conversion::createColonyCoordinates(positions, cols, rows);
