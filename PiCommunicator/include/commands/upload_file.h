@@ -5,6 +5,8 @@
 #include "datamodel/location.h"
 #include "responses/upload_response.h"
 
+class QFile;
+
 namespace c3picko
 {
 namespace pi
@@ -15,7 +17,12 @@ namespace pi
 		{
 			Q_OBJECT
 
+			UploadFile() = delete;
+			using Command::Command;
+
 		  public:
+			typedef responses::UploadResponse Response;
+
 			/**
 			 * @brief Uploads a new file with content @p data to @p file_name in @p location
 			 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
@@ -25,21 +32,20 @@ namespace pi
 			 * @param select Should the file be selected?
 			 * @param print Should the file be printed?
 			 */
-			UploadFile(QByteArray content, data::Location location, QString file_name, bool select, bool print);
+			static UploadFile* CreateFile(QByteArray content, data::Location location, QString file_name, bool select = false,
+										  bool print = false);
 
 			/**
-			 * @brief UploadFile Creates a new folder @p folder_path on location local.
+			 * @brief Creates a new folder @p folder_path on location local.
 			 * NOTE SdCard else is not supported by octoprint yet
 			 * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
 			 * @param folder_name Name of the folder to create
 			 */
-			UploadFile(QString folder_name, QString path, data::Location location);
-
-			typedef responses::UploadResponse Response;
+			static UploadFile* CreateFolder(QString folder_name, QString path, data::Location location);
 
 		  protected:
-			QHttpMultiPart* BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print);
-			QHttpMultiPart* BuildFolderCreatePacket(QString folder_name, QString path);
+			static QHttpMultiPart* BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print);
+			static QHttpMultiPart* BuildFolderCreatePacket(QString folder_name, QString path);
 
 		  public slots:
 			virtual void OnReplyFinished(QNetworkReply* reply) override;

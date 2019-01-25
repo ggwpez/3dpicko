@@ -67,43 +67,48 @@ void PiCommands::GetAllFiles()
 	QCoreApplication	   app(argc, nullptr);
 	c3picko::pi::OctoPrint printer("127.0.0.1:8080", "<KEY>");
 
-	c3picko::pi::commands::GetAllFiles cmd(true);
+	c3picko::pi::Command* cmd = c3picko::pi::commands::GetAllFiles::AllFilesRecursive();
 
-	QObject::connect(&cmd, &Command::OnStatusOk, this, &PiCommands::OnStatusOk);
-	QObject::connect(&cmd, &Command::OnStatusErr, this, &PiCommands::OnStatusErr);
-	QObject::connect(&cmd, &Command::OnNetworkErr, this, &PiCommands::OnNetworkErr);
+	QObject::connect(cmd, &Command::OnStatusOk, this, &PiCommands::OnStatusOk);
+	QObject::connect(cmd, &Command::OnStatusErr, this, &PiCommands::OnStatusErr);
+	QObject::connect(cmd, &Command::OnNetworkErr, this, &PiCommands::OnNetworkErr);
+
+	QObject::connect(this, &PiCommands::done, cmd, &QObject::deleteLater);
 	QObject::connect(this, &PiCommands::done, &app, &QCoreApplication::quit);
 
-	printer.SendCommand(&cmd);
+	printer.SendCommand(cmd);
 	app.exec();
 }
 
 void PiCommands::UploadFile1()
 {
-	c3picko::pi::commands::UploadFile cmd("subfolder", "folder/", data::Location::LOCAL);
+	c3picko::pi::Command* cmd = commands::UploadFile::CreateFolder("subfolder", "folder/", data::Location::LOCAL);
 
 	QString	filename = QFINDTESTDATA("upload_response1.http");
-	QByteArray data		= cmd.GetPostData();
+	QByteArray data		= cmd->GetPostData();
 
 	QFile file(filename);
 	QVERIFY(file.open(QIODevice::ReadOnly));
 	QByteArray expect = file.readAll();
 
 	QCOMPARE(data, expect);
+	delete cmd;
 }
 
 void PiCommands::UploadFile2()
 {
-	c3picko::pi::commands::UploadFile cmd("M109 T0 S220.000000\nT0\nG21\nG90\n...", data::Location::LOCAL, "whistle_v2.gcode", true, true);
+	c3picko::pi::Command* cmd = commands::UploadFile::CreateFile("M109 T0 S220.000000\nT0\nG21\nG90\n...", data::Location::LOCAL,
+																 "whistle_v2.gcode", true, true);
 
 	QString	filename = QFINDTESTDATA("upload_response2.http");
-	QByteArray data		= cmd.GetPostData();
+	QByteArray data		= cmd->GetPostData();
 
 	QFile file(filename);
 	QVERIFY(file.open(QIODevice::ReadOnly));
 	QByteArray expect = file.readAll();
 
 	QCOMPARE(data, expect);
+	delete cmd;
 }
 
 void PiCommands::Parsing()

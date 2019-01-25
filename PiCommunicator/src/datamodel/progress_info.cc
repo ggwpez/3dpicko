@@ -1,4 +1,5 @@
 #include "datamodel/progress_info.h"
+#include <QJsonObject>
 #include <QJsonValue>
 #include <cstring>
 
@@ -8,7 +9,7 @@ namespace pi
 {
 	namespace data
 	{
-		ProgressInfo::ProgressInfo(QJsonObject obj)
+		ProgressInfo::ProgressInfo(const QJsonObject& obj)
 		{
 			completion		= obj["completion"].toDouble();
 			filepos			= obj["filepos"].toInt();

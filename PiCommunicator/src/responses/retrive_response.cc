@@ -9,8 +9,7 @@ namespace pi
 {
 	namespace responses
 	{
-
-		RetriveResponse::RetriveResponse(QJsonObject obj) : Response(obj)
+		RetriveResponse::RetriveResponse(const QJsonObject& obj) : Response(obj)
 		{
 			for (QJsonValue const& file : obj["files"].toArray())
 			{

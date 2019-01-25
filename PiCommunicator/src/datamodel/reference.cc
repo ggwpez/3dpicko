@@ -1,4 +1,5 @@
 #include "datamodel/reference.h"
+#include <QJsonObject>
 
 namespace c3picko
 {
@@ -6,7 +7,7 @@ namespace pi
 {
 	namespace data
 	{
-		Reference::Reference(QJsonObject obj)
+		Reference::Reference(const QJsonObject& obj)
 		{
 			resource = obj["resource"].toString();
 
@@ -15,6 +16,6 @@ namespace pi
 			if (obj.contains("model"))
 				download = obj["model"].toString();
 		}
-	} // namespace responses
+	} // namespace data
 } // namespace commands
 } // namespace c3picko

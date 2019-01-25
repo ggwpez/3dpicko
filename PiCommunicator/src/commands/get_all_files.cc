@@ -9,10 +9,9 @@ namespace pi
 {
 	namespace commands
 	{
-		GetAllFiles::GetAllFiles(bool recursive)
-			: Command("files" + QString(recursive ? "?recursive=true" : ""), QJsonObject(), {200}, Command::HTTPType::GET)
-		{
-		}
+		GetAllFiles* GetAllFiles::AllFiles() { return new GetAllFiles("files?recursive=false", {200}, Command::HTTPType::GET); }
+
+		GetAllFiles* GetAllFiles::AllFilesRecursive() { return new GetAllFiles("files?recursive=true", {200}, Command::HTTPType::GET); }
 
 		void GetAllFiles::OnReplyFinished(QNetworkReply* reply) { CheckStatusCodeAndResponse<Response>(reply); }
 	} // namespace commands

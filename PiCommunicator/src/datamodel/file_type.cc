@@ -1,4 +1,5 @@
 #include "datamodel/file_type.h"
+#include <QString>
 
 namespace c3picko
 {
@@ -6,7 +7,7 @@ namespace pi
 {
 	namespace data
 	{
-		FileType FileTypeFromString(QString str)
+		FileType FileTypeFromString(QString const& str)
 		{
 			if (str == "model")
 				return FileType::MODEL;

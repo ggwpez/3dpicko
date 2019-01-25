@@ -1,7 +1,7 @@
 #ifndef ORIGIN_H
 #define ORIGIN_H
 
-#include <QString>
+class QString;
 
 namespace c3picko
 {
@@ -18,7 +18,7 @@ namespace pi
 			SD_CARD
 		};
 
-		Location LocationFromString(QString str);
+		Location LocationFromString(QString const& str);
 		QString ToString(Location val);
 	} // namespace data
 } // namespace commands

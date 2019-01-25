@@ -1,7 +1,7 @@
 #ifndef FILE_TYPE_H
 #define FILE_TYPE_H
 
-#include <QString>
+class QString;
 
 namespace c3picko
 {
@@ -20,7 +20,7 @@ namespace pi
 			FOLDER
 		};
 
-		FileType FileTypeFromString(QString str);
+		FileType FileTypeFromString(QString const& str);
 	} // namespace data
 } // namespace commands
 } // namespace c3picko
