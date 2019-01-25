@@ -5,7 +5,7 @@ CONFIG += console c++11
 QT = network core websockets
 
 SOURCES += main.cpp \
-    global.cc
+	global.cc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../GUI/release/ -lGUIWebserver
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../GUI/debug/ -lGUIWebserver
@@ -72,5 +72,5 @@ HEADERS += \
 
 LIBS += -lopencv_core \
 		-lopencv_imgproc \
-		-lopencv_highgui \
-		-lopencv_imgcodecs
+		-lopencv_highgui
+		#-lopencv_imgcodecs

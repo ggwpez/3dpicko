@@ -51,7 +51,8 @@ function resizeCanvas(canvas) {
 }
 
 // colony detection
-function getPositions(image_id){
+function getPositions(){
+    var image_id = chosen_image.id;
     console.log("colonies  from image " +image_id);
 // lade Ergebnisse der Kolonieerkennung
 

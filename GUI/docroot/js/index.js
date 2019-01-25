@@ -303,6 +303,8 @@ function selectionTab(){
 }
 function strategyTab(){
 	tabEnter(4);
+
+	drawWells();
 }
 function overviewTab(){
 	tabEnter(5);

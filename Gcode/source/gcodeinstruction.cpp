@@ -130,8 +130,8 @@ class GcodeInstruction::GcodeField::Parameter {
 	return GcodeInstruction::GcodeField('S', s_waiting_time);
   }
 
-  static GcodeField P(const bool cold_extrusion_allowed) {
-	return GcodeInstruction::GcodeField('P', (cold_extrusion_allowed ? '0' : '1'));
+  static GcodeField P(const int p_flag) {
+	return GcodeInstruction::GcodeField('P', p_flag);
   }
 };
 
@@ -150,7 +150,7 @@ GcodeInstruction::GcodeField::GcodeField(char letter, float number) : letter_(le
 GcodeInstruction GcodeInstruction::Init() {
   return GcodeInstruction({
 	GcodeField::Command::M302(),
-	GcodeField::P
+	GcodeField::Parameter::P(0),
 	GcodeField::Command::G28(),
 	GcodeField::Command::G90(),
 	GcodeField::Command::M82(),
