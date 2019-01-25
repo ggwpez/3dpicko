@@ -1,3 +1,3 @@
-#include "include/detectionsettings.h"
+#include "../include/detectionsettings.h"
 
 struct detectionSettings;
