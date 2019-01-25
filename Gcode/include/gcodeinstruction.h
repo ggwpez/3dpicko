@@ -123,6 +123,12 @@ class GcodeInstruction {
   static GcodeInstruction Wait(const int s_waiting_time);
 
   /**
+   * @brief Creates a gcode instruction for allowing cold extrusion.
+   * @return a gcode instruction of the form "M302 P1",
+   */
+  static GcodeInstruction AllowColdExtrusion();
+
+  /**
    * Returns a string representation of
    * this single gcode command, such as
    * "G1 X35 Y120 Z320".

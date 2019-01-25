@@ -38,6 +38,11 @@ class GcodeInstruction::GcodeField::Command {
    * extrusion to absolute mode.
    */
   static GcodeField M82() { return GcodeInstruction::GcodeField('M', 82); }
+  /**
+   * Creates and returns the g-code command M302 used for setting up
+   * cold extrusion.
+   */
+  static GcodeField M302() { return GcodeInstruction::GcodeField('M', 302); }
 };
 
 /**
@@ -110,6 +115,16 @@ class GcodeInstruction::GcodeField::Parameter {
   static GcodeField S(const int s_waiting_time) {
     return GcodeInstruction::GcodeField('S', s_waiting_time);
   }
+
+  /**
+   * @brief Creates and returns the Pnnn parameter used for enabling
+   * and disabling cold extrusion.
+   * @param flag Allow extrusion at any temperature.
+   * @return the g-code field Pnnn
+   */
+  static GcodeField P(const int flag) {
+    return GcodeInstruction::GcodeField('P', flag);
+  }
 };
 
 std::string GcodeInstruction::GcodeField::ToString() const {
@@ -176,6 +191,11 @@ GcodeInstruction GcodeInstruction::SetMovementSpeed(
 GcodeInstruction GcodeInstruction::Wait(const int s_waiting_time) {
   return GcodeInstruction(
       {GcodeField::Command::G4(), GcodeField::Parameter::S(s_waiting_time)});
+}
+
+GcodeInstruction GcodeInstruction::AllowColdExtrusion() {
+  return GcodeInstruction(
+      {GcodeField::Command::M302(), GcodeField::Parameter::P(1)});
 }
 
 GcodeInstruction::GcodeInstruction(std::vector<GcodeField> fields)

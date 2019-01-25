@@ -65,6 +65,7 @@ std::vector<GcodeInstruction> GcodeGenerator::Init() {
   gcode_init.push_back(GcodeInstruction::AbsolutePositioning());
   gcode_init.push_back(GcodeInstruction::ExtrusionModeAbsolute());
   gcode_init.push_back(GcodeInstruction::Home());
+  gcode_init.push_back(GcodeInstruction::AllowColdExtrusion());
   return gcode_init;
 }
 
