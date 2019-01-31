@@ -30,31 +30,6 @@ function DeletePlateProfile(id){
   // TODO Backend delete
 }
 
-$('#delete-dialog').on('show.bs.modal', function (e) {
-  // <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${printer_profile.id}">&times;</button>
-  const type = $(e.relatedTarget).data('type');
-  const id = $(e.relatedTarget).data('id');
-  
-  switch (type) {
-    case "image":
-    // TODO update createpickjob.js
-    // document.getElementById("delete-dialog-body").innerHTML = "Bild löschen?";
-    // document.getElementById("delete-button").onclick = function(){DeleteImage(id)}
-    break;
-    case "printer-profile":
-    document.getElementById('delete-dialog-body').innerHTML = `Delete printer profile ${printer_profiles[id].profile_name}?`;
-    document.getElementById('delete-button').onclick = function(){DeletePrinterProfile(id)};
-    break;
-    case "socket-profile":
-    document.getElementById('delete-dialog-body').innerHTML = `Delete socket profile ${socket_profiles[id].profile_name}?`;
-    document.getElementById('delete-button').onclick = function(){DeleteSocketProfile(id)};
-    break;
-    case "plate-profile":
-    document.getElementById('delete-dialog-body').innerHTML = `Delete plate profile ${plate_profiles[id].profile_name}?`;
-    document.getElementById('delete-button').onclick = function(){DeletePlateProfile(id)};
-    break;
-  }
-});
 $(function LoadProfiles(){
   newprinterprofile = {
     "id" : "newprinter-profile",
@@ -152,7 +127,7 @@ function AddPrinterProfile(printer_profile){
   let deletable = true;
 
   if(printer_profile.id == "newprinter-profile"){
-    link_text = "Create new printer profile ->"; 
+    link_text = "Create new printer profile >"; 
     button_text = "Create profile";
     deletable = false;
   } 
@@ -245,7 +220,7 @@ function AddSocketProfile(socket_profile){
   let deletable = true;
 
   if(socket_profile.id == "newsocket-profile"){
-    link_text = "Create new socket profile ->"; 
+    link_text = "Create new socket profile >"; 
     button_text = "Create socket profile";
     deletable = false;
   } 
@@ -343,7 +318,7 @@ function AddPlateProfile(plate_profile){
   let deletable = true;
 
   if(plate_profile.id == "newplate-profile"){
-    link_text = "Create new goal plate profile ->"; 
+    link_text = "Create new goal plate profile >"; 
     button_text = "Create plate profile";
     deletable = false;
   } 
