@@ -18,6 +18,15 @@ namespace c3picko {
 
 	}
 
+	Image Image::crop(Image original, QJsonObject window)
+	{
+		QString desc, path;
+
+		desc = "Cropped version ";
+
+		return Image(original.id() +".1", original.original_name_, desc, path, QDateTime::currentDateTime());
+	}
+
 	Image::ID Image::id() const
 	{
 		return id_;

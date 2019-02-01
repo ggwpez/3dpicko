@@ -321,6 +321,9 @@ function cutTab(){
 function attributesTab(){
 	tabEnter(2);
 	document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
+
+	// Do the cutting
+	api('crop-image', { id: chosen_image.id, window: cropper.getData() });
 }
 
 

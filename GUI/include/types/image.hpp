@@ -12,6 +12,8 @@ namespace c3picko {
 		Image(QJsonObject const&);
 		Image(ID id, QString original_name, QString description, QString path, QDateTime uploaded);
 
+		static Image crop(Image original, QJsonObject window);
+
 	private:
 		ID id_;
 		QString original_name_;

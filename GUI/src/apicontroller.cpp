@@ -174,6 +174,26 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			}
 		}
 	}
+	else if (path.startsWith("crop-image"))
+	{
+		QString img_id = request["id"].toString();
+		QJsonObject window = request["window"].toObject();
+		cv::Rect rect(window["x"].toInt(), window["y"].toInt(), window["width"].toInt(), window["height"].toInt());
+
+		if (! db_.imageTable().exists(img_id))
+		{
+			emit OnFileCropError(img_id, client);
+		}
+		else
+		{
+			Image const& img = db_.imageTable().get(img_id);
+
+			cv::Mat data = cv::imread((DocRoot() +img.path()).toLatin1().constData());
+			cv::Mat cropped(data, rect);
+
+			Image cropped_img(img);
+		}
+	}
 	else if (path.startsWith("createsettingsprofile")){
 		QJsonObject json_profile_object = request["data"].toObject();
 		// TODO create new profile
