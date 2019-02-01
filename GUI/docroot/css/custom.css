@@ -1,21 +1,14 @@
-body {
-	/*
-	for fixed navbar
-	padding-top: 100px;
-	*/
-}
-
 img {
-  max-width: 100%; /* cropper: This rule is very important, please do not ignore this! */
+	max-width: 100%; /* cropper: This rule is very important, please do not ignore this! */
 }
 
 .cropper_container {
-      max-width: 640px;
-      margin: 20px auto;
-    }
-    img {
-      width: 100%;
-    }
+	max-width: 640px;
+	margin: 20px auto;
+}
+.cropper_container img {
+	width: 100%;
+}
 
 .navbar{
 	margin-bottom: 20px;
@@ -25,7 +18,9 @@ img {
 .close{
 	position: absolute;
 	display: block;
-	right: 5px;
+	font-size: xx-large;
+	top: 5px; 
+	right: 10px;
 }
 
 /*Internet Explorer Card-Height Fix*/
@@ -48,6 +43,7 @@ img {
 
 .nav-pills .nav-link.disabled{
 	color: #DDDDDD;
+	background-color: #11d100
 }
 
 .dropzone{
@@ -56,12 +52,28 @@ img {
 	background-position: center;
 }
 
+#dropZone{
+	background-color: transparent;
+	border: none;
+	width: 200px;
+	height: 200px;
+}
+
+#dropZone.empty{
+	background-color: #ddd;
+	border: 2px dashed black;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 200px;
+	font-size: 2em;
+	font-weight: bold;
+}
+
 .add {
 	cursor: copy;
 }
 
-.del
-	{
+.del{
 	cursor: no-drop;
 }
 
@@ -94,9 +106,10 @@ input[type=number]::-webkit-outer-spin-button {
 	margin: 0; 
 }
 
-input[type="number"]{
+input[type=number]{
 	max-width: 30px;
 	text-align: right;
+	-moz-appearance:textfield;
 }
 
 #group h2 {
@@ -106,4 +119,32 @@ input[type="number"]{
 .card-header{
 	padding-bottom: 0px;
 	padding-top: 0px;
+}
+
+#alert-window {
+	position: fixed;
+	right: 5px;
+	top: 5px;
+	z-index: 10;
+}
+
+#steps{
+  pointer-events: none;
+}
+
+.image-card{
+	display: inline-block;
+	vertical-align:top;
+	max-width: 200px;
+	min-height: 250px;
+}
+.job-card{
+	display: inline-block;
+	vertical-align:top;
+	max-width: 250px;
+	min-height: 250px;
+}
+
+label{
+	font-weight: bold;
 }

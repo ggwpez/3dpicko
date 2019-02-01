@@ -1,146 +1,178 @@
 <!doctype html>
 <html lang="de">
 <head>
- <!-- Required meta tags -->
- <meta charset="utf-8">
- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
- <!-- Bootstrap CSS -->
- <link rel="stylesheet" href="css/bootstrap.css">
- <!-- Custom CSS -->
- <link rel="stylesheet" href="css/custom.css">
- <link rel="stylesheet" href="css/cropper.css">
- <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-
- <title>3CPickO</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="css/cropper.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+  <title>3CPickO</title>
 </head>
 <body>
- <nav>
-  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+  <nav>
+   <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
     <a class="nav-item nav-link" id="nav-start-tab" data-toggle="tab" href="#nav-start" role="tab" aria-controls="nav-start" aria-selected="false">Start</a>
-    <a class="nav-item nav-link active" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="true">Neuer Job</a>
-    <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">Alle Jobs</a>
-    <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">Historie</a>
-    <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Einstellungen</a>
+    <a class="nav-item nav-link active" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="true">New Job</a>
+    <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">All Jobs</a>
+    <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">History</a>
+    <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
     <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-settings" aria-selected="false">Admin</a>
-  </div>
+ </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
- <div class="tab-pane fade" id="nav-start" role="tabpanel" aria-labelledby="nav-start-tab">
-  <div class="container justify-content-start">
-   <div class="row ">
-    <div class="col-lg-8">
+  <div class="tab-pane fade" id="nav-start" role="tabpanel" aria-labelledby="nav-start-tab">
+   <div class="container justify-content-start">
+    <div class="row ">
+     <div class="col-lg-8">
       <h1>Intro …</h1>
-    </div>
-  </div>
+   </div>
+</div>
 </div>
 </div>
 <div class="tab-pane fade show active" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
- <div class="container-fluid">
-  <div class="row">
-   <div class="col-sm-4 col-md-3 col-lg-2">
-    <div class="nav flex-column nav-pills" id="steps">
-     <h4 id ="headertag">Entwurf</h4>
-     <a class="nav-link active" id="browse-tab" data-toggle="pill" href="#browse">1. Bild auswählen</a>
-     <a class="nav-link disabled" id="cut-tab" data-toggle="pill" href="#cut">2. Bild zuschneiden</a>
-     <a class="nav-link disabled" id="attributes-tab" data-toggle="pill" href="#attributes">3. Attribute angeben</a>
-     <!--<a class="nav-link disabled" id="settings-tab" data-toggle="pill" href="#settings" onclick="startImageProcessing()">Parameter anpassen</a>-->
-     <a class="nav-link disabled" id="selection-tab" data-toggle="pill" href="#selection">4. Kolonien auswählen</a>
-     <a class="nav-link disabled" id="strategy-tab" data-toggle="pill" href="#strategy">5. Pickstrategie wählen</a>
-     <a class="nav-link disabled" id="overview-tab" data-toggle="pill" href="#overview">6. Übersicht</a>
-     <a class="nav-link disabled" id="execute-tab" data-toggle="pill" href="#execute">7. Pickjob starten</a>
-   </div>
- </div>
- <div class="col-sm-8 col-md-9 col-lg-10" >
-  <div class="tab-content" id="tabContent">
-   <div class="tab-pane fade show active" id="browse">
-    <div class="row mb-4">
-     <div class="col-md-6 col-lg-4">
-      <h2>Bild auswählen</h2>
-      <div id="dropZone" style="width: 200px; height: 200px; background-color: grey"></div>
-      <div id="chosen-image"></div>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-sm-4 col-md-3 col-lg-2">
+      <div class="nav flex-column nav-pills" id="steps">
+       <h4 id ="headertag">Entwurf</h4>
+              <!-- <a class="nav-link active" id="browse-tab" data-toggle="pill" href="#browse">1. Bild auswählen</a>
+                <a class="nav-link disabled" id="cut-tab" data-toggle="pill" href="#cut">2. Bild zuschneiden</a>
+                <a class="nav-link disabled" id="attributes-tab" data-toggle="pill" href="#attributes">3. Attribute angeben</a>
+                <a class="nav-link disabled" id="settings-tab" data-toggle="pill" href="#settings" onclick="startImageProcessing()">Parameter anpassen</a>
+                <a class="nav-link disabled" id="selection-tab" data-toggle="pill" href="#selection">4. Kolonien auswählen</a>
+                <a class="nav-link disabled" id="strategy-tab" data-toggle="pill" href="#strategy">5. Pickstrategie wählen</a>
+                <a class="nav-link disabled" id="overview-tab" data-toggle="pill" href="#overview">6. Übersicht</a>
+                <a class="nav-link disabled" id="execute-tab" data-toggle="pill" href="#execute">7. Pickjob starten</a> -->
+                <span class="nav-link active" id="browse-tab" href="#browse">1. Bild auswählen</span>
+                <span class="nav-link" id="cut-tab" href="#cut">2. Bild zuschneiden</span>
+                <span class="nav-link" id="attributes-tab" href="#attributes">3. Attribute angeben</span>
+                <!--<span class="nav-link" id="settings-tab" href="#settings" onclick="startImageProcessing()">Parameter anpassen</span>-->
+                <span class="nav-link" id="selection-tab" href="#selection">4. Kolonien auswählen</span>
+                <span class="nav-link" id="strategy-tab" href="#strategy">5. Pickstrategie wählen</span>
+                <span class="nav-link" id="overview-tab" href="#overview">6. Übersicht</span>
+                <span class="nav-link" id="execute-tab" href="#execute">7. Pickjob starten</span>
+             </div>
+          </div>
+          <div class="col-sm-8 col-md-9 col-lg-10" >
+            <div class="tab-content" id="tabContent">
+             <div class="tab-pane fade show active" id="browse">
+              <div class="row mb-4">
+               <div class="col-md-6 col-lg-4">
+                <h2>Choose image</h2>
+                <div id="dropZone" class="empty">Drop Image</div>
+                <div id="chosen-image"></div>
+             </div>
+          </div>
+          <div class="row">
+            <div class="col" >
+             <h2>All images</h2>
+             <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
+             <div id="all-images" style="display: none;"></div>
+          </div>
+       </div>
     </div>
-  </div>
-  <div class="row">
-   <div class="col" >
-    <h2>Alle Bilder</h2>
-    <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
-    <div id="all-images" style="display: none;"></div>
-  </div>
-</div>
-</div>
-<div class="tab-pane fade col-md-8" id="cut">
-  <h1>Bild manuell zuschneiden</h1>
-  <div class="crop_container">
-                        <div>
-                          <img id="cutImg" src="" alt="Picture">
-                        </div>
-                      </div>
-
-  <br>
-  <button class="btn btn-dark m-2" onclick="attributesTab()">Weiter</button>
-</div>
-<div class="tab-pane fade" id="attributes">
-  <form id="attributes-form" name="attributes-form">
-   <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Bild Name</label>
-    <div class="col-sm-10">
-     <input type="text" readonly class="form-control-plaintext" id="staticImgName" value="">
-   </div>
+    <div class="tab-pane fade col-md-8" id="cut">
+     <h1>Cut image</h1>
+     <div class="crop_container">
+      <div>
+       <img id="cutImg" src="" alt="Picture">
+    </div>
  </div>
- <div class="form-group row">
-  <label class="col-sm-2 col-form-label">Job Name</label>
-  <div class="col-sm-10">
-   <input type="text" class="form-control" id="inputJobName" aria-describedby="jobNameHelp">
-   <small id="jobNameHelp" class="form-text text-muted">Optionaler Name</small>
- </div>
+ <br>
+ <button class="btn btn-dark m-2" onclick="attributesTab()">Next Step</button>
 </div>
-<div class="form-group row">
-  <label class="col-sm-2 col-form-label">Printer</label>
-  <div class="col-sm-10">
-   <select id="select-printer-profile" class="form-control"></select>
-  <small id="printerProfileHelp" class="form-text text-muted">Choose printer</small>
-</div>
-</div>
-<div class="form-group row">
-  <label class="col-sm-2 col-form-label">Socket</label>
-  <div class="col-sm-10">
-   <select id="select-socket-profile" class="form-control"></select>
-  <small id="socketProfileHelp" class="form-text text-muted">Choose socket</small>
-</div>
-</div>
-</form>
-<button class="btn btn-dark m-2" onclick="selectionTab()">Weiter3</button>
+<div class="tab-pane fade col-md-6" id="attributes">
+   <form id="attributes-form" name="attributes-form">
+      <div class="form-group">
+         <label for="staticImgName">Image:&nbsp;</label><span id="staticImgName"></span>
+         <!-- <input type="text" readonly class="" id="staticImgName" value=""> -->
+      </div>
+      <div class="form-group">
+         <label for="inputJobName">Job name</label>
+         <input type="text" class="form-control" id="inputJobName" placeholder="optional">
+      </div>
+      <div class="form-row">
+         <div class="form-group col-md-6">
+            <label for="select-printer-profile">Printer</label>
+            <select class="form-control" id="select-printer-profile"></select>
+         </div>
+         <div class="form-group col-md-6">
+            <label for="select-socket-profile">Socket</label>
+            <select class="form-control" id="select-socket-profile"></select>
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="description-input">Description</label>
+         <textarea class="form-control" id="description-input" rows="3"></textarea>
+      </div>
+   </form>
+   <button class="btn btn-dark m-2" onclick="selectionTab()">Next Step</button>
 </div>
 <div class="tab-pane fade col-md-8" id="selection">
-  <h1>Kolonien auswählen/abwählen</h1>
+  <h1>Choose colonys</h1>
   <p>
-   <div id="clickArea">
-    <img id="photograph" src="" />
-    <canvas id="drawArea" width="900 "height="600"></canvas>
-  </div>
+     <div id="clickArea">
+      <img id="photograph" src="" />
+      <canvas id="drawArea" width="900 "height="600"></canvas>
+   </div>
 </p>
 <p>
- <div id="buttons">
-  <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
-  <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
-  <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
-  <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
+  <div id="buttons">
+   <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
+   <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
+   <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
+   <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
 </div>
 </p>
 <p id="showCoordinates"></p>
 </div>
 <div class="tab-pane fade col-md-8" id="strategy">
-   <canvas id="circle" width="1000" height="800"></canvas>
+  <canvas id="circle" width="1000" height="800"></canvas>
   <script src='http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js'></script>
   <br>
-  <button class="btn btn-dark m-2" onclick="overviewTab()">Übersicht ></button>
+  <button class="btn btn-dark m-2" onclick="overviewTab()">Overview ></button>
 </div>
 <div class="tab-pane fade col-md-8" id="overview">
-  <h2>Übersicht über alle Attribute</h2>
-  <button class="btn btn-dark m-2 disabled" onclick="alert('noch nicht alle nötigen Angaben gemacht')">Pickjob starten ></button>
+  <h2>Overview</h2>
+  <div id="overview-content"></div>
+  <h2>Check preconditions</h2>
+  <form id="check-preconditions" class="needs-validation" novalidate>
+     <div class="form-group">
+        <div class="form-check">
+         <input class="form-check-input" type="checkbox" value="" id="check-plates" required>
+         <label class="form-check-label" for="check-plates">
+          Plates correctly positioned in colony picker?
+       </label>
+       <div class="invalid-feedback">
+          Check plates and confirm!
+       </div>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+      <label class="form-check-label" for="invalidCheck">
+       Agree to terms and conditions.
+    </label>
+    <div class="invalid-feedback">
+       You must agree!
+    </div>
+ </div>
+</div>
+</form>
+<button class="btn btn-dark m-2" onclick="executeTab()">Start picking ></button>
+</div>
+<div class="tab-pane fade col-md-8" id="execute">
+  <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->
+  <h1>Picking...</h1>
+  <div class="spinner-border"></div>
+  <br>
+  <button class="btn btn-dark m-2" onclick="">Export pdf</button>
 </div>
 </div>
 </div>
@@ -148,124 +180,74 @@
 </div>
 </div>
 <div class="tab-pane fade" id="nav-all-jobs" role="tabpanel" aria-labelledby="nav-all-jobs-tab">
-  <div class="container">
-    <h1>Pickjobs und Entwürfe</h1>
+   <div class="container-fluid">
+    <h1>Pickjobs</h1>
     <form class="form-inline">
      <input class="form-control my-2 mr-2" type="search" placeholder="Suchbegriff">
-     <button class="btn btn-dark my-2" type="submit">Filtern</button>
-   </form>
-   <div class="card-deck" id="allJobList">
-             <!--<div class="card m-1">
-               <button type="button" class="close" data-toggle="modal" data-target="#deleteDialog" onclick="select('card2')">&times;</button>
-               <div class="card-body pb-0">
-                 <h5 class="card-title">SuperVirus V-8</h5>
-                 <img class="card-img" src="img/colony.jpg" alt="Bild der Agarplatte">
-                 <p class="card-text"><ul><li>Nutzer: Kabisch</li><li>Datum: 06.12.18</li><li>Gepickt: Nein</li></ul>Virus mit dem ich die Menschheit ausrotten werde. Mir fehlt nur noch ein automatischer Colony-Picker. Mit Drag&Drop.</p>
-               </div>
-               <div class="card-footer bg-white">
-                 <a href="#" class="btn btn-dark ">bearbeiten</a>
-               </div>
-          </div>
-       </div>
-      hässlicher Hack, teilt card-deck für "kleiner als large" displays
-       <div class="w-100 d-block d-lg-none"></div> TODO
-     </div>-->
-   </div>
- </div>
+     <button class="btn btn-dark my-2" type="submit">Filter</button>
+  </form>
+  <div id="allJobList"></div>
+</div>
 </div>
 <div class="tab-pane fade" id="nav-historic-jobs" role="tabpanel" aria-labelledby="nav-historic-jobs-tab">
-  History
+   History
 </div>
 <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
- <div class="container" id="group">
-   <div class="row mb-2">
-    <div class="col">
-     <h2>Druckerprofile</h2>
-     <div class="accordion" id="printer-profiles"></div>
+   <div class="container">
+    <div class="row mb-2" id="group">
+     <div class="col">
+      <h2>Printer Porfiles</h2>
+      <div class="accordion" id="printer-profiles"></div>
    </div>
    <div class="col">
-     <h2>Fassungsprofile</h2>
-     <div class="accordion" id="socket-profiles"></div>
+      <h2>Socket Profiles</h2>
+      <div class="accordion" id="socket-profiles"></div>
    </div>
    <div class="col">
-    <h2>Plattenprofile</h2>
-    <div class="accordion" id="plate-profiles"></div>
-  </div>
-</div>
-<div class="row">
+      <h2>Plate Profiles</h2>
+      <div class="accordion" id="plate-profiles"></div>
+   </div>
 </div>
 </div>
 </div>
 <div class="tab-pane fade" id="nav-admin" role="tabpanel" aria-labelledby="nav-admin-tab">
- <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
- <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
- <div id="debug-output">
- </div>
-</div>
-<!-- Delete-Dialog -->
-<div class="modal fade" id="deleteDialog" tabindex="-1">
- <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content">
-   <div class="modal-header">
-    <h5 class="modal-title">Löschen?</h5>
-    <button type="button" class="close" data-dismiss="modal">&times;</button>
-  </div>
-  <div class="modal-body">
-    Soll das Bild vom Server gelöscht werden?
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-dark" data-dismiss="modal">Abbrechen</button>
-    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="DeleteImage()">Löschen</button>
-  </div>
-</div>
-</div>
-</div>
-<div class="modal fade" id="deleteJobDialog" tabindex="-1">
- <div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content">
-   <div class="modal-header">
-    <h5 class="modal-title">Löschen?</h5>
-    <button type="button" class="close" data-dismiss="modal">&times;</button>
-  </div>
-  <div class="modal-body">
-    Soll der Job vom Server gelöscht werden?
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-dark" data-dismiss="modal">Abbrechen</button>
-    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="DeleteJob()">Löschen</button>
-  </div>
-</div>
-</div>
+   <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
+   <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
+   <div id="debug-output"></div>
 </div>
 <!-- Info-Dialog -->
 <div class="modal fade" id="info-dialog" tabindex="-1">
- <div class="modal-dialog modal-dialog-centered">
-   <div class="modal-content">
+   <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
      <div class="modal-header">
-       <h5 class="modal-title" id="info-dialog-title">Erfolgreich aktualisiert.</h5>
-       <button type="button" class="close" data-dismiss="modal">&times;</button>
-     </div>
-     <div class="modal-body">
-       <button type="button" class="btn btn-dark" data-dismiss="modal">Ok</button>
-     </div>
+      <h5 class="modal-title" id="info-dialog-title"></h5>
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
    </div>
- </div>
+   <div class="modal-body">
+      <button type="button" class="btn btn-dark" data-dismiss="modal">Ok</button>
+   </div>
 </div>
-<!-- generischer Delete-Dialog -->
+</div>
+</div>
+<!-- Delete-Dialog -->
 <div class="modal fade" id="delete-dialog" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-   <div class="modal-content">
-    <div class="modal-header">
-     <h5 class="modal-title">Löschen?</h5>
-     <button type="button" class="close" data-dismiss="modal">&times;</button>
+   <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+     <div class="modal-header">
+      <h5 class="modal-title" id="delete-dialog-title"></h5>
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
    </div>
-   <div class="modal-body" id="delete-dialog-body"></div>
+   <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
    <div class="modal-footer">
-     <button type="button" class="btn btn-dark" data-dismiss="modal">Abbrechen</button>
-     <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Löschen</button>
+      <button type="button" class="btn btn-dark" data-dismiss="modal">Cancel</button>
+      <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
    </div>
- </div>
 </div>
+</div>
+</div>
+<!-- Global Alert: call ShowAlert(message, type) -->
+<div id="alert-window">
+   <div id="global-alert" style="display: none;"></div>
 </div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Bootstrap JS -->
