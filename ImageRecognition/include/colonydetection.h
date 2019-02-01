@@ -34,7 +34,7 @@ namespace c3picko {
 		 * @param settings_json: Custom settings which should be applied to the image for better results.
 		 * @return void
 		 */
-		static std::vector<cv::Vec3f> algorithmHoughCircles(cv::Mat src, std::string settings_json);
+		static std::vector<cv::Vec3f> algoFlour1(cv::Mat src, std::string settings_json);
 
 		/**
 		 * @brief The colonydetection function

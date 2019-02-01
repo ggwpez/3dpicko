@@ -10,11 +10,11 @@
 namespace c3picko {
 
 class Test {
-    public:
+	public:
 
-    static void imagePrint(cv::Mat& img);
-    static void testPrint(std::vector<cv::Vec3f> positions, cv::Mat img);
+	static void imagePrint(cv::Mat img);
+	static void testPrint(std::vector<cv::Vec3f> positions, cv::Mat& img);
 
-    };
+	};
 }
 #endif // TEST_H

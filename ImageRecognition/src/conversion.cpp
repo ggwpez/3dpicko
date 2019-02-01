@@ -3,7 +3,7 @@
 using namespace c3picko;
 
 std::vector<cv::Vec3f> Conversion::createColonyCoordinates(std::vector<cv::Vec3f> positions, int cols, int rows){
-    std::fstream file;
+   /* std::fstream file;
 	file.open ("coorinates.json");
 	file << "{\"colonies\":[\n";
 	for(size_t i = 0; i < positions.size(); i++){
@@ -12,8 +12,8 @@ std::vector<cv::Vec3f> Conversion::createColonyCoordinates(std::vector<cv::Vec3f
 		"\", \"diameter\":\"" + std::to_string( static_cast<double>(positions[i][2])/(rows / 100)) + "\" },\n";
 	}
 	file << "]}";
-    file.close();
-
+	file.close();
+*/
 	std::vector<cv::Vec3f> positions_percent;
 	positions_percent.resize(positions.size());
 	for (size_t i = 0; i < positions.size(); i++){
