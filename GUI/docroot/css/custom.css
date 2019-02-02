@@ -1,20 +1,7 @@
-img {
-	max-width: 100%; /* cropper: This rule is very important, please do not ignore this! */
+label{
+	font-weight: bold;
 }
-
-.cropper_container {
-	max-width: 640px;
-	margin: 20px auto;
-}
-.cropper_container img {
-	width: 100%;
-}
-
-.navbar{
-	margin-bottom: 20px;
-}
-
-/* Close Button on top-right of Element */
+/* close button */
 .close{
 	position: absolute;
 	display: block;
@@ -22,116 +9,30 @@ img {
 	top: 5px; 
 	right: 10px;
 }
-
-/*Internet Explorer Card-Height Fix*/
-.card-body{
-	height: 100%;
+#steps{
+  pointer-events: none;
 }
-
 .nav-pills .nav-link{
 	color: black;
 } 
-
 .nav-pills .nav-link:hover{
 	color: #888888;
 } 
-
 .nav-pills .nav-link.active{
 	color: white;
 	background-color: #212529;
 }
-
 .nav-pills .nav-link.disabled{
 	color: #DDDDDD;
 	background-color: #11d100
 }
-
-.dropzone{
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center;
-}
-
-#dropZone{
-	background-color: transparent;
-	border: none;
-	width: 200px;
-	height: 200px;
-}
-
-#dropZone.empty{
-	background-color: #ddd;
-	border: 2px dashed black;
-	text-align: center;
-	vertical-align: middle;
-	line-height: 200px;
-	font-size: 2em;
-	font-weight: bold;
-}
-
-.add {
-	cursor: copy;
-}
-
-.del{
-	cursor: no-drop;
-}
-
-#clickArea {
-	width: 900px;
-	height: 600px;
-	border: 2px white solid;
-	overflow: hidden;
-	background-color: #transparent;
-	cursor: pointer;
-}
-
-#photograph {
-	width: 900px;
-	height: 600px;
-	position: absolute;
-	z-index:1;
-}
-
-#drawArea {
-	width: 900px;
-	height: 600px;
-	position: absolute;
-	z-index: 20;
-}
-
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-	-webkit-appearance: none; 
-	margin: 0; 
-}
-
-input[type=number]{
-	max-width: 30px;
-	text-align: right;
-	-moz-appearance:textfield;
-}
-
-#group h2 {
-	text-align: center;
-}
-
 .card-header{
 	padding-bottom: 0px;
 	padding-top: 0px;
 }
-
-#alert-window {
-	position: fixed;
-	right: 5px;
-	top: 5px;
-	z-index: 10;
+.card-body{
+	height: 100%; /* Internet Explorer Card-Height Fix */
 }
-
-#steps{
-  pointer-events: none;
-}
-
 .image-card{
 	display: inline-block;
 	vertical-align:top;
@@ -144,7 +45,100 @@ input[type=number]{
 	max-width: 250px;
 	min-height: 250px;
 }
+#alert-window{
+	position: fixed;
+	left: 50%;
+    transform: translateX(-50%);
+	top: 15px;
+	z-index: 10;
+	pointer-events: none;
+}
+.alert{
+	pointer-events: none;
+}
 
-label{
+/* Image-Upload-Tab */
+#dropZone{
+	background-color: transparent;
+	border: none;
+	width: 200px;
+	height: 200px;
+	cursor: pointer;
+}
+#dropZone.empty{
+	background-color: #ddd;
+	color: #666;
+	border: 2px dashed #666;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 200px;
+	font-size: 2em;
 	font-weight: bold;
+}
+#dropZone:hover{
+	color: black;
+	border-color: black;
+}
+#dropZone.dragover{
+	color: black;
+	border-color: black;
+}
+
+/* Cut-Tab */
+img {
+	max-width: 100%; /* cropper: This rule is very important, please do not ignore this! */
+}
+.cropper_container {
+	max-width: 640px;
+	margin: 20px auto;
+}
+.cropper_container img {
+	width: 100%;
+}
+
+/* Colony-Selection-Tab */
+.add {
+	cursor: copy;
+}
+.del{
+	cursor: no-drop;
+}
+#clickArea {
+	width: 900px;
+	height: 600px;
+	border: 2px white solid;
+	overflow: hidden;
+	background-color: #transparent;
+	cursor: pointer;
+}
+#photograph {
+	width: 900px;
+	height: 600px;
+	position: absolute;
+	z-index:1;
+}
+#drawArea {
+	width: 900px;
+	height: 600px;
+	position: absolute;
+	z-index: 20;
+}
+
+/* Profile Settings Page */
+/* remove number input spinner */
+#nav-settings input[type=number]{
+	max-width: 30px;
+	text-align: right;
+	-moz-appearance:textfield;
+}
+#nav-settings input[type=number]::-webkit-inner-spin-button, 
+#nav-settings input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none; 
+	margin: 0; 
+}
+#group h2 {
+	text-align: center;
+}
+.form-text{
+	margin-top: -5px;
 }

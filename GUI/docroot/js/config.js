@@ -149,49 +149,49 @@ function AddPrinterProfile(printer_profile){
   <input type="hidden" id="type" name="type" value="printer-profile">
   <div class="form-group">
   <label for="profile_name">Name of printer profile:</label>
-  <input id="profile_name" class="form-control" name="profile_name" type="text" placeholder="name" value="${printer_profile.profile_name}" required="required">
+  <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="identifier" value="${printer_profile.profile_name}">
   </div>
   <div class="form-group">
   <label>Cut-Position:</label>
-  (<input id="cut_filament_position_x" name="cut_filament_position_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" min="0" step="0.1" value="${printer_profile.cut_filament_position_x}">,
-  <input id="cut_filament_position_y" name="cut_filament_position_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.cut_filament_position_y}">)
+  (<input required="required" id="cut_filament_position_x" name="cut_filament_position_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" min="0" step="0.1" value="${printer_profile.cut_filament_position_x}">,
+  <input required="required" id="cut_filament_position_y" name="cut_filament_position_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.cut_filament_position_y}">)
   <small class="form-text text-muted">
   The xy position, in the coordinate system of the printer, the nozzle needs to move to in order to have the filament cut
   </small>
   </div>
   <div class="form-group">
   <label>Filament length:</label>
-  <input id="filament_extrusion_length" name="filament_extrusion_length" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.filament_extrusion_length}">
+  <input required="required" id="filament_extrusion_length" name="filament_extrusion_length" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.filament_extrusion_length}"> mm.
   <small class="form-text text-muted">
-  The length up to which the filament shall be extruded, in millimeter.
+  The length up to which the filament shall be extruded.
   </small>
   </div>
   <div class="form-group">
   <label>z-coordinate:</label>
-  <input id="z_coordinate_extruded_filament_above_plates" name="z_coordinate_extruded_filament_above_plates" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_above_plates}">
+  <input required="required" id="z_coordinate_extruded_filament_above_plates" name="z_coordinate_extruded_filament_above_plates" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_above_plates}"> mm.
   <small class="form-text text-muted">
-  The z coordinate, in the coordinate system of the printer, the extruded filament can be moved above the plates without touching them or anything else, in millimeter.
+  The z coordinate, in the coordinate system of the printer, the extruded filament can be moved above the plates without touching them or anything else.
   </small>
   </div>
   <div class="form-group">
   <label>z-coordinate Source:</label>
-  <input id="z_coordinate_extruded_filament_inside_source_plate" name="z_coordinate_extruded_filament_inside_source_plate" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_inside_source_plate}">
+  <input required="required" id="z_coordinate_extruded_filament_inside_source_plate" name="z_coordinate_extruded_filament_inside_source_plate" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_inside_source_plate}"> mm.
   <small class="form-text text-muted">
-  The z coordinate, in the coordinate system of the printer, the extruded filament touches a colony on the source plate, in millimeter.
+  The z coordinate, in the coordinate system of the printer, the extruded filament touches a colony on the source plate.
   </small>
   </div>
   <div class="form-group">
   <label>z-coordinate Master:</label>
-  <input id="z_coordinate_extruded_filament_inside_master_plate" name="z_coordinate_extruded_filament_inside_master_plate" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_inside_master_plate}">
+  <input required="required" id="z_coordinate_extruded_filament_inside_master_plate" name="z_coordinate_extruded_filament_inside_master_plate" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_inside_master_plate}"> mm.
   <small class="form-text text-muted">
-  The z coordinate, in the coordinate system of the printer, the extruded filament touches the culture medium on the master plate, in millimeter.
+  The z coordinate, in the coordinate system of the printer, the extruded filament touches the culture medium on the master plate.
   </small>
   </div>
   <div class="form-group">
   <label>z-coordinate Goal:</label>
-  <input id="z_coordinate_extruded_filament_inside_goal_plate" name="z_coordinate_extruded_filament_inside_goal_plate" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_inside_goal_plate}">
+  <input required="required" id="z_coordinate_extruded_filament_inside_goal_plate" name="z_coordinate_extruded_filament_inside_goal_plate" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${printer_profile.z_coordinate_extruded_filament_inside_goal_plate}"> mm.
   <small class="form-text text-muted">
-  The z coordinate, in the coordinate system of the printer, the extruded filament touches the liqour inside the well of the goal plate, in millimeter.
+  The z coordinate, in the coordinate system of the printer, the extruded filament touches the liqour inside the well of the goal plate.
   </small>
   </div>
   <button type="submit" class="btn btn-dark">${button_text}</button>
@@ -242,29 +242,29 @@ function AddSocketProfile(socket_profile){
   <input type="hidden" id="type" name="type" value="socket-profile">
   <div class="form-group">
   <label for="profile_name">Name:</label>
-  <input id="profile_name" class="form-control" name="profile_name" type="text" placeholder="name" value="${socket_profile.profile_name}" required="required">
+  <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="identifier" value="${socket_profile.profile_name}">
   </div>
   <div class="form-group">
   <label>Source plate origin:</label>
   
-  (<input id="global_origin_of_source_plate_x" class="d-inline form-control-plaintext" name="global_origin_of_source_plate_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_source_plate_x}">,
-  <input id="global_origin_of_source_plate_y" name="global_origin_of_source_plate_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_source_plate_y}">)
+  (<input required="required" id="global_origin_of_source_plate_x" class="d-inline form-control-plaintext" name="global_origin_of_source_plate_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_source_plate_x}">,
+  <input required="required" id="global_origin_of_source_plate_y" name="global_origin_of_source_plate_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_source_plate_y}">)
   <small class="form-text text-muted">
   The origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket
   </small>
   </div>
   <div class="form-group">
   <label>Master plate origin:</label>
-  (<input id="global_origin_of_master_plate_x" name="global_origin_of_master_plate_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_master_plate_x}">,
-  <input id="global_origin_of_master_plate_y" name="global_origin_of_master_plate_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_master_plate_y}">)
+  (<input required="required" id="global_origin_of_master_plate_x" name="global_origin_of_master_plate_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_master_plate_x}">,
+  <input required="required" id="global_origin_of_master_plate_y" name="global_origin_of_master_plate_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_master_plate_y}">)
   <small class="form-text text-muted">
   The origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket
   </small>
   </div>
   <div class="form-group">
   <label>Goal plate origin:</label>
-  (<input id="global_origin_of_goal_plate_x" name="global_origin_of_goal_plate_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_goal_plate_x}">,
-  <input id="global_origin_of_goal_plate_y" name="global_origin_of_goal_plate_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_goal_plate_y}">)
+  (<input required="required" id="global_origin_of_goal_plate_x" name="global_origin_of_goal_plate_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_goal_plate_x}">,
+  <input required="required" id="global_origin_of_goal_plate_y" name="global_origin_of_goal_plate_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.global_origin_of_goal_plate_y}">)
   <small class="form-text text-muted">
   The origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket
   </small>
@@ -285,8 +285,8 @@ function AddSocketProfile(socket_profile){
   </div>
   <div class="form-group">
   <label>Socket origin offset:</label>
-  (<input id="socket_origin_offset_x" name="socket_origin_offset_x" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.socket_origin_offset_x}">,
-  <input id="socket_origin_offset_y" name="socket_origin_offset_y" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${socket_profile.socket_origin_offset_y}">)
+  (<input required="required" id="socket_origin_offset_x" name="socket_origin_offset_x" type="number" class="d-inline form-control-plaintext" placeholder="0" step="0.1" value="${socket_profile.socket_origin_offset_x}">,
+  <input required="required" id="socket_origin_offset_y" name="socket_origin_offset_y" type="number" class="d-inline form-control-plaintext" placeholder="0" step="0.1" value="${socket_profile.socket_origin_offset_y}">)
   <small class="form-text text-muted">
   The offset of the origin of the socket to the origin of the printers coordinate system in y direction
   </small>
@@ -340,38 +340,38 @@ function AddPlateProfile(plate_profile){
   <input type="hidden" id="type" name="type" value="plate-profile">
   <div class="form-group">
   <label for="profile_name">Name:</label>
-  <input id="profile_name" class="form-control" name="profile_name" type="text" placeholder="name" value="${plate_profile.profile_name}" required="required">
+  <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="identifier" value="${plate_profile.profile_name}">
   </div>
   <div class="form-group">
   <label>Number of rows:</label>
-  <input id="number_of_rows" name="number_of_rows" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="1" value="${plate_profile.number_of_rows}">
+  <input required="required" id="number_of_rows" name="number_of_rows" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="1" value="${plate_profile.number_of_rows}"> rows.
   <small class="form-text text-muted">
   Number of rows the goal plate has.
   </small>
   </div>
   <div class="form-group">
   <label>Number of columns:</label>
-  <input id="number_of_columns" name="number_of_columns" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="1" value="${plate_profile.number_of_columns}">
+  <input required="required" id="number_of_columns" name="number_of_columns" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="1" value="${plate_profile.number_of_columns}"> columns.
   <small class="form-text text-muted">
   Number of columns the goal plate has.
   </small>
   </div>
   <div class="form-group">
   <label>A1 row offset:</label>
-  <input id="a1_row_offset" name="a1_row_offset" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${plate_profile.a1_row_offset}">
+  <input required="required" id="a1_row_offset" name="a1_row_offset" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${plate_profile.a1_row_offset}"> mm.
   <small class="form-text text-muted">
   The offset of the center of the first well A1 to the upper edge of the goal plate.
   </small>
   </div>
   <div class="form-group">
   <label>A1 column offset:</label>
-  <input id="a1_column_offset" name="a1_column_offset" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${plate_profile.a1_column_offset}">
+  <input required="required" id="a1_column_offset" name="a1_column_offset" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${plate_profile.a1_column_offset}"> mm.
   <small class="form-text text-muted">
   The offset of the center of the first well A1 to the left edge of the goal plate.
   </small>
   </div><div class="form-group">
   <label>Well spacing center to center:</label>
-  <input id="well_spacing_center_to_center" name="well_spacing_center_to_center" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${plate_profile.well_spacing_center_to_center}">
+  <input required="required" id="well_spacing_center_to_center" name="well_spacing_center_to_center" type="number" class="d-inline form-control-plaintext" placeholder="0" min="0" step="0.1" value="${plate_profile.well_spacing_center_to_center}"> mm.
   <small class="form-text text-muted">
   The distance between the center of a well to the center of any directly adjacent wells.
   </small>

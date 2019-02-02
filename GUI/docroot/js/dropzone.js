@@ -1,28 +1,43 @@
-var dropZone = document.getElementById('dropZone');
+$(function() {
+    var dropZone = document.getElementById('dropZone');
 
-// Optional.   Show the copy icon when dragging over.  Seems to only work for chrome.
-dropZone.addEventListener('dragover', function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+    dropZone.addEventListener('dragover', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    });
+    dropZone.addEventListener('dragenter', function(e) {
+        dropZone.addClass('dragover');
+    });
+    dropZone.addEventListener('dragleave', function(e) {
+        dropZone.removeClass('dragover');
+    });
+
+    // drag and drop
+    dropZone.addEventListener('drop', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        dropZone.removeClass('dragover');
+        upload(e.dataTransfer.files[0]);
+    });
+    // classic file selection
+    $('#classicUpload').bind('change', function(e) {
+        // upload multiple files
+        for(i=0; i<this.files.length; i++){
+            upload(this.files[i]);
+        }
+    });
 });
 
-// Get file data on drop
-var rawData = new ArrayBuffer();   // TODO
-dropZone.addEventListener('drop', function(e) {
-
-    e.stopPropagation();
-    e.preventDefault();
-    var file = e.dataTransfer.files[0]; // Array of all files
-
-    var reader = new FileReader();
-
-    reader.onload = function(e) {
-        // finished reading file data.
-        rawData = e.target.result;
-        var base64result = rawData.substr(rawData.indexOf(',') + 1);
-        api("uploadimage", {  original_filename: file.name, file: base64result});
+function upload(file){
+    if(file){
+        let rawData = new ArrayBuffer();    // TODO
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            rawData = e.target.result;
+            var base64result = rawData.substr(rawData.indexOf(',') + 1);
+            api("uploadimage", {original_filename: file.name, file: base64result});
+        };
     }
-
-    reader.readAsDataURL(file); // start reading the file data.
-});
+}
