@@ -1,43 +1,39 @@
-#ifndef JOB_OPERATION_H
+﻿#ifndef JOB_OPERATION_H
 #define JOB_OPERATION_H
 
 #include "command.h"
-#include "datamodel/job_action.h"
-#include "datamodel/job_pause_action.h"
+//#include "datamodel/job_action.h"
+//#include "datamodel/job_pause_action.h"
 #include "responses/job_info.h"
 
-namespace c3picko
-{
-namespace pi
-{
-	namespace commands
-	{
-		/**
-		 * @brief Job control for the currently running job on OctoPrint
-		 */
-		class JobOperation : public Command
-		{
-			Q_OBJECT
+namespace c3picko {
+namespace pi {
+namespace commands {
+/**
+ * @brief Job control for the currently running job on OctoPrint
+ */
+class JobOperation : public Command {
+  Q_OBJECT
 
-			JobOperation() = delete;
-			using Command::Command;
+  JobOperation() = delete;
+  using Command::Command;
 
-		  public:
-			typedef responses::JobInfo Response;
+ public:
+  typedef responses::JobInfo Response;
 
-			static JobOperation* GetInfo();
+  static JobOperation* GetInfo();
 
-			static JobOperation* Start();
-			static JobOperation* Cancel();
-			static JobOperation* Restart();
-			static JobOperation* Pause();
-			static JobOperation* Resume();
-			static JobOperation* TogglePause();
+  static JobOperation* Start();
+  static JobOperation* Cancel();
+  static JobOperation* Restart();
+  static JobOperation* Pause();
+  static JobOperation* Resume();
+  static JobOperation* TogglePause();
 
-		  public slots:
-			virtual void OnReplyFinished(QNetworkReply* reply) override;
-		};
-	} // namespace commands
+ public slots:
+  virtual void OnReplyFinished(QNetworkReply* reply) override;
+};
+} // namespace commands
 } // namespace pi
 } // namespace c3picko
 

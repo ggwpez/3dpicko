@@ -15,60 +15,74 @@ namespace c3picko {
 class PrinterProfile {
  public:
   explicit PrinterProfile(
-      const Point& cut_filament_position, float filament_extrusion_length,
-      float z_coordinate_extruded_filament_above_plates,
-      float z_coordinate_extruded_filament_inside_source_plate,
-      float z_coordinate_extruded_filament_inside_master_plate,
-      float z_coordinate_extruded_filament_inside_goal_plate);
+      int movement_speed,
+      const Point& cut_filament_position_above_trigger,
+      float z_coordinate_pushing_the_trigger,
+      float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade,
+      float filament_extrusion_length_on_move_offset = 0,
+      float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = 0);
 
+  int movementSpeed() const;
   Point cutFilamentPosition() const;
-  float filamentExtrusionLength() const;
-  float zCoordinateFilamentAbovePlates() const;
-  float zCoordinateFilamentInsideSourcePlate() const;
-  float zCoordinateFilamentInsideMasterPlate() const;
-  float zCoordinateFilamentInsideGoalPlate() const;
+  float zCoordinatePushingTheTrigger() const;
+  float zCoordinateDistanceBetweenPushedTriggerAndGapBetweenScissorsBlade() const;
+  float filamentExtrusionLengthOnMove() const;
+  float filamentExtrusionLengthOnPickAndPutOntoMasterPlate() const;
+  float safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const;
 
  private:
   /**
-   * @brief cut_filament_position_ the xy position, in the coordinate system
-   * of the printer, the nozzle needs to move to in order to have the filament
-   * cut
+   * @brief movement_speed_ the speed the nozzle is moved with,
+   * in mm/min
    */
-  const Point cut_filament_position_;
+  const int movement_speed_;
 
   /**
-   * @brief filament_extrusion_length_ the length up to which the filament
-   * shall be extruded, in millimeter
+   * @brief cut_filament_position_above_trigger_ the xyz position, in the coordinate system
+   * of the printer, the nozzle needs to move to in order to be above the trigger of the
+   * scissor and directly above the center of the space between the scissors blades
    */
-  const float filament_extrusion_length_;
+  const Point cut_filament_position_above_trigger_;
 
   /**
-   * @brief z_coordinate_extruded_filament_above_plates_ the z coordinate, in
-   * the coordinate system of the printer, the extruded filament can be moved
-   * above the plates without touching them or anything else, in millimeter
+   * @brief z_coordinate_pushing_the_trigger_ the z coordinate
+   * the trigger of the scissor is definetly pushed
    */
-  const float z_coordinate_extruded_filament_above_plates_;
+  const float z_coordinate_pushing_the_trigger_;
 
   /**
-   * @brief z_coordinate_filament_inside_source_plate_ the z coordinate, in the
-   * coordinate system of the printer, the extruded filament touches a colony
-   * on the source plate, in millimeter
+   * @brief z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_
+   * the distance between the trigger when it is pushed fullily and the gap
+   * between the scissors blades, where the filament is cut in between
    */
-  const float z_coordinate_extruded_filament_inside_source_plate_;
+  const float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_;
 
   /**
-   * @brief z_coordinate_extruded_filament_inside_master_plate_ the z
-   * coordinate, in the coordinate system of the printer, the extruded filament
-   * touches the culture medium on the master plate, in millimeter
+   * @brief filament_extrusion_length_default_ the length up to which the filament
+   * shall be extruded to at least, determined by manual testing, in millimeter
    */
-  const float z_coordinate_extruded_filament_inside_master_plate_;
+  const float filament_extrusion_length_default_;
 
   /**
-   * @brief z_coordinate_extruded_filament_inside_goal_plate_ the z coordinate,
-   * in the coordinate system of the printer, the extruded filament touches
-   * the liqour inside the well of the goal plate, in millimeter
+   * @brief filament_extrusion_length_on_move_ the length up to which the filament
+   * shall be extruded while moving the nozzle above the plates, in millimeter
    */
-  const float z_coordinate_extruded_filament_inside_goal_plate_;
+  const float filament_extrusion_length_on_move_;
+
+  /**
+   * @brief filament_extrusion_length_on_pick_and_put_onto_master_plate_
+   * the length up to which the filament shall be extruded when a colony
+   * is picked and put onto the master plate, in millimeter
+   */
+  const float filament_extrusion_length_on_pick_and_put_onto_master_plate_;
+
+  /**
+   * @brief safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_
+   * the distance between the extruded filament of the moving nozzle and the top
+   * surface of every plate, guaranteeing that the tip of the filament does not
+   * touch anything on move, determined by manual testing, in millimeter
+   */
+  const float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 };
 }  // namespace c3picko
 #endif  // PRINTERPROFILE_H

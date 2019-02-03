@@ -10,7 +10,7 @@ SOURCES += \
     source/point.cpp \
     source/platesocketprofile.cpp \
     source/printerprofile.cpp \
-    source/masterandgoalplateprofile.cpp
+    source/plateprofile.cpp
 
 HEADERS += \
 	include/gcodeinstruction.h \
@@ -18,4 +18,4 @@ HEADERS += \
 	include/point.h \
 	include/printerprofile.h \
 	include/platesocketprofile.h \
-	include/masterandgoalplateprofile.h
+    include/plateprofile.h

@@ -2,44 +2,48 @@
 
 namespace c3picko {
 
-PrinterProfile::PrinterProfile(
-    const Point& cut_filament_position, float filament_extrusion_length,
-    float z_coordinate_extruded_filament_above_plates,
-    float z_coordinate_extruded_filament_inside_source_plate,
-    float z_coordinate_extruded_filament_inside_master_plate,
-    float z_coordinate_extruded_filament_inside_goal_plate)
-    : cut_filament_position_(cut_filament_position),
-      filament_extrusion_length_(filament_extrusion_length),
-      z_coordinate_extruded_filament_above_plates_(
-          z_coordinate_extruded_filament_above_plates),
-      z_coordinate_extruded_filament_inside_source_plate_(
-          z_coordinate_extruded_filament_inside_source_plate),
-      z_coordinate_extruded_filament_inside_master_plate_(
-          z_coordinate_extruded_filament_inside_master_plate),
-      z_coordinate_extruded_filament_inside_goal_plate_(
-          z_coordinate_extruded_filament_inside_goal_plate) {}
+PrinterProfile::PrinterProfile(int movement_speed,
+                               const Point& cut_filament_position_above_trigger,
+                               float z_coordinate_pushing_the_trigger,
+                               float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade,
+                               float filament_extrusion_length_on_move_offset,
+                               float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset)
+  : movement_speed_(movement_speed),
+    cut_filament_position_above_trigger_(cut_filament_position_above_trigger),
+    z_coordinate_pushing_the_trigger_(z_coordinate_pushing_the_trigger),
+    z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_(z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade),
+    filament_extrusion_length_default_(3),
+    filament_extrusion_length_on_move_(filament_extrusion_length_default_ + filament_extrusion_length_on_move_offset),
+    filament_extrusion_length_on_pick_and_put_onto_master_plate_(filament_extrusion_length_default_ + filament_extrusion_length_on_pick_and_put_onto_master_plate_offset),
+    safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(2)
+{}
+
+int PrinterProfile::movementSpeed() const {
+  return movement_speed_;
+}
 
 Point PrinterProfile::cutFilamentPosition() const {
-  return cut_filament_position_;
+  return cut_filament_position_above_trigger_;
 }
 
-float PrinterProfile::filamentExtrusionLength() const {
-  return filament_extrusion_length_;
+float PrinterProfile::zCoordinatePushingTheTrigger() const {
+  return z_coordinate_pushing_the_trigger_;
 }
 
-float PrinterProfile::zCoordinateFilamentAbovePlates() const {
-  return z_coordinate_extruded_filament_above_plates_;
+float PrinterProfile::zCoordinateDistanceBetweenPushedTriggerAndGapBetweenScissorsBlade() const {
+  return z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_;
 }
 
-float PrinterProfile::zCoordinateFilamentInsideSourcePlate() const {
-  return z_coordinate_extruded_filament_inside_source_plate_;
+float PrinterProfile::filamentExtrusionLengthOnMove() const {
+  return filament_extrusion_length_on_move_;
 }
 
-float PrinterProfile::zCoordinateFilamentInsideMasterPlate() const {
-  return z_coordinate_extruded_filament_inside_master_plate_;
+float PrinterProfile::filamentExtrusionLengthOnPickAndPutOntoMasterPlate() const {
+  return filament_extrusion_length_on_pick_and_put_onto_master_plate_;
 }
 
-float PrinterProfile::zCoordinateFilamentInsideGoalPlate() const {
-  return z_coordinate_extruded_filament_inside_goal_plate_;
+float PrinterProfile::safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const {
+  return safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 }
+
 }  // namespace c3picko

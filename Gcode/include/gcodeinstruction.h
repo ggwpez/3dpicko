@@ -48,9 +48,6 @@ class GcodeInstruction {
    * @param x_coordinate a floating point number between 0 and 210
    * @param y_coordinate a floating point number between 0 and 255
    * @param z_coordinate a floating point number 0 and 210
-   * @throw std::out_of_range exception if given x_coordinate
-   * or z_coordinate is negative or bigger than 210,
-   * or if given y_coordinate is negative or bigger than 255
    * @return a gcode instruction of the form "G1 Xx_coordinate Yy_coordinate
    * Zz_coordinate", x_coordinate, y_coordinate, z_coordinate standing for the
    * actual values
@@ -65,9 +62,6 @@ class GcodeInstruction {
    * and the movement speed of the nozzle are not changed.
    * @param x_coordinate a floating point number between 0 and 210
    * @param y_coordinate a floating point number between 0 and 255
-   * @throw std::out_of_range exception if given x_coordinate
-   * is negative or bigger than 210, or if given y_coordinate
-   * is negative or bigger than 255
    * @return a gcode instruction of the form "G1 Xx_coordinate Yy_coordinate",
    * x_coordinate, y_coordinate standing for the actual values
    */
@@ -79,8 +73,6 @@ class GcodeInstruction {
    * to a new z Coordinate. The length of filament, the x- and y-position
    * and the movement speed of the nozzle are not changed.
    * @param z_coordinate a floating point number between 0 and 255
-   * @throw std::out_of_range exception if given z_coordinate
-   * is negative or bigger than 210
    * @return a gcode instruction of the form "G1 Zz_coordinate",
    * z_coordinate standing for the actual value
    */
@@ -92,9 +84,6 @@ class GcodeInstruction {
    * and the movement speed of the nozzle are not changed.
    * @param e_filament_extrusion_length the desired length of the extruded
    * filament
-   * @throw std::out_of_range exception if given length
-   * of extruded filament is negative or bigger than 210
-   * is
    * @return a gcode instruction of the form "G1 Ee_filament_extrusion_length",
    * e_filament_extrusion_length standing for the actual value
    */
@@ -106,9 +95,7 @@ class GcodeInstruction {
    * of the nozzle to the given one. The x-, y-, z-position
    * of the nozzle and the length of the extruded filament
    * are not changed.
-   * @param f_nozzle_movement_speed the desired movement speed of the nozzle
-   * @throw std::out_of_range exception if given movement speed
-   * is negative or bigger than 27000, the maximum possible speed
+   * @param f_nozzle_movement_speed the desired movement speed of the nozzle, in mm/min
    * @return a gcode instruction of the form "G1 Ff_nozzle_movement_speed",
    * f_nozzle_movement_speed standing for the actual value
    */
