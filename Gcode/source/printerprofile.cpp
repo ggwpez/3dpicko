@@ -5,13 +5,13 @@ namespace c3picko {
 PrinterProfile::PrinterProfile(int movement_speed,
                                const Point& cut_filament_position_above_trigger,
                                float z_coordinate_pushing_the_trigger,
-                               float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade,
+                               float distance_between_pushed_trigger_and_gap_between_scissors_blade,
                                float filament_extrusion_length_on_move_offset,
                                float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset)
   : movement_speed_(movement_speed),
     cut_filament_position_above_trigger_(cut_filament_position_above_trigger),
     z_coordinate_pushing_the_trigger_(z_coordinate_pushing_the_trigger),
-    z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_(z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade),
+    distance_between_pushed_trigger_and_gap_between_scissors_blade_(distance_between_pushed_trigger_and_gap_between_scissors_blade),
     filament_extrusion_length_default_(3),
     filament_extrusion_length_on_move_(filament_extrusion_length_default_ + filament_extrusion_length_on_move_offset),
     filament_extrusion_length_on_pick_and_put_onto_master_plate_(filament_extrusion_length_default_ + filament_extrusion_length_on_pick_and_put_onto_master_plate_offset),
@@ -30,8 +30,8 @@ float PrinterProfile::zCoordinatePushingTheTrigger() const {
   return z_coordinate_pushing_the_trigger_;
 }
 
-float PrinterProfile::zCoordinateDistanceBetweenPushedTriggerAndGapBetweenScissorsBlade() const {
-  return z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_;
+float PrinterProfile::distanceBetweenPushedTriggerAndGapBetweenScissorsBlade() const {
+  return distance_between_pushed_trigger_and_gap_between_scissors_blade_;
 }
 
 float PrinterProfile::filamentExtrusionLengthOnMove() const {

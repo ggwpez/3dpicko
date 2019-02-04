@@ -25,7 +25,7 @@ class PrinterProfile {
   int movementSpeed() const;
   Point cutFilamentPosition() const;
   float zCoordinatePushingTheTrigger() const;
-  float zCoordinateDistanceBetweenPushedTriggerAndGapBetweenScissorsBlade() const;
+  float distanceBetweenPushedTriggerAndGapBetweenScissorsBlade() const;
   float filamentExtrusionLengthOnMove() const;
   float filamentExtrusionLengthOnPickAndPutOntoMasterPlate() const;
   float safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const;
@@ -51,11 +51,11 @@ class PrinterProfile {
   const float z_coordinate_pushing_the_trigger_;
 
   /**
-   * @brief z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_
+   * @brief distance_between_pushed_trigger_and_gap_between_scissors_blade_
    * the distance between the trigger when it is pushed fullily and the gap
    * between the scissors blades, where the filament is cut in between
    */
-  const float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade_;
+  const float distance_between_pushed_trigger_and_gap_between_scissors_blade_;
 
   /**
    * @brief filament_extrusion_length_default_ the length up to which the filament
