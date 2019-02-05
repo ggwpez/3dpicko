@@ -188,7 +188,8 @@ function AddImageToList(image_object){
 		<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
 		<div class="card-body p-1" onclick="SetChosen('${image_object.id}');" $(&quot;html, body&quot;).animate({ scrollTop: 0 }, &quot;slow&quot;);" style="cursor: pointer;">
 		<h5 class="card-title mr-2 p-1">${image_object.original_name}</h5>
-		<img class="card-img" src="${image_object.path}" alt="${image_object.original_name}"">
+		<div class="spinner-border m-5" id="loading-${image_object.id}"></div>
+		<img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
 		<p class="card-text">Date: ${DateToString(image_object.uploaded)}</li></p>
 		</div>
 		</div>`;

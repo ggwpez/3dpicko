@@ -1,5 +1,6 @@
 label{
 	font-weight: bold;
+	margin-bottom: 0px;
 }
 /* close button */
 .close{
@@ -128,6 +129,8 @@ img {
 /* remove number input spinner */
 #nav-settings input[type=number]{
 	max-width: 30px;
+	padding: 0px;
+	line-height: 1;
 	text-align: right;
 	-moz-appearance:textfield;
 }
@@ -139,6 +142,9 @@ img {
 #group h2 {
 	text-align: center;
 }
-.form-text{
-	margin-top: -5px;
+#nav-settings .card{
+	white-space: nowrap;
+}
+small{
+	white-space: normal;
 }
