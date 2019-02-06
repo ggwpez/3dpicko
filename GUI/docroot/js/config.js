@@ -136,7 +136,7 @@ $(function LoadProfiles(){
    };
 
   const creality = {
-    "id" : "XYZ",
+    "id" : "ABC",
     "type" : "printer-profile",
     "profile_name" : "Creality Ender-3",
     "cut_filament_position_above_trigger_x" : "1",
@@ -237,7 +237,7 @@ function AddPrinterProfile(printer_profile){
 
   document.getElementById('printer-profiles').insertAdjacentHTML('beforeend',html);
   $('#form-'+printer_profile.id).on('submit', UpdateSettingsProfile);
-  $('#form-'+socket_profile.id).on('focus', 'input', function(){this.select();});
+  $('#form-'+printer_profile.id).on('focus', 'input', function(){this.select();});
 
   if(printer_profile.profile_name != ""){
     let printer_profile_option = document.createElement('option');
@@ -466,5 +466,5 @@ function AddPlateProfile(plate_profile){
 
   document.getElementById('plate-profiles').insertAdjacentHTML('beforeend',html);
   $('#form-'+plate_profile.id).on('submit', UpdateSettingsProfile);
-  $('#form-'+socket_profile.id).on('focus', 'input', function(){this.select();});
+  $('#form-'+plate_profile.id).on('focus', 'input', function(){this.select();});
 }
