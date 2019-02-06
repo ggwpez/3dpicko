@@ -8,22 +8,14 @@ var all_jobs = [];
 // ?
 var cards = 1;
 
-/*(function LoadAllImages(){
-	$.getJSON( "/api/getimagelist", function(response) {
-		div_images = document.getElementById('all-images');
-		$.each( response, function( key, image_object ) {
-			AddImageToList(image_object);
-		});
-		div_images.style.display = "block";
-	});
-})();*/
-
 (function Setup()
 {
 	WsSetup(
 		() =>
 		{
 			document.title = "Connected - 3CPicko";
+			global_alert.css('display', 'none');
+			ShowAlert("Connected to server", "success", 500);
 			api("getimagelist");
 			api("getjoblist");
 		},
@@ -77,6 +69,7 @@ var cards = 1;
 			{
 				AddImageToList(data);
 				SetChosen(data.id);
+				ShowAlert("Image "+data.original_name+" uploaded.", "success");
 			}
 			else if (type == "createjob")
 			{
@@ -129,6 +122,8 @@ var cards = 1;
 			else if (type == "debug")
 			{
 				addDebugOutputLine(data.line);
+				// TODO...
+				if(data.line == "Ignoring doubled image") ShowAlert("Image alread exists.", "danger");
 			}
 			else if (type == "getpositions")
 			{
@@ -142,6 +137,8 @@ var cards = 1;
 		},
 		() =>
 		{
+			global_alert.addClass('alert alert-danger');
+			global_alert.css('display', 'block');
 			document.title = "No connection - 3CPicko";
 		});
 })();
@@ -191,14 +188,15 @@ function AddImageToList(image_object){
 		<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
 		<div class="card-body p-1" onclick="SetChosen('${image_object.id}');" $(&quot;html, body&quot;).animate({ scrollTop: 0 }, &quot;slow&quot;);" style="cursor: pointer;">
 		<h5 class="card-title mr-2 p-1">${image_object.original_name}</h5>
-		<img class="card-img" src="${image_object.path}" alt="${image_object.original_name}"">
+		<div class="spinner-border m-5" id="loading-${image_object.id}"></div>
+		<img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
 		<p class="card-text">Date: ${DateToString(image_object.uploaded)}</li></p>
 		</div>
 		</div>`;
 
 		div_images = document.getElementById('all-images');
 		images_list[image_object.id] = image_object;
-		div_images.insertAdjacentHTML('beforeend',html);
+		div_images.insertAdjacentHTML('afterbegin',html);
 	}
 }
 
@@ -276,15 +274,6 @@ const tabOrder = [ "browse", "cut", "attributes", "selection", "strategy", "over
 function tabEnter(tabId)
 {
 	console.log("Enabling tab: " +tabOrder[tabId]);
-	// for(id = tabId-1; id >= 0; id--){
-	// 	console.log("Disabling tab: " +tabOrder[id]);
-	// 	console.log("iteration" + id);
-	// 	$("#" +tabOrder[id] +"-tab").addClass("disabled");
-	// 	$("#" +tabOrder[id] +"-tab").css("background-color", '#11d100');
-	// }
-	// $("#" +tabOrder[tabId] +"-tab").removeClass("disabled");
-	// $("#" +tabOrder[tabId] +"-tab").tab('show');
-
 	for(id = 0; id < tabOrder.length; id++){
 		if(id < tabId){
 			console.log("Disabling tab: " +tabOrder[id]);
@@ -310,12 +299,10 @@ function cutTab(){
 			console.log("Image loaded ###########");
 			cropper = new Cropper(cutImg, {
 				aspectRatio: 1.5/1
-			});}, 1000);
-
-
-
-    //setTimeout(function() {cropper.replace(chosen_image.path);}, 1000);
-}
+			});
+		}, 1000);
+		//setTimeout(function() {cropper.replace(chosen_image.path);}, 1000);
+	}
 }
 
 function attributesTab(){
@@ -326,9 +313,6 @@ function attributesTab(){
 	var rect = cropper.getData();
 	api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
-
-
-
 function selectionTab(){
 	if(chosen_image){
 		tabEnter(3);
@@ -352,7 +336,6 @@ function selectionTab(){
 }
 function strategyTab(){
 	tabEnter(4);
-
 	drawWells();
 }
 function overviewTab(){
@@ -373,23 +356,22 @@ function overviewTab(){
 	`;
 
 	document.getElementById('overview-content').insertAdjacentHTML('afterbegin', html);
-
 }
 function executeTab(){
 	var form = document.getElementById('check-preconditions');
-    if (form.checkValidity() === true) tabEnter(6);
-    form.classList.add('was-validated');
+	if (form.checkValidity() === true) tabEnter(6);
+	form.classList.add('was-validated');
 }
 
 var global_alert = $('#global-alert');
 var alert_window = $('#alert-window');
 
 // bootstrap alert-type: success/warning/danger/primary/dark... 
-function ShowAlert(message, type = "success"){
+function ShowAlert(message, type = "success", delay=3000){
 	let new_alert = global_alert.clone();
 	new_alert[0].innerHTML = message;
 	new_alert[0].className = "alert alert-" + type;
-	new_alert.fadeIn("slow", function(){new_alert.delay(3000).fadeOut("slow")});
+	new_alert.fadeIn("slow", function(){new_alert.delay(delay).fadeOut("slow")});
 	alert_window.append(new_alert);
 }
 
