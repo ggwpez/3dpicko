@@ -166,7 +166,7 @@ GcodeInstruction GcodeGenerator::CreateGcodePushTheTrigger() {
 
 GcodeInstruction GcodeGenerator::CreateGcodeExtrudeFilamentToCutLength() {
  return GcodeInstruction::ExtrudeFilament(
-			 printer_profile_.zCoordinateDistanceBetweenPushedTriggerAndGapBetweenScissorsBlade()
+			 printer_profile_.distanceBetweenPushedTriggerAndGapBetweenScissorsBlade()
 			 + 2); // 2 mm of the filament's tip are cut
 }
 
