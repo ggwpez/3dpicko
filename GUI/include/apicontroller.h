@@ -36,6 +36,7 @@ signals:
 	void OnJobCreateError(QString, QObject*);
 	void OnFileDeleteError(QString path, QObject* client);
 	void OnJobDeleteError(QString path, QObject* client);
+	void OnFileCropped(Image, QObject* client);
 	void OnFileCropError(QString id, QObject* client);
 
 private:

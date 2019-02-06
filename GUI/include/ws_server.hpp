@@ -34,6 +34,9 @@ public slots:
 	void JobCreateError(QString path, QObject* client);
 	void FileDeleteError(QString path, QObject* client);
 	void JobDeleteError(QString path, QObject* client);
+	void FileCropped(Image img, QObject* client);
+	void FileCropError(QString id, QObject* client);
+
 	void NewDebugLine(QString line);
 	void SslErrors(const QList<QSslError> &errors);
 

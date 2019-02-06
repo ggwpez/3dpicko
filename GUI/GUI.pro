@@ -1,5 +1,4 @@
-QT  += core network websockets
-QT  -= gui
+QT  = gui core network websockets
 
 TARGET = GUIWebserver
 

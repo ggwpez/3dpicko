@@ -1,5 +1,4 @@
-QT  += core network websockets
-QT  -= gui
+QT  = core network websockets
 
 TEMPLATE = lib
 CONFIG   += staticlib

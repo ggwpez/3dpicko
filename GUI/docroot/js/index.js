@@ -249,7 +249,7 @@ function SetChosen(image_id){
 
 	if(image_id){
 		chosen_image = images_list[image_id];
-		console.log("Image", images_list[image_id]);
+		console.log("Selecting image ", image_id);
 		div_chosen.innerHTML = `
 		<ul><li>Dateiname: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
 		<button class="btn btn-dark" onclick="cutTab()">Choose image ></button>\
@@ -267,7 +267,7 @@ function SetChosen(image_id){
 
 function addDebugOutputLine(line)
 {
-	console.log("Adding: " +line);
+	//console.log("Adding: " +line);
 	document.getElementById('debug-output').insertAdjacentHTML('beforeend', line +'<br>');
 }
 
@@ -323,7 +323,8 @@ function attributesTab(){
 	document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
 
 	// Do the cutting
-	api('crop-image', { id: chosen_image.id, window: cropper.getData() });
+	var rect = cropper.getData();
+	api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
 
 

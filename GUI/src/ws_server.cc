@@ -1,18 +1,18 @@
 #include "include/ws_server.hpp"
 #include "include/global.h"
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QJsonArray>
-#include <QtWebSockets>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QWebSocketServer>
+#include <QtWebSockets>
 
-namespace c3picko {
+namespace c3picko
+{
 
 WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* api, QObject* _parent)
 	: QObject(_parent), api_(api),
-	  server_(new QWebSocketServer(QStringLiteral("Echo Server"),
-								   (ssl ? QWebSocketServer::SecureMode :
-										  QWebSocketServer::NonSecureMode), this))
+	  server_(new QWebSocketServer(QStringLiteral("Echo Server"), (ssl ? QWebSocketServer::SecureMode : QWebSocketServer::NonSecureMode),
+								   this))
 {
 	if (ssl)
 		server_->setSslConfiguration(*ssl);
@@ -22,7 +22,7 @@ WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* a
 	{
 		qDebug() << "WebSocket server listening on port" << 8888;
 
-		connect(server_, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(SslErrors(const QList<QSslError> &)));
+		connect(server_, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(SslErrors(const QList<QSslError>&)));
 		connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
 		connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
 		emit OnStarted();
@@ -36,30 +36,35 @@ WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* a
 	connect(api_, &APIController::OnJobCreateError, this, &WsServer::JobCreateError);
 	connect(api_, &APIController::OnFileDeleteError, this, &WsServer::FileDeleteError);
 	connect(api_, &APIController::OnJobDeleteError, this, &WsServer::JobDeleteError);
+	connect(api_, &APIController::OnFileCropped, this, &WsServer::FileCropped);
+	connect(api_, &APIController::OnFileCropError, this, &WsServer::FileCropError);
 }
 
 void WsServer::NewConnection()
 {
-	QWebSocket *pSocket = server_->nextPendingConnection();
+	QWebSocket* pSocket = server_->nextPendingConnection();
 
 	connect(pSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(NewTextData(QString)));
 	connect(pSocket, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(NewBinaryData(QByteArray)));
 	connect(pSocket, SIGNAL(disconnected()), this, SLOT(ConnectionClosed()));
 
 	clients_ << pSocket;
-	//qDebug() << "### NewClient" << pSocket;
+	// qDebug() << "### NewClient" << pSocket;
 }
 
 void WsServer::NewTextData(QString data)
 {
 	QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
-	//qDebug() << "Text data" << data;
+	// qDebug() << "Text data" << data;
 	if (client)
 	{
 		QJsonObject req = QJsonDocument::fromJson(data.toUtf8()).object();
 		ServiceRequestForClient(req, client);
 	}
+	else
+		qFatal("%s", "qobject_cast<QWebSocket*>(sender()) was null"); // if this fails, check that this function was never manually called
+																	  // but only as slot
 }
 
 void WsServer::NewBinaryData(QByteArray data)
@@ -76,7 +81,7 @@ void WsServer::ConnectionClosed()
 {
 	QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
-	//qDebug() << "Client disconnected" << client;
+	// qDebug() << "Client disconnected" << client;
 	if (client)
 	{
 		clients_.removeAll(client);
@@ -126,25 +131,25 @@ void WsServer::JobDeleted(Job job, QObject*)
 		this->SendToClient("deletejob", json, client);
 }
 
-void WsServer::FileUploadError(QString path, QObject* client)
+void WsServer::FileUploadError(QString path, QObject* client) { qDebug() << "Error uploading image #" << path; }
+
+void WsServer::JobCreateError(QString path, QObject* client) { qDebug() << "Error creating job #" << path; }
+
+void WsServer::FileDeleteError(QString path, QObject* client) { qDebug() << "Error deleting image #" << path; }
+
+void WsServer::JobDeleteError(QString path, QObject*) { qDebug() << "Error deleting job #" << path; }
+
+void WsServer::FileCropped(Image img, QObject*)
 {
-	qDebug() << "Error uploading image #" << path;
+	qDebug() << "File cropped " << img.id();
+
+	QJsonObject json = api_->createImageList(img);
+
+	for (QWebSocket* client : clients_)
+		this->SendToClient("getimagelist", json, client);
 }
 
-void WsServer::JobCreateError(QString path, QObject* client)
-{
-	qDebug() << "Error creating job #" << path;
-}
-
-void WsServer::FileDeleteError(QString path, QObject* client)
-{
-	qDebug() << "Error deleting image #" << path;
-}
-
-void WsServer::JobDeleteError(QString path, QObject* client)
-{
-	qDebug() << "Error deleting job#" << path;
-}
+void WsServer::FileCropError(QString id, QObject*) { qDebug() << "File crop error " << id; }
 
 void WsServer::NewDebugLine(QString line)
 {
@@ -173,17 +178,14 @@ void WsServer::SendToClient(QJsonValue type, QJsonObject data, QWebSocket* clien
 	SendToClient(json, client);
 }
 
-void WsServer::SendToClient(QJsonObject packet, QWebSocket* client)
-{
-	client->sendTextMessage(QJsonDocument(packet).toJson());
-}
+void WsServer::SendToClient(QJsonObject packet, QWebSocket* client) { client->sendTextMessage(QJsonDocument(packet).toJson()); }
 
 void WsServer::ServiceRequestForClient(QJsonObject request, QWebSocket* socket)
 {
 	QJsonObject json_data, json;
 	api_->service(request, json_data, socket);
 
-	if (! json_data.empty())
+	if (!json_data.empty())
 		SendToClient(request["request"], json_data, socket);
 }
 
@@ -193,5 +195,4 @@ WsServer::~WsServer()
 	server_->deleteLater();
 	qDeleteAll(clients_);
 }
-
 }
