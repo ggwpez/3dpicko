@@ -1,0 +1,21 @@
+#clickArea {
+	width: 900px;
+	height: 600px;
+	border: 2px white solid;
+	overflow: hidden;
+	background-color: #transparent;
+	cursor: pointer;
+}
+
+#photograph {
+    
+    width: 900px;
+	height: 600px;
+
+}
+
+#test {
+    width: 90px;
+	height: 60px;
+}
+

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "include/point.h"
+#include "include/json_constructable.hpp"
 
 namespace c3picko {
 
@@ -15,13 +16,14 @@ namespace c3picko {
  * the master plate the same way they are to the goal plate
  * these characteristics count for the master plate as well.
  */
-class MasterAndGoalPlateProfile {
+class MasterAndGoalPlateProfile : public JsonConstructable {
  public:
+	MasterAndGoalPlateProfile(QJsonObject const&);
   MasterAndGoalPlateProfile(int number_of_rows,
-                            int number_of_columns,
-                            float a1_row_offset,
-                            float a1_column_offset,
-                            float well_spacing_center_to_center);
+							int number_of_columns,
+							float a1_row_offset,
+							float a1_column_offset,
+							float well_spacing_center_to_center);
 
   int numberOfRows() const;
   int numberOfColumns() const;
@@ -29,6 +31,8 @@ class MasterAndGoalPlateProfile {
   float a1RowOffset() const;
   float a1ColumnOffset() const;
   float wellSpacingCenterToCenter() const;
+
+  void write(QJsonObject&) const;
 
  private:
   /**

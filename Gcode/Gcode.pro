@@ -1,21 +1,23 @@
-TEMPLATE = app
-CONFIG += console c++11
-CONFIG -= app_bundle
-CONFIG -= qt
+TEMPLATE = lib
+CONFIG += c++11 staticlib
+QT += core
 
 SOURCES += \
-    source/main.cpp \
-    source/gcodeinstruction.cpp \
-    source/gcodegenerator.cpp \
-    source/point.cpp \
-    source/platesocketprofile.cpp \
-    source/printerprofile.cpp \
-    source/masterandgoalplateprofile.cpp
+	source/main.cpp \
+	source/gcodeinstruction.cpp \
+	source/gcodegenerator.cpp \
+	source/point.cpp \
+	source/platesocketprofile.cpp \
+	source/printerprofile.cpp \
+	source/masterandgoalplateprofile.cpp
 
 HEADERS += \
-    include/gcodeinstruction.h \
-    include/gcodegenerator.h \
-    include/point.h \
-    include/printerprofile.h \
-    include/platesocketprofile.h \
-    include/masterandgoalplateprofile.h
+	include/gcodeinstruction.h \
+	include/gcodegenerator.h \
+	include/point.h \
+	include/printerprofile.h \
+	include/platesocketprofile.h \
+	include/masterandgoalplateprofile.h
+
+INCLUDEPATH += $$PWD/../Main
+LIBS =
