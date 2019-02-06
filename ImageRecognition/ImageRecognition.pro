@@ -1,7 +1,8 @@
 QT  = core network websockets
 
-TEMPLATE = lib
-CONFIG   += staticlib
+TEMPLATE = app
+#TEMPLATE = lib
+#CONFIG   += staticlib
 
 SOURCES += \
 	src/colonydetection.cpp \
@@ -9,8 +10,9 @@ SOURCES += \
 	src/detectionsettings.cpp \
 	src/dishdetection.cpp \
 	src/imageediting.cpp \
-	src/main.cpp \
-	src/preprocessing.cpp
+	src/preprocessing.cpp \
+	src/test.cpp \
+	src/main.cpp
 
 HEADERS += \
 	include/colonydetection.h \
@@ -18,8 +20,9 @@ HEADERS += \
 	include/detectionsettings.h \
 	include/dishdetection.h \
 	include/imageediting.h \
-	include/main.h \
-	include/preprocessing.h
+	include/preprocessing.h \
+	include/test.h \
+include/main.h
 
 INCLUDEPATH += /usr/local/include/opencv
 
@@ -28,5 +31,3 @@ LIBS += -L/usr/local/lib/ \
 		-lopencv_imgproc \
 		-lopencv_highgui \
 		-lopencv_imgcodecs
-
-LIBS =

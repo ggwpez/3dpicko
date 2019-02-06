@@ -243,7 +243,8 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			}
 
 			std::vector<cv::Vec3f> coords = ColonyDetection::colonyDetection(data, "");
-			QJsonArray			   json_coords;
+			coords = Conversion::createColonyCoordinates(coords, 900,600);
+			QJsonArray json_coords;
 			qDebug() << coords.size() << "Colonies";
 			for (int i = 0; i < coords.size(); ++i)
 			{

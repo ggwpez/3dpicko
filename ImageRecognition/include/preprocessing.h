@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "detectionsettings.h"
+#include "test.h"
 
 namespace c3picko {
 

@@ -11,9 +11,6 @@
 #include <string>
 
 #include "colonydetection.h"
-#include "conversion.h"
-#include "detectionsettings.h"
-#include "preprocessing.h"
 
 namespace c3picko {
 
@@ -33,7 +30,6 @@ namespace c3picko {
          * @param
          * @return
          */
-        void testPrint(std::vector<cv::Vec3f> positions, cv::Mat img);
 
         /**
          * @file

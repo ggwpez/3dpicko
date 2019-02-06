@@ -1,4 +1,4 @@
-#include "include/dishdetection.h"
+#include "../include/dishdetection.h"
 
 using namespace c3picko;
 
