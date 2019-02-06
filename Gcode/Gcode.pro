@@ -1,15 +1,16 @@
 TEMPLATE = lib
-CONFIG += c++11 staticlib
-QT += core
+CONFIG += c++11
+CONFIG -= app_bundle
+CONFIG -= qt
 
 SOURCES += \
-	source/main.cpp \
+   # source/main.cpp \
 	source/gcodeinstruction.cpp \
 	source/gcodegenerator.cpp \
 	source/point.cpp \
 	source/platesocketprofile.cpp \
 	source/printerprofile.cpp \
-	source/masterandgoalplateprofile.cpp
+	source/plateprofile.cpp
 
 HEADERS += \
 	include/gcodeinstruction.h \
@@ -17,7 +18,6 @@ HEADERS += \
 	include/point.h \
 	include/printerprofile.h \
 	include/platesocketprofile.h \
-	include/masterandgoalplateprofile.h
+	include/plateprofile.h
 
-INCLUDEPATH += $$PWD/../Main
 LIBS =

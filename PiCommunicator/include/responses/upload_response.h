@@ -3,7 +3,7 @@
 
 #include "datamodel/abridged_file_info.h"
 #include "datamodel/location.h"
-#include "responses/response.h"
+#include "response.h"
 
 #include <QVector>
 
@@ -19,7 +19,7 @@ namespace pi
 		 */
 		struct UploadResponse : public Response
 		{
-			UploadResponse(QJsonObject obj);
+			UploadResponse(QJsonObject const& obj);
 
 			data::AbridgedFileInfo local, sdcard, folder;
 			bool				   done;

@@ -6,7 +6,8 @@ SUBDIRS += \
 	Main \
 	Gcode \
 	GUI \
-	ImageRecognition
+	ImageRecognition \
+	TestGcode
 
 Tests.depends = PiCommunicator
 Main.depends = PiCommunicator GUI Gcode ImageRecognition

@@ -6,20 +6,21 @@ namespace pi
 {
 	namespace commands
 	{
-		Connection::Connection() : Command("connection", {200}, HTTPType::GET) {}
+		Connection* Connection::GetInfo() { return new Connection{"connection", {200}, HTTPType::GET}; }
 
-		Connection::Connection(data::ConnectionType type) : Command("connection", {{"command", data::ToString(type)}}, {204}, HTTPType::POST)
+		Connection* Connection::Connect(QString port, qint32 baudrate, QString printer_profile, bool save, bool autoconnect)
 		{
+			return new Connection{
+				"connection", CreateConnectJson(port, baudrate, printer_profile, save, autoconnect), {204}, HTTPType::POST};
 		}
 
-		Connection::Connection(QString port, qint32 baudrate, QString printer_profile, bool save, bool autoconnect)
-			: Command("connect", CreateConnectJson(port, baudrate, printer_profile, save, autoconnect), {204}, HTTPType::POST)
-		{
-		}
+		Connection* Connection::Disconnect() { return new Connection{"connection", {{"command", "disconnect"}}, {204}, HTTPType::POST}; }
+
+		Connection* Connection::FakeAck() { return new Connection{"connection", {{"command", "fake_ack"}}, {204}, HTTPType::POST}; }
 
 		void Connection::OnReplyFinished(QNetworkReply* reply)
 		{
-			if (type_ ==  HTTPType::GET) // Are we waiting for a response ?
+			if (type_ == HTTPType::GET) // Are we waiting for a response ?
 				CheckStatusCodeAndResponse<Response>(reply);
 			else if (type_ == HTTPType::POST) // No response in POST
 				CheckStatusCode(reply, nullptr);
@@ -30,7 +31,7 @@ namespace pi
 		QJsonObject Connection::CreateConnectJson(QString port, qint32 baudrate, QString printer_profile, bool save, bool autoconnect)
 		{
 			QJsonObject ret;
-			ret["command"] = data::ToString(data::ConnectionType::CONNECT);
+			ret["command"] = "connect";
 
 			if (port.length())
 				ret["port"] = port;

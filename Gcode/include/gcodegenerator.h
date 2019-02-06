@@ -2,7 +2,7 @@
 #define GCODEGENERATOR_H
 
 #include "include/gcodeinstruction.h"
-#include "include/masterandgoalplateprofile.h"
+#include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/point.h"
 #include "include/printerprofile.h"
@@ -22,7 +22,7 @@ class GcodeGenerator {
   explicit GcodeGenerator(
       const PlateSocketProfile& plate_socket_profile,
       const PrinterProfile& printer_profile,
-      const MasterAndGoalPlateProfile& master_and_goal_plate_profile);
+      const PlateProfile& master_and_goal_plate_profile);
 
   /**
    * @brief Creates the gcode for an entire picking process.
@@ -42,6 +42,14 @@ class GcodeGenerator {
 
  private:
   /**
+   * @brief Creates a gcode instruction for initializing the printer.
+   * This includes setting the positioning of nozzle and extrusion
+   * to absolute and the homing of the nozzle.
+   * @return a gcode instruction of the form " "
+   */
+  std::vector<GcodeInstruction> Init();
+
+  /**
    * @brief MapLocalColonyCoordinateToGlobal transforms a local colony
    * coordinate into a global (socket) coordinate.
    * @param local_colony the local colony coordinate to be transformed into
@@ -50,12 +58,16 @@ class GcodeGenerator {
    */
   GlobalColonyCoordinates MapLocalColonyCoordinateToGlobal(
       LocalColonyCoordinates& local_colony);
+
   GcodeInstruction CreateGcodeLowerFilamentOntoColony();
   GcodeInstruction CreateGcodeLowerFilamentOntoMaster();
-  GcodeInstruction CreateGcodeLowerFilamentInsideWell();
+  GcodeInstruction CreateGcodeAlignTipOfNozzleWithTopOfWell();
+  GcodeInstruction CreateGcodeExtrudeFilamentUntilBottomOfWell();
   GcodeInstruction CreateGcodeRaiseFilamentAbovePlate();
-  GcodeInstruction CreateGcodeMoveToCutFilemantPosition();
-  GcodeInstruction CreateGcodeExtrudeNewFilament();
+  GcodeInstruction CreateGcodeMoveToCutFilemantPositionAboveTrigger();
+  GcodeInstruction CreateGcodePushTheTrigger();
+  GcodeInstruction CreateGcodeExtrudeFilamentToCutLength();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMove();
 
   /**
    * @brief See ComputeGlobalWellAndMasterCoordinates().
@@ -116,10 +128,10 @@ class GcodeGenerator {
   PrinterProfile printer_profile_;
 
   /**
-   * @brief master_and_goal_plate_profile_ the currently used
-   * goal plate
+   * @brief plate_profile_ the currently used
+   * source, master and goal plate
    */
-  MasterAndGoalPlateProfile master_and_goal_plate_profile_;
+  PlateProfile plate_profile_;
 
   /**
    * @brief gcode_lower_filament_onto_colony_ the gcode instruction for lowering
@@ -135,10 +147,16 @@ class GcodeGenerator {
   GcodeInstruction gcode_lower_filament_onto_master_;
 
   /**
-   * @brief gcode_lower_filament_inside_well_ the gcode instruction for lowering
-   * the nozzle inside a well on the current xy position.
+   * @brief gcode_align_tip_of_nozzle_with_top_of_well_ the gcode instruction for aligning
+   * the tip of the nozzle with the top of the well it is positioned above.
    */
-  GcodeInstruction gcode_lower_filament_inside_well_;
+  GcodeInstruction gcode_align_tip_of_nozzle_with_top_of_well_;
+
+  /**
+   * @brief gcode_extrude_filament_until_bottom_of_well_ the gcode instruction for
+   * extruding the filament until its tip touches the bottom of the well
+   */
+  GcodeInstruction gcode_extrude_filament_until_bottom_of_well_;
 
   /**
    * @brief gcode_raise_filament_above_plate_ the gcode instruction for raising
@@ -148,16 +166,31 @@ class GcodeGenerator {
   GcodeInstruction gcode_raise_filament_above_plate_;
 
   /**
-   * @brief gcode_move_to_cut_filament_position_ the gcode instruction for
-   * moving the nozzle to the position where the filament is cut.
+   * @brief gcode_move_to_cut_filament_position_above_trigger_ the gcode instruction for
+   * moving the nozzle to the position where the filament is cut but the trigger is not yet
+   * pushed.
    */
-  GcodeInstruction gcode_move_to_cut_filament_position_;
+  GcodeInstruction gcode_move_to_cut_filament_position_above_trigger_;
 
   /**
-   * @brief gcode_extrude_new_filament_ the gcode instruction for
-   * extruding the filament up to a certain length.
+   * @brief gcode_extrude_filament_to_cut_length_w the gcode instruction
+   * for extruding the filament to a length so that the tip of it is
+   * cut by pushing the trigger
    */
-  GcodeInstruction gcode_extrude_new_filament_;
+  GcodeInstruction gcode_extrude_filament_to_cut_length_;
+
+  /**
+   * @brief gcode_push_trigger_ the gcode instruction for
+   * lowering the nozzle until the trigger is pushed fullily
+   * so that the filament is cut
+   */
+  GcodeInstruction gcode_push_trigger_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_ the gcode instruction for
+   * extruding the filament up to the length it shall have on the move.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_;
 
   /**
    * @brief global_well_xy_coordinates_ the xy coordinates

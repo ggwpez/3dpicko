@@ -14,6 +14,9 @@ namespace pi
 		{
 			Q_OBJECT
 
+			DeleteFile() = delete;
+			using Command::Command;
+
 		  public:
 			/**
 			 * @brief Delete a file at @p path on @p location
@@ -23,7 +26,7 @@ namespace pi
 			 * @param location SdCard or Local
 			 * @param path Path to the file to delete
 			 */
-			DeleteFile(data::Location location, QString path);
+			static DeleteFile* Delete(data::Location location, QString path);
 		};
 	} // namespace commands
 }

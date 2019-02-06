@@ -1,5 +1,6 @@
 #include "datamodel/abridged_file_info.h"
 #include <QJsonArray>
+#include <QJsonObject>
 
 namespace c3picko
 {
@@ -7,7 +8,7 @@ namespace pi
 {
 	namespace data
 	{
-		AbridgedFileInfo::AbridgedFileInfo(QJsonObject obj)
+		AbridgedFileInfo::AbridgedFileInfo(const QJsonObject& obj) : responses::Response(obj)
 		{
 			name	= obj["name"].toString();
 			display = obj["display"].toString();

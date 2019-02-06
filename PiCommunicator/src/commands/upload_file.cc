@@ -1,5 +1,6 @@
 #include "include/commands/upload_file.h"
 #include <QByteArray>
+#include <QFile>
 #include <QJsonValue>
 
 #include <QHttpMultiPart>
@@ -11,41 +12,24 @@ namespace pi
 {
 	namespace commands
 	{
-		// static QString const boundry1 = "----WebKitFormBoundaryDeC2E3iWbTv1PwMC";
-		// static QString const boundry2 = "----WebKitFormBoundaryDeC2E3iWbTv1PwMC";
-
-		UploadFile::UploadFile(QByteArray content, data::Location location, QString file_name, bool select, bool print)
-			: Command("files/" + data::ToString(location), BuildFileUploadPacket(content, file_name, select, print), {201},
-					  Command::HTTPType::POST, "multipart/form-data;")
+		UploadFile* UploadFile::CreateFile(QByteArray content, data::Location location, QString file_name, bool select, bool print)
 		{
-			content_type_ += ("; boundary=" + QString(query_->boundary()));
+			QHttpMultiPart* query = BuildFileUploadPacket(content, file_name, select, print);
+
+			return new UploadFile("files/" + data::ToString(location), query, {201}, Command::HTTPType::POST,
+								  "multipart/form-data; boundary=" + QString(query->boundary()));
 		}
 
-		UploadFile::UploadFile(QString folder_name, QString path, data::Location location)
-			: Command("files/" + data::ToString(location), BuildFolderCreatePacket(folder_name, path), {201}, Command::HTTPType::POST,
-					  "multipart/form-data")
+		UploadFile* UploadFile::CreateFolder(QString folder_name, QString path, data::Location location)
 		{
-			content_type_ += ("; boundary=" + QString(query_->boundary()));
+			QHttpMultiPart* query = BuildFolderCreatePacket(folder_name, path);
+
+			return new UploadFile("files/" + data::ToString(location), query, {201}, Command::HTTPType::POST,
+								  "multipart/form-data; boundary=" + QString(query->boundary()));
 		}
 
 		QHttpMultiPart* UploadFile::BuildFileUploadPacket(QByteArray data, QString file_name, bool select, bool print)
 		{
-			/*QByteArray query;
-
-			query.append("--" + boundry1 + "\nContent-Disposition: form-data; name=\"file\"; filename=\"" + file_name + "\"\n"
-						 + "Content-Type: application/octet-stream\n\n");
-
-			query.append(data);
-			query.append("\n--" + boundry1 + "\nContent-Disposition: form-data; name=\"select\"" + "\n\n" + (select ? "true" : "false")
-						 + '\n');
-			query.append("--" + boundry1 + "\nContent-Disposition: form-data; name=\"print\"" + "\n\n" + (print ? "true" : "false")
-						 + '\n');
-			query.append("--" + boundry1 + "--\n");
-
-			return query;*/
-
-			// TODO this does sadly not work, since QHttpPart is not serializable
-			// maybe it is in the future?
 			QHttpMultiPart* query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 			QHttpPart		file_part, select_part, print_part;
 
@@ -88,17 +72,6 @@ namespace pi
 			query->append(select_part);
 
 			return query;
-
-			/*QString query;
-
-			query.append("--" + boundry2 + "\nContent-Disposition: form-data; name=\"foldername\"\n\n");
-			query.append(folder_name);
-
-			query.append("\n--" + boundry2 + "\nContent-Disposition: form-data; name=\"path\"" + "\n\n");
-			query.append("local");
-			query.append("\n--" + boundry2 + "--\n");
-
-			return query.toUtf8();*/
 		}
 
 		void UploadFile::OnReplyFinished(QNetworkReply* reply) { CheckStatusCodeAndResponse<Response>(reply); }

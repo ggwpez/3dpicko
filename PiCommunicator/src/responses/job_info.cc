@@ -7,7 +7,7 @@ namespace pi
 {
 	namespace responses
 	{
-		JobInfo::JobInfo(QJsonObject obj)
+		JobInfo::JobInfo(const QJsonObject& obj) : Response(obj)
 		{
 			job		 = data::JobGeneralInfo(obj["job"].toObject());
 			progress = data::ProgressInfo(obj["progress"].toObject());

@@ -1,4 +1,5 @@
 #include "datamodel/job_general_info.h"
+#include <QJsonObject>
 #include <QJsonValue>
 
 namespace c3picko
@@ -7,7 +8,7 @@ namespace pi
 {
 	namespace data
 	{
-		JobGeneralInfo::JobGeneralInfo(QJsonObject obj)
+		JobGeneralInfo::JobGeneralInfo(QJsonObject const& obj)
 		{
 			file = AbridgedFileInfo(obj["file"].toObject());
 

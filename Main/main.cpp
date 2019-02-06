@@ -18,7 +18,8 @@ using namespace c3picko;
 
 /*static void OnStatusOk(int, Command::Response* response)
 {
-	qDebug() << response->ToString();
+	if (response)
+		qDebug() << "response: " << qPrintable(response->ToString());
 }
 
 static void OnStatusErr(QVariant status, Command::Response*) { qDebug() << qPrintable("Status error: " + status.toString()); }
@@ -29,19 +30,17 @@ int main(int argc, char** argv)
 {
 	QCoreApplication app(argc, argv);
 
-	c3picko::pi::OctoPrint printer("84.136.88.42", "CB46ACB8E7314CA5A41044F004DC6CE8");
-	//c3picko::pi::commands::UploadFile cmd("M60", data::Location::LOCAL, "test3.gcode", false, false);
+	OctoPrint printer("192.168.2.100", "2CCEF1563DA648D3962431A69431295C");
+	Command*  cmd = UploadFile::CreateFile("M60\nM33\nG X10 Y20 Z10", data::Location::LOCAL, "new.gcode");
 
-	//c3picko::pi::commands::UploadFile cmd("subsub", "", data::Location::LOCAL);
-	//c3picko::pi::commands::DeleteFile cmd(data::Location::LOCAL, "test3.gcode");
-	c3picko::pi::commands::GetAllFiles cmd(true);
+	QObject::connect(cmd, &Command::OnStatusOk, &OnStatusOk);
+	QObject::connect(cmd, &Command::OnStatusErr, &OnStatusErr);
+	QObject::connect(cmd, &Command::OnNetworkErr, &OnNetworkErr);
 
-	QObject::connect(&cmd, &Command::OnStatusOk, &OnStatusOk);
-	QObject::connect(&cmd, &Command::OnStatusErr, &OnStatusErr);
-	QObject::connect(&cmd, &Command::OnNetworkErr, &OnNetworkErr);
-	QObject::connect(&cmd, SIGNAL(OnFinished()), &app, SLOT(quit()));
+	QObject::connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));
+	QObject::connect(cmd, SIGNAL(OnFinished()), &app, SLOT(quit()));
 
-	printer.SendCommand(&cmd);
+	printer.SendCommand(cmd);
 	return app.exec();
 }*/
 
