@@ -98,6 +98,23 @@ GoalPlateOrientation PlateSocketProfile::orientationOfGoalPlate() const {
   return orientation_of_goal_plate_;
 }
 
+<<<<<<< HEAD
+void PlateSocketProfile::write(QJsonObject& obj) const
+{
+	obj["depth_of_cutout_the_goal_plate_lies_in"] = QString::number(depth_of_cutout_the_goal_plate_lies_in_);
+	obj["depth_of_cutout_the_master_plate_lies_in"] = QString::number(depth_of_cutout_the_master_plate_lies_in_);
+	obj["depth_of_cutout_the_source_plate_lies_in"] = QString::number(depth_of_cutout_the_source_plate_lies_in_);
+	obj["global_origin_of_goal_plate_x"] = QString::number(global_origin_of_goal_plate_.xCoordinate());
+	obj["global_origin_of_goal_plate_y"] = QString::number(global_origin_of_goal_plate_.yCoordinate());
+	obj["global_origin_of_master_plate_x"] = QString::number(global_origin_of_master_plate_.xCoordinate());
+	obj["global_origin_of_master_plate_y"] = QString::number(global_origin_of_master_plate_.yCoordinate());
+	obj["global_origin_of_source_plate_x"] = QString::number(global_origin_of_source_plate_.xCoordinate());
+	obj["global_origin_of_source_plate_y"] = QString::number(global_origin_of_source_plate_.yCoordinate());
+	obj["orientation_of_goal_plate"] = (orientation_of_goal_plate_ == kFirstRowFirstColumnAtCutoutOrigin ? "kFirstRowFirstColumnAtCutoutOrigin" : "kLastRowFirstColumnAtCutoutOrigin");
+	obj["socket_origin_offset_x"] = QString::number(socket_origin_offset_x_);
+	obj["socket_origin_offset_y"] = QString::number(socket_origin_offset_y_);
+	obj["socket_origin_offset_z"] = QString::number(socket_origin_offset_z_);
+=======
 void PlateSocketProfile::write(QJsonObject& obj) const {
   obj["depth_of_cutout_the_goal_plate_lies_in"] =
       depth_of_cutout_the_goal_plate_lies_in_;
@@ -124,6 +141,7 @@ void PlateSocketProfile::write(QJsonObject& obj) const {
   obj["socket_origin_offset_x"] = socket_origin_offset_x_;
   obj["socket_origin_offset_y"] = socket_origin_offset_y_;
   obj["socket_origin_offset_z"] = socket_origin_offset_z_;
+>>>>>>> ecabd82d61c7d3c0c24d35b91370e90debe5068b
 }
 
 }  // namespace c3picko

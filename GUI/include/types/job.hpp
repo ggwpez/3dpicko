@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include "include/types/image.hpp"
 #include "include/json_constructable.hpp"
+#include "include/types/profile.hpp"
 
 namespace c3picko
 {
@@ -15,11 +16,13 @@ namespace c3picko
 		typedef QString ID;
 		Job() = default;
 		Job(QJsonObject const&);
-		Job(ID id, Image::ID img_id, QString name, QString description, QDateTime job_created, qint32 step);
+
+		void resetCreationDate();
 
 	private:
 		ID id_;
 		Image::ID img_id_;
+		ProfileWrapper::ID plate_, printer_, socket_;
 		QString name_, description_;
 		QDateTime job_created_;
 

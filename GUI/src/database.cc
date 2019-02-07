@@ -90,5 +90,8 @@ void Database::write(QJsonObject& obj) const
 	obj["deleted_images"] = (QJsonObject)deleted_images_;
 
 	obj["profiles"] = (QJsonObject)profiles_;
+	obj["image_id"] = image_id_;
+	obj["job_id"] = job_id_;
+	obj["profile_id"] = profile_id_;
 }
 }

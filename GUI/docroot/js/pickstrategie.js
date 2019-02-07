@@ -2,6 +2,61 @@ var canvas,
 context;
 
 const Circle = new Class({
+<<<<<<< HEAD
+  
+  Implements: [Options, Events],
+  
+  initialize: function (options) {
+    this.setOptions(options);
+    
+    this.draw().attach();
+  },
+  
+  attach: function () {
+    this.addEvent('change', this.draw);
+  },
+  
+  set: function (what, value) {
+  	const is_new = (this.options[what] != value);
+    
+    if (is_new)
+    {
+    	this.options[what] = value;
+    	this.fireEvent('change');
+    }
+    return this;
+  },
+  
+  get: function (what) {
+    return this.options[what];
+  },
+  
+  draw: function () {
+   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
+    
+    context.beginPath();
+		context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI, false);
+		context.fillStyle = this.options.background;
+		context.fill();
+		context.lineWidth = 3;
+		context.strokeStyle = this.options.linecolor;
+      	context.stroke();
+  
+    return this;
+  },
+  
+  getSize: function () {
+    return {
+			width: this.options.radius * 2,
+		  height: this.options.radius * 2
+		}
+  },
+  
+  getPosition: function () {
+    var position = {
+			x: this.get('x'),
+			y: this.get('y')
+=======
 
 	Implements: [Options, Events],
 
@@ -22,6 +77,7 @@ const Circle = new Class({
 		{
 			this.options[what] = value;
 			this.fireEvent('change');
+>>>>>>> ecabd82d61c7d3c0c24d35b91370e90debe5068b
 		}
 		return this;
 	},

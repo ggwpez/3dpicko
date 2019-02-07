@@ -20,8 +20,9 @@ Größe Petrischale:
 // Variable if colonies should be added or delted
 var mode ='add';
 
+var context, canvas;
 // Variable containing the list of colonies
-var coordinatesPx = {"colonies":[]};
+var colony_coords = [];
 
 // Size of the petri dish
 var widthMm = 127.5;
@@ -61,28 +62,28 @@ function getPositions(){
 
 function drawPositions(coords)
 {
+    canvas  = document.getElementById('drawArea'),
+    context = canvas.getContext('2d');
+    img = document.getElementById('photograph');
+
+    canvas.style.position = "absolute";
+    canvas.style.left = img.offsetLeft + "px";
+    canvas.style.top = img.offsetTop + "px";
+    canvas.style.width = img.width +"px";
+    canvas.style.height = img.height +"px";
+
+    img.width = img.width;
+    img.height = img.height;
+
     // Import colonies from colony detection
     coords.coords.forEach((value) => {
-        xPosition = (value[0] * 9);
-        yPosition = (value[1] * 6);
-        diameter = (value[2] * 8);
-        var colony = {"xCoordinate":xPosition,"yCoordinate":yPosition, "diameter":diameter};
-        coordinatesPx.colonies.push(colony);
+        colony_coords.push({
+            x: value[0] * img.width  /100,
+            y: value[1] * img.height /100,
+            r: value[2]
+        });
     });
     printPositions();
-}
-
-//	change mode if colonies should be added or deleted
-function editColonyMode(m){
-	mode = m;
-    var element = document.getElementById("drawArea");
-    if (m == "add"){
-        element.classList.remove("del");
-        element.classList.add("add");
-    } else {
-        element.classList.remove("add");
-        element.classList.add("del");
-    }
 }
 
 // find exact position
@@ -132,59 +133,56 @@ function changePosition(event){
     printPositions();
 }
 
+var balls = [];
 // Print colonies
 function printPositions(){
-
     // show coordinatesPx
-    showCoordinates.innerHTML = JSON.stringify(coordinatesPx.colonies, null, 4);
+    showCoordinates.innerHTML = JSON.stringify(colony_coords, null, 4);
 
     // Print new positions
-    for (i in coordinatesPx.colonies){
-        var canvas = document.getElementById("drawArea");
-        var circle = canvas.getContext("2d");
-        circle.beginPath();
-        console.log("Printing colony\n" +coordinatesPx.colonies[i].xCoordinate+" " +coordinatesPx.colonies[i].yCoordinate +" " +coordinatesPx.colonies[i].diameter);
-        circle.arc(coordinatesPx.colonies[i].xCoordinate, coordinatesPx.colonies[i].yCoordinate, coordinatesPx.colonies[i].diameter, 0, 2*Math.PI);
-        circle.lineWidth = 4;
-        circle.strokeStyle = 'blue';
-        circle.stroke();
+    for (i in colony_coords)
+    {
+        var ball = new Circle({
+            x: colony_coords[i].x,
+            y: colony_coords[i].y,
+            radius: colony_coords[i].r,
+            linecolor: 'green',
+            background: 'transparent'
+        });
+
+        ball.addEvent('mouseenter', function () {
+            this.set('linecolor', 'red');
+        });
+
+        ball.addEvent('mouseleave', function () {
+            this.set('linecolor', 'green');
+        });
+        balls.push(ball);
     }
-}
 
-// Delete null elements from array
-function removeNull(){
-	var coordinatesPxHelper = {"colonies":[]}; 
-	for (i in coordinatesPx.colonies){
-		var colony = coordinatesPx.colonies[i];
-		if (colony) {
-			coordinatesPxHelper.colonies.push(colony);
-		}
-	}
-	coordinatesPx = coordinatesPxHelper;
-	//showCoordinates.innerHTML = JSON.stringify(coordinatesPx.colonies, null, 4);
-}
+    canvas.addEvent('mousemove', function (e)
+    {
+        var rect = canvas.getBoundingClientRect();
+        var x = e.client.x -rect.left,
+        y = e.client.y -rect.top;
 
-// Convert coordinates to mm format
-function convertCoordinates(){
-	removeNull();
-	
-	for (i in coordinatesPx.colonies){
-		var colonyPx = coordinatesPx.colonies[i];
-		
-		var xPositionPx = colonyPx.xCoordinate;
-		var yPositionPx = colonyPx.yCoordinate;
-		
-		var xPositionMm = Math.round(widthMm * (xPositionPx / drawArea.clientWidth));
-		var yPositionMm = Math.round(heightMm * (yPositionPx / drawArea.clientHeight));
-		
-        var colonyMm = {"xCoordinate":xPositionMm,"yCoordinate":yPositionMm};
-        coordinatesMm.colonies.push(colonyMm);
-	}
-	showCoordinates.innerHTML = JSON.stringify(coordinatesMm.colonies, null, 4);
-}
+        for (var i = 0; i < balls.length; ++i)
+        {
+            var ball = balls[i];
 
-// Create pickjob
-function recPositions(){
-	convertCoordinates();
-	
+            if (ball.isMouseOver(x, y))
+            {
+                if (! ball.mouseover)
+                {
+                    ball.fireEvent('mouseenter');
+                    ball.mouseover = true;
+                }
+            }
+            else if (ball.mouseover)
+            {
+                ball.mouseover = false;
+                ball.fireEvent('mouseleave');
+            }
+        }
+    });
 }

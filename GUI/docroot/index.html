@@ -110,10 +110,8 @@
               </div>
               <div class="tab-pane fade col-md-8" id="selection">
                 <h2>Choose colonys</h2>
-                <div id="clickArea">
                   <img id="photograph" src="" />
-                  <canvas id="drawArea" width="900 "height="600"></canvas>
-                </div>
+                  <canvas id="drawArea"></canvas>
                 <br>
                 <div id="buttons">
                   <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
@@ -204,6 +202,8 @@
     <div class="tab-pane fade" id="nav-admin" role="tabpanel" aria-labelledby="nav-admin-tab">
       <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
       <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
+      <button type="button" class="btn btn-success" onclick="api('backup')">Backup</button>
+      <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
       <div id="debug-output"></div>
     </div>
   </div>
