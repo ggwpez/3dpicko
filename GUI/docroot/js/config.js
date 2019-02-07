@@ -1,5 +1,3 @@
-var printer_profiles = {}, socket_profiles = {}, plate_profiles = {};
-
 var UpdateSettingsProfile = function (e){
   e.preventDefault();
   
@@ -15,18 +13,18 @@ var UpdateSettingsProfile = function (e){
 function DeletePrinterProfile(id){
   $('#card-'+id).remove();
   $('#select-printer-profile option[value='+id+']').remove();
-  delete printer_profiles[id];
+  delete all_profiles[id];
   // TODO Backend delete
 }
 function DeleteSocketProfile(id){
   $('#card-'+id).remove();
   $('#select-socket-profile option[value='+id+']').remove();
-  delete socket_profiles[id];
+  delete all_profiles[id];
   // TODO Backend delete
 }
 function DeletePlateProfile(id){
   $('#card-'+id).remove();
-  delete plate_profiles[id];
+  delete all_profiles[id];
   // TODO Backend delete
 }
 
@@ -153,7 +151,7 @@ $(function LoadProfiles(){
 });
 
 function AddPrinterProfile(printer_profile){
-  printer_profiles[printer_profile.id] = printer_profile;
+  all_profiles[printer_profile.id] = printer_profile;
 
   let link_text = printer_profile.profile_name;
   let button_text = "Save changes";
@@ -248,7 +246,7 @@ function AddPrinterProfile(printer_profile){
 }
 
 function AddSocketProfile(socket_profile){
-  socket_profiles[socket_profile.id] = socket_profile;
+  all_profiles[socket_profile.id] = socket_profile;
 
   let link_text = socket_profile.profile_name;
   let button_text = "Save changes";
@@ -356,7 +354,7 @@ function AddSocketProfile(socket_profile){
 
 
 function AddPlateProfile(plate_profile){
-  plate_profiles[plate_profile.id] = plate_profile;
+  all_profiles[plate_profile.id] = plate_profile;
 
   let link_text = plate_profile.profile_name;
   let button_text = "Save changes";

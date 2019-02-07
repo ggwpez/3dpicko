@@ -5,6 +5,7 @@ var chosen_image = {};
 var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
+var all_profiles = {};
 // ?
 var cards = 1;
 
@@ -18,6 +19,7 @@ var cards = 1;
 			ShowAlert("Connected to server", "success", 500);
 			api("getimagelist");
 			api("getjoblist");
+			api("getprofilelist");
 		},
 		(type, data) =>
 		{
@@ -82,42 +84,25 @@ var cards = 1;
 				data.jobs.forEach(AddJobToList);
 				console.log("Jobs:\n" +data +"\ncount: " +data.jobs.length);
 			}
+			else if (type == "getprofilelist")
+			{
+				data.profiles.forEach(AddProfileToList);
+				console.log("Profiles:\n" +data +"\ncount: " +data.jobs.length);
+			}
 			else if (type == "createsettingsprofile"){
-				const profile_object = data; 
-				switch(profile_object.type){
-					case "printer-profile": 
-					AddPrinterProfile(profile_object);
-					printer_profiles[profile_object.id] = profile_object;
-					break;
-					case "socket-profile": 
-					AddSocketProfile(profile_object);
-					socket_profiles[profile_object.id] = profile_object;
-					break;
-					case "plate-profile": 
-					AddPlateProfile(profile_object);
-					plate_profiles[profile_object.id] = profile_object;
-					break;
-				}
-				$('#form-new'+profile_object.type)[0].reset();
-				$('#collapse-new'+profile_object.type).collapse('hide');
-				ShowAlert(profile_object.profile_name+" added.", "success");
+				AddProfileToList(data);
+				$('#form-new'+data.type)[0].reset();
+				$('#collapse-new'+data.type).collapse('hide');
+				ShowAlert(data.profile_name+" added.", "success");
 			}
 			else if(type == "updatesettingsprofile"){
-				const profile_object = data; 
-				switch(profile_object.type){
-					case "printer-profile": 
-					printer_profiles[profile_object.id] = profile_object;
-					break;
-					case "socket-profile": 
-					socket_profiles[profile_object.id] = profile_object;
-					break;
-					case "plate-profile": 
-					plate_profiles[profile_object.id] = profile_object;
-					break;
-				}
-				$('#link-'+profile_object.id).text(profile_object.profile_name);
-				$('#collapse-'+profile_object.id).collapse('hide');
-				ShowAlert(profile_object.profile_name+" updated.", "success");
+				if(data.id in all_profiles){
+					all_profiles[profile_object.id] = profile_object;
+					$('#link-'+profile_object.id).text(profile_object.profile_name);
+					$('#collapse-'+profile_object.id).collapse('hide');
+					ShowAlert(profile_object.profile_name+" updated.", "success");
+				} 
+				else ShowAlert(profile_object.profile_name+" not existent.", "danger");
 			}
 			else if (type == "debug")
 			{
@@ -142,6 +127,23 @@ var cards = 1;
 			document.title = "No connection - 3CPicko";
 		});
 })();
+
+function AddProfileToList(profile){
+	if(!(profile.id in all_profiles)){
+		all_profiles[profile.id] = profile;
+		switch(profile.type){
+			case "printer-profile": 
+			AddPrinterProfile(profile);
+			break;
+			case "socket-profile": 
+			AddSocketProfile(profile);
+			break;
+			case "plate-profile": 
+			AddPlateProfile(profile);
+			break;
+		}
+	}	
+}
 
 function AddJobToList(job)
 {
@@ -214,10 +216,13 @@ $('#delete-dialog').on('show.bs.modal', function (e) {
   	break;
   	case "job":
   	dialog_text.innerHTML = `Delete job ${all_jobs[id].name}?`;
-  	dialog_button.addEventListener('click', function(){DeleteJob(id)});
+  	if(data.id in all_profiles){
+  		dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
+  	}
+  	dialog
+  	_button.addEventListener('click', function(){DeleteJob(id)});
   	break;
   	case "printer-profile":
-  	dialog_text.innerHTML = `Delete printer profile ${printer_profiles[id].profile_name}?`;
   	dialog_button.addEventListener('click', function(){DeletePrinterProfile(id)});
   	break;
   	case "socket-profile":
@@ -344,10 +349,13 @@ function overviewTab(){
 	console.log(current_job);
 	// TODO get processed images
 	const html = `
-	<img id="processed-image" src="${images_list[current_job.img_id].path}" width="50%">
+	if(data.id in all_profiles){
+		<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
+	}
+	<img id="pr
+	ocessed-image" src="${images_list[current_job.img_id].path}" width="50%">
 	<ul class="mt-2">
 	<li>Job name: ${current_job.name}</li>
-	<li>Printer: ${printer_profiles[current_job.printer].profile_name}</li>
 	<li>Socket: ${socket_profiles[current_job.socket].profile_name}</li>
 	<li>Description: ${current_job.description}</li>
 	<li>Pick strategy:</li>
