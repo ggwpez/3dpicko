@@ -140,8 +140,7 @@ int start(int argc, char** argv)
 		qInstallMessageHandler(nullptr); // reset message handlers
 		ws_ptr = nullptr;				 // also dont redirect the console output to WsServer anymore
 	});
-	return app.exec();
-}
+	return app.exec(); }
 
 int main(int argc, char** argv)
 {

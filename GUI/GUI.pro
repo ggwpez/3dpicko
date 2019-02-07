@@ -12,7 +12,8 @@ SOURCES += src/main.cpp \
 	src/types/job.cc \
 	src/table.cc \
 	src/database.cc \
-	src/types/image.cc
+	src/types/image.cc \
+    src/types/profile.cc
 
 HEADERS += \
 	include/requestmapper.h \
@@ -21,9 +22,11 @@ HEADERS += \
 	include/types/job.hpp \
 	include/table.hpp \
 	include/database.hpp \
-	include/types/image.hpp
+	include/types/image.hpp \
+    include/types/profile.hpp
 
 INCLUDEPATH += $$PWD/../Main
+INCLUDEPATH += $$PWD/../Gcode
 
 LIBS =
 DEFINES += QT_NO_INFO_OUTPUT

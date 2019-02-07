@@ -2,6 +2,7 @@
 #define PRINTERPROFILE_H
 
 #include "include/point.h"
+#include "include/json_constructable.hpp"
 
 namespace c3picko {
 
@@ -12,15 +13,16 @@ namespace c3picko {
  * used 3D printer.
  *
  */
-class PrinterProfile {
+class PrinterProfile : public JsonConstructable {
  public:
+	explicit PrinterProfile(QJsonObject const&);
   explicit PrinterProfile(
-      int movement_speed,
-      const Point& cut_filament_position_above_trigger,
-      float z_coordinate_pushing_the_trigger,
-      float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade,
-      float filament_extrusion_length_on_move_offset = 0,
-      float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = 0);
+	  int movement_speed,
+	  const Point& cut_filament_position_above_trigger,
+	  float z_coordinate_pushing_the_trigger,
+	  float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade,
+	  float filament_extrusion_length_on_move_offset = 0,
+	  float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = 0);
 
   int movementSpeed() const;
   Point cutFilamentPosition() const;
@@ -29,6 +31,8 @@ class PrinterProfile {
   float filamentExtrusionLengthOnMove() const;
   float filamentExtrusionLengthOnPickAndPutOntoMasterPlate() const;
   float safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const;
+
+  void write(QJsonObject&) const;
 
  private:
   /**
@@ -83,6 +87,7 @@ class PrinterProfile {
    * touch anything on move, determined by manual testing, in millimeter
    */
   const float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
+
 };
 }  // namespace c3picko
 #endif  // PRINTERPROFILE_H

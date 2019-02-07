@@ -3,7 +3,6 @@
 #include "include/json_constructable.hpp"
 #include <QDateTime>
 #include <QImage>
-#include <memory>
 #include <opencv2/opencv.hpp>
 
 namespace c3picko
@@ -50,11 +49,11 @@ class Image : public JsonConstructable
 	 * @param h Crop Height
 	 * @return
 	 */
-	Image crop(int x, int y, int w, int h);
+	bool crop(int x, int y, int w, int h, Image& output);
 
-	std::shared_ptr<cv::Mat> readCvMat();
-	QByteArray				 readData() const;
-	static cv::Mat decodeCvMat(QByteArray data);
+	bool readCvMat(cv::Mat& output);
+	bool readData(QByteArray& output) const;
+	static bool decodeCvMat(QByteArray data, cv::Mat& output);
 
   private:
 	QString original_name_;
@@ -68,7 +67,7 @@ class Image : public JsonConstructable
 	/**
 	 * @brief The image itself. Also referred to as the 'cache'.
 	 */
-	std::shared_ptr<cv::Mat> image_ = nullptr;
+	cv::Mat image_;
 	int						 width_ = 0, height_ = 0;
 	ID						 id_;
 

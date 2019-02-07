@@ -15,7 +15,7 @@ Image::Image(const QJsonObject& obj)
 	  width_(obj["width"].toInt()), height_(obj["height"].toInt())
 {
 	Q_ASSERT(!id_.isEmpty());
-	Q_ASSERT(!path_.isEmpty());
+	qWarning() << "Image path was empty, image lost";
 	Q_ASSERT(width_ && height_);
 }
 
@@ -23,10 +23,14 @@ Image::Image(QByteArray data, QString original_name, QString description, QDateT
 	: JsonConstructable(QJsonObject()), original_name_(original_name), description_(description), path_(""), uploaded_(uploaded)
 {
 	// Calculate size
-	image_  = std::make_shared<cv::Mat>(decodeCvMat(data));
-	width_  = image_->cols;
-	height_ = image_->rows;
-	id_		= calculateId(*image_);
+	if (! decodeCvMat(data, image_))
+	{
+		qWarning() << "Loading image failed:" << original_name;
+		return;
+	}
+	width_  = image_.cols;
+	height_ = image_.rows;
+	id_		= calculateId(image_);
 
 	Q_ASSERT(!id_.isEmpty());
 	Q_ASSERT(width_ && height_);
@@ -34,16 +38,16 @@ Image::Image(QByteArray data, QString original_name, QString description, QDateT
 
 Image::Image(cv::Mat image, QString original_name, QString description, QDateTime uploaded)
 	: JsonConstructable(QJsonObject()), original_name_(original_name), description_(description), uploaded_(uploaded),
-	  image_(std::make_shared<cv::Mat>(image)), width_(image.cols), height_(image.rows), id_(calculateId(*image_))
+	  image_(image), width_(image.cols), height_(image.rows), id_(calculateId(image_))
 {
 	Q_ASSERT(!id_.isEmpty());
-	Q_ASSERT(!path_.isEmpty()); // WILL FAIL
+	Q_ASSERT(path_.isEmpty());
 	Q_ASSERT(width_ && height_);
 }
 
 bool Image::writeToFile()
 {
-	if (!image_ || path_.length()) // path_ should be empty, otherwise we may create two files with the same content
+	if (image_.empty() || path_.length()) // path_ should be empty, otherwise we may create two files with the same content
 		return false;
 
 	QTemporaryFile file(UploadFolder() + "XXXXXXXX");
@@ -57,7 +61,7 @@ bool Image::writeToFile()
 	else
 	{
 		std::vector<uint8_t> raw;
-		cv::imencode(".jpg", *image_, raw); // TODO use extension
+		cv::imencode(".jpg", image_, raw); // TODO use extension
 
 		if (!file.write(reinterpret_cast<char const*>(raw.data()), raw.size()))
 		{
@@ -65,8 +69,8 @@ bool Image::writeToFile()
 			return false;
 		}
 
-		path_ = UploadFolderName() + "/" + QFileInfo(file).fileName();
-		image_->release(); // TODO make optional
+		path_ = "/"+ UploadFolderName() + "/" + QFileInfo(file).fileName();
+		clearCache(); // TODO make optional
 		return true;
 	}
 }
@@ -81,45 +85,58 @@ bool Image::deleteFile()
 	return false;
 }
 
-void Image::clearCache() { image_->release(); }
+void Image::clearCache() { image_.release(); }
 
-Image Image::crop(int x, int y, int w, int h)
+bool Image::crop(int x, int y, int w, int h, Image& output)
 {
 	QString desc, name;
 
 	desc = "Cropped version of '" + original_name_ + "'";
 	name = original_name_ + "_1";
 
-	std::shared_ptr<cv::Mat> image   = readCvMat();
-	cv::Mat					 cropped = (*image)(cv::Rect(x, y, w, h)); // crop
+	cv::Mat image;
+	if (! readCvMat(image))
+		return false;
+	cv::Mat					 cropped = image(cv::Rect(x, y, w, h)); // crop
 
-	return Image(cropped, name, desc, QDateTime::currentDateTime());
+	output = Image(cropped, name, desc, QDateTime::currentDateTime());
+	return true;
 }
 
-std::shared_ptr<cv::Mat> Image::readCvMat()
+bool Image::readCvMat(cv::Mat& output)
 {
-	if (image_)
-		return image_;
+	if (!(output = image_).empty())
+		return true;
 
-	QByteArray data = readData();
-	return (image_ = std::make_shared<cv::Mat>(decodeCvMat(data)));
+	QByteArray data;
+	if (! readData(data))
+		return false;
+
+	return decodeCvMat(data, output);
 }
 
-QByteArray Image::readData() const
+bool Image::readData(QByteArray& output) const
 {
-	QFile file(path_);
+	output = {};
+	QFile file(DocRoot() +path_.mid(1));
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		qWarning() << "Could not open file:" << path_ << "\n" << file.errorString();
-		return {};
+		qWarning() << "Could not open file:" << path_ << ":" << file.errorString();
+		return false;
 	}
-	return file.readAll();
+
+	output = file.readAll();
+	return true;
 }
 
-cv::Mat Image::decodeCvMat(QByteArray data)
+bool Image::decodeCvMat(QByteArray data, cv::Mat& output)
 {
-	return cv::imdecode(cv::Mat(1, data.size(), CV_8UC1, data.data()), CV_LOAD_IMAGE_UNCHANGED);
+	if (data.isEmpty())
+		return false;
+
+	output = cv::imdecode(cv::Mat(1, data.size(), CV_8UC1, data.data()), CV_LOAD_IMAGE_UNCHANGED);
+	return (! output.empty());
 }
 
 Image::ID Image::calculateId(cv::Mat const& image)

@@ -26,6 +26,7 @@ public:
 	QJsonObject createJobList(Job);
 	QJsonObject createDeleteImage(Image);
 	QJsonObject createDeleteJob(Job job);
+	QJsonObject createProfileList();
 
 signals:
 	void OnNewFile(Image, QObject* client);

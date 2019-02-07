@@ -6,6 +6,7 @@
 #include <QJsonValue>
 #include <QMap>
 #include <QObject>
+#include <map>
 
 namespace c3picko
 {
@@ -28,7 +29,9 @@ template <typename Value> class Table : public JsonConvertable
 
 		if (it != entries_.end())
 		{
-			*it = value;
+			// *it = value;
+			entries_.erase(it);
+			entries_.insert(key, value);
 		}
 		else
 		{

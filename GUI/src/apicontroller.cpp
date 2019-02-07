@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QProcess>
 #include <QRandomGenerator>
+#include <QMetaObject>
 
 namespace c3picko
 {
@@ -16,7 +17,7 @@ APIController::APIController(Database& db, QObject* parent) : QObject(parent), d
 QJsonObject APIController::createImageList()
 {
 	QJsonArray image_list;
-	for (auto const pair : db_.imageTable())
+	for (auto const pair : db_.images())
 	{
 		Image const& image = pair.second;
 		QJsonObject  json;
@@ -43,7 +44,7 @@ QJsonObject APIController::createJobList()
 {
 	QJsonArray json_jobs;
 
-	for (auto it = db_.jobTable().begin(); it != db_.jobTable().end(); ++it)
+	for (auto it = db_.jobs().begin(); it != db_.jobs().end(); ++it)
 	{
 		QJsonObject json;
 		(*it).second.write(json);
@@ -64,6 +65,20 @@ QJsonObject APIController::createJobList(Job job)
 	return {{"jobs", json_jobs}};
 }
 
+QJsonObject APIController::createProfileList()
+{
+	QJsonArray json_jobs;
+
+	for (auto it = db_.profiles().begin(); it != db_.profiles().end(); ++it)
+	{
+		QJsonObject json;
+		(*it).second.write(json);
+		json_jobs.append(json);
+	}
+
+	return {{"profiles", json_jobs}};
+}
+
 QJsonObject APIController::createDeleteImage(Image img) { return {{"id", img.id()}}; }
 
 QJsonObject APIController::createDeleteJob(Job job) { return {{"id", job.id()}}; }
@@ -77,17 +92,25 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 	{
 		response = createImageList();
 	}
+	else if (path.startsWith("getprofilelist"))
+	{
+		response = createProfileList();
+	}
+	else if (path.startsWith("getjoblist"))
+	{
+		response = createJobList();
+	}
 	else if (path.startsWith("deleteimage"))
 	{
 		Image::ID id = req_data["id"].toString();
 		// Does the image exist?
-		if (!db_.imageTable().exists(id))
+		if (!db_.images().exists(id))
 		{
 			emit OnFileDeleteError(req_data["id"].toString(), client);
 			return;
 		}
 		// Is the image	in use by a job?
-		for (auto pair : db_.jobTable())
+		for (auto pair : db_.jobs())
 		{
 			if (pair.second.img_id() == id)
 			{
@@ -96,13 +119,13 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			}
 		}
 
-		Image image = db_.imageTable().get(id);
+		Image image = db_.images().get(id);
 		image.clearCache();
 
 		if (image.deleteFile())
 		{
-			db_.deletedImageTable().add(id, image);
-			db_.imageTable().remove(id); // Carefull here, if we use a reference to image instead, it will go out of scope after deletion
+			db_.deletedImages().add(id, image);
+			db_.images().remove(id); // Carefull here, if we use a reference to image instead, it will go out of scope after deletion
 			emit OnFileDeleted(image, client);
 		}
 		else
@@ -114,15 +137,15 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 	{
 		QString id = req_data["id"].toString();
 		// Does the job exist?
-		if (!db_.jobTable().exists(id))
+		if (!db_.jobs().exists(id))
 		{
 			emit OnJobDeleteError(req_data["id"].toString(), client);
 		}
 		else
 		{
-			Job job = db_.jobTable().get(id);
-			db_.jobTable().remove(id);
-			db_.deletedJobTable().add(id, job);
+			Job job = db_.jobs().get(id);
+			db_.jobs().remove(id);
+			db_.deletedJobs().add(id, job);
 
 			emit OnJobDeleted(job, client);
 		}
@@ -136,7 +159,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		qDebug() << "Hash" << image.id();
 
 		// Is the user trying to upload an image twice?
-		if (db_.imageTable().exists(image.id()))
+		if (db_.images().exists(image.id()))
 		{
 			qDebug() << "Ignoring doubled image";
 			// TODO inform client?
@@ -154,7 +177,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 				return;
 			}
 
-			db_.imageTable().add(image.id(), image);
+			db_.images().add(image.id(), image);
 			image.write(response);
 
 			emit OnNewFile(image, client);
@@ -166,29 +189,29 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		int		x = req_data["x"].toDouble(), y = req_data["y"].toDouble(), w = req_data["width"].toDouble(),
 			h = req_data["height"].toDouble();
 
-		if (std::min(x, y) < 100 || std::min(w, h) < 100)
-		{
-			response = {{"error", "Invalid cropping area"}};
-			qDebug() << x << y << w << h;
-			return emit OnFileCropError(img_id, client);
-		}
-
-		if (!db_.imageTable().exists(img_id))
+		if (!db_.images().exists(img_id))
 			return emit OnFileCropError(img_id, client);
 		else
 		{
-			Image& original = db_.imageTable().get(img_id);
-			Image  cropped  = original.crop(x, y, w, h);
+			Image  cropped;
+			Image& original = db_.images().get(img_id);
+			if (x >= original.width() || y >= original.height() || std::min({w,h}) <= 0 || (x +w) >= original.width() || (y +h) >= original.height())
+			{
+				response = {{"error", "Invalid cropping area"}};
+				qDebug() << x << y << w << h;
+				return emit OnFileCropError(img_id, client);
+			}
 
 			// Is the cropped image empty?
-			if (!cropped.width() || cropped.height())
+			if (! original.crop(x, y, w, h, cropped))
 			{
 				qDebug() << "Cropping failed";
 				emit OnFileCropError(img_id, client); // TODO inform client
 				return;
 			}
+			cropped.writeToFile();	// save them to the hdd
 
-			db_.imageTable().add(cropped.id(), cropped);
+			db_.images().add(cropped.id(), cropped);
 			qDebug() << "Cropping image " << cropped.originalName();
 			response = {{"id", cropped.id()}}; // TODO
 			emit OnFileCropped(cropped, client);
@@ -196,47 +219,80 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 	}
 	else if (path.startsWith("createsettingsprofile"))
 	{
-		QJsonObject json_profile_object = request["data"].toObject();
+		QJsonObject json_profile = request["data"].toObject();
 		// TODO create new profile
 		// TODO create unique id
-		QString newId			  = QString::number(QRandomGenerator::global()->generate());
-		json_profile_object["id"] = newId;
-		response				  = json_profile_object;
+		ProfileWrapper::ID newId			  = db_.newProfileId();
+
+		qDebug("%s", QString::fromUtf8(QJsonDocument(json_profile).toJson()).toLatin1().constData());
+		json_profile["id"] = newId; // TODO  hack
+		ProfileWrapper profile(json_profile);
+		db_.profiles().add(newId, profile);
+		qDebug() << "Added profile" << profile.id();
+		profile.write(response);
 	}
 	else if (path.startsWith("updatesettingsprofile"))
 	{
-		QJsonObject json_profile_object = request["data"].toObject();
-		// TODO update profile
-		response = json_profile_object;
+		qDebug() << "update lel";
+		QJsonObject json_profile = request["data"].toObject();
+
+		ProfileWrapper profile(json_profile);
+
+		if (! db_.profiles().exists(profile.id()))
+		{
+			// TODO signal
+			qWarning() << "Profile id unknown:" << profile.id();
+			response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
+		}
+		else
+		{
+			db_.profiles().add(profile.id(), profile);
+			qDebug() << "Added profile" << profile.id();
+			response = json_profile;
+		}
+	}
+	else if (path.startsWith("deletesettingsprofile"))
+	{
+		ProfileWrapper::ID id = req_data["id"].toString();
+
+		if (! db_.profiles().exists(id))
+		{
+			// TODO signal
+			qWarning() << "Cant delete unknown profile id" << id;
+		}
+		else
+		{
+			// FIXME cant delete profiles used by jobs
+			db_.profiles().remove(id);
+			qDebug() << "Delete profile" << id;
+			response = {{"id", id}};
+		}
 	}
 	else if (path.startsWith("createjob"))
 	{
-		static unsigned short id  = 456;
-		QString				  jid = QString::number(id);
+		Job::ID jid = db_.newJobId();
 
 		Job new_job(jid, req_data["img_id"].toString(), req_data["name"].toString(), req_data["description"].toString(),
 					QDateTime::currentDateTime(), 2);
-		db_.jobTable().add(jid, new_job);
+		db_.jobs().add(jid, new_job);
 		new_job.write(response);
 
-		++id;
 		emit OnNewJob(new_job, client);
 	}
 	else if (path.startsWith("getpositions"))
 	{
 		QString img_id = req_data["id"].toString();
 
-		if (!db_.imageTable().exists(img_id))
+		if (!db_.images().exists(img_id))
 		{
 			qWarning() << "Colony detection error: image not found (#" << img_id << ")";
 		}
 		else
 		{
-			Image& img = db_.imageTable().get(img_id); // Non const& bc readCvMat() can set the cache
+			Image& img = db_.images().get(img_id); // Non const& bc readCvMat() can set the cache
+			cv::Mat data;
 
-			cv::Mat data = *img.readCvMat();
-
-			if (!data.data)
+			if (!img.readCvMat(data))
 			{
 				qCritical() << "CV could not read image" << img.path();
 				return;
@@ -253,19 +309,15 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			response = {{"id", img_id}, {"coords", json_coords}};
 		}
 	}
-	else if (path.startsWith("getjoblist"))
-	{
-		response = createJobList();
-	}
 	else if (path.startsWith("shutdown"))
 	{
 		qDebug() << "Client requested shutdown at" << QDateTime::currentDateTime().toString();
-		qApp->exit(0);
+		QMetaObject::invokeMethod(qApp, "exit", Qt::QueuedConnection, Q_ARG(int, 0));
 	}
 	else if (path.startsWith("restart"))
 	{
 		qDebug() << "Client requested restart at" << QDateTime::currentDateTime().toString();
-		qApp->exit(123);
+		QMetaObject::invokeMethod(qApp, "exit", Qt::QueuedConnection, Q_ARG(int, 123));
 	}
 	else
 	{

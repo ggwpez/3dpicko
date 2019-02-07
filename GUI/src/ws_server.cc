@@ -43,6 +43,8 @@ WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* a
 void WsServer::NewConnection()
 {
 	QWebSocket* pSocket = server_->nextPendingConnection();
+	if (! pSocket)
+		return;
 
 	connect(pSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(NewTextData(QString)));
 	connect(pSocket, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(NewBinaryData(QByteArray)));

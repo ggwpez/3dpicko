@@ -1,6 +1,8 @@
 ﻿#ifndef POINT_H
 #define POINT_H
 
+#include "include/json_constructable.hpp"
+
 namespace c3picko {
 
 /**
@@ -9,8 +11,9 @@ namespace c3picko {
  * @brief Class representing a simple 3D point.
  *
  */
-class Point {
+class Point : public JsonConstructable{
  public:
+	Point(QJsonObject const&);
   /**
    * @brief Point
    * @param x_coordinate
@@ -19,9 +22,12 @@ class Point {
    * the z coordinate is not needed it does not need to be set
    */
   Point(float x_coordinate, float y_coordinate, float z_coordinate = 0);
+
   float xCoordinate() const;
   float yCoordinate() const;
   float zCoordinate() const;
+
+  void write(QJsonObject& obj) const;
 
  private:
   const float x_coordinate_;

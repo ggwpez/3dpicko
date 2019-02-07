@@ -1,8 +1,8 @@
 QT  = core network websockets
 
-TEMPLATE = app
-#TEMPLATE = lib
-#CONFIG   += staticlib
+#TEMPLATE = app
+TEMPLATE = lib
+CONFIG   += staticlib
 
 SOURCES += \
 	src/colonydetection.cpp \
@@ -11,8 +11,9 @@ SOURCES += \
 	src/dishdetection.cpp \
 	src/imageediting.cpp \
 	src/preprocessing.cpp \
-	src/test.cpp \
-	src/main.cpp
+	src/test.cpp
+
+	#src/main.cpp
 
 HEADERS += \
 	include/colonydetection.h \
