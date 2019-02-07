@@ -89,9 +89,11 @@ GlobalColonyCoordinates GcodeGenerator::MapLocalColonyCoordinateToGlobal(
     LocalColonyCoordinates& local_colony) {
   return GlobalColonyCoordinates(
       local_colony.xCoordinate() +
-          plate_socket_profile_.originOfSourcePlate().xCoordinate(),
+          plate_socket_profile_.originOfSourcePlate().xCoordinate() +
+          plate_socket_profile_.originOffsetX(),
       local_colony.yCoordinate() +
-          plate_socket_profile_.originOfSourcePlate().yCoordinate());
+          plate_socket_profile_.originOfSourcePlate().yCoordinate() +
+          plate_socket_profile_.originOffsetY());
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
@@ -217,10 +219,12 @@ void GcodeGenerator::ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
       global_well_coordintes.push_back(
           Point(plate_profile_.a1RowOffset() +
                     j * plate_profile_.wellSpacingCenterToCenter() +
-                    origin_of_plate.xCoordinate(),
+                    origin_of_plate.xCoordinate() +
+                    plate_socket_profile_.originOffsetX(),
                 plate_profile_.a1ColumnOffset() +
                     i * plate_profile_.wellSpacingCenterToCenter() +
-                    origin_of_plate.yCoordinate()));
+                    origin_of_plate.yCoordinate() +
+                    plate_socket_profile_.originOffsetY()));
     }
   }
 }
@@ -232,10 +236,12 @@ void GcodeGenerator::ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
       global_well_coordintes.push_back(
           Point(plate_profile_.a1ColumnOffset() +
                     i * plate_profile_.wellSpacingCenterToCenter() +
-                    origin_of_plate.xCoordinate(),
+                    origin_of_plate.xCoordinate() +
+                    plate_socket_profile_.originOffsetX(),
                 plate_profile_.a1RowOffset() +
                     j * plate_profile_.wellSpacingCenterToCenter() +
-                    origin_of_plate.yCoordinate()));
+                    origin_of_plate.yCoordinate() +
+                    plate_socket_profile_.originOffsetY()));
     }
   }
 }
