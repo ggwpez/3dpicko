@@ -87,7 +87,7 @@ var cards = 1;
 			else if (type == "getprofilelist")
 			{
 				data.profiles.forEach(AddProfileToList);
-				console.log("Profiles:\n" +data +"\ncount: " +data.jobs.length);
+				console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
 			}
 			else if (type == "createsettingsprofile"){
 				AddProfileToList(data);
@@ -102,7 +102,7 @@ var cards = 1;
 					$('#collapse-'+profile_object.id).collapse('hide');
 					ShowAlert(profile_object.profile_name+" updated.", "success");
 				} 
-				else ShowAlert(profile_object.profile_name+" not existent.", "danger");
+				else ShowAlert(profile_object.profile_name+" non-existent.", "danger");
 			}
 			else if (type == "debug")
 			{
@@ -216,12 +216,10 @@ $('#delete-dialog').on('show.bs.modal', function (e) {
   	break;
   	case "job":
   	dialog_text.innerHTML = `Delete job ${all_jobs[id].name}?`;
-  	if(data.id in all_profiles){
-  		dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
-  	}
   	dialog_button.addEventListener('click', function(){DeleteJob(id)});
   	break;
   	case "printer-profile":
+  	dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
   	dialog_button.addEventListener('click', function(){DeletePrinterProfile(id)});
   	break;
   	case "socket-profile":
@@ -337,6 +335,7 @@ function selectionTab(){
 
 		api("createjob", current_job);
 	}
+
 }
 function strategyTab(){
 	tabEnter(4);
@@ -348,17 +347,13 @@ function overviewTab(){
 	console.log(current_job);
 	// TODO get processed images
 	const html = `
-	if(data.id in all_profiles){
-		<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
-	}
-	<img id="pr
-	ocessed-image" src="${images_list[current_job.img_id].path}" width="50%">
+	<img id="processed-image" src="${images_list[current_job.img_id].path}" width="50%">
 	<ul class="mt-2">
 	<li>Job name: ${current_job.name}</li>
+	<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
 	<li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
 	<li>Description: ${current_job.description}</li>
 	<li>Pick strategy:</li>
-	<li>?</li>
 	</ul>
 	`;
 
