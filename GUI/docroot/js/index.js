@@ -219,18 +219,17 @@ $('#delete-dialog').on('show.bs.modal', function (e) {
   	if(data.id in all_profiles){
   		dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
   	}
-  	dialog
-  	_button.addEventListener('click', function(){DeleteJob(id)});
+  	dialog_button.addEventListener('click', function(){DeleteJob(id)});
   	break;
   	case "printer-profile":
   	dialog_button.addEventListener('click', function(){DeletePrinterProfile(id)});
   	break;
   	case "socket-profile":
-  	dialog_text.innerHTML = `Delete socket profile ${socket_profiles[id].profile_name}?`;
+  	dialog_text.innerHTML = `Delete socket profile ${all_profiles[id].profile_name}?`;
   	dialog_button.addEventListener('click', function(){DeleteSocketProfile(id)});
   	break;
   	case "plate-profile":
-  	dialog_text.innerHTML = `Delete plate profile ${plate_profiles[id].profile_name}?`;
+  	dialog_text.innerHTML = `Delete plate profile ${all_profiles[id].profile_name}?`;
   	dialog_button.addEventListener('click', function(){DeletePlateProfile(id)});
   	break;
   }
@@ -356,7 +355,7 @@ function overviewTab(){
 	ocessed-image" src="${images_list[current_job.img_id].path}" width="50%">
 	<ul class="mt-2">
 	<li>Job name: ${current_job.name}</li>
-	<li>Socket: ${socket_profiles[current_job.socket].profile_name}</li>
+	<li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
 	<li>Description: ${current_job.description}</li>
 	<li>Pick strategy:</li>
 	<li>?</li>
