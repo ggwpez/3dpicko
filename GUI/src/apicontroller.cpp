@@ -7,7 +7,29 @@
 #include <QJsonObject>
 #include <QProcess>
 #include <QRandomGenerator>
-#include <QMetaObject>
+#include "httplistener.h"
+#include "include/global.h"
+#include "include/requestmapper.h"
+#include "include/ws_server.hpp"
+#include "include/command.h"
+#include "include/octoprint.h"
+#include "include/commands/arbitrary_command.h"
+#include "include/gcodegenerator.h"
+
+using namespace c3picko::pi;
+using namespace c3picko::pi::commands;
+
+static void OnStatusOk(int, Command::Response* response)
+{
+	if (response)
+		qDebug() << "response: " << qPrintable(response->ToString());
+}
+
+static void OnStatusErr(QVariant status, Command::Response*) { qDebug() << qPrintable("Status error: " + status.toString()); }
+
+static void OnNetworkErr(QString error) { qDebug() << qPrintable("Network error: " + error); }
+
+static OctoPrint printer("192.168.2.2", "F866D6261972458CACAE9CB56E484758");
 
 namespace c3picko
 {
@@ -224,7 +246,6 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		// TODO create unique id
 		ProfileWrapper::ID newId			  = db_.newProfileId();
 
-		qDebug("%s", QString::fromUtf8(QJsonDocument(json_profile).toJson()).toLatin1().constData());
 		json_profile["id"] = newId; // TODO  hack
 		ProfileWrapper profile(json_profile);
 		db_.profiles().add(newId, profile);
@@ -272,10 +293,13 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 	{
 		Job::ID jid = db_.newJobId();
 
-		Job new_job(jid, req_data["img_id"].toString(), req_data["name"].toString(), req_data["description"].toString(),
-					QDateTime::currentDateTime(), 2);
+		req_data["id"] = jid;
+		Job new_job(req_data);			// FIXME validate profile ids
+		new_job.resetCreationDate();	// cheat
+
 		db_.jobs().add(jid, new_job);
 		new_job.write(response);
+		qDebug("%s", QString::fromUtf8(QJsonDocument(req_data).toJson()).toLatin1().constData());
 
 		emit OnNewJob(new_job, client);
 	}
@@ -299,7 +323,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			}
 
 			std::vector<cv::Vec3f> coords = ColonyDetection::colonyDetection(data, "");
-			coords = Conversion::createColonyCoordinates(coords, 900,600);
+			coords = Conversion::createColonyCoordinates(coords, data.cols,data.rows);
 			QJsonArray json_coords;
 			qDebug() << coords.size() << "Colonies";
 			for (int i = 0; i < coords.size(); ++i)
@@ -309,15 +333,47 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			response = {{"id", img_id}, {"coords", json_coords}};
 		}
 	}
+	else if (path.startsWith("startjob"))
+	{
+		PrinterProfile* printerp = (PrinterProfile*)(db_.profiles().get("302"));
+		PlateSocketProfile* socket = (PlateSocketProfile*)(db_.profiles().get("303"));
+		PlateProfile* plate = (PlateProfile*)(db_.profiles().get("304"));
+
+		GcodeGenerator gen(*socket, *printerp, *plate);
+
+		std::vector<LocalColonyCoordinates> coords;
+		for (int i = 0; i < 3; ++i)
+			coords.push_back(Point(10*i +30, i*10 +30));
+
+		auto code = gen.CreateGcodeForTheEntirePickingProcess(5,5, coords);
+
+		QStringList sum;
+		for (auto c : code)
+			sum << QString::fromStdString(c.ToString());
+
+		Command*  cmd = ArbitraryCommand::MultiCommand(sum);
+
+		QObject::connect(cmd, &Command::OnStatusOk, &OnStatusOk);
+		QObject::connect(cmd, &Command::OnStatusErr, &OnStatusErr);
+		QObject::connect(cmd, &Command::OnNetworkErr, &OnNetworkErr);
+
+		QObject::connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));
+
+		printer.SendCommand(cmd);
+	}
 	else if (path.startsWith("shutdown"))
 	{
 		qDebug() << "Client requested shutdown at" << QDateTime::currentDateTime().toString();
-		QMetaObject::invokeMethod(qApp, "exit", Qt::QueuedConnection, Q_ARG(int, 0));
+		qApp->exit(0);
 	}
 	else if (path.startsWith("restart"))
 	{
 		qDebug() << "Client requested restart at" << QDateTime::currentDateTime().toString();
-		QMetaObject::invokeMethod(qApp, "exit", Qt::QueuedConnection, Q_ARG(int, 123));
+		qApp->exit(123);
+	}
+	else if (path.startsWith("backup"))
+	{
+		db_.saveToFile();
 	}
 	else
 	{

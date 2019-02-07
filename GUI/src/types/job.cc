@@ -14,20 +14,19 @@ namespace c3picko
 
 	}
 
-	Job::Job(ID id, Image::ID img_id, QString name, QString description, QDateTime job_created, qint32 step)
-		: JsonConstructable(QJsonObject()), id_(id), img_id_(img_id), name_(name), description_(description), job_created_(job_created), step_(step)
+	void Job::resetCreationDate()
 	{
+		job_created_ = QDateTime::currentDateTime();
+	}
 
-		}
+	Job::ID Job::id() const
+	{
+		return id_;
+	}
 
-		Job::ID Job::id() const
-		{
-			return id_;
-		}
-
-		Image::ID Job::img_id() const
-		{
-			return img_id_;
+	Image::ID Job::img_id() const
+	{
+		return img_id_;
 	}
 
 	void Job::write(QJsonObject& obj) const

@@ -13,7 +13,7 @@ SOURCES += src/main.cpp \
 	src/table.cc \
 	src/database.cc \
 	src/types/image.cc \
-    src/types/profile.cc
+	src/types/profile.cc
 
 HEADERS += \
 	include/requestmapper.h \
@@ -23,7 +23,7 @@ HEADERS += \
 	include/table.hpp \
 	include/database.hpp \
 	include/types/image.hpp \
-    include/types/profile.hpp
+	include/types/profile.hpp
 
 INCLUDEPATH += $$PWD/../Main
 INCLUDEPATH += $$PWD/../Gcode
@@ -33,5 +33,6 @@ DEFINES += QT_NO_INFO_OUTPUT
 OTHER_FILES += etc/serverconfig.ini
 
 INCLUDEPATH += $$PWD/../ImageRecognition
+INCLUDEPATH += $$PWD/../PiCommunicator $$PWD/../PiCommunicator/include
 
 include(../QtWebApp/httpserver/httpserver.pri)

@@ -90,16 +90,16 @@ float PlateProfile::cultureMediumThickness() const {
 
 void PlateProfile::write(QJsonObject& obj) const
 {
-	obj["a1_column_offset"] = a1_column_offset_;
-	obj["a1_row_offset"] = a1_row_offset_;
-	obj["culture_medium_thickness"] = culture_medium_thickness_;
-	obj["height_goal_plate"] = height_goal_plate_;
-	obj["height_master_plate"] = height_master_plate_;
-	obj["height_source_plate"] = height_source_plate_;
-	obj["number_of_columns"] = number_of_columns_;
-	obj["number_of_rows"] = number_of_rows_;
-	obj["well_depth"] = well_depth_;
-	obj["well_spacing_center_to_center"] = well_spacing_center_to_center_;
+	obj["a1_column_offset"] = QString::number(a1_column_offset_);
+	obj["a1_row_offset"] = QString::number(a1_row_offset_);
+	obj["culture_medium_thickness"] = QString::number(culture_medium_thickness_);
+	obj["height_goal_plate"] =QString::number( height_goal_plate_);
+	obj["height_master_plate"] = QString::number(height_master_plate_);
+	obj["height_source_plate"] = QString::number(height_source_plate_);
+	obj["number_of_columns"] = QString::number(number_of_columns_);
+	obj["number_of_rows"] = QString::number(number_of_rows_);
+	obj["well_depth"] = QString::number(well_depth_);
+	obj["well_spacing_center_to_center"] = QString::number(well_spacing_center_to_center_);
 	// FIXME number_of_Wells_
 }
 } // namespace c3picko

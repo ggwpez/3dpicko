@@ -170,7 +170,7 @@ namespace c3picko
 			}
 		}
 
-		std::cout << "good bois: " << uniq_labels.size() << std::endl;
+		/*std::cout << "good bois: " << uniq_labels.size() << std::endl;
 		drawText(stages.back(), pos);
 
 		static int i = 0;
@@ -183,12 +183,8 @@ namespace c3picko
 			cv::imshow(name, stage);
 		}
 
-		/*auto it = stages.begin();
-		std::advance(it, 5);
-		cv:imwrite("out1.jpg", *it);*/
-
 		cv::waitKey(0);
-		cv::destroyAllWindows();
+		cv::destroyAllWindows();*/
 
 		return std::vector<cv::Vec3f>(pos.begin(), pos.end());
 	}

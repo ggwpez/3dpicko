@@ -66,15 +66,15 @@ float PrinterProfile::safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove(
 void PrinterProfile::write(QJsonObject& obj) const
 {
 	obj["movement_speed"] = movement_speed_;
-	obj["cut_filament_position_above_trigger_x"] = cut_filament_position_above_trigger_.xCoordinate();
-	obj["cut_filament_position_above_trigger_y"] = cut_filament_position_above_trigger_.yCoordinate();
-	obj["cut_filament_position_above_trigger_z"] = cut_filament_position_above_trigger_.zCoordinate();
-	obj["z_coordinate_pushing_the_trigger"] = z_coordinate_pushing_the_trigger_;
-	obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"] = distance_between_pushed_trigger_and_gap_between_scissors_blade_;
-	obj["filament_extrusion_length_on_move_offset"] = filament_extrusion_length_on_move_;
-	obj["filament_extrusion_length_on_pick_and_put_onto_master_plate_offset"] = filament_extrusion_length_on_pick_and_put_onto_master_plate_;
-	obj["filament_extrusion_length_default"] = filament_extrusion_length_default_;
-	obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move"] = safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
+	obj["cut_filament_position_above_trigger_x"] = QString::number(cut_filament_position_above_trigger_.xCoordinate());
+	obj["cut_filament_position_above_trigger_y"] = QString::number(cut_filament_position_above_trigger_.yCoordinate());
+	obj["cut_filament_position_above_trigger_z"] = QString::number(cut_filament_position_above_trigger_.zCoordinate());
+	obj["z_coordinate_pushing_the_trigger"] = QString::number(z_coordinate_pushing_the_trigger_);
+	obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"] = QString::number(distance_between_pushed_trigger_and_gap_between_scissors_blade_);
+	obj["filament_extrusion_length_on_move_offset"] = QString::number(filament_extrusion_length_on_move_);
+	obj["filament_extrusion_length_on_pick_and_put_onto_master_plate_offset"] = QString::number(filament_extrusion_length_on_pick_and_put_onto_master_plate_);
+	obj["filament_extrusion_length_default"] = QString::number(filament_extrusion_length_default_);
+	obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move"] = QString::number(safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_);
 }
 
 }  // namespace c3picko

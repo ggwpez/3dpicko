@@ -319,6 +319,7 @@ function selectionTab(){
 	if(chosen_image){
 		tabEnter(3);
 		document.getElementById('photograph').src = chosen_image.path;
+
 		const printer_selection = document.getElementById('select-printer-profile');
 		const socket_selection = document.getElementById('select-socket-profile');
 		const printer_id = printer_selection.options[printer_selection.selectedIndex].value;

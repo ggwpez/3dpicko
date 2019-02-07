@@ -34,7 +34,7 @@ const Circle = new Class({
    // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
     
     context.beginPath();
-		context.arc(this.options.x + this.options.radius, this.options.y + this.options.radius, this.options.radius, 0, 2 * Math.PI, false);
+		context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI, false);
 		context.fillStyle = this.options.background;
 		context.fill();
 		context.lineWidth = 3;
