@@ -2,7 +2,6 @@ var canvas,
 context;
 
 const Circle = new Class({
-<<<<<<< HEAD
   
   Implements: [Options, Events],
   
@@ -56,28 +55,7 @@ const Circle = new Class({
     var position = {
 			x: this.get('x'),
 			y: this.get('y')
-=======
 
-	Implements: [Options, Events],
-
-	initialize: function (options) {
-		this.setOptions(options);
-
-		this.draw().attach();
-	},
-
-	attach: function () {
-		this.addEvent('change', this.draw);
-	},
-
-	set: function (what, value) {
-		const is_new = (this.options[what] != value);
-
-		if (is_new)
-		{
-			this.options[what] = value;
-			this.fireEvent('change');
->>>>>>> ecabd82d61c7d3c0c24d35b91370e90debe5068b
 		}
 		return this;
 	},

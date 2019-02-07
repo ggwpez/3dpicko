@@ -318,11 +318,7 @@ function attributesTab(){
 function selectionTab(){
 	if(chosen_image){
 		tabEnter(3);
-<<<<<<< HEAD
 		document.getElementById('photograph').src = chosen_image.path;
-
-=======
->>>>>>> ecabd82d61c7d3c0c24d35b91370e90debe5068b
 		const printer_selection = document.getElementById('select-printer-profile');
 		const socket_selection = document.getElementById('select-socket-profile');
 		const printer_id = printer_selection.options[printer_selection.selectedIndex].value;
