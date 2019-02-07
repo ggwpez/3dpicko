@@ -2,48 +2,61 @@
 
 namespace c3picko {
 
-	PlateSocketProfile::PlateSocketProfile(const QJsonObject& obj)
-		: JsonConstructable (obj),
-		  depth_of_cutout_the_goal_plate_lies_in_(obj["depth_of_cutout_the_goal_plate_lies_in"].toString().toDouble()),
-		  depth_of_cutout_the_master_plate_lies_in_(obj["depth_of_cutout_the_master_plate_lies_in"].toString().toDouble()),
-		  depth_of_cutout_the_source_plate_lies_in_(obj["depth_of_cutout_the_source_plate_lies_in"].toString().toDouble()),
-		  global_origin_of_goal_plate_(Point(obj["global_origin_of_goal_plate_x"].toString().toDouble(),
-											 obj["global_origin_of_goal_plate_y"].toString().toDouble())),
-		  global_origin_of_master_plate_(Point(obj["global_origin_of_master_plate_x"].toString().toDouble(),
-																		  obj["global_origin_of_master_plate_y"].toString().toDouble())),
-		  global_origin_of_source_plate_(Point(obj["global_origin_of_source_plate_x"].toString().toDouble(),
-																		  obj["global_origin_of_source_plate_y"].toString().toDouble())),
-		  orientation_of_goal_plate_(obj["orientation_of_goal_plate"].toString() == "kFirstRowFirstColumnAtCutoutOrigin" ? kFirstRowFirstColumnAtCutoutOrigin : kLastRowFirstColumnAtCutoutOrigin),
-		  socket_origin_offset_x_(obj["socket_origin_offset_x"].toString().toDouble()),
-		  socket_origin_offset_y_(obj["socket_origin_offset_y"].toString().toDouble()),
-		  socket_origin_offset_z_(obj["socket_origin_offset_z"].toString().toDouble())
-	{
+PlateSocketProfile::PlateSocketProfile(const QJsonObject& obj)
+    : JsonConstructable(obj),
+      depth_of_cutout_the_goal_plate_lies_in_(
+          obj["depth_of_cutout_the_goal_plate_lies_in"].toString().toDouble()),
+      depth_of_cutout_the_master_plate_lies_in_(
+          obj["depth_of_cutout_the_master_plate_lies_in"]
+              .toString()
+              .toDouble()),
+      depth_of_cutout_the_source_plate_lies_in_(
+          obj["depth_of_cutout_the_source_plate_lies_in"]
+              .toString()
+              .toDouble()),
+      global_origin_of_goal_plate_(
+          Point(obj["global_origin_of_goal_plate_x"].toString().toDouble(),
+                obj["global_origin_of_goal_plate_y"].toString().toDouble())),
+      global_origin_of_master_plate_(
+          Point(obj["global_origin_of_master_plate_x"].toString().toDouble(),
+                obj["global_origin_of_master_plate_y"].toString().toDouble())),
+      global_origin_of_source_plate_(
+          Point(obj["global_origin_of_source_plate_x"].toString().toDouble(),
+                obj["global_origin_of_source_plate_y"].toString().toDouble())),
+      orientation_of_goal_plate_(obj["orientation_of_goal_plate"].toString() ==
+                                         "kFirstRowFirstColumnAtCutoutOrigin"
+                                     ? kFirstRowFirstColumnAtCutoutOrigin
+                                     : kLastRowFirstColumnAtCutoutOrigin),
+      socket_origin_offset_x_(
+          obj["socket_origin_offset_x"].toString().toDouble()),
+      socket_origin_offset_y_(
+          obj["socket_origin_offset_y"].toString().toDouble()),
+      socket_origin_offset_z_(
+          obj["socket_origin_offset_z"].toString().toDouble()) {}
 
-	}
-
-	PlateSocketProfile::PlateSocketProfile(const Point& global_origin_of_source_plate,
-									   const Point& global_origin_of_master_plate,
-									   const Point& global_origin_of_goal_plate,
-									   GoalPlateOrientation orientation_of_goal_plate,
-									   float depth_of_cutout_the_source_plate_lies_in,
-									   float depth_of_cutout_the_master_plate_lies_in,
-									   float depth_of_cutout_the_goal_plate_lies_in,
-									   float socket_origin_offset_x,
-									   float socket_origin_offset_y,
-									   float socket_origin_offset_z)
-  : JsonConstructable (QJsonObject()),
-	global_origin_of_source_plate_(global_origin_of_source_plate),
-	global_origin_of_master_plate_(global_origin_of_master_plate),
-	global_origin_of_goal_plate_(global_origin_of_goal_plate),
-	orientation_of_goal_plate_(orientation_of_goal_plate),
-	depth_of_cutout_the_source_plate_lies_in_(depth_of_cutout_the_source_plate_lies_in),
-	depth_of_cutout_the_master_plate_lies_in_(depth_of_cutout_the_master_plate_lies_in),
-	depth_of_cutout_the_goal_plate_lies_in_(depth_of_cutout_the_goal_plate_lies_in),
-	socket_origin_offset_x_(socket_origin_offset_x),
-	socket_origin_offset_y_(socket_origin_offset_y),
-	socket_origin_offset_z_(socket_origin_offset_z) {
-
-}
+PlateSocketProfile::PlateSocketProfile(
+    const Point& global_origin_of_source_plate,
+    const Point& global_origin_of_master_plate,
+    const Point& global_origin_of_goal_plate,
+    GoalPlateOrientation orientation_of_goal_plate,
+    float depth_of_cutout_the_source_plate_lies_in,
+    float depth_of_cutout_the_master_plate_lies_in,
+    float depth_of_cutout_the_goal_plate_lies_in, float socket_origin_offset_x,
+    float socket_origin_offset_y, float socket_origin_offset_z)
+    : JsonConstructable(QJsonObject()),
+      global_origin_of_source_plate_(global_origin_of_source_plate),
+      global_origin_of_master_plate_(global_origin_of_master_plate),
+      global_origin_of_goal_plate_(global_origin_of_goal_plate),
+      orientation_of_goal_plate_(orientation_of_goal_plate),
+      depth_of_cutout_the_source_plate_lies_in_(
+          depth_of_cutout_the_source_plate_lies_in),
+      depth_of_cutout_the_master_plate_lies_in_(
+          depth_of_cutout_the_master_plate_lies_in),
+      depth_of_cutout_the_goal_plate_lies_in_(
+          depth_of_cutout_the_goal_plate_lies_in),
+      socket_origin_offset_x_(socket_origin_offset_x),
+      socket_origin_offset_y_(socket_origin_offset_y),
+      socket_origin_offset_z_(socket_origin_offset_z) {}
 
 float PlateSocketProfile::originOffsetX() const {
   return socket_origin_offset_x_;
@@ -82,9 +95,10 @@ Point PlateSocketProfile::originOfGoalPlate() const {
 }
 
 GoalPlateOrientation PlateSocketProfile::orientationOfGoalPlate() const {
-	return orientation_of_goal_plate_;
+  return orientation_of_goal_plate_;
 }
 
+<<<<<<< HEAD
 void PlateSocketProfile::write(QJsonObject& obj) const
 {
 	obj["depth_of_cutout_the_goal_plate_lies_in"] = QString::number(depth_of_cutout_the_goal_plate_lies_in_);
@@ -100,5 +114,34 @@ void PlateSocketProfile::write(QJsonObject& obj) const
 	obj["socket_origin_offset_x"] = QString::number(socket_origin_offset_x_);
 	obj["socket_origin_offset_y"] = QString::number(socket_origin_offset_y_);
 	obj["socket_origin_offset_z"] = QString::number(socket_origin_offset_z_);
+=======
+void PlateSocketProfile::write(QJsonObject& obj) const {
+  obj["depth_of_cutout_the_goal_plate_lies_in"] =
+      depth_of_cutout_the_goal_plate_lies_in_;
+  obj["depth_of_cutout_the_master_plate_lies_in"] =
+      depth_of_cutout_the_master_plate_lies_in_;
+  obj["depth_of_cutout_the_source_plate_lies_in"] =
+      depth_of_cutout_the_source_plate_lies_in_;
+  obj["global_origin_of_goal_plate_x"] =
+      global_origin_of_goal_plate_.xCoordinate();
+  obj["global_origin_of_goal_plate_y"] =
+      global_origin_of_goal_plate_.yCoordinate();
+  obj["global_origin_of_master_plate_x"] =
+      global_origin_of_master_plate_.xCoordinate();
+  obj["global_origin_of_master_plate_y"] =
+      global_origin_of_master_plate_.yCoordinate();
+  obj["global_origin_of_source_plate_x"] =
+      global_origin_of_source_plate_.xCoordinate();
+  obj["global_origin_of_source_plate_y"] =
+      global_origin_of_source_plate_.yCoordinate();
+  obj["orientation_of_goal_plate"] =
+      orientation_of_goal_plate_ == kFirstRowFirstColumnAtCutoutOrigin
+          ? "kFirstRowFirstColumnAtCutoutOrigin"
+          : "kLastRowFirstColumnAtCutoutOrigin";
+  obj["socket_origin_offset_x"] = socket_origin_offset_x_;
+  obj["socket_origin_offset_y"] = socket_origin_offset_y_;
+  obj["socket_origin_offset_z"] = socket_origin_offset_z_;
+>>>>>>> ecabd82d61c7d3c0c24d35b91370e90debe5068b
 }
-} // namespace c3pick
+
+}  // namespace c3picko

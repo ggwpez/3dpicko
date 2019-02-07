@@ -318,8 +318,11 @@ function attributesTab(){
 function selectionTab(){
 	if(chosen_image){
 		tabEnter(3);
+<<<<<<< HEAD
 		document.getElementById('photograph').src = chosen_image.path;
 
+=======
+>>>>>>> ecabd82d61c7d3c0c24d35b91370e90debe5068b
 		const printer_selection = document.getElementById('select-printer-profile');
 		const socket_selection = document.getElementById('select-socket-profile');
 		const printer_id = printer_selection.options[printer_selection.selectedIndex].value;
@@ -333,15 +336,34 @@ function selectionTab(){
 			socket: socket_id,
 			description: description
 		}
-
-		api("createjob", current_job);
-	}
-
+	} 
 }
+
 function strategyTab(){
+	let plate_selection = document.getElementById("select-plate-profile");
+	for(let profile_id in all_profiles){
+		let profile = all_profiles[profile_id];
+		console.log(profile);
+		if(profile.type=="plate-profile"){
+			//TODO read number of colonys
+			if(profile.number_of_rows*profile.number_of_columns >= 96){
+				let plate_profile_option = document.createElement('option');
+				plate_profile_option.value = profile.id;
+				plate_profile_option.text = profile.profile_name;
+				plate_selection.appendChild(plate_profile_option);
+			}
+		}
+	}
+	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
+	drawWells(all_profiles[plate_id].number_of_columns, all_profiles[plate_id].number_of_rows);
+	plate_selection.addEventListener("change", function(){
+		const plate_id = plate_selection.options[plate_selection.selectedIndex].value;
+		drawWells(all_profiles[plate_id].number_of_columns, all_profiles[plate_id].number_of_rows);
+	});
+
 	tabEnter(4);
-	drawWells();
 }
+
 function overviewTab(){
 	tabEnter(5);
 	console.log(all_jobs);
