@@ -98,7 +98,7 @@ GlobalColonyCoordinates GcodeGenerator::MapLocalColonyCoordinateToGlobal(
 
 GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
   return GcodeInstruction::MoveToZ(
-      plate_socket_profile_.originOffsetZ() -
+      plate_socket_profile_.originOffsetZ() +
       plate_socket_profile_.depthOfCutoutSourcePlateLiesIn() +
       plate_profile_.cultureMediumThickness() +
       printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
@@ -108,7 +108,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
 
 GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
   return GcodeInstruction::MoveToZ(
-      plate_socket_profile_.originOffsetZ() -
+      plate_socket_profile_.originOffsetZ() +
       plate_socket_profile_.depthOfCutoutMasterPlateLiesIn() +
       plate_profile_.cultureMediumThickness() +
       printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
@@ -118,7 +118,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
 
 GcodeInstruction GcodeGenerator::CreateGcodeAlignTipOfNozzleWithTopOfWell() {
   return GcodeInstruction::MoveToZ(
-      plate_socket_profile_.originOffsetZ() -
+      plate_socket_profile_.originOffsetZ() +
       plate_socket_profile_.depthOfCutoutGoalPlateLiesIn() +
       plate_profile_.heightGoalPlate());
 }
@@ -129,17 +129,17 @@ GcodeInstruction GcodeGenerator::CreateGcodeExtrudeFilamentUntilBottomOfWell() {
 
 GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAbovePlate() {
   float z_coordinate_tip_of_nozzle_aligned_with_top_surface_of_source_plate =
-      plate_socket_profile_.originOffsetZ() -
+      plate_socket_profile_.originOffsetZ() +
       plate_socket_profile_.depthOfCutoutSourcePlateLiesIn() +
       plate_profile_.heightSourcePlate();
 
   float z_coordinate_tip_of_nozzle_aligned_with_top_surface_of_master_plate =
-      plate_socket_profile_.originOffsetZ() -
+      plate_socket_profile_.originOffsetZ() +
       plate_socket_profile_.depthOfCutoutMasterPlateLiesIn() +
       plate_profile_.heightMasterPlate();
 
   float z_coordinate_tip_of_nozzle_aligned_with_top_surface_of_goal_plate =
-      plate_socket_profile_.originOffsetZ() -
+      plate_socket_profile_.originOffsetZ() +
       plate_socket_profile_.depthOfCutoutGoalPlateLiesIn() +
       plate_profile_.heightGoalPlate();
 
@@ -159,9 +159,12 @@ GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAbovePlate() {
 GcodeInstruction
 GcodeGenerator::CreateGcodeMoveToCutFilemantPositionAboveTrigger() {
   return GcodeInstruction::MoveToXYZ(
-      printer_profile_.cutFilamentPosition().xCoordinate(),
-      printer_profile_.cutFilamentPosition().yCoordinate(),
-      printer_profile_.cutFilamentPosition().zCoordinate());
+      printer_profile_.cutFilamentPosition().xCoordinate() +
+          plate_socket_profile_.originOffsetX(),
+      printer_profile_.cutFilamentPosition().yCoordinate() +
+          plate_socket_profile_.originOffsetY(),
+      printer_profile_.cutFilamentPosition().zCoordinate() +
+          plate_socket_profile_.originOffsetZ());
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodePushTheTrigger() {
