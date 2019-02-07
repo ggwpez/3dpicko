@@ -159,12 +159,9 @@ GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAbovePlate() {
 GcodeInstruction
 GcodeGenerator::CreateGcodeMoveToCutFilemantPositionAboveTrigger() {
   return GcodeInstruction::MoveToXYZ(
-      printer_profile_.cutFilamentPosition().xCoordinate() +
-          plate_socket_profile_.originOffsetX(),
-      printer_profile_.cutFilamentPosition().yCoordinate() +
-          plate_socket_profile_.originOffsetY(),
-      printer_profile_.cutFilamentPosition().zCoordinate() +
-          plate_socket_profile_.originOffsetZ());
+      printer_profile_.cutFilamentPosition().xCoordinate(),
+      printer_profile_.cutFilamentPosition().yCoordinate(),
+      printer_profile_.cutFilamentPosition().zCoordinate());
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodePushTheTrigger() {
