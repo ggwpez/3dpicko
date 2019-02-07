@@ -1,8 +1,8 @@
 ﻿#ifndef PRINTERPROFILE_H
 #define PRINTERPROFILE_H
 
-#include "include/point.h"
 #include "include/json_constructable.hpp"
+#include "include/point.h"
 
 namespace c3picko {
 
@@ -15,14 +15,14 @@ namespace c3picko {
  */
 class PrinterProfile : public JsonConstructable {
  public:
-	explicit PrinterProfile(QJsonObject const&);
+  explicit PrinterProfile(QJsonObject const&);
   explicit PrinterProfile(
-	  int movement_speed,
-	  const Point& cut_filament_position_above_trigger,
-	  float z_coordinate_pushing_the_trigger,
-	  float z_coordinate_distance_between_pushed_trigger_and_gap_between_scissors_blade,
-	  float filament_extrusion_length_on_move_offset = 0,
-	  float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = 0);
+      int movement_speed, const Point& cut_filament_position_above_trigger,
+      float z_coordinate_pushing_the_trigger,
+      float distance_between_pushed_trigger_and_gap_between_scissors_blade,
+      float filament_extrusion_length_on_move_offset = 0,
+      float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset =
+          0);
 
   int movementSpeed() const;
   Point cutFilamentPosition() const;
@@ -42,9 +42,10 @@ class PrinterProfile : public JsonConstructable {
   const int movement_speed_;
 
   /**
-   * @brief cut_filament_position_above_trigger_ the xyz position, in the coordinate system
-   * of the printer, the nozzle needs to move to in order to be above the trigger of the
-   * scissor and directly above the center of the space between the scissors blades
+   * @brief cut_filament_position_above_trigger_ the xyz position, in the
+   * coordinate system of the printer, the nozzle needs to move to in order to
+   * be above the trigger of the scissor and directly above the center of the
+   * space between the scissors blades
    */
   const Point cut_filament_position_above_trigger_;
 
@@ -62,14 +63,16 @@ class PrinterProfile : public JsonConstructable {
   const float distance_between_pushed_trigger_and_gap_between_scissors_blade_;
 
   /**
-   * @brief filament_extrusion_length_default_ the length up to which the filament
-   * shall be extruded to at least, determined by manual testing, in millimeter
+   * @brief filament_extrusion_length_default_ the length up to which the
+   * filament shall be extruded to at least, determined by manual testing, in
+   * millimeter
    */
   const float filament_extrusion_length_default_;
 
   /**
-   * @brief filament_extrusion_length_on_move_ the length up to which the filament
-   * shall be extruded while moving the nozzle above the plates, in millimeter
+   * @brief filament_extrusion_length_on_move_ the length up to which the
+   * filament shall be extruded while moving the nozzle above the plates, in
+   * millimeter
    */
   const float filament_extrusion_length_on_move_;
 
@@ -81,13 +84,14 @@ class PrinterProfile : public JsonConstructable {
   const float filament_extrusion_length_on_pick_and_put_onto_master_plate_;
 
   /**
-   * @brief safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_
-   * the distance between the extruded filament of the moving nozzle and the top
+   * @brief
+   * safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_ the
+   * distance between the extruded filament of the moving nozzle and the top
    * surface of every plate, guaranteeing that the tip of the filament does not
    * touch anything on move, determined by manual testing, in millimeter
    */
-  const float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
-
+  const float
+      safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 };
 }  // namespace c3picko
 #endif  // PRINTERPROFILE_H
