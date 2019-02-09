@@ -27,7 +27,7 @@ var cards = 1;
 			console.log("Response: ", data);
 
 			if ("error" in data)				// TODO unclean
-				alert(data.error);
+				ShowAlert(data.error, "danger");
 			else if (type == "getimagelist")
 			{
 				console.log(data);
@@ -91,24 +91,21 @@ var cards = 1;
 			}
 			else if (type == "createsettingsprofile"){
 				AddProfileToList(data);
-				$('#form-new'+data.type)[0].reset();
-				$('#collapse-new'+data.type).collapse('hide');
 				ShowAlert(data.profile_name+" added.", "success");
 			}
 			else if(type == "updatesettingsprofile"){
-				if(data.id in all_profiles){
-					all_profiles[profile_object.id] = profile_object;
-					$('#link-'+profile_object.id).text(profile_object.profile_name);
-					$('#collapse-'+profile_object.id).collapse('hide');
-					ShowAlert(profile_object.profile_name+" updated.", "success");
-				} 
-				else ShowAlert(profile_object.profile_name+" non-existent.", "danger");
+				AddProfileToList(data);
+				ShowAlert(data.profile_name+" updated.", "success");
+			}
+			else if(type == "deletesettingsprofile"){
+				ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
+				DeleteProfile(data.id);
 			}
 			else if (type == "debug")
 			{
 				addDebugOutputLine(data.line);
 				// TODO...
-				if(data.line == "Ignoring doubled image") ShowAlert("Image alread exists.", "danger");
+				if(data.line == "Ignoring doubled image") ShowAlert("Image already exists.", "danger");
 			}
 			else if (type == "getpositions")
 			{
@@ -127,23 +124,6 @@ var cards = 1;
 			document.title = "No connection - 3CPicko";
 		});
 })();
-
-function AddProfileToList(profile){
-	if(!(profile.id in all_profiles)){
-		all_profiles[profile.id] = profile;
-		switch(profile.type){
-			case "printer-profile": 
-			AddPrinterProfile(profile);
-			break;
-			case "socket-profile": 
-			AddSocketProfile(profile);
-			break;
-			case "plate-profile": 
-			AddPlateProfile(profile);
-			break;
-		}
-	}	
-}
 
 function AddJobToList(job)
 {
@@ -203,7 +183,7 @@ function AddImageToList(image_object){
 }
 
 $('#delete-dialog').on('show.bs.modal', function (e) {
-  // <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
+  // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
   const type = $(e.relatedTarget).data('type');
   const id = $(e.relatedTarget).data('id');
   const dialog_text = document.getElementById('delete-dialog-title');
@@ -212,36 +192,46 @@ $('#delete-dialog').on('show.bs.modal', function (e) {
   switch (type) {
   	case "image":
   	dialog_text.innerHTML = `Delete image ${images_list[id].original_name}?`;
-  	dialog_button.addEventListener('click', function(){DeleteImage(id)});
+  	dialog_button.onclick = function(){
+  		console.log("Trying to delete image with id: " + id);
+  		api("deleteimage", {id: id.toString()});
+  	};
   	break;
   	case "job":
   	dialog_text.innerHTML = `Delete job ${all_jobs[id].name}?`;
-  	dialog_button.addEventListener('click', function(){DeleteJob(id)});
+  	dialog_button.onclick = function(){
+  		console.log("Trying to delete job with id: " + id);
+  		api("deletejob", {id: id.toString()});
+  	};
   	break;
   	case "printer-profile":
   	dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
-  	dialog_button.addEventListener('click', function(){DeletePrinterProfile(id)});
+  	dialog_button.onclick = function(){
+  		console.log("Trying to delete printer profile with id: " + id);
+  		api("deletesettingsprofile", {id: id.toString()});
+  	};
   	break;
   	case "socket-profile":
   	dialog_text.innerHTML = `Delete socket profile ${all_profiles[id].profile_name}?`;
-  	dialog_button.addEventListener('click', function(){DeleteSocketProfile(id)});
+    	dialog_button.onclick = function(){
+  		console.log("Trying to delete socket profile with id: " + id);
+  		api("deletesettingsprofile", {id: id.toString()});
+  	};
   	break;
   	case "plate-profile":
   	dialog_text.innerHTML = `Delete plate profile ${all_profiles[id].profile_name}?`;
-  	dialog_button.addEventListener('click', function(){DeletePlateProfile(id)});
+  	dialog_button.onclick = function(){
+  		console.log("Trying to delete plate profile with id: " + id);
+  		api("deletesettingsprofile", {id: id.toString()});
+  	};
   	break;
+  	default:
+  	dialog_text.innerHTML = `Not implemented`;
+  	dialog_button.onclick = function(){
+  		console.log("called non implemented delete");
+  	};
   }
 });
-
-function DeleteImage(id){
-	console.log("Trying to delete image with id: " + id);
-	api("deleteimage", {id: id});
-}
-
-function DeleteJob(id){
-	console.log("Trying to delete job with id: " + id);
-	api("deletejob", {id: id.toString()});
-}
 
 function SetChosen(image_id){
 	div_chosen = document.getElementById('chosen-image');
@@ -332,6 +322,7 @@ function selectionTab(){
 			socket: socket_id,
 			description: description
 		}
+		api("createjob", current_job);
 	} 
 }
 
@@ -339,7 +330,6 @@ function strategyTab(){
 	let plate_selection = document.getElementById("select-plate-profile");
 	for(let profile_id in all_profiles){
 		let profile = all_profiles[profile_id];
-		console.log(profile);
 		if(profile.type=="plate-profile"){
 			//TODO read number of colonys
 			if(profile.number_of_rows*profile.number_of_columns >= 96){

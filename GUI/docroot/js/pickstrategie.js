@@ -1,61 +1,27 @@
-var canvas,
-context;
+var canvas = document.getElementById('circle');
+var context;
 
 const Circle = new Class({
-  
-  Implements: [Options, Events],
-  
-  initialize: function (options) {
-    this.setOptions(options);
-    
-    this.draw().attach();
-  },
-  
-  attach: function () {
-    this.addEvent('change', this.draw);
-  },
-  
-  set: function (what, value) {
-  	const is_new = (this.options[what] != value);
-    
-    if (is_new)
-    {
-    	this.options[what] = value;
-    	this.fireEvent('change');
-    }
-    return this;
-  },
-  
-  get: function (what) {
-    return this.options[what];
-  },
-  
-  draw: function () {
-   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
-    
-    context.beginPath();
-		context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI, false);
-		context.fillStyle = this.options.background;
-		context.fill();
-		context.lineWidth = 3;
-		context.strokeStyle = this.options.linecolor;
-      	context.stroke();
-  
-    return this;
-  },
-  
-  getSize: function () {
-    return {
-			width: this.options.radius * 2,
-		  height: this.options.radius * 2
-		}
-  },
-  
-  getPosition: function () {
-    var position = {
-			x: this.get('x'),
-			y: this.get('y')
 
+	Implements: [Options, Events],
+
+	initialize: function (options) {
+		this.setOptions(options);
+
+		this.draw().attach();
+	},
+
+	attach: function () {
+		this.addEvent('change', this.draw);
+	},
+
+	set: function (what, value) {
+		const is_new = (this.options[what] != value);
+
+		if (is_new)
+		{
+			this.options[what] = value;
+			this.fireEvent('change');
 		}
 		return this;
 	},
@@ -65,6 +31,40 @@ const Circle = new Class({
 	},
 
 	draw: function () {
+   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
+
+   context.beginPath();
+   context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI, false);
+   context.fillStyle = this.options.background;
+   context.fill();
+   context.lineWidth = 3;
+   context.strokeStyle = this.options.linecolor;
+   context.stroke();
+
+   return this;
+},
+
+getSize: function () {
+	return {
+		width: this.options.radius * 2,
+		height: this.options.radius * 2
+	}
+},
+
+getPosition: function () {
+	var position = {
+		x: this.get('x'),
+		y: this.get('y')
+
+	}
+	return this;
+},
+
+get: function (what) {
+	return this.options[what];
+},
+
+draw: function () {
    // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
 
    context.beginPath();
@@ -112,16 +112,16 @@ isMouseOver: function (x, y) {
 
 var balls;
 var collided_id, old_collided_id;
-var disabled = false;
+var mouse_down = false;
+
 function drawWells(cols, rows, colonys = 1)
 {
+	context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	collided_id = -1, old_collided_id = -1;
 	balls = [];
-	canvas  = document.getElementById('circle'),
-	context = canvas.getContext('2d');
 	context.canvas.width = cols*32+50;
 	context.canvas.height = rows*32+50;
-	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	for (var x = 0; x < cols; ++x){
 		for (var y = 0; y < rows; ++y)
@@ -153,45 +153,50 @@ function drawWells(cols, rows, colonys = 1)
 		context.fillText(String.fromCharCode(65 +i), 10, 32 * i + 70);
 	}
 
-	canvas.addEvent('mousemove', function (e)
-	{
-		if(!disabled){
-			var rect = canvas.getBoundingClientRect();
-			var x = e.client.x -rect.left,
-			y = e.client.y -rect.top;
+}
 
-			for (var i = 0; i < balls.length; ++i)
+canvas.addEvent('mousemove', function (e)
+{
+	if(mouse_down){
+		var rect = canvas.getBoundingClientRect();
+		var x = e.client.x -rect.left,
+		y = e.client.y -rect.top;
+
+		for (var i = 0; i < balls.length; ++i)
+		{
+			var ball = balls[i];
+
+			if (ball.isMouseOver(x, y))
 			{
-				var ball = balls[i];
-
-				if (ball.isMouseOver(x, y))
+				if (! ball.mouseover)
 				{
-					if (! ball.mouseover)
-					{
-						ball.fireEvent('mouseenter');
-						ball.mouseover = true;
-						collided_id = i;
-					}
-				}
-				else if (ball.mouseover)
-				{
-					ball.mouseover = false;
-					ball.fireEvent('mouseleave');
+					ball.fireEvent('mouseenter');
+					ball.mouseover = true;
+					collided_id = i;
 				}
 			}
-
-			if (old_collided_id != collided_id)
+			else if (ball.mouseover)
 			{
-				for (var i = 0; i < balls.length; ++i)
-				{
-					balls[i].set('background', (i < collided_id ? 'white' : 'green'));
-				}
-				old_collided_id = collided_id;
+				ball.mouseover = false;
+				ball.fireEvent('mouseleave');
 			}
 		}
-	});
-	canvas.addEvent('click', function (e){
-		disabled = !disabled;
-		console.log(collided_id);
-	});
-}
+
+		if (old_collided_id != collided_id)
+		{
+			for (var i = 0; i < balls.length; ++i)
+			{
+				balls[i].set('background', (i < collided_id ? 'white' : 'green'));
+			}
+			old_collided_id = collided_id;
+		}
+	} else return false;
+});
+canvas.addEvent('mousedown', function (e){
+	mouse_down = true;
+	canvas.fireEvent('mousemove', e);
+});
+canvas.addEvent('mouseup', function (e){
+	mouse_down = false;
+	console.log("Starting Well: ", collided_id+1);
+});

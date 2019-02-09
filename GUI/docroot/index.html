@@ -122,8 +122,16 @@
                 <div id="showCoordinates"></div>
               </div>
               <div class="tab-pane fade col-md-8" id="strategy">
-                <canvas id="circle" width="1000" height="800"></canvas>
-                <script src='http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js'></script>
+                <h2>Pick strategy</h2>
+                <form id="strategy-form" name="strategy-form">
+                  <div class="form-group">
+                    <label for="select-plate-profile">Plates:</label>
+                    <select id="select-plate-profile"></select>
+                  </div>
+                </form>
+                <h2>Choose starting well</h2>
+                <canvas id="circle"></canvas>
+                <br>
                 <button class="btn btn-dark m-2" onclick="overviewTab()">Overview ></button>
               </div>
               <div class="tab-pane fade col-md-8" id="overview">
@@ -251,6 +259,7 @@
   <script type="text/javascript" src="js/colonydetection.js"></script>
   <script type="text/javascript" src="js/config.js"></script>
   <script type="text/javascript" src="js/cropper.js"></script>
+  <script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
   <script type="text/javascript" src="js/pickstrategie.js"></script>
 </body>
 </html>

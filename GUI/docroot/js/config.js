@@ -6,30 +6,20 @@ var UpdateSettingsProfile = function (e){
   for (const [key, value]  of form_data.entries()) {
     json_object[key] = value;
   }
-  if(json_object.id == "newprinter-profile" || json_object.id == "newsocket-profile" || json_object.id == "newplate-profile") api("createsettingsprofile", json_object);
-  else api("updatesettingsprofile", json_object);
-}
-
-function DeletePrinterProfile(id){
-  $('#card-'+id).remove();
-  $('#select-printer-profile option[value='+id+']').remove();
-  delete all_profiles[id];
-  // TODO Backend delete
-}
-function DeleteSocketProfile(id){
-  $('#card-'+id).remove();
-  $('#select-socket-profile option[value='+id+']').remove();
-  delete all_profiles[id];
-  // TODO Backend delete
-}
-function DeletePlateProfile(id){
-  $('#card-'+id).remove();
-  delete all_profiles[id];
-  // TODO Backend delete
+  if(json_object.id == "newprinter-profile" || json_object.id == "newsocket-profile" || json_object.id == "newplate-profile"){
+    $('#form-new'+json_object.type)[0].reset();
+    $('#collapse-new'+json_object.type).collapse('hide');
+    api("createsettingsprofile", json_object);
+  } 
+  else{
+    $('#collapse-'+json_object.id).collapse('hide');
+    api("updatesettingsprofile", json_object);
+  } 
 }
 
 $(function LoadProfiles(){
-  newprinterprofile = {
+  // add empty "newprofiles", initial values possible
+  AddPrinterProfile({
     "id" : "newprinter-profile",
     "type" : "printer-profile",
     "profile_name" : "",
@@ -38,13 +28,11 @@ $(function LoadProfiles(){
     "cut_filament_position_above_trigger_z" : "",
     "z_coordinate_pushing_the_trigger" : "",
     "distance_between_pushed_trigger_and_gap_between_scissors_blade" : "",
-    "movement_speed" : "",
-    "filament_extrusion_length_on_move_offset": "",
-    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : ""
-  };
-  AddPrinterProfile(newprinterprofile);
-
-  newsocketprofile = {
+    "movement_speed" : 0,
+    "filament_extrusion_length_on_move_offset" : 0,
+    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : 0
+  });
+  AddSocketProfile({
     "id" : "newsocket-profile",
     "type" : "socket-profile",
     "socket_origin_offset_x" : "",
@@ -61,9 +49,24 @@ $(function LoadProfiles(){
     "global_origin_of_goal_plate_y" : "",
     "depth_of_cutout_the_goal_plate_lies_in" : "",
     "orientation_of_goal_plate" : "kFirstRowFirstColumnAtCutoutOrigin"
-  };
-  AddSocketProfile(newsocketprofile);
+  });
+  AddPlateProfile({
+    "id" : "newplate-profile",
+    "type" : "plate-profile",
+    "profile_name" : "",
+    "number_of_rows" : "",
+    "number_of_columns" : "",
+    "a1_row_offset" : "",
+    "a1_column_offset" : "",
+    "well_spacing_center_to_center" : "",
+    "height_source_plate" : "",
+    "height_master_plate" : "",
+    "height_goal_plate" : "",
+    "well_depth" : "",
+    "culture_medium_thickness" : ""
+  });
 
+  // local profiles for debugging
   const prototyp1 = {
     "id" : "DEFAULTBLUE",
     "type" : "socket-profile",
@@ -82,25 +85,7 @@ $(function LoadProfiles(){
     "depth_of_cutout_the_goal_plate_lies_in" : "12",
     "orientation_of_goal_plate" : "kFirstRowFirstColumnAtCutoutOrigin"
   };
-  AddSocketProfile(prototyp1);
-
-  const newplateprofile = {
-    "id" : "newplate-profile",
-    "type" : "plate-profile",
-    "profile_name" : "",
-    "number_of_rows" : "",
-    "number_of_columns" : "",
-    "a1_row_offset" : "",
-    "a1_column_offset" : "",
-    "well_spacing_center_to_center" : "",
-    "height_source_plate" : "",
-    "height_master_plate" : "",
-    "height_goal_plate" : "",
-    "well_depth" : "",
-    "culture_medium_thickness" : ""
-  };
-  AddPlateProfile(newplateprofile);
-
+  AddProfileToList(prototyp1);
   const default_plate = {
     "id" : "DEFALUTPLATE",
     "type" : "plate-profile",
@@ -116,9 +101,7 @@ $(function LoadProfiles(){
     "well_depth" : "7",
     "culture_medium_thickness" : "8"
   }
-  AddPlateProfile(default_plate);
-  
-  // TDOD Backend load
+  AddProfileToList(default_plate);
   const makergear = {
     "id" : "XYZ",
     "type" : "printer-profile",
@@ -131,8 +114,7 @@ $(function LoadProfiles(){
     "movement_speed" : "6",
     "filament_extrusion_length_on_move_offset": "7",
     "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : "8"
-   };
-
+  };
   const creality = {
     "id" : "ABC",
     "type" : "printer-profile",
@@ -146,22 +128,66 @@ $(function LoadProfiles(){
     "filament_extrusion_length_on_move_offset": "7",
     "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : "8"
   };
-  AddPrinterProfile(makergear);
-  AddPrinterProfile(creality);
+  AddProfileToList(makergear);
+  AddProfileToList(creality);  
 });
 
-function AddPrinterProfile(printer_profile){
-  all_profiles[printer_profile.id] = printer_profile;
+function DeleteProfile(id){
+  if(id in all_profiles){
+    $('#card-'+id).remove();
+    const profile = all_profiles[id];
+    switch(profile.type){
+      case "printer-profile": 
+      $('#select-printer-profile option[value='+id+']').remove();
+      break;
+      case "socket-profile": 
+      $('#select-socket-profile option[value='+id+']').remove();
+      break;
+      case "plate-profile": 
+      // TODO update options list
+      break;
+    }
+    delete all_profiles[id];
+  }
+}
 
+function AddProfileToList(profile){
+  if(profile.id in all_profiles){
+    // update profile (delete old profile)
+    DeleteProfile(profile.id);
+  }
+  // add new profile
+  all_profiles[profile.id] = profile;
+  switch(profile.type){
+    case "printer-profile": 
+    AddPrinterProfile(profile);
+    break;
+    case "socket-profile": 
+    AddSocketProfile(profile);
+    break;
+    case "plate-profile": 
+    AddPlateProfile(profile);
+    break;
+  }
+}
+
+function AddPrinterProfile(printer_profile){
+  console.log("Profile:", printer_profile);
   let link_text = printer_profile.profile_name;
   let button_text = "Save changes";
   let deletable = true;
+ 
 
   if(printer_profile.id == "newprinter-profile"){
     link_text = "Create new printer profile >"; 
     button_text = "Create profile";
     deletable = false;
-  } 
+  }
+  // TODO
+  if(!("filament_extrusion_length_on_move_offset" in printer_profile)){
+    printer_profile.filament_extrusion_length_on_move_offset = printer_profile.filament_extrusion_length_on_move - printer_profile.filament_extrusion_length_default;
+    printer_profile.filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = printer_profile.filament_extrusion_length_on_pick_and_put_onto_master_plate - printer_profile.filament_extrusion_length_default;
+  }
 
   const html = `
   <div class="card" id="card-${printer_profile.id}">
@@ -246,8 +272,6 @@ function AddPrinterProfile(printer_profile){
 }
 
 function AddSocketProfile(socket_profile){
-  all_profiles[socket_profile.id] = socket_profile;
-
   let link_text = socket_profile.profile_name;
   let button_text = "Save changes";
   let deletable = true;
@@ -354,8 +378,6 @@ function AddSocketProfile(socket_profile){
 
 
 function AddPlateProfile(plate_profile){
-  all_profiles[plate_profile.id] = plate_profile;
-
   let link_text = plate_profile.profile_name;
   let button_text = "Save changes";
   let deletable = true;
