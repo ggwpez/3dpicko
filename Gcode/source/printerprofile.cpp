@@ -13,18 +13,20 @@ PrinterProfile::PrinterProfile(const QJsonObject& obj)
 		  obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"]
 			  .toString()
 			  .toDouble()),
+	  filament_extrusion_length_default_(3),
 	  filament_extrusion_length_on_move_(
-		  obj["filament_extrusion_length_on_move"]
+		  filament_extrusion_length_default_ +
+		  obj["filament_extrusion_length_on_move_offset"]
 			  .toString()
 			  .toDouble()),
 	  z_coordinate_pushing_the_trigger_(
 		  obj["z_coordinate_pushing_the_trigger"].toString().toDouble()),
 	  filament_extrusion_length_on_pick_and_put_onto_master_plate_(
-		  obj["filament_extrusion_length_on_pick_and_put_onto_master_plate"]
+		  obj["filament_extrusion_length_on_pick_and_put_onto_master_plate_offset"]
 			  .toString()
-			  .toDouble()),
-	  filament_extrusion_length_default_(3),
-	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(2) {
+			  .toDouble()
+	+filament_extrusion_length_default_),
+	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(3) {
 
 }
 
@@ -47,7 +49,7 @@ PrinterProfile::PrinterProfile(
 	  filament_extrusion_length_on_pick_and_put_onto_master_plate_(
 		  filament_extrusion_length_default_ +
 		  filament_extrusion_length_on_pick_and_put_onto_master_plate_offset),
-	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(2) {
+	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(3) {
 }
 
 int PrinterProfile::movementSpeed() const { return movement_speed_; }

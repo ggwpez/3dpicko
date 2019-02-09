@@ -65,6 +65,7 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 	gcodes.push_back(gcode_extrude_filament_to_cut_length_);
 	gcodes.push_back(gcode_push_trigger_);
 	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+	gcodes.push_back(GcodeInstruction::ZeroE());
 	gcodes.push_back(gcode_extrusion_length_on_move_);
   }
 
