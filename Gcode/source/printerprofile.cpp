@@ -24,7 +24,7 @@ PrinterProfile::PrinterProfile(
 	  filament_extrusion_length_on_pick_and_put_onto_master_plate_(
 		  filament_extrusion_length_default_ +
 		  filament_extrusion_length_on_pick_and_put_onto_master_plate_offset),
-	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(2) {
+	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(3) {
 }
 
 int PrinterProfile::movementSpeed() const { return movement_speed_; }
