@@ -1,5 +1,5 @@
-var canvas = document.getElementById('circle');
-var context;
+var pickstrategy_canvas = document.getElementById('pickstrategy-canvas');
+var pickstrategy_context;
 
 const Circle = new Class({
 
@@ -31,84 +31,49 @@ const Circle = new Class({
 	},
 
 	draw: function () {
-   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
+   		// pickstrategy_context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
+		pickstrategy_context.beginPath();
+   		pickstrategy_context.arc(this.options.x + this.options.radius, this.options.y + this.options.radius, this.options.radius, 0, 2 * Math.PI, false);
+   		pickstrategy_context.fillStyle = this.options.background;
+   		pickstrategy_context.fill();
+   		pickstrategy_context.lineWidth = 3;
+   		pickstrategy_context.strokeStyle = this.options.linecolor;
+   		pickstrategy_context.stroke();
 
-   context.beginPath();
-   context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI, false);
-   context.fillStyle = this.options.background;
-   context.fill();
-   context.lineWidth = 3;
-   context.strokeStyle = this.options.linecolor;
-   context.stroke();
+   		return this;
+   	},
 
-   return this;
-},
+   	getSize: function () {
+   		return {
+   			width: this.options.radius * 2,
+   			height: this.options.radius * 2
+   		}
+   	},
 
-getSize: function () {
-	return {
-		width: this.options.radius * 2,
-		height: this.options.radius * 2
-	}
-},
+   	getPosition: function () {
+   		var position = {
+   			x: this.get('x'),
+   			y: this.get('y')
+   		}
 
-getPosition: function () {
-	var position = {
-		x: this.get('x'),
-		y: this.get('y')
+   		return position;
+   	},
 
-	}
-	return this;
-},
+   	isMouseOver: function (x, y) {
+   		var position = this.getPosition(),
+   		size   = this.getSize(),
+   		radius = this.options.radius,
+   		centerX = position.x + (size.width / 2),
+   		centerY = position.y + (size.height / 2),
+   		distanceX = x - centerX,
+   		distanceY = y - centerY;
 
-get: function (what) {
-	return this.options[what];
-},
+   		var d = Math.round(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
 
-draw: function () {
-   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
+   		return d <= radius;
+   	}
+   });
 
-   context.beginPath();
-   context.arc(this.options.x + this.options.radius, this.options.y + this.options.radius, this.options.radius, 0, 2 * Math.PI, false);
-   context.fillStyle = this.options.background;
-   context.fill();
-   context.lineWidth = 3;
-   context.strokeStyle = this.options.linecolor;
-   context.stroke();
-
-   return this;
-},
-
-getSize: function () {
-	return {
-		width: this.options.radius * 2,
-		height: this.options.radius * 2
-	}
-},
-
-getPosition: function () {
-	var position = {
-		x: this.get('x'),
-		y: this.get('y')
-	}
-
-	return position;
-},
-
-isMouseOver: function (x, y) {
-	var position = this.getPosition(),
-	size   = this.getSize(),
-	radius = this.options.radius,
-	centerX = position.x + (size.width / 2),
-	centerY = position.y + (size.height / 2),
-	distanceX = x - centerX,
-	distanceY = y - centerY;
-
-	var d = Math.round(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-
-	return d <= radius;
-}
-
-});
 
 var balls;
 var collided_id, old_collided_id;
@@ -116,12 +81,12 @@ var mouse_down = false;
 
 function drawWells(cols, rows, colonys = 1)
 {
-	context = canvas.getContext('2d');
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	pickstrategy_context = pickstrategy_canvas.getContext('2d');
+	pickstrategy_context.clearRect(0, 0, pickstrategy_canvas.width, pickstrategy_canvas.height);
 	collided_id = -1, old_collided_id = -1;
 	balls = [];
-	context.canvas.width = cols*32+50;
-	context.canvas.height = rows*32+50;
+	pickstrategy_context.canvas.width = cols*32+50;
+	pickstrategy_context.canvas.height = rows*32+50;
 
 	for (var x = 0; x < cols; ++x){
 		for (var y = 0; y < rows; ++y)
@@ -144,21 +109,21 @@ function drawWells(cols, rows, colonys = 1)
 			balls.push(ball);
 		}
 	}
-	context.font = "16px Arial";
-	context.fillStyle = "red";
+	pickstrategy_context.font = "16px Arial";
+	pickstrategy_context.fillStyle = "red";
 	for (var i = 0; i < cols; ++i) {
-		context.fillText(i+1, 50 +8 +32 *i, 30);
+		pickstrategy_context.fillText(i+1, 50 +8 +32 *i, 30);
 	}
 	for (var i = 0; i < rows; ++i) {
-		context.fillText(String.fromCharCode(65 +i), 10, 32 * i + 70);
+		pickstrategy_context.fillText(String.fromCharCode(65 +i), 10, 32 * i + 70);
 	}
 
 }
 
-canvas.addEvent('mousemove', function (e)
+pickstrategy_canvas.addEvent('mousemove', function (e)
 {
 	if(mouse_down){
-		var rect = canvas.getBoundingClientRect();
+		var rect = pickstrategy_canvas.getBoundingClientRect();
 		var x = e.client.x -rect.left,
 		y = e.client.y -rect.top;
 
@@ -192,11 +157,11 @@ canvas.addEvent('mousemove', function (e)
 		}
 	} else return false;
 });
-canvas.addEvent('mousedown', function (e){
+pickstrategy_canvas.addEvent('mousedown', function (e){
 	mouse_down = true;
-	canvas.fireEvent('mousemove', e);
+	pickstrategy_canvas.fireEvent('mousemove', e);
 });
-canvas.addEvent('mouseup', function (e){
+pickstrategy_canvas.addEvent('mouseup', function (e){
 	mouse_down = false;
 	console.log("Starting Well: ", collided_id+1);
 });

@@ -108,16 +108,31 @@
                 </form>
                 <button class="btn btn-dark m-2" onclick="selectionTab()">Next Step</button>
               </div>
-              <div class="tab-pane fade col-md-8" id="selection">
-                <h2>Choose colonys</h2>
-                  <img id="photograph" src="" />
-                  <canvas id="drawArea"></canvas>
-                <br>
-                <div id="buttons">
-                  <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
-                  <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
-                  <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
-                  <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
+              <div class="tab-pane fade col-md-12 col-xl-10" id="selection">
+                <div class="row">
+                  <div class="col-lg-9">
+                    <h2>Choose colonys</h2>
+                    <img id="photograph" src="" />
+                    <canvas id="drawArea" style="position: absolute; top: 0;"></canvas>
+                    <div id="buttons">
+                      <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
+                      <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
+                      <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
+                      <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <h2 class="d-none d-lg-block">Settings</h2>
+                    <div class="form-group">
+                      <label for="select-algorithm">Algorithm:</label>
+                      <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
+                    </div>
+                    <form id="detection-settings-form">
+                      <div id="detection-settings"></div>
+                      <button type="submit" class="btn btn-primary">Apply</button>
+                      <button type="reset" class="btn btn-secondary">Reset</button>
+                    </form>
+                  </div>
                 </div>
                 <div id="showCoordinates"></div>
               </div>
@@ -130,7 +145,7 @@
                   </div>
                 </form>
                 <h2>Choose starting well</h2>
-                <canvas id="circle"></canvas>
+                <canvas id="pickstrategy-canvas"></canvas>
                 <br>
                 <button class="btn btn-dark m-2" onclick="overviewTab()">Overview ></button>
               </div>

@@ -6,8 +6,7 @@ var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
 var all_profiles = {};
-// ?
-var cards = 1;
+var algorithms;
 
 (function Setup()
 {
@@ -56,7 +55,7 @@ var cards = 1;
 				if (!(data.id in all_jobs))
 				{
 					console.warn("Server trying to delete non existing job: " + JSON.stringify(data));
-					ShowAlert("Error: Non existing job.", "danger");
+					ShowAlert("Error: Non existing job. Reload.", "danger");
 				}
 				else
 				{
@@ -78,6 +77,7 @@ var cards = 1;
 				AddJobToList(data);
 				document.getElementById("headertag").innerHTML = "Entwurf #" +data.id;
 				// current_job = data;
+				ShowAlert("Pickjob "+data.id+" saved.", "success");
 			}
 			else if (type == "getjoblist")
 			{
@@ -93,11 +93,11 @@ var cards = 1;
 				AddProfileToList(data);
 				ShowAlert(data.profile_name+" added.", "success");
 			}
-			else if(type == "updatesettingsprofile"){
+			else if (type == "updatesettingsprofile"){
 				AddProfileToList(data);
 				ShowAlert(data.profile_name+" updated.", "success");
 			}
-			else if(type == "deletesettingsprofile"){
+			else if (type == "deletesettingsprofile"){
 				ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
 				DeleteProfile(data.id);
 			}
@@ -112,6 +112,15 @@ var cards = 1;
 				console.log("Positions\n" +JSON.stringify(data));
 				drawPositions(data);
 			}
+			else if (type == "getdetectionalgorithms"){
+				GetDetectionAlgorithms(data);
+			}
+			else if (type == "updatedetectionsettings"){
+				// TODO
+			}
+			else if (type == "crop-image"){
+				// TODO
+			} 
 			else
 			{
 				console.warn("Ignoring message of type '" +type +"'");
@@ -124,6 +133,149 @@ var cards = 1;
 			document.title = "No connection - 3CPicko";
 		});
 })();
+
+
+
+function GetDetectionAlgorithms(detection_algorithms){
+	algorithms = detection_algorithms;
+	// TODO Remove (only for debugging)
+	algorithms = {
+		"321":
+		{
+			name: "Fluro",
+			description: "Good for detecting fluorescent colonies",
+			settings:
+			{
+				"1234":
+				{
+					name: "Threshold 1",
+					type: "slider",
+					valueType: "float",
+					min: 0,
+					max: 10,
+					step: 0.1,
+					defaultValue: 1.2,
+					description: ""
+				},
+				"123":
+				{
+					name: "Erode & Dilate",
+					type: "checkbox",
+					defaultValue: true,
+					description: ""
+				},
+				"12sad3":
+				{
+					name: "Erode & Dilate 2",
+					type: "checkbox",
+					defaultValue: false,
+					description: "do not touch me!"
+				}
+			}
+		},
+		"423":
+		{
+			name: "Fluro 2",
+			description: "Good for detecting more fluorescent colonies",
+			settings:
+			{
+				"1234":
+				{
+					name: "Thres",
+					type: "slider",
+					valueType: "float",
+					min: -10,
+					max: 10,
+					step: 1,
+					defaultValue: 1,
+					description: "Hi this is very descriptive"
+				},
+				"123":
+				{
+					name: "Zahl",
+					type: "slider",
+					valueType: "float",
+					min: -10,
+					max: 10,
+					step: 1,
+					defaultValue: 1,
+					description: ""
+				}
+			}
+		}
+	}
+	
+	const algorithm_selection = document.getElementById("select-algorithm");
+	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
+
+	for (let id in algorithms){
+		let algorithm = algorithms[id];
+		let algorithm_option = document.createElement('option');
+		algorithm_option.value = id;
+		algorithm_option.text = algorithm.name + " (" + algorithm.description + ")";
+		algorithm_option.title = algorithm.description;
+		algorithm_selection.appendChild(algorithm_option);
+	}
+	algorithm_selection.onchange = function(){GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);};
+	GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);
+}
+
+function GetDetectionAlgorithmSettings(id){
+	const detection_settings = document.getElementById("detection-settings");
+	while (detection_settings.firstChild) detection_settings.removeChild(detection_settings.firstChild);
+
+	const algorithm = algorithms[id];
+	for (let settings_id in algorithm.settings){
+		let settings = algorithm.settings[settings_id];
+		let new_input_html = `
+		<div class="form-group">
+		<label for="${settings_id}">${settings.name}:</label>
+		`;
+
+		if(settings.type == "slider"){
+			new_input_html += `
+			<input type="range" class="custom-range" id="${settings_id}" name="${settings_id}" min="${settings.min}" max="${settings.max}" step="${settings.step}" value="${settings.defaultValue}" oninput="$('#slider-${settings_id}')[0].value=this.value;">
+			<div style="text-align: center;"><span style="float:left;">${settings.min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${settings.min}" max="${settings.max}" step="${settings.step}" id="slider-${settings_id}" value="${settings.defaultValue}" oninput="$('#${settings_id}')[0].value=this.value;"><span style="float:right">${settings.max}</span></div>
+			`;
+		}
+		else if(settings.type == "checkbox"){
+			new_input_html += `<div class="custom-control custom-checkbox d-inline"><input type="checkbox" class="custom-control-input" id="${settings_id}" name="${settings_id}" ${(settings.defaultValue)?`checked`:``}><label class="custom-control-label" for="${settings_id}"></label></div>`;
+		}
+		
+		if(settings.description){
+			new_input_html += `<small class="form-text text-muted">${settings.description}</small>`;
+		}
+		new_input_html += '</div>';
+		detection_settings.insertAdjacentHTML('beforeend', new_input_html);
+	}
+}
+
+var UpdateDetectionSettings = function (e){
+	// Send as:
+	// {
+	// 	algorithm: "321",
+	// 	settings:
+	// 	{
+	// 		"1234": 6,
+	// 		"123": true
+	// 	}
+	// }
+	e.preventDefault();
+	let settings_object = {};
+	let algorithm_id = document.getElementById('select-algorithm').value;
+ 	let settings = algorithms[algorithm_id].settings;
+	for(let key in settings){
+		if(settings[key].type=="slider") settings_object[key] = Number(document.getElementById(key).value);
+		else if(settings[key].type=="checkbox") settings_object[key] = document.getElementById(key).checked;
+	}
+
+	new_settings = {
+		algorithm: algorithm_id,
+		settings: settings_object
+	};
+	console.log("New Settings:", new_settings);
+	api('updatedetectionsettings', new_settings); 
+}
 
 function AddJobToList(job)
 {
@@ -182,55 +334,59 @@ function AddImageToList(image_object){
 	}
 }
 
-$('#delete-dialog').on('show.bs.modal', function (e) {
-  // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
-  const type = $(e.relatedTarget).data('type');
-  const id = $(e.relatedTarget).data('id');
-  const dialog_text = document.getElementById('delete-dialog-title');
-  const dialog_button = document.getElementById('delete-button');
-  
-  switch (type) {
-  	case "image":
-  	dialog_text.innerHTML = `Delete image ${images_list[id].original_name}?`;
-  	dialog_button.onclick = function(){
-  		console.log("Trying to delete image with id: " + id);
-  		api("deleteimage", {id: id.toString()});
-  	};
-  	break;
-  	case "job":
-  	dialog_text.innerHTML = `Delete job ${all_jobs[id].name}?`;
-  	dialog_button.onclick = function(){
-  		console.log("Trying to delete job with id: " + id);
-  		api("deletejob", {id: id.toString()});
-  	};
-  	break;
-  	case "printer-profile":
-  	dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
-  	dialog_button.onclick = function(){
-  		console.log("Trying to delete printer profile with id: " + id);
-  		api("deletesettingsprofile", {id: id.toString()});
-  	};
-  	break;
-  	case "socket-profile":
-  	dialog_text.innerHTML = `Delete socket profile ${all_profiles[id].profile_name}?`;
-    	dialog_button.onclick = function(){
-  		console.log("Trying to delete socket profile with id: " + id);
-  		api("deletesettingsprofile", {id: id.toString()});
-  	};
-  	break;
-  	case "plate-profile":
-  	dialog_text.innerHTML = `Delete plate profile ${all_profiles[id].profile_name}?`;
-  	dialog_button.onclick = function(){
-  		console.log("Trying to delete plate profile with id: " + id);
-  		api("deletesettingsprofile", {id: id.toString()});
-  	};
-  	break;
-  	default:
-  	dialog_text.innerHTML = `Not implemented`;
-  	dialog_button.onclick = function(){
-  		console.log("called non implemented delete");
-  	};
-  }
+$(function(){
+	$('#detection-settings-form').on('submit', UpdateDetectionSettings);
+	
+	$('#delete-dialog').on('show.bs.modal', function (e) {
+  	// use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
+  	const type = $(e.relatedTarget).data('type');
+  	const id = $(e.relatedTarget).data('id');
+  	const dialog_text = document.getElementById('delete-dialog-title');
+  	const dialog_button = document.getElementById('delete-button');
+
+  	switch (type) {
+  		case "image":
+  		dialog_text.innerHTML = `Delete image ${images_list[id].original_name}?`;
+  		dialog_button.onclick = function(){
+  			console.log("Trying to delete image with id: " + id);
+  			api("deleteimage", {id: id.toString()});
+  		};
+  		break;
+  		case "job":
+  		dialog_text.innerHTML = `Delete job ${all_jobs[id].name}?`;
+  		dialog_button.onclick = function(){
+  			console.log("Trying to delete job with id: " + id);
+  			api("deletejob", {id: id.toString()});
+  		};
+  		break;
+  		case "printer-profile":
+  		dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
+  		dialog_button.onclick = function(){
+  			console.log("Trying to delete printer profile with id: " + id);
+  			api("deletesettingsprofile", {id: id.toString()});
+  		};
+  		break;
+  		case "socket-profile":
+  		dialog_text.innerHTML = `Delete socket profile ${all_profiles[id].profile_name}?`;
+  		dialog_button.onclick = function(){
+  			console.log("Trying to delete socket profile with id: " + id);
+  			api("deletesettingsprofile", {id: id.toString()});
+  		};
+  		break;
+  		case "plate-profile":
+  		dialog_text.innerHTML = `Delete plate profile ${all_profiles[id].profile_name}?`;
+  		dialog_button.onclick = function(){
+  			console.log("Trying to delete plate profile with id: " + id);
+  			api("deletesettingsprofile", {id: id.toString()});
+  		};
+  		break;
+  		default:
+  		dialog_text.innerHTML = `Not implemented`;
+  		dialog_button.onclick = function(){
+  			console.log("called non implemented delete");
+  		};
+  	}
+  });
 });
 
 function SetChosen(image_id){
@@ -281,7 +437,7 @@ function tabEnter(tabId)
 var cropper;
 //Navigation
 function cutTab(){
-	if(chosen_image){
+	if(chosen_image.path){
 		tabEnter(1);
 
 		cutImg = document.querySelector('#cutImg');
@@ -306,7 +462,7 @@ function attributesTab(){
 	api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
 function selectionTab(){
-	if(chosen_image){
+	if(chosen_image.path){
 		tabEnter(3);
 		document.getElementById('photograph').src = chosen_image.path;
 		const printer_selection = document.getElementById('select-printer-profile');
@@ -323,6 +479,9 @@ function selectionTab(){
 			description: description
 		}
 		api("createjob", current_job);
+		api("getdetectionalgorithms");
+		// TODO Remove (only for debugging)
+		GetDetectionAlgorithms({});
 	} 
 }
 

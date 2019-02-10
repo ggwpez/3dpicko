@@ -104,6 +104,9 @@ img {
 .del{
 	cursor: no-drop;
 }
+input[type=range]{
+	height: auto;
+}
 
 /* Profile Settings Page */
 /* remove number input spinner */
@@ -114,8 +117,11 @@ img {
 	text-align: right;
 	-moz-appearance:textfield;
 }
-#nav-settings input[type=number]::-webkit-inner-spin-button, 
-#nav-settings input[type=number]::-webkit-outer-spin-button { 
+input[type=number]{
+	-moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
 	-webkit-appearance: none; 
 	margin: 0; 
 }
