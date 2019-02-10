@@ -47,9 +47,11 @@ class Image : public JsonConstructable
 	 * @param y Start y pos
 	 * @param w Crop Width
 	 * @param h Crop Height
-	 * @return
+	 * @param output
+	 * @param error Error string is set, when return is false
+	 * @return Success.
 	 */
-	bool crop(int x, int y, int w, int h, Image& output);
+	bool crop(int x, int y, int w, int h, Image& output, QString& error);
 
 	bool readCvMat(cv::Mat& output);
 	bool readData(QByteArray& output) const;

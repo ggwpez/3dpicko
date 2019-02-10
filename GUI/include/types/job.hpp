@@ -22,7 +22,7 @@ namespace c3picko
 	private:
 		ID id_;
 		Image::ID img_id_;
-		ProfileWrapper::ID plate_, printer_, socket_;
+		Profile::ID plate_, printer_, socket_;
 		QString name_, description_;
 		QDateTime job_created_;
 
