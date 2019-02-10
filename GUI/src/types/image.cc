@@ -1,4 +1,5 @@
 #include "include/types/image.hpp"
+#include <algorithm>
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <QDebug>
@@ -65,7 +66,7 @@ bool Image::writeToFile()
 
 		if (!file.write(reinterpret_cast<char const*>(raw.data()), raw.size()))
 		{
-			qCritical() << "Could not write image" << id_ << "\n" << file.errorString();
+			qCritical() << "Could not write image" << id_ << "(" << file.errorString() << ")";
 			return false;
 		}
 
@@ -87,8 +88,20 @@ bool Image::deleteFile()
 
 void Image::clearCache() { image_.release(); }
 
-bool Image::crop(int x, int y, int w, int h, Image& output)
+bool Image::crop(int x, int y, int w, int h, Image& output, QString& error)
 {
+	// INFO in C++17 use std::clamp
+	x = std::min(std::max(x, 0), width_ -1);
+	y = std::min(std::max(y, 0), height_ -1);
+	w = std::min(std::max(w, 1), width_);
+	h = std::min(std::max(h, 1), height_);
+
+	if (std::max(w, h) < 100)
+	{
+		error = "Cropped image to small";
+		return false;
+	}
+
 	QString desc, name;
 
 	desc = "Cropped version of '" + original_name_ + "'";
@@ -97,7 +110,7 @@ bool Image::crop(int x, int y, int w, int h, Image& output)
 	cv::Mat image;
 	if (! readCvMat(image))
 		return false;
-	cv::Mat					 cropped = image(cv::Rect(x, y, w, h)); // crop
+	cv::Mat	cropped = image(cv::Rect(x, y, w, h)); // crop
 
 	output = Image(cropped, name, desc, QDateTime::currentDateTime());
 	return true;

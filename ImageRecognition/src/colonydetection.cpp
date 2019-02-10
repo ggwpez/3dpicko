@@ -101,6 +101,7 @@ namespace c3picko
 
 	std::vector<cv::Vec3f> ColonyDetection::algoFlour1(cv::Mat orig, std::string settings_json)
 	{
+		stages.clear();
 		std::vector<cv::Vec3f> pos;
 		// create variables for images
 		cv::Mat stats, labeled, centers;
@@ -173,7 +174,7 @@ namespace c3picko
 		/*std::cout << "good bois: " << uniq_labels.size() << std::endl;
 		drawText(stages.back(), pos);
 
-		static int i = 0;
+		int i = 0;
 		for (cv::Mat& stage : stages)
 		{
 			std::string name = "stage" +std::to_string(i++);
@@ -183,7 +184,7 @@ namespace c3picko
 			cv::imshow(name, stage);
 		}
 
-		cv::waitKey(0);
+		while (cv::waitKey(0) != 'q');
 		cv::destroyAllWindows();*/
 
 		return std::vector<cv::Vec3f>(pos.begin(), pos.end());

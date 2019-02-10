@@ -28,16 +28,26 @@ WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* a
 		emit OnStarted();
 	}
 
-	connect(api_, &APIController::OnNewFile, this, &WsServer::NewFile);
-	connect(api_, &APIController::OnNewJob, this, &WsServer::NewJob);
-	connect(api_, &APIController::OnFileDeleted, this, &WsServer::FileDeleted);
+	connect(api_, &APIController::OnImageCreated, this, &WsServer::NewFile);
+	connect(api_, &APIController::OnJobCreated, this, &WsServer::NewJob);
+	connect(api_, &APIController::OnImageDeleted, this, &WsServer::FileDeleted);
 	connect(api_, &APIController::OnJobDeleted, this, &WsServer::JobDeleted);
-	connect(api_, &APIController::OnFileUploadError, this, &WsServer::FileUploadError);
+	connect(api_, &APIController::OnImageCreateError, this, &WsServer::FileUploadError);
 	connect(api_, &APIController::OnJobCreateError, this, &WsServer::JobCreateError);
-	connect(api_, &APIController::OnFileDeleteError, this, &WsServer::FileDeleteError);
+	connect(api_, &APIController::OnImageDeleteError, this, &WsServer::FileDeleteError);
 	connect(api_, &APIController::OnJobDeleteError, this, &WsServer::JobDeleteError);
-	connect(api_, &APIController::OnFileCropped, this, &WsServer::FileCropped);
-	connect(api_, &APIController::OnFileCropError, this, &WsServer::FileCropError);
+	connect(api_, &APIController::OnImageCropped, this, &WsServer::FileCropped);
+	connect(api_, &APIController::OnImageCropError, this, &WsServer::FileCropError);
+
+	for (int i = 0; i < APIController::staticMetaObject.methodOffset(); ++i)
+	{
+		QMetaMethod f = api_->metaObject()->method(i);
+
+		if (f.methodType() == QMetaMethod::Signal)
+		{
+//			this->metaObject()->me
+		}
+	}
 }
 
 void WsServer::NewConnection()

@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QProcess>
 #include <QRandomGenerator>
+#include <algorithm>
 #include "httplistener.h"
 #include "include/global.h"
 #include "include/requestmapper.h"
@@ -121,6 +122,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 	else if (path.startsWith("getjoblist"))
 	{
 		response = createJobList();
+
 	}
 	else if (path.startsWith("deleteimage"))
 	{
@@ -128,7 +130,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		// Does the image exist?
 		if (!db_.images().exists(id))
 		{
-			emit OnFileDeleteError(req_data["id"].toString(), client);
+			emit OnImageDeleteError(req_data["id"].toString(), client);
 			return;
 		}
 		// Is the image	in use by a job?
@@ -136,7 +138,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		{
 			if (pair.second.img_id() == id)
 			{
-				emit OnFileDeleteError(req_data["id"].toString(), client);
+				emit OnImageDeleteError(req_data["id"].toString(), client);
 				return;
 			}
 		}
@@ -148,11 +150,11 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		{
 			db_.deletedImages().add(id, image);
 			db_.images().remove(id); // Carefull here, if we use a reference to image instead, it will go out of scope after deletion
-			emit OnFileDeleted(image, client);
+			emit OnImageDeleted(image, client);
 		}
 		else
 		{
-			emit OnFileDeleteError(image.path(), client);
+			emit OnImageDeleteError(image.path(), client);
 		}
 	}
 	else if (path.startsWith("deletejob"))
@@ -185,108 +187,94 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		{
 			qDebug() << "Ignoring doubled image";
 			// TODO inform client?
+	//		emit OnImageCreateError(,);
+		}
+		else if (! image.writeToFile())
+		{
+			emit OnImageCreateError(image.id(), client);
 		}
 		else
 		{
-			/*
-			 * drag and drop image upload handler
-			 * sends json object: {"id" : "id", "path" : "path_to_image", "filename" : "original_filename_without_extension", "upload_date"
-			 * : "last_modified_date_string"}
-			*/
-			if (!image.writeToFile())
-			{
-				emit OnFileUploadError(image.id(), client);
-				return;
-			}
-
 			db_.images().add(image.id(), image);
 			image.write(response);
 
-			emit OnNewFile(image, client);
+			emit OnImageCreated(image, client);
 		}
 	}
 	else if (path.startsWith("crop-image"))
 	{
 		QString img_id = req_data["id"].toString();
-		int		x = req_data["x"].toDouble(), y = req_data["y"].toDouble(), w = req_data["width"].toDouble(),
+		int	x = req_data["x"].toDouble(), y = req_data["y"].toDouble(), w = req_data["width"].toDouble(),
 			h = req_data["height"].toDouble();
 
 		if (!db_.images().exists(img_id))
-			return emit OnFileCropError(img_id, client);
+			return emit OnImageCropError(img_id, client);
 		else
 		{
+			QString error;
 			Image  cropped;
 			Image& original = db_.images().get(img_id);
-			if (x >= original.width() || y >= original.height() || std::min({w,h}) <= 0 || (x +w) >= original.width() || (y +h) >= original.height())
-			{
-				response = {{"error", "Invalid cropping area"}};
-				qDebug() << x << y << w << h;
-				return emit OnFileCropError(img_id, client);
-			}
 
 			// Is the cropped image empty?
-			if (! original.crop(x, y, w, h, cropped))
+			if (! original.crop(x, y, w, h, cropped, error))
 			{
-				qDebug() << "Cropping failed";
-				emit OnFileCropError(img_id, client); // TODO inform client
+				emit OnImageCropError(img_id, client); // TODO inform client
 				return;
 			}
-			cropped.writeToFile();	// save them to the hdd
+			if (! cropped.writeToFile())	// save cropped image to the hdd
+			{
+			//	emit OnImageCreateError();
+				return;
+			}
 
 			db_.images().add(cropped.id(), cropped);
-			qDebug() << "Cropping image " << cropped.originalName();
 			response = {{"id", cropped.id()}}; // TODO
-			emit OnFileCropped(cropped, client);
+			emit OnImageCropped(cropped, client);
 		}
 	}
 	else if (path.startsWith("createsettingsprofile"))
 	{
 		QJsonObject json_profile = request["data"].toObject();
-		// TODO create new profile
-		// TODO create unique id
-		ProfileWrapper::ID newId			  = db_.newProfileId();
+		Profile::ID newId			  = db_.newProfileId();
 
 		json_profile["id"] = newId; // TODO  hack
-		ProfileWrapper profile(json_profile);
+		Profile profile(json_profile);
+
 		db_.profiles().add(newId, profile);
-		qDebug() << "Added profile" << profile.id();
 		profile.write(response);
+		emit OnProfileCreated(newId, client);
 	}
 	else if (path.startsWith("updatesettingsprofile"))
 	{
-		qDebug() << "update lel";
 		QJsonObject json_profile = request["data"].toObject();
-
-		ProfileWrapper profile(json_profile);
+		Profile profile(json_profile);
 
 		if (! db_.profiles().exists(profile.id()))
 		{
-			// TODO signal
-			qWarning() << "Profile id unknown:" << profile.id();
 			response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
+	//		emit OnProfileUpdateError();
 		}
 		else
 		{
 			db_.profiles().add(profile.id(), profile);
-			qDebug() << "Added profile" << profile.id();
 			response = json_profile;
+			emit OnProfileUpdated(profile.id(), client);
 		}
 	}
 	else if (path.startsWith("deletesettingsprofile"))
 	{
-		ProfileWrapper::ID id = req_data["id"].toString();
+		Profile::ID id = req_data["id"].toString();
 
 		if (! db_.profiles().exists(id))
 		{
-			// TODO signal
-			qWarning() << "Cant delete unknown profile id" << id;
+		//	emit OnProfileDeleteError(id, client);
 		}
 		else
 		{
 			// FIXME cant delete profiles used by jobs
 			db_.profiles().remove(id);
-			qDebug() << "Delete profile" << id;
 			response = {{"id", id}};
+	//		emit OnProfileDeleteError();
 		}
 	}
 	else if (path.startsWith("createjob"))
@@ -301,7 +289,7 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		new_job.write(response);
 		qDebug("%s", QString::fromUtf8(QJsonDocument(req_data).toJson()).toLatin1().constData());
 
-		emit OnNewJob(new_job, client);
+		emit OnJobCreated(new_job, client);
 	}
 	else if (path.startsWith("getpositions"))
 	{
@@ -337,15 +325,16 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 	{
 		PrinterProfile* printerp = (PrinterProfile*)(db_.profiles().get("302"));
 		PlateSocketProfile* socket = (PlateSocketProfile*)(db_.profiles().get("303"));
-		PlateProfile* plate = (PlateProfile*)(db_.profiles().get("304"));
+		PlateProfile* plate = (PlateProfile*)(db_.profiles().get("305"));
 
 		GcodeGenerator gen(*socket, *printerp, *plate);
 
 		std::vector<LocalColonyCoordinates> coords;
-		for (int i = 0; i < 3; ++i)
-			coords.push_back(Point(10*i +30, i*10 +30));
+		for (int x = 0; x < 4; ++x)
+			for (int y = 0; y < 5; ++y)
+				coords.push_back(Point(10*x +70, y*10 +20));
 
-		auto code = gen.CreateGcodeForTheEntirePickingProcess(5,5, coords);
+		auto code = gen.CreateGcodeForTheEntirePickingProcess(1,8, coords);
 
 		QStringList sum;
 		for (auto c : code)

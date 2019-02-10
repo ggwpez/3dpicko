@@ -61,7 +61,7 @@ Job::ID Database::newJobId()
 	return QString::number(job_id_++);
 }
 
-ProfileWrapper::ID Database::newProfileId()
+Profile::ID Database::newProfileId()
 {
 	return QString::number(profile_id_++);
 }

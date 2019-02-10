@@ -9,7 +9,6 @@ namespace c3picko {
 	class JsonConvertable
 	{
 	public:
-		//inline JsonConvertable(QJsonObject const&) { }
 		inline virtual ~JsonConvertable() { }
 
 		virtual inline explicit operator QJsonObject() const

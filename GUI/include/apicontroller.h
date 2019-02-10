@@ -29,16 +29,41 @@ public:
 	QJsonObject createProfileList();
 
 signals:
-	void OnNewFile(Image, QObject* client);
-	void OnNewJob(Job, QObject* client);
-	void OnFileDeleted(Image, QObject* client);
-	void OnJobDeleted(Job, QObject* client);
-	void OnFileUploadError(QString path, QObject* client);
+	/**
+	 * @brief SendToClient Should send data to the client
+	 * @param data
+	 * @param client
+	 */
+	void SendToClient(QJsonObject data, QObject* client);
+	/**
+	 * @brief BroadcastToClients Should be connected to a SLOT that sends data to all clients except the except client
+	 * @param data
+	 * @param except Client to be excluded
+	 */
+	void SendToClients(QJsonObject data, QObject* except);
+
+	void OnJobCreated(Job, QObject* client);
 	void OnJobCreateError(QString, QObject*);
-	void OnFileDeleteError(QString path, QObject* client);
+	void OnJobDeleted(Job, QObject* client);
 	void OnJobDeleteError(QString path, QObject* client);
-	void OnFileCropped(Image, QObject* client);
-	void OnFileCropError(QString id, QObject* client);
+
+	void OnImageCreated(Image, QObject* client);
+	void OnImageCreateError(QString path, QObject* client);
+	void OnImageDeleted(Image, QObject* client);
+	void OnImageDeleteError(QString path, QObject* client);
+	void OnImageCropped(Image, QObject* client);
+	void OnImageCropError(QString id, QObject* client);
+
+	void OnProfileCreated(Profile::ID profile, QObject* client);
+	// not used
+	// void OnProfileCreateError(Profile::ID profile, QObject* client);
+	void OnProfileUpdated(Profile::ID, QObject* client);
+	void OnProfileUpdateError(Profile::ID, QObject* client);
+	void OnProfileDeleted(Profile profile, QObject* client);
+	void OnProfileDeleteError(Profile profile, QObject* client);
+
+	//void OnColonyDetected();
+	void OnColonyDetectionError();
 
 private:
 	Database& db_;

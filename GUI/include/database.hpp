@@ -15,7 +15,7 @@ class Database : public QObject, JsonConvertable
   public:
 	typedef Table<Job>   JobTable;
 	typedef Table<Image> ImageTable;
-	typedef Table<ProfileWrapper> ProfileTable;
+	typedef Table<Profile> ProfileTable;
 
 	Database(QString file_path, QObject* parent);
 	~Database() override;
@@ -30,7 +30,7 @@ class Database : public QObject, JsonConvertable
 
 	Image::ID newImageId();
 	Job::ID newJobId();
-	ProfileWrapper::ID newProfileId();
+	Profile::ID newProfileId();
 
   public:
 	void read(const QJsonObject&) override;
