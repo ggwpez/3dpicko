@@ -112,8 +112,10 @@
                 <div class="row">
                   <div class="col-lg-9">
                     <h2>Choose colonys</h2>
-                    <img id="photograph" src="" />
-                    <canvas id="drawArea" style="position: absolute; top: 0;"></canvas>
+                     <div style="position: relative;">
+                       <canvas id="layer0" style="z-index: 0;"></canvas>
+                       <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+                    </div>
                     <div id="buttons">
                       <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
                       <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
@@ -121,7 +123,7 @@
                       <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
                     </div>
                   </div>
-                  <div class="col-lg-3">
+                  <div class="col-lg-3" style="z-index: 2;">
                     <h2 class="d-none d-lg-block">Settings</h2>
                     <div class="form-group">
                       <label for="select-algorithm">Algorithm:</label>
@@ -276,5 +278,6 @@
   <script type="text/javascript" src="js/cropper.js"></script>
   <script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
   <script type="text/javascript" src="js/pickstrategie.js"></script>
+  <script type="text/javascript" src="js/circle.js"></script>
 </body>
 </html>

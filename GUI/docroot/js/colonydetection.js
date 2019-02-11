@@ -16,29 +16,19 @@ Größe Petrischale:
 127,5 x 85
 1,5:1
 */
-
-// Variable if colonies should be added or delted
-var mode ='add';
-
-var context, canvas;
+var layer0 = {}, layer1 = {};
 // Variable containing the list of colonies
 var colony_coords = [];
 
-// Size of the petri dish
-var widthMm = 127.5;
-var heightMm = 85;
 
 // Variable containing the list of colonies in mm
 var coordinatesMm = {"colonies":[]};
 
-// Make clickArea interactive
-var container = document.querySelector("#clickArea");
 
 // Correct canvas size
 //resizeCanvas(drawArea);
 
 // React to clicks insiede of drawArea
-container.addEventListener("click", changePosition, false);
 
 // Select size of the canvas
 function resizeCanvas(canvas) {
@@ -60,22 +50,33 @@ function getPositions(){
     api('getpositions', { id: image_id });
 }
 
+var img;
+function selectionTabEnter()
+{
+    layer0.canvas  = document.getElementById('layer0'),
+    layer1.canvas  = document.getElementById('layer1'),
+    layer0.context = layer0.canvas.getContext('2d');
+    layer1.context = layer1.canvas.getContext('2d');
+
+    img = new Image();
+    img.onload = function ()
+    {
+        layer0.canvas.width  = img.width; // in pixels
+        layer0.canvas.height = img.height; // in pixels
+
+        layer1.canvas.width  = img.width; // in pixels
+        layer1.canvas.height = img.height; // in pixels
+
+        layer0.context.drawImage(img, 0, 0);
+        // TODO only make the detection button ready when we are here
+    }
+    img.src = chosen_image.path;
+}
+
 function drawPositions(coords)
 {
-    canvas  = document.getElementById('drawArea'),
-    context = canvas.getContext('2d');
-    img = document.getElementById('photograph');
-
-    canvas.style.position = "absolute";
-    canvas.style.left = img.offsetLeft + "px";
-    canvas.style.top = img.offsetTop + "px";
-    canvas.style.width = img.width +"px";
-    canvas.style.height = img.height +"px";
-
-    img.width = img.width;
-    img.height = img.height;
-
-    // Import colonies from colony detection
+    pickstrategy_context = layer1.context;
+    
     coords.coords.forEach((value) => {
         colony_coords.push({
             x: value[0] * img.width  /100,
@@ -83,53 +84,7 @@ function drawPositions(coords)
             r: value[2]
         });
     });
-    printPositions();
-}
 
-// find exact position
-function getPosition(event) {
-    var xPosition = 0;
-    var yPosition = 0;
-    while (event) {
-        if (event.tagName == "BODY") {
-            var xScroll = event.scrollLeft || document.documentElement.scrollLeft;
-            var yScroll = event.scrollTop || document.documentElement.scrollTop;
-
-            xPosition += (event.offsetLeft - xScroll + event.clientLeft);
-            yPosition += (event.offsetTop - yScroll + event.clientTop);
-        } else {
-            xPosition += (event.offsetLeft - event.scrollLeft + event.clientLeft);
-            yPosition += (event.offsetTop - event.scrollTop + event.clientTop);
-        }
-        event = event.offsetParent;
-    }
-    return {
-        x: xPosition,
-        y: yPosition
-    };
-}
-
-// add or delete colonies
-function changePosition(event){
-    var parentPosition = getPosition(event.currentTarget);
-    var xPosition = event.clientX - parentPosition.x;
-    var yPosition = event.clientY - parentPosition.y;		
-
-    // Add colonies
-    if (mode == 'add'){
-        var colony = {"xCoordinate":xPosition,"yCoordinate":yPosition, "diameter":"10"};
-        coordinatesPx.colonies.push(colony);		
-    } 
-
-    // Delete colonies
-    if (mode == 'del'){
-        for (i in coordinatesPx.colonies) {
-            if (Math.abs(coordinatesPx.colonies[i].xCoordinate - xPosition) < coordinatesPx.colonies[i].diameter &&
-                Math.abs(coordinatesPx.colonies[i].yCoordinate - yPosition) < coordinatesPx.colonies[i].diameter){
-                delete coordinatesPx.colonies[i];
-            }
-        }
-    }
     printPositions();
 }
 
@@ -147,7 +102,8 @@ function printPositions(){
             y: colony_coords[i].y,
             radius: colony_coords[i].r,
             linecolor: 'green',
-            background: 'transparent'
+            background: 'transparent',
+            canvas: layer1.canvas
         });
 
         ball.addEvent('mouseenter', function () {
@@ -160,9 +116,9 @@ function printPositions(){
         balls.push(ball);
     }
 
-    canvas.addEvent('mousemove', function (e)
+    layer1.canvas.addEvent('mousemove', function (e)
     {
-        var rect = canvas.getBoundingClientRect();
+        var rect = layer1.canvas.getBoundingClientRect();
         var x = e.client.x -rect.left,
         y = e.client.y -rect.top;
 

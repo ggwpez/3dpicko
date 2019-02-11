@@ -1,80 +1,6 @@
 var pickstrategy_canvas = document.getElementById('pickstrategy-canvas');
 var pickstrategy_context;
 
-const Circle = new Class({
-
-	Implements: [Options, Events],
-
-	initialize: function (options) {
-		this.setOptions(options);
-
-		this.draw().attach();
-	},
-
-	attach: function () {
-		this.addEvent('change', this.draw);
-	},
-
-	set: function (what, value) {
-		const is_new = (this.options[what] != value);
-
-		if (is_new)
-		{
-			this.options[what] = value;
-			this.fireEvent('change');
-		}
-		return this;
-	},
-
-	get: function (what) {
-		return this.options[what];
-	},
-
-	draw: function () {
-   		// pickstrategy_context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
-		pickstrategy_context.beginPath();
-   		pickstrategy_context.arc(this.options.x + this.options.radius, this.options.y + this.options.radius, this.options.radius, 0, 2 * Math.PI, false);
-   		pickstrategy_context.fillStyle = this.options.background;
-   		pickstrategy_context.fill();
-   		pickstrategy_context.lineWidth = 3;
-   		pickstrategy_context.strokeStyle = this.options.linecolor;
-   		pickstrategy_context.stroke();
-
-   		return this;
-   	},
-
-   	getSize: function () {
-   		return {
-   			width: this.options.radius * 2,
-   			height: this.options.radius * 2
-   		}
-   	},
-
-   	getPosition: function () {
-   		var position = {
-   			x: this.get('x'),
-   			y: this.get('y')
-   		}
-
-   		return position;
-   	},
-
-   	isMouseOver: function (x, y) {
-   		var position = this.getPosition(),
-   		size   = this.getSize(),
-   		radius = this.options.radius,
-   		centerX = position.x + (size.width / 2),
-   		centerY = position.y + (size.height / 2),
-   		distanceX = x - centerX,
-   		distanceY = y - centerY;
-
-   		var d = Math.round(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-
-   		return d <= radius;
-   	}
-   });
-
-
 var balls;
 var collided_id, old_collided_id;
 var mouse_down = false;
@@ -92,10 +18,11 @@ function drawWells(cols, rows, colonys = 1)
 		for (var y = 0; y < rows; ++y)
 		{
 			ball = new Circle({
-				x: x *32 + 50,
-				y: y *32 + 50,
+				x: x *32 + 60,
+				y: y *32 + 65,
 				radius: 14,
-				background: 'white'
+				background: 'white',
+				canvas: pickstrategy_canvas
 			});
 
 			ball.addEvent('mouseenter', function () {
@@ -159,6 +86,7 @@ pickstrategy_canvas.addEvent('mousemove', function (e)
 });
 pickstrategy_canvas.addEvent('mousedown', function (e){
 	mouse_down = true;
+	// What a cheat!
 	pickstrategy_canvas.fireEvent('mousemove', e);
 });
 pickstrategy_canvas.addEvent('mouseup', function (e){

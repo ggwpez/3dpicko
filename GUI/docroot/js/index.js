@@ -464,7 +464,8 @@ function attributesTab(){
 function selectionTab(){
 	if(chosen_image.path){
 		tabEnter(3);
-		document.getElementById('photograph').src = chosen_image.path;
+	
+		selectionTabEnter();
 		const printer_selection = document.getElementById('select-printer-profile');
 		const socket_selection = document.getElementById('select-socket-profile');
 		const printer_id = printer_selection.options[printer_selection.selectedIndex].value;
@@ -479,7 +480,7 @@ function selectionTab(){
 			description: description
 		}
 		api("createjob", current_job);
-		api("getdetectionalgorithms");
+		api("getdetectionalgorithms");	// TODO should we put this in the init?
 		// TODO Remove (only for debugging)
 		GetDetectionAlgorithms({});
 	} 
