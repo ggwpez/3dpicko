@@ -1,136 +1,28 @@
-var canvas,
-context;
-
-const Circle = new Class({
-  
-  Implements: [Options, Events],
-  
-  initialize: function (options) {
-    this.setOptions(options);
-    
-    this.draw().attach();
-  },
-  
-  attach: function () {
-    this.addEvent('change', this.draw);
-  },
-  
-  set: function (what, value) {
-  	const is_new = (this.options[what] != value);
-    
-    if (is_new)
-    {
-    	this.options[what] = value;
-    	this.fireEvent('change');
-    }
-    return this;
-  },
-  
-  get: function (what) {
-    return this.options[what];
-  },
-  
-  draw: function () {
-   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
-    
-    context.beginPath();
-		context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI, false);
-		context.fillStyle = this.options.background;
-		context.fill();
-		context.lineWidth = 3;
-		context.strokeStyle = this.options.linecolor;
-      	context.stroke();
-  
-    return this;
-  },
-  
-  getSize: function () {
-    return {
-			width: this.options.radius * 2,
-		  height: this.options.radius * 2
-		}
-  },
-  
-  getPosition: function () {
-    var position = {
-			x: this.get('x'),
-			y: this.get('y')
-
-		}
-		return this;
-	},
-
-	get: function (what) {
-		return this.options[what];
-	},
-
-	draw: function () {
-   // context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
-
-   context.beginPath();
-   context.arc(this.options.x + this.options.radius, this.options.y + this.options.radius, this.options.radius, 0, 2 * Math.PI, false);
-   context.fillStyle = this.options.background;
-   context.fill();
-   context.lineWidth = 3;
-   context.strokeStyle = this.options.linecolor;
-   context.stroke();
-
-   return this;
-},
-
-getSize: function () {
-	return {
-		width: this.options.radius * 2,
-		height: this.options.radius * 2
-	}
-},
-
-getPosition: function () {
-	var position = {
-		x: this.get('x'),
-		y: this.get('y')
-	}
-
-	return position;
-},
-
-isMouseOver: function (x, y) {
-	var position = this.getPosition(),
-	size   = this.getSize(),
-	radius = this.options.radius,
-	centerX = position.x + (size.width / 2),
-	centerY = position.y + (size.height / 2),
-	distanceX = x - centerX,
-	distanceY = y - centerY;
-
-	var d = Math.round(Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)));
-
-	return d <= radius;
-}
-
-});
+var pickstrategy_canvas = document.getElementById('pickstrategy-canvas');
+var pickstrategy_context;
 
 var balls;
 var collided_id, old_collided_id;
-var disabled = false;
+var mouse_down = false;
+
 function drawWells(cols, rows, colonys = 1)
 {
+	pickstrategy_context = pickstrategy_canvas.getContext('2d');
+	pickstrategy_context.clearRect(0, 0, pickstrategy_canvas.width, pickstrategy_canvas.height);
 	collided_id = -1, old_collided_id = -1;
 	balls = [];
-	canvas  = document.getElementById('circle'),
-	context = canvas.getContext('2d');
-	context.canvas.width = cols*32+50;
-	context.canvas.height = rows*32+50;
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	pickstrategy_context.canvas.width = cols*32+50;
+	pickstrategy_context.canvas.height = rows*32+50;
 
 	for (var x = 0; x < cols; ++x){
 		for (var y = 0; y < rows; ++y)
 		{
 			ball = new Circle({
-				x: x *32 + 50,
-				y: y *32 + 50,
+				x: x *32 + 60,
+				y: y *32 + 65,
 				radius: 14,
-				background: 'white'
+				background: 'white',
+				canvas: pickstrategy_canvas
 			});
 
 			ball.addEvent('mouseenter', function () {
@@ -144,54 +36,60 @@ function drawWells(cols, rows, colonys = 1)
 			balls.push(ball);
 		}
 	}
-	context.font = "16px Arial";
-	context.fillStyle = "red";
+	pickstrategy_context.font = "16px Arial";
+	pickstrategy_context.fillStyle = "red";
 	for (var i = 0; i < cols; ++i) {
-		context.fillText(i+1, 50 +8 +32 *i, 30);
+		pickstrategy_context.fillText(i+1, 50 +8 +32 *i, 30);
 	}
 	for (var i = 0; i < rows; ++i) {
-		context.fillText(String.fromCharCode(65 +i), 10, 32 * i + 70);
+		pickstrategy_context.fillText(String.fromCharCode(65 +i), 10, 32 * i + 70);
 	}
 
-	canvas.addEvent('mousemove', function (e)
-	{
-		if(!disabled){
-			var rect = canvas.getBoundingClientRect();
-			var x = e.client.x -rect.left,
-			y = e.client.y -rect.top;
+}
 
-			for (var i = 0; i < balls.length; ++i)
+pickstrategy_canvas.addEvent('mousemove', function (e)
+{
+	if(mouse_down){
+		var rect = pickstrategy_canvas.getBoundingClientRect();
+		var x = e.client.x -rect.left,
+		y = e.client.y -rect.top;
+
+		for (var i = 0; i < balls.length; ++i)
+		{
+			var ball = balls[i];
+
+			if (ball.isMouseOver(x, y))
 			{
-				var ball = balls[i];
-
-				if (ball.isMouseOver(x, y))
+				if (! ball.mouseover)
 				{
-					if (! ball.mouseover)
-					{
-						ball.fireEvent('mouseenter');
-						ball.mouseover = true;
-						collided_id = i;
-					}
-				}
-				else if (ball.mouseover)
-				{
-					ball.mouseover = false;
-					ball.fireEvent('mouseleave');
+					ball.fireEvent('mouseenter');
+					ball.mouseover = true;
+					collided_id = i;
 				}
 			}
-
-			if (old_collided_id != collided_id)
+			else if (ball.mouseover)
 			{
-				for (var i = 0; i < balls.length; ++i)
-				{
-					balls[i].set('background', (i < collided_id ? 'white' : 'green'));
-				}
-				old_collided_id = collided_id;
+				ball.mouseover = false;
+				ball.fireEvent('mouseleave');
 			}
 		}
-	});
-	canvas.addEvent('click', function (e){
-		disabled = !disabled;
-		console.log(collided_id);
-	});
-}
+
+		if (old_collided_id != collided_id)
+		{
+			for (var i = 0; i < balls.length; ++i)
+			{
+				balls[i].set('background', (i < collided_id ? 'white' : 'green'));
+			}
+			old_collided_id = collided_id;
+		}
+	} else return false;
+});
+pickstrategy_canvas.addEvent('mousedown', function (e){
+	mouse_down = true;
+	// What a cheat!
+	pickstrategy_canvas.fireEvent('mousemove', e);
+});
+pickstrategy_canvas.addEvent('mouseup', function (e){
+	mouse_down = false;
+	console.log("Starting Well: ", collided_id+1);
+});

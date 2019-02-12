@@ -108,22 +108,47 @@
                 </form>
                 <button class="btn btn-dark m-2" onclick="selectionTab()">Next Step</button>
               </div>
-              <div class="tab-pane fade col-md-8" id="selection">
-                <h2>Choose colonys</h2>
-                  <img id="photograph" src="" />
-                  <canvas id="drawArea"></canvas>
-                <br>
-                <div id="buttons">
-                  <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
-                  <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
-                  <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
-                  <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
+              <div class="tab-pane fade col-md-12 col-xl-10" id="selection">
+                <div class="row">
+                  <div class="col-lg-9">
+                    <h2>Choose colonys</h2>
+                     <div style="position: relative;">
+                       <canvas id="layer0" style="z-index: 0;"></canvas>
+                       <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+                    </div>
+                    <div id="buttons">
+                      <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
+                      <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
+                      <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
+                      <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3" style="z-index: 2;">
+                    <h2 class="d-none d-lg-block">Settings</h2>
+                    <div class="form-group">
+                      <label for="select-algorithm">Algorithm:</label>
+                      <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
+                    </div>
+                    <form id="detection-settings-form">
+                      <div id="detection-settings"></div>
+                      <button type="submit" class="btn btn-primary">Apply</button>
+                      <button type="reset" class="btn btn-secondary">Reset</button>
+                    </form>
+                  </div>
                 </div>
                 <div id="showCoordinates"></div>
               </div>
               <div class="tab-pane fade col-md-8" id="strategy">
-                <canvas id="circle" width="1000" height="800"></canvas>
-                <script src='http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js'></script>
+                <h2>Pick strategy</h2>
+                <form id="strategy-form" name="strategy-form">
+                  <div class="form-group">
+                    <label for="select-plate-profile">Plates:</label>
+                    <select id="select-plate-profile"></select>
+                  </div>
+                </form>
+                <h2>Choose starting well</h2>
+                <canvas id="pickstrategy-canvas"></canvas>
+                <br>
                 <button class="btn btn-dark m-2" onclick="overviewTab()">Overview ></button>
               </div>
               <div class="tab-pane fade col-md-8" id="overview">
@@ -251,6 +276,8 @@
   <script type="text/javascript" src="js/colonydetection.js"></script>
   <script type="text/javascript" src="js/config.js"></script>
   <script type="text/javascript" src="js/cropper.js"></script>
+  <script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
   <script type="text/javascript" src="js/pickstrategie.js"></script>
+  <script type="text/javascript" src="js/circle.js"></script>
 </body>
 </html>
