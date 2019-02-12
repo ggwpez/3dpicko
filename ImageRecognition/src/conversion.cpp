@@ -7,8 +7,8 @@ std::vector<cv::Vec3f> Conversion::createColonyCoordinates(std::vector<cv::Vec3f
 	std::vector<cv::Vec3f> positions_percent;
 
 	for (size_t i = 0; i < positions.size(); i++){
-		positions_percent.push_back({ positions[i][0] / (cols / 100),
-									  positions[i][1] / (rows / 100),
+		positions_percent.push_back({ positions[i][0] / (float(cols) / 100),
+									  positions[i][1] / (float(rows) / 100),
 									  positions[i][2]});
 	}
 	// Dummies for testing
