@@ -46,9 +46,8 @@ APIInput::APIInput(APIController* parent)
 QJsonObject APIInput::createImageList()
 {
 	QJsonArray image_list;
-	for (auto const pair : api->db().images())
+	for (auto const& image : api->db().images())
 	{
-		Image const& image = pair.second;
 		QJsonObject  json;
 
 		image.write(json);
@@ -73,10 +72,10 @@ QJsonObject APIInput::createJobList()
 {
 	QJsonArray json_jobs;
 
-	for (auto it = api->db().jobs().begin(); it != api->db().jobs().end(); ++it)
+	for (auto const& job : api->db().jobs())
 	{
 		QJsonObject json;
-		(*it).second.write(json);
+		job.write(json);
 		json_jobs.append(json);
 	}
 
@@ -98,10 +97,10 @@ QJsonObject APIInput::createProfileList()
 {
 	QJsonArray json_jobs;
 
-	for (auto it = api->db().profiles().begin(); it != api->db().profiles().end(); ++it)
+	for (auto const& profile : api->db().profiles())
 	{
 		QJsonObject json;
-		(*it).second.write(json);
+		profile.write(json);
 		json_jobs.append(json);
 	}
 
@@ -143,9 +142,9 @@ void APIInput::service(QJsonObject& request, QObject* client)
 			return;
 		}
 		// Is the image	used by a job?
-		for (auto pair : api->db().jobs())
+		for (auto const& job : api->db().jobs())
 		{
-			if (pair.second.img_id() == id)
+			if (job.img_id() == id)
 			{
 				emit api->OnImageDeleteError(req_data["id"].toString(), client);
 				return;

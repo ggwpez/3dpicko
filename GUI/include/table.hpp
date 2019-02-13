@@ -7,6 +7,8 @@
 #include <QMap>
 #include <QObject>
 #include <map>
+#include <type_traits>
+#include <utility>
 
 namespace c3picko
 {
@@ -70,9 +72,9 @@ template <typename Value> class Table : public JsonConvertable
 
 	inline void remove(Key const& key) { entries_.remove(key); }
 
-	inline typename MapType::key_value_iterator begin() { return entries_.keyValueBegin(); }
-
-	inline typename MapType::key_value_iterator end() { return entries_.keyValueEnd(); }
+	// key_value_iterator was introduced in 5.10 but the CI-Server has 5.9.5
+	inline typename MapType::iterator begin() { return entries_.begin(); }
+	inline typename MapType::iterator end() { return entries_.end(); }
 
   public:
 	inline void read(QJsonObject const& obj) override

@@ -6,7 +6,7 @@ QT = network core websockets gui
 
 SOURCES += main.cpp \
 	global.cc \
-    marshalling.cc
+	marshalling.cc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../GUI/release/ -lGUIWebserver
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../GUI/debug/ -lGUIWebserver
@@ -70,7 +70,7 @@ HEADERS += \
 	include/json_constructable.hpp \
 	include/json_convertable.h \
 	include/global.h \
-    include/marshalling.hpp
+	include/marshalling.hpp
 
 LIBS += -lopencv_core \
 		-lopencv_imgproc \
