@@ -4,7 +4,7 @@
 #include <QSslConfiguration>
 #include <QObject>
 #include <QSslError>
-#include "include/apicontroller.h"
+#include "include/api_input.h"
 
 using namespace stefanfrings;
 
@@ -26,7 +26,7 @@ private slots:
 	void ConnectionClosed();
 
 public slots:
-	void NewFile(Image img, QObject* socket);
+	/*void NewFile(Image img, QObject* socket);
 	void NewJob(Job job, QObject* socket);
 	void FileDeleted(Image img, QObject*);
 	void JobDeleted(Job job, QObject*);
@@ -35,7 +35,7 @@ public slots:
 	void FileDeleteError(QString path, QObject* client);
 	void JobDeleteError(QString path, QObject* client);
 	void FileCropped(Image img, QObject* client);
-	void FileCropError(QString id, QObject* client);
+	void FileCropError(QString id, QObject* client);*/
 
 	void NewDebugLine(QString line);
 	void SslErrors(const QList<QSslError> &errors);

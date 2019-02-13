@@ -1,9 +1,10 @@
-#include "include/apicontroller.h"
-#include "include/colonydetection.h"
+#include "include/api_input.h"
+#include "include/colonydetector.h"
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QThreadPool>
 #include <QJsonObject>
 #include <QProcess>
 #include <QRandomGenerator>
@@ -16,6 +17,7 @@
 #include "include/octoprint.h"
 #include "include/commands/arbitrary_command.h"
 #include "include/gcodegenerator.h"
+#include "include/api_controller.h"
 
 using namespace c3picko::pi;
 using namespace c3picko::pi::commands;
@@ -35,12 +37,16 @@ static OctoPrint printer("192.168.2.2", "F866D6261972458CACAE9CB56E484758");
 namespace c3picko
 {
 
-APIController::APIController(Database& db, QObject* parent) : QObject(parent), db_(db) {}
+APIInput::APIInput(APIController* parent)
+	: QObject(parent), api(parent)
+{
 
-QJsonObject APIController::createImageList()
+}
+
+QJsonObject APIInput::createImageList()
 {
 	QJsonArray image_list;
-	for (auto const pair : db_.images())
+	for (auto const pair : api->db().images())
 	{
 		Image const& image = pair.second;
 		QJsonObject  json;
@@ -52,7 +58,7 @@ QJsonObject APIController::createImageList()
 	return {{"images", image_list}};
 }
 
-QJsonObject APIController::createImageList(Image img)
+QJsonObject APIInput::createImageList(Image img)
 {
 	QJsonArray  json_jobs;
 	QJsonObject json_job;
@@ -63,11 +69,11 @@ QJsonObject APIController::createImageList(Image img)
 	return {{"images", json_jobs}};
 }
 
-QJsonObject APIController::createJobList()
+QJsonObject APIInput::createJobList()
 {
 	QJsonArray json_jobs;
 
-	for (auto it = db_.jobs().begin(); it != db_.jobs().end(); ++it)
+	for (auto it = api->db().jobs().begin(); it != api->db().jobs().end(); ++it)
 	{
 		QJsonObject json;
 		(*it).second.write(json);
@@ -77,7 +83,7 @@ QJsonObject APIController::createJobList()
 	return {{"jobs", json_jobs}};
 }
 
-QJsonObject APIController::createJobList(Job job)
+QJsonObject APIInput::createJobList(Job job)
 {
 	QJsonArray  json_jobs;
 	QJsonObject json_job;
@@ -88,11 +94,11 @@ QJsonObject APIController::createJobList(Job job)
 	return {{"jobs", json_jobs}};
 }
 
-QJsonObject APIController::createProfileList()
+QJsonObject APIInput::createProfileList()
 {
 	QJsonArray json_jobs;
 
-	for (auto it = db_.profiles().begin(); it != db_.profiles().end(); ++it)
+	for (auto it = api->db().profiles().begin(); it != api->db().profiles().end(); ++it)
 	{
 		QJsonObject json;
 		(*it).second.write(json);
@@ -102,79 +108,82 @@ QJsonObject APIController::createProfileList()
 	return {{"profiles", json_jobs}};
 }
 
-QJsonObject APIController::createDeleteImage(Image img) { return {{"id", img.id()}}; }
+QJsonObject APIInput::createDeleteImage(Image img) { return {{"id", img.id()}}; }
 
-QJsonObject APIController::createDeleteJob(Job job) { return {{"id", job.id()}}; }
+QJsonObject APIInput::createDeleteJob(Job job) { return {{"id", job.id()}}; }
 
-void APIController::service(QJsonObject& request, QJsonObject& response, QObject* client)
+void APIInput::service(QJsonObject& request, QObject* client)
 {
 	QString		path	 = request["request"].toString().toLower();
 	QJsonObject req_data = request["data"].toObject();
 
-	if (path.startsWith("getimagelist"))
+	if (path == "getimagelist")
 	{
-		response = createImageList();
+		emit api->OnImageListRequested(client);
 	}
-	else if (path.startsWith("getprofilelist"))
+	else if (path == "getprofilelist")
 	{
-		response = createProfileList();
+		emit api->OnProfileListRequested(client);
 	}
-	else if (path.startsWith("getjoblist"))
+	else if (path == "getjoblist")
 	{
-		response = createJobList();
-
+		emit api->OnJobListRequested(client);
 	}
-	else if (path.startsWith("deleteimage"))
+	else if (path == "getdetectionalgorithms")
+	{
+		emit api->OnAlgorithmListRequested(client);
+	}
+	else if (path == "deleteimage")
 	{
 		Image::ID id = req_data["id"].toString();
 		// Does the image exist?
-		if (!db_.images().exists(id))
+		if (!api->db().images().exists(id))
 		{
-			emit OnImageDeleteError(req_data["id"].toString(), client);
+			emit api->OnImageDeleteError(req_data["id"].toString(), client);
 			return;
 		}
-		// Is the image	in use by a job?
-		for (auto pair : db_.jobs())
+		// Is the image	used by a job?
+		for (auto pair : api->db().jobs())
 		{
 			if (pair.second.img_id() == id)
 			{
-				emit OnImageDeleteError(req_data["id"].toString(), client);
+				emit api->OnImageDeleteError(req_data["id"].toString(), client);
 				return;
 			}
 		}
 
-		Image image = db_.images().get(id);
+		Image image = api->db().images().get(id);
 		image.clearCache();
 
 		if (image.deleteFile())
 		{
-			db_.deletedImages().add(id, image);
-			db_.images().remove(id); // Carefull here, if we use a reference to image instead, it will go out of scope after deletion
-			emit OnImageDeleted(image, client);
+			api->db().deletedImages().add(id, image);
+			api->db().images().remove(id); // Carefull here, if we use a reference to image instead, it will go out of scope after deletion
+			emit api->OnImageDeleted(image, client);
 		}
 		else
 		{
-			emit OnImageDeleteError(image.path(), client);
+			emit api->OnImageDeleteError(image.path(), client);
 		}
 	}
-	else if (path.startsWith("deletejob"))
+	else if (path == "deletejob")
 	{
 		QString id = req_data["id"].toString();
 		// Does the job exist?
-		if (!db_.jobs().exists(id))
+		if (!api->db().jobs().exists(id))
 		{
-			emit OnJobDeleteError(req_data["id"].toString(), client);
+			emit api->OnJobDeleteError(req_data["id"].toString(), client);
 		}
 		else
 		{
-			Job job = db_.jobs().get(id);
-			db_.jobs().remove(id);
-			db_.deletedJobs().add(id, job);
+			Job job = api->db().jobs().get(id);
+			api->db().jobs().remove(id);
+			api->db().deletedJobs().add(id, job);
 
-			emit OnJobDeleted(job, client);
+			emit api->OnJobDeleted(job, client);
 		}
 	}
-	else if (path.startsWith("uploadimage"))
+	else if (path == "uploadimage")
 	{
 		// Get image data
 		QByteArray img_data(QByteArray::fromBase64(req_data["file"].toString().toUtf8())); // TODO ugly code
@@ -183,134 +192,146 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 		qDebug() << "Hash" << image.id();
 
 		// Is the user trying to upload an image twice?
-		if (db_.images().exists(image.id()))
+		if (api->db().images().exists(image.id()))
 		{
 			qDebug() << "Ignoring doubled image";
 			// TODO inform client?
-	//		emit OnImageCreateError(,);
+			emit api->OnImageCreateError("<cropped>", client);
 		}
 		else if (! image.writeToFile())
 		{
-			emit OnImageCreateError(image.id(), client);
+			emit api->OnImageCreateError(image.id(), client);
 		}
 		else
 		{
-			db_.images().add(image.id(), image);
-			image.write(response);
+			api->db().images().add(image.id(), image);
+			//image.write(response);
 
-			emit OnImageCreated(image, client);
+			emit api->OnImageCreated(image, client);
 		}
 	}
-	else if (path.startsWith("crop-image"))
+	else if (path == "crop-image")
 	{
 		QString img_id = req_data["id"].toString();
 		int	x = req_data["x"].toDouble(), y = req_data["y"].toDouble(), w = req_data["width"].toDouble(),
 			h = req_data["height"].toDouble();
 
-		if (!db_.images().exists(img_id))
-			return emit OnImageCropError(img_id, client);
+		if (!api->db().images().exists(img_id))
+			return emit api->OnImageCropError(img_id, client);
 		else
 		{
 			QString error;
 			Image  cropped;
-			Image& original = db_.images().get(img_id);
+			Image& original = api->db().images().get(img_id);
 
 			// Is the cropped image empty?
 			if (! original.crop(x, y, w, h, cropped, error))
 			{
-				emit OnImageCropError(img_id, client); // TODO inform client
+				emit api->OnImageCropError(img_id, client); // TODO inform client
 				return;
 			}
 			if (! cropped.writeToFile())	// save cropped image to the hdd
 			{
-			//	emit OnImageCreateError();
+				emit api->OnImageCreateError("<cropped>", client);
 				return;
 			}
 
-			db_.images().add(cropped.id(), cropped);
-			response = {{"id", cropped.id()}}; // TODO
-			emit OnImageCropped(cropped, client);
+			api->db().images().add(cropped.id(), cropped);
+			//response = {{"id", cropped.id()}}; // TODO
+			emit api->OnImageCropped(cropped, client);
 		}
 	}
-	else if (path.startsWith("createsettingsprofile"))
+	else if (path == "createsettingsprofile")
 	{
 		QJsonObject json_profile = request["data"].toObject();
-		Profile::ID newId			  = db_.newProfileId();
+		Profile::ID newId			  = api->db().newProfileId();
 
 		json_profile["id"] = newId; // TODO  hack
 		Profile profile(json_profile);
 
-		db_.profiles().add(newId, profile);
-		profile.write(response);
-		emit OnProfileCreated(newId, client);
+		api->db().profiles().add(newId, profile);
+		//profile.write(response);
+		emit api->OnProfileCreated(newId, client);
 	}
-	else if (path.startsWith("updatesettingsprofile"))
+	else if (path == "updatesettingsprofile")
 	{
 		QJsonObject json_profile = request["data"].toObject();
 		Profile profile(json_profile);
 
-		if (! db_.profiles().exists(profile.id()))
+		if (! api->db().profiles().exists(profile.id()))
 		{
-			response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
-	//		emit OnProfileUpdateError();
+			//response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
+			emit api->OnProfileUpdateError(profile.id(), client);
 		}
 		else
 		{
-			db_.profiles().add(profile.id(), profile);
-			response = json_profile;
-			emit OnProfileUpdated(profile.id(), client);
+			api->db().profiles().add(profile.id(), profile);
+			//response = json_profile;
+			emit api->OnProfileUpdated(profile.id(), client);
 		}
 	}
-	else if (path.startsWith("deletesettingsprofile"))
+	else if (path == "deletesettingsprofile")
 	{
 		Profile::ID id = req_data["id"].toString();
 
-		if (! db_.profiles().exists(id))
+		if (! api->db().profiles().exists(id))
 		{
-		//	emit OnProfileDeleteError(id, client);
+			emit api->OnProfileDeleteError(id, client);
 		}
 		else
 		{
 			// FIXME cant delete profiles used by jobs
-			db_.profiles().remove(id);
-			response = {{"id", id}};
-	//		emit OnProfileDeleteError();
+			emit api->OnProfileDeleted(api->db().profiles().get(id), client);
+			//response = {{"id", id}};
+			api->db().profiles().remove(id);
 		}
 	}
-	else if (path.startsWith("createjob"))
+	else if (path == "createjob")
 	{
-		Job::ID jid = db_.newJobId();
+		Job::ID jid = api->db().newJobId();
 
 		req_data["id"] = jid;
 		Job new_job(req_data);			// FIXME validate profile ids
 		new_job.resetCreationDate();	// cheat
 
-		db_.jobs().add(jid, new_job);
-		new_job.write(response);
+		api->db().jobs().add(jid, new_job);
+		//new_job.write(response);
 		qDebug("%s", QString::fromUtf8(QJsonDocument(req_data).toJson()).toLatin1().constData());
 
-		emit OnJobCreated(new_job, client);
+		emit api->OnJobCreated(new_job, client);
 	}
-	else if (path.startsWith("getpositions"))
+	else if (path == "getpositions")
 	{
 		QString img_id = req_data["id"].toString();
 
-		if (!db_.images().exists(img_id))
+		if (!api->db().images().exists(img_id))
 		{
 			qWarning() << "Colony detection error: image not found (#" << img_id << ")";
+			emit api->OnColonyDetectionError("Image not found", client);
 		}
 		else
 		{
-			Image& img = db_.images().get(img_id); // Non const& bc readCvMat() can set the cache
+			Image& img = api->db().images().get(img_id); // Non const& bc readCvMat() can set the cache
 			cv::Mat data;
 
 			if (!img.readCvMat(data))
 			{
 				qCritical() << "CV could not read image" << img.path();
+				emit api->OnColonyDetectionError("Image not readable or empty", client);
 				return;
 			}
 
-			std::vector<cv::Vec3f> coords = ColonyDetection::colonyDetection(data, "");
+			ColonyDetector* detector = new ColonyDetector(data.clone());	// Clone to avoid thread problems TODO debug
+			// Set the connection context to detector, so in case it timeouts it dosent leak memory
+			connect(detector, &ColonyDetector::OnFinished, detector, [this](qint64 ms)
+			{
+				qDebug() << "Colony detected in" << ms << "ms";
+				emit api->OnColonyDetected();
+			});
+			detector->setAutoDelete(true);
+			api->pool()->start(detector);
+
+			/*std::vector<cv::Vec3f> coords = ColonyDetector::colonyDetection(data, "");
 			coords = Conversion::createColonyCoordinates(coords, data.cols,data.rows);
 			QJsonArray json_coords;
 			qDebug() << coords.size() << "Colonies";
@@ -318,14 +339,14 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 			{
 				json_coords.push_back(QJsonArray({coords[i][0], coords[i][1], coords[i][2]}));
 			}
-			response = {{"id", img_id}, {"coords", json_coords}};
+			response = {{"id", img_id}, {"coords", json_coords}};*/
 		}
 	}
-	else if (path.startsWith("startjob"))
+	else if (path == "startjob")
 	{
-		PrinterProfile* printerp = (PrinterProfile*)(db_.profiles().get("302"));
-		PlateSocketProfile* socket = (PlateSocketProfile*)(db_.profiles().get("303"));
-		PlateProfile* plate = (PlateProfile*)(db_.profiles().get("305"));
+		PrinterProfile* printerp = (PrinterProfile*)(api->db().profiles().get("302"));
+		PlateSocketProfile* socket = (PlateSocketProfile*)(api->db().profiles().get("303"));
+		PlateProfile* plate = (PlateProfile*)(api->db().profiles().get("305"));
 
 		GcodeGenerator gen(*socket, *printerp, *plate);
 
@@ -350,23 +371,23 @@ void APIController::service(QJsonObject& request, QJsonObject& response, QObject
 
 		printer.SendCommand(cmd);
 	}
-	else if (path.startsWith("shutdown"))
+	else if (path == "shutdown")
 	{
 		qDebug() << "Client requested shutdown at" << QDateTime::currentDateTime().toString();
 		qApp->exit(0);
 	}
-	else if (path.startsWith("restart"))
+	else if (path == "restart")
 	{
 		qDebug() << "Client requested restart at" << QDateTime::currentDateTime().toString();
 		qApp->exit(123);
 	}
-	else if (path.startsWith("backup"))
+	else if (path == "backup")
 	{
-		db_.saveToFile();
+		api->db().saveToFile();
 	}
 	else
 	{
-		response = {{"error", "unknown request"}};
+		//response = {{"error", "unknown request"}};
 	}
 }
 } // namespace c3picko

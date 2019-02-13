@@ -1,7 +1,7 @@
 #ifndef REQUESTMAPPER_H
 #define REQUESTMAPPER_H
 
-#include "include/apicontroller.h"
+#include "include/api_controller.h"
 #include "httprequesthandler.h"
 #include "staticfilecontroller.h"
 

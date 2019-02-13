@@ -5,6 +5,7 @@
 #include "include/command.h"
 #include "include/octoprint.h"
 #include "include/commands/arbitrary_command.h"
+#include "include/api_controller.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -14,6 +15,7 @@
 #include <QSslKey>
 #include <QString>
 #include <QtGlobal>
+#include <QThreadPool>
 #include <csignal>
 
 using namespace stefanfrings;
@@ -84,7 +86,7 @@ int start(int argc, char** argv)
 
 	Database db("database.json", &app);
 	// API Controller
-	APIController* apiController = new APIController(db, &app);
+	APIController* api = new APIController(QThreadPool::globalInstance(), db, &app);
 
 	// Static file controller
 	QSettings* fileSettings = new QSettings(configFileName, QSettings::IniFormat, &app);
@@ -109,9 +111,9 @@ int start(int argc, char** argv)
 		qDebug() << "SSL disabled";
 
 	// HTTP server
-	HttpListener listener(listenerSettings, ssl, new RequestMapper(staticFileController, apiController, &app), &app);
+	HttpListener listener(listenerSettings, ssl, new RequestMapper(staticFileController, api, &app), &app);
 	// WS server
-	WsServer _ws(listenerSettings, ssl, apiController, &app);
+	WsServer _ws(listenerSettings, ssl, api, &app);
 	ws_ptr = &_ws;
 
 	QObject::connect(&app, &QCoreApplication::aboutToQuit, [] {

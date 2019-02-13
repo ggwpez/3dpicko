@@ -11,11 +11,6 @@ std::vector<cv::Vec3f> Conversion::createColonyCoordinates(std::vector<cv::Vec3f
 									  positions[i][1] / (float(rows) / 100),
 									  positions[i][2]});
 	}
-	// Dummies for testing
-	positions_percent.push_back({0,0,20});
-	positions_percent.push_back({100, 100, 20});
-	positions_percent.push_back({0, 100, 20});
-	positions_percent.push_back({100, 0, 20});
 
 	return positions_percent;
 }
@@ -27,5 +22,6 @@ return positions;
 DetectionSettings Conversion::convertSettings(std::string settings_json){
 
 	DetectionSettings settings;
+	return settings;
 
 }

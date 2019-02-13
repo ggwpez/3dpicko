@@ -1,4 +1,5 @@
 #include "include/ws_server.hpp"
+#include "include/api_controller.h"
 #include "include/global.h"
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -26,27 +27,6 @@ WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, APIController* a
 		connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
 		connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
 		emit OnStarted();
-	}
-
-	connect(api_, &APIController::OnImageCreated, this, &WsServer::NewFile);
-	connect(api_, &APIController::OnJobCreated, this, &WsServer::NewJob);
-	connect(api_, &APIController::OnImageDeleted, this, &WsServer::FileDeleted);
-	connect(api_, &APIController::OnJobDeleted, this, &WsServer::JobDeleted);
-	connect(api_, &APIController::OnImageCreateError, this, &WsServer::FileUploadError);
-	connect(api_, &APIController::OnJobCreateError, this, &WsServer::JobCreateError);
-	connect(api_, &APIController::OnImageDeleteError, this, &WsServer::FileDeleteError);
-	connect(api_, &APIController::OnJobDeleteError, this, &WsServer::JobDeleteError);
-	connect(api_, &APIController::OnImageCropped, this, &WsServer::FileCropped);
-	connect(api_, &APIController::OnImageCropError, this, &WsServer::FileCropError);
-
-	for (int i = 0; i < APIController::staticMetaObject.methodOffset(); ++i)
-	{
-		QMetaMethod f = api_->metaObject()->method(i);
-
-		if (f.methodType() == QMetaMethod::Signal)
-		{
-//			this->metaObject()->me
-		}
 	}
 }
 
@@ -101,7 +81,7 @@ void WsServer::ConnectionClosed()
 	}
 }
 
-void WsServer::NewFile(Image img, QObject* socket)
+/*void WsServer::NewFile(Image img, QObject* socket)
 {
 	qDebug() << "New image #" << img.path();
 	QJsonObject json = api_->createImageList(img);
@@ -162,7 +142,7 @@ void WsServer::FileCropped(Image img, QObject*)
 }
 
 void WsServer::FileCropError(QString id, QObject*) { qDebug() << "File crop error " << id; }
-
+*/
 void WsServer::NewDebugLine(QString line)
 {
 	for (auto client : clients_)
@@ -194,11 +174,11 @@ void WsServer::SendToClient(QJsonObject packet, QWebSocket* client) { client->se
 
 void WsServer::ServiceRequestForClient(QJsonObject request, QWebSocket* socket)
 {
-	QJsonObject json_data, json;
-	api_->service(request, json_data, socket);
+	//QJsonObject json_data, json;
+	api_->service(request, socket);
 
-	if (!json_data.empty())
-		SendToClient(request["request"], json_data, socket);
+	//if (!json_data.empty())
+		//SendToClient(request["request"], json_data, socket);
 }
 
 WsServer::~WsServer()

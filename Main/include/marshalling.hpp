@@ -18,9 +18,9 @@ class Marshalling {
   static void fromJson(QJsonObject const&, T& output);
 };
 
+
 #define MAKE_MARSHALLABLE(T)                        \
 													\
-  class T;                                          \
   template <>                                       \
   QJsonObject Marshalling::toJson(T const&);        \
   template <>                                       \
@@ -30,10 +30,17 @@ class Marshalling {
   template <>                                       \
   void Marshalling::fromJson(QJsonObject const&, T& output);
 
+#define MAKE_MARSHALLABLE_CLASS(T) \
+	class T;\
+	MAKE_MARSHALLABLE(T)
+#define MAKE_MARSHALLABLE_ENUM_CLASS(T) \
+	enum class T;\
+	MAKE_MARSHALLABLE(T)
+
 // Here we instantiate the template functions, so the compiler knows they must
 // exist somewhere. The classes themself are unaltered by this.
-MAKE_MARSHALLABLE(Point);
-MAKE_MARSHALLABLE(PrinterProfile);
-MAKE_MARSHALLABLE(PlateSocketProfile);
-MAKE_MARSHALLABLE(PlateProfile);
+MAKE_MARSHALLABLE_CLASS(Point);
+MAKE_MARSHALLABLE_CLASS(PrinterProfile);
+MAKE_MARSHALLABLE_CLASS(PlateSocketProfile);
+MAKE_MARSHALLABLE_CLASS(PlateProfile);
 }
