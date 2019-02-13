@@ -2,5 +2,5 @@
 
 namespace c3picko {
 
-	/* STUB */
+/* STUB */
 }

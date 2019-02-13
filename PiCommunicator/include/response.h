@@ -3,25 +3,21 @@
 
 #include <QJsonObject>
 
-namespace c3picko
-{
-namespace pi
-{
-	namespace responses
-	{
-		struct Response
-		{
-			Response() = default;
-			Response(QJsonObject const& obj);
-			virtual QString ToString();
+namespace c3picko {
+namespace pi {
+namespace responses {
+struct Response {
+  Response() = default;
+  Response(QJsonObject const &obj);
+  virtual QString ToString();
 
-			virtual inline ~Response() {}
+  virtual inline ~Response() {}
 
-		  protected:
-			QJsonObject raw;
-		};
-	} // namespace responses
-} // namespace commands
+protected:
+  QJsonObject raw;
+};
+} // namespace responses
+} // namespace pi
 } // namespace c3picko
 
 #endif // RESPONSE_H_

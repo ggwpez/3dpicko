@@ -6,14 +6,14 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <QtGlobal>
-#include <QThreadStorage>
-#include <QHash>
-#include <QStringList>
-#include <QMutex>
-#include <QObject>
 #include "logglobal.h"
 #include "logmessage.h"
+#include <QHash>
+#include <QMutex>
+#include <QObject>
+#include <QStringList>
+#include <QThreadStorage>
+#include <QtGlobal>
 
 namespace stefanfrings {
 
@@ -48,141 +48,153 @@ namespace stefanfrings {
 */
 
 class DECLSPEC Logger : public QObject {
-    Q_OBJECT
-    Q_DISABLE_COPY(Logger)
+  Q_OBJECT
+  Q_DISABLE_COPY(Logger)
 public:
+  /**
+    Constructor.
+    Uses the same defaults as the other constructor.
+    @param parent Parent object
+  */
+  Logger(QObject *parent);
 
-    /**
-      Constructor.
-      Uses the same defaults as the other constructor.
-      @param parent Parent object
-    */
-    Logger(QObject* parent);
+  /**
+    Constructor.
+    @param msgFormat Format of the decoration, e.g. "{timestamp} {type}
+    thread={thread}: {msg}"
+    @param timestampFormat Format of timestamp, e.g. "dd.MM.yyyy hh:mm:ss.zzz"
+    @param minLevel Minimum severity that genertes an output (0=debug,
+    1=warning, 2=critical, 3=fatal).
+    @param bufferSize Size of the backtrace buffer, number of messages per
+    thread. 0=disabled.
+    @param parent Parent object
+    @see LogMessage for a description of the message decoration.
+  */
+  Logger(const QString msgFormat = "{timestamp} {type} {msg}",
+         const QString timestampFormat = "dd.MM.yyyy hh:mm:ss.zzz",
+         const QtMsgType minLevel = QtDebugMsg, const int bufferSize = 0,
+         QObject *parent = 0);
 
+  /** Destructor */
+  virtual ~Logger();
 
-    /**
-      Constructor.
-      @param msgFormat Format of the decoration, e.g. "{timestamp} {type} thread={thread}: {msg}"
-      @param timestampFormat Format of timestamp, e.g. "dd.MM.yyyy hh:mm:ss.zzz"
-      @param minLevel Minimum severity that genertes an output (0=debug, 1=warning, 2=critical, 3=fatal).
-      @param bufferSize Size of the backtrace buffer, number of messages per thread. 0=disabled.
-      @param parent Parent object
-      @see LogMessage for a description of the message decoration.
-    */
-    Logger(const QString msgFormat="{timestamp} {type} {msg}", const QString timestampFormat="dd.MM.yyyy hh:mm:ss.zzz", const QtMsgType minLevel=QtDebugMsg, const int bufferSize=0, QObject* parent = 0);
+  /**
+    Decorate and log the message, if type>=minLevel.
+    This method is thread safe.
+    @param type Message type (level)
+    @param message Message text
+    @param file Name of the source file where the message was generated (usually
+    filled with the macro __FILE__)
+    @param function Name of the function where the message was generated
+    (usually filled with the macro __LINE__)
+    @param line Line Number of the source file, where the message was generated
+    (usually filles with the macro __func__ or __FUNCTION__)
+    @see LogMessage for a description of the message decoration.
+  */
+  virtual void log(const QtMsgType type, const QString &message,
+                   const QString &file = "", const QString &function = "",
+                   const int line = 0);
 
-    /** Destructor */
-    virtual ~Logger();
+  /**
+    Installs this logger as the default message handler, so it
+    can be used through the global static logging functions (e.g. qDebug()).
+  */
+  void installMsgHandler();
 
-    /**
-      Decorate and log the message, if type>=minLevel.
-      This method is thread safe.
-      @param type Message type (level)
-      @param message Message text
-      @param file Name of the source file where the message was generated (usually filled with the macro __FILE__)
-      @param function Name of the function where the message was generated (usually filled with the macro __LINE__)
-      @param line Line Number of the source file, where the message was generated (usually filles with the macro __func__ or __FUNCTION__)
-      @see LogMessage for a description of the message decoration.
-    */
-    virtual void log(const QtMsgType type, const QString& message, const QString &file="", const QString &function="", const int line=0);
+  /**
+    Sets a thread-local variable that may be used to decorate log messages.
+    This method is thread safe.
+    @param name Name of the variable
+    @param value Value of the variable
+  */
+  static void set(const QString &name, const QString &value);
 
-    /**
-      Installs this logger as the default message handler, so it
-      can be used through the global static logging functions (e.g. qDebug()).
-    */
-    void installMsgHandler();
-
-    /**
-      Sets a thread-local variable that may be used to decorate log messages.
-      This method is thread safe.
-      @param name Name of the variable
-      @param value Value of the variable
-    */
-    static void set(const QString& name, const QString& value);
-
-    /**
-      Clear the thread-local data of the current thread.
-      This method is thread safe.
-      @param buffer Whether to clear the backtrace buffer
-      @param variables Whether to clear the log variables
-    */
-    virtual void clear(const bool buffer=true, const bool variables=true);
+  /**
+    Clear the thread-local data of the current thread.
+    This method is thread safe.
+    @param buffer Whether to clear the backtrace buffer
+    @param variables Whether to clear the log variables
+  */
+  virtual void clear(const bool buffer = true, const bool variables = true);
 
 protected:
+  /** Format string for message decoration */
+  QString msgFormat;
 
-    /** Format string for message decoration */
-    QString msgFormat;
+  /** Format string of timestamps */
+  QString timestampFormat;
 
-    /** Format string of timestamps */
-    QString timestampFormat;
+  /** Minimum level of message types that are written out */
+  QtMsgType minLevel;
 
-    /** Minimum level of message types that are written out */
-    QtMsgType minLevel;
+  /** Size of backtrace buffer, number of messages per thread. 0=disabled */
+  int bufferSize;
 
-    /** Size of backtrace buffer, number of messages per thread. 0=disabled */
-    int bufferSize;
+  /** Used to synchronize access of concurrent threads */
+  static QMutex mutex;
 
-    /** Used to synchronize access of concurrent threads */
-    static QMutex mutex;
-
-    /**
-      Decorate and write a log message to stderr. Override this method
-      to provide a different output medium.
-    */
-    virtual void write(const LogMessage* logMessage);
+  /**
+    Decorate and write a log message to stderr. Override this method
+    to provide a different output medium.
+  */
+  virtual void write(const LogMessage *logMessage);
 
 private:
+  /** Pointer to the default logger, used by msgHandler() */
+  static Logger *defaultLogger;
 
-    /** Pointer to the default logger, used by msgHandler() */
-    static Logger* defaultLogger;
-
-    /**
-      Message Handler for the global static logging functions (e.g. qDebug()).
-      Forward calls to the default logger.
-      <p>
-      In case of a fatal message, the program will abort.
-      Variables in the in the message are replaced by their values.
-      This method is thread safe.
-      @param type Message type (level)
-      @param message Message text
-      @param file Name of the source file where the message was generated (usually filled with the macro __FILE__)
-      @param function Name of the function where the message was generated (usually filled with the macro __LINE__)
-      @param line Line Number of the source file, where the message was generated (usually filles with the macro __func__ or __FUNCTION__)
-    */
-    static void msgHandler(const QtMsgType type, const QString &message, const QString &file="", const QString &function="", const int line=0);
-
+  /**
+    Message Handler for the global static logging functions (e.g. qDebug()).
+    Forward calls to the default logger.
+    <p>
+    In case of a fatal message, the program will abort.
+    Variables in the in the message are replaced by their values.
+    This method is thread safe.
+    @param type Message type (level)
+    @param message Message text
+    @param file Name of the source file where the message was generated (usually
+    filled with the macro __FILE__)
+    @param function Name of the function where the message was generated
+    (usually filled with the macro __LINE__)
+    @param line Line Number of the source file, where the message was generated
+    (usually filles with the macro __func__ or __FUNCTION__)
+  */
+  static void msgHandler(const QtMsgType type, const QString &message,
+                         const QString &file = "", const QString &function = "",
+                         const int line = 0);
 
 #if QT_VERSION >= 0x050000
 
-    /**
-      Wrapper for QT version 5.
-      @param type Message type (level)
-      @param context Message context
-      @param message Message text
-      @see msgHandler()
-    */
-    static void msgHandler5(const QtMsgType type, const QMessageLogContext& context, const QString &message);
+  /**
+    Wrapper for QT version 5.
+    @param type Message type (level)
+    @param context Message context
+    @param message Message text
+    @see msgHandler()
+  */
+  static void msgHandler5(const QtMsgType type,
+                          const QMessageLogContext &context,
+                          const QString &message);
 
 #else
 
-    /**
-      Wrapper for QT version 4.
-      @param type Message type (level)
-      @param message Message text
-      @see msgHandler()
-    */
-    static void msgHandler4(const QtMsgType type, const char * message);
+  /**
+    Wrapper for QT version 4.
+    @param type Message type (level)
+    @param message Message text
+    @see msgHandler()
+  */
+  static void msgHandler4(const QtMsgType type, const char *message);
 
 #endif
 
-    /** Thread local variables to be used in log messages */
-    static QThreadStorage<QHash<QString,QString>*> logVars;
+  /** Thread local variables to be used in log messages */
+  static QThreadStorage<QHash<QString, QString> *> logVars;
 
-    /** Thread local backtrace buffers */
-    QThreadStorage<QList<LogMessage*>*> buffers;
-
+  /** Thread local backtrace buffers */
+  QThreadStorage<QList<LogMessage *> *> buffers;
 };
 
-} // end of namespace
+} // namespace stefanfrings
 
 #endif // LOGGER_H
