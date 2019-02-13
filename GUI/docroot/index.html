@@ -1,6 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -31,7 +32,7 @@
       <div class="container justify-content-start">
         <div class="row ">
           <div class="col-lg-8">
-            <h1>Intro …</h1>
+            <h1>Intro &hellip;</h1>
           </div>
         </div>
       </div>
@@ -41,30 +42,30 @@
         <div class="row">
           <div class="col-sm-4 col-md-3 col-lg-2">
             <div class="nav flex-column nav-pills" id="steps">
-              <h4 id ="headertag">Entwurf</h4>
-              <div class="nav-link active" id="browse-tab" href="#browse">1. Bild auswählen</div>
+              <h4 id="headertag">Entwurf</h4>
+              <div class="nav-link active" id="browse-tab" href="#browse">1. Bild ausw&auml;hlen</div>
               <div class="nav-link" id="cut-tab" href="#cut">2. Bild zuschneiden</div>
               <div class="nav-link" id="attributes-tab" href="#attributes">3. Attribute angeben</div>
               <!--<div class="nav-link" id="settings-tab" href="#settings" onclick="startImageProcessing()">Parameter anpassen</div>-->
-              <div class="nav-link" id="selection-tab" href="#selection">4. Kolonien auswählen</div>
-              <div class="nav-link" id="strategy-tab" href="#strategy">5. Pickstrategie wählen</div>
-              <div class="nav-link" id="overview-tab" href="#overview">6. Übersicht</div>
+              <div class="nav-link" id="selection-tab" href="#selection">4. Kolonien ausw&auml;hlen</div>
+              <div class="nav-link" id="strategy-tab" href="#strategy">5. Pickstrategie w&auml;hlen</div>
+              <div class="nav-link" id="overview-tab" href="#overview">6. &Uuml;bersicht</div>
               <div class="nav-link" id="execute-tab" href="#execute">7. Pickjob starten</div>
             </div>
           </div>
-          <div class="col-sm-8 col-md-9 col-lg-10" >
+          <div class="col-sm-8 col-md-9 col-lg-10">
             <div class="tab-content" id="tabContent">
               <div class="tab-pane fade show active" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-4">
                     <h2>Choose image</h2>
-                    <form><input id="classicUpload" type="file" multiple style="display: none;"/></form>
+                    <form><input id="classicUpload" type="file" multiple style="display: none;"></form>
                     <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
                     <div id="chosen-image"></div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col" >
+                  <div class="col">
                     <h2>All images</h2>
                     <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
                     <div id="all-images" style="display: none;"></div>
@@ -149,7 +150,7 @@
                 <h2>Choose starting well</h2>
                 <canvas id="pickstrategy-canvas"></canvas>
                 <br>
-                <button class="btn btn-dark m-2" onclick="overviewTab()">Overview ></button>
+                <button class="btn btn-dark m-2" onclick="overviewTab()">Overview &gt;</button>
               </div>
               <div class="tab-pane fade col-md-8" id="overview">
                 <h2>Overview</h2>
@@ -177,7 +178,7 @@
                     </div>
                   </div>
                 </form>
-                <button class="btn btn-dark m-2" onclick="executeTab()">Start picking ></button>
+                <button class="btn btn-dark m-2" onclick="executeTab()">Start picking &gt;</button>
               </div>
               <div class="tab-pane fade col-md-8" id="execute">
                 <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->

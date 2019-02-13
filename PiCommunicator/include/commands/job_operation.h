@@ -18,20 +18,20 @@ class JobOperation : public Command {
   JobOperation() = delete;
   using Command::Command;
 
- public:
+public:
   typedef responses::JobInfo Response;
 
-  static JobOperation* GetInfo();
+  static JobOperation *GetInfo();
 
-  static JobOperation* Start();
-  static JobOperation* Cancel();
-  static JobOperation* Restart();
-  static JobOperation* Pause();
-  static JobOperation* Resume();
-  static JobOperation* TogglePause();
+  static JobOperation *Start();
+  static JobOperation *Cancel();
+  static JobOperation *Restart();
+  static JobOperation *Pause();
+  static JobOperation *Resume();
+  static JobOperation *TogglePause();
 
- public slots:
-  virtual void OnReplyFinished(QNetworkReply* reply) override;
+public slots:
+  virtual void OnReplyFinished(QNetworkReply *reply) override;
 };
 } // namespace commands
 } // namespace pi

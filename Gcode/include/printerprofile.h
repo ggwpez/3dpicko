@@ -13,14 +13,14 @@ namespace c3picko {
  *
  */
 class PrinterProfile {
- public:
+public:
   explicit PrinterProfile(
-	  int movement_speed, const Point& cut_filament_position_above_trigger,
-	  float z_coordinate_pushing_the_trigger,
-	  float distance_between_pushed_trigger_and_gap_between_scissors_blade,
-	  float filament_extrusion_length_on_move_offset = 0,
-	  float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset =
-		  0);
+      int movement_speed, const Point &cut_filament_position_above_trigger,
+      float z_coordinate_pushing_the_trigger,
+      float distance_between_pushed_trigger_and_gap_between_scissors_blade,
+      float filament_extrusion_length_on_move_offset = 0,
+      float filament_extrusion_length_on_pick_and_put_onto_master_plate_offset =
+          0);
 
   int movementSpeed() const;
   Point cutFilamentPosition() const;
@@ -33,7 +33,7 @@ class PrinterProfile {
   float filamentExtrusionLengthOnMoveOffset() const;
   float filamentExtrusionLengthDefault() const;
 
- private:
+private:
   /**
    * @brief movement_speed_ the speed the nozzle is moved with,
    * in mm/min
@@ -88,7 +88,7 @@ class PrinterProfile {
    * filament_extrusion_length_on_pick_and_put_onto_master_plate_
    */
   const float
-	  filament_extrusion_length_on_pick_and_put_onto_master_plate_offset_;
+      filament_extrusion_length_on_pick_and_put_onto_master_plate_offset_;
 
   /**
    * @brief filament_extrusion_length_on_pick_and_put_onto_master_plate_
@@ -105,7 +105,7 @@ class PrinterProfile {
    * touch anything on move, determined by manual testing, in millimeter
    */
   const float
-	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
+      safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 };
-}  // namespace c3picko
-#endif  // PRINTERPROFILE_H
+} // namespace c3picko
+#endif // PRINTERPROFILE_H

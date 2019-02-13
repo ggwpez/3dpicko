@@ -1,8 +1,8 @@
 #ifndef PROFILE_HPP
 #define PROFILE_HPP
 
-#include <memory>
 #include "include/json_constructable.hpp"
+#include <memory>
 
 namespace c3picko {
 class PrinterProfile;
@@ -10,20 +10,20 @@ class PlateSocketProfile;
 class PlateProfile;
 
 class Profile : public JsonConstructable {
- public:
+public:
   typedef QString ID;
-  Profile(QJsonObject const&);
+  Profile(QJsonObject const &);
 
-  void write(QJsonObject& obj) const;
+  void write(QJsonObject &obj) const;
 
-  explicit operator PrinterProfile*() const;
-  explicit operator PlateSocketProfile*() const;
-  explicit operator PlateProfile*() const;
+  explicit operator PrinterProfile *() const;
+  explicit operator PlateSocketProfile *() const;
+  explicit operator PlateProfile *() const;
 
   ID id() const;
   QString name() const;
 
- private:
+private:
   QString type_;
   QString name_;
   QString id_;
@@ -31,6 +31,6 @@ class Profile : public JsonConstructable {
   std::shared_ptr<PlateSocketProfile> socket_;
   std::shared_ptr<PrinterProfile> printer_;
 };
-}
+} // namespace c3picko
 
-#endif  // PROFILE_HPP
+#endif // PROFILE_HPP

@@ -1,40 +1,38 @@
 #pragma once
 
-#include <QString>
-#include <QDateTime>
-#include <QTimeZone>
-#include <QJsonObject>
-#include "include/types/image.hpp"
 #include "include/json_constructable.hpp"
+#include "include/types/image.hpp"
 #include "include/types/profile.hpp"
+#include <QDateTime>
+#include <QJsonObject>
+#include <QString>
+#include <QTimeZone>
 
-namespace c3picko
-{
-	class Job : public JsonConstructable
-	{
-	public:
-		typedef QString ID;
-		Job() = default;
-		Job(QJsonObject const&);
+namespace c3picko {
+class Job : public JsonConstructable {
+public:
+  typedef QString ID;
+  Job() = default;
+  Job(QJsonObject const &);
 
-		void resetCreationDate();
+  void resetCreationDate();
 
-	private:
-		ID id_;
-		Image::ID img_id_;
-		Profile::ID plate_, printer_, socket_;
-		QString name_, description_;
-		QDateTime job_created_;
+private:
+  ID id_;
+  Image::ID img_id_;
+  Profile::ID plate_, printer_, socket_;
+  QString name_, description_;
+  QDateTime job_created_;
 
-		/**
-		 * @brief How far is the configuration of this Job?
-		 */
-		qint32 step_ = 0;
+  /**
+   * @brief How far is the configuration of this Job?
+   */
+  qint32 step_ = 0;
 
-	public:
-		Image::ID img_id() const;
-		ID id() const;
+public:
+  Image::ID img_id() const;
+  ID id() const;
 
-		void write(QJsonObject&) const override;
-	};
-}
+  void write(QJsonObject &) const override;
+};
+} // namespace c3picko

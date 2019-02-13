@@ -1,8 +1,8 @@
 #ifndef REQUESTMAPPER_H
 #define REQUESTMAPPER_H
 
-#include "include/api_controller.h"
 #include "httprequesthandler.h"
+#include "include/api_controller.h"
 #include "staticfilecontroller.h"
 
 using namespace stefanfrings;
@@ -10,13 +10,15 @@ using namespace stefanfrings;
 namespace c3picko {
 
 class RequestMapper : public HttpRequestHandler {
-	Q_OBJECT
+  Q_OBJECT
 public:
-	RequestMapper(StaticFileController* file_controller, APIController* api, QObject* parent=nullptr);
-	void service(HttpRequest& request, HttpResponse& response);
+  RequestMapper(StaticFileController *file_controller, APIController *api,
+                QObject *parent = nullptr);
+  void service(HttpRequest &request, HttpResponse &response);
+
 private:
-	StaticFileController* staticFileController;
-	APIController* api_;
+  StaticFileController *staticFileController;
+  APIController *api_;
 };
 } // namespace c3picko
 #endif // REQUESTMAPPER_H

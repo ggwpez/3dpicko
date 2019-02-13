@@ -18,11 +18,10 @@ namespace c3picko {
  *
  */
 class GcodeGenerator {
- public:
-  explicit GcodeGenerator(
-      const PlateSocketProfile& plate_socket_profile,
-      const PrinterProfile& printer_profile,
-      const PlateProfile& master_and_goal_plate_profile);
+public:
+  explicit GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
+                          const PrinterProfile &printer_profile,
+                          const PlateProfile &master_and_goal_plate_profile);
 
   /**
    * @brief Creates the gcode for an entire picking process.
@@ -40,7 +39,7 @@ class GcodeGenerator {
       int starting_row, int starting_column,
       std::vector<LocalColonyCoordinates> local_colony_coordinates);
 
- private:
+private:
   /**
    * @brief Creates a gcode instruction for initializing the printer.
    * This includes setting the positioning of nozzle and extrusion
@@ -56,8 +55,8 @@ class GcodeGenerator {
    * a coordinate of the used socket's coordinate system
    * @return the colony coordinate in the socket's coordinate system
    */
-  GlobalColonyCoordinates MapLocalColonyCoordinateToGlobal(
-      LocalColonyCoordinates& local_colony);
+  GlobalColonyCoordinates
+  MapLocalColonyCoordinateToGlobal(LocalColonyCoordinates &local_colony);
 
   GcodeInstruction CreateGcodeLowerFilamentOntoColony();
   GcodeInstruction CreateGcodeLowerFilamentOntoMaster();
@@ -85,8 +84,8 @@ class GcodeGenerator {
    * ComputeGlobalWellCoordinates() and ComputeGlobalMasterCoordinates()
    * call this function providing the necessary arguments.
    */
-  std::vector<Point> ComputeGlobalWellAndMasterCoordinates(
-      const Point& origin_of_plate);
+  std::vector<Point>
+  ComputeGlobalWellAndMasterCoordinates(const Point &origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
@@ -97,7 +96,7 @@ class GcodeGenerator {
    * global xy coordinates of the wells.
    */
   void ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
-      std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
+      std::vector<Point> &global_well_coordintes, const Point &origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
@@ -108,7 +107,7 @@ class GcodeGenerator {
    * global xy coordinates of the wells.
    */
   void ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
-      std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
+      std::vector<Point> &global_well_coordintes, const Point &origin_of_plate);
 
   /**
    * @brief ComputeStartingWell computes the first well
@@ -147,14 +146,15 @@ class GcodeGenerator {
   GcodeInstruction gcode_lower_filament_onto_master_;
 
   /**
-   * @brief gcode_align_tip_of_nozzle_with_top_of_well_ the gcode instruction for aligning
-   * the tip of the nozzle with the top of the well it is positioned above.
+   * @brief gcode_align_tip_of_nozzle_with_top_of_well_ the gcode instruction
+   * for aligning the tip of the nozzle with the top of the well it is
+   * positioned above.
    */
   GcodeInstruction gcode_align_tip_of_nozzle_with_top_of_well_;
 
   /**
-   * @brief gcode_extrude_filament_until_bottom_of_well_ the gcode instruction for
-   * extruding the filament until its tip touches the bottom of the well
+   * @brief gcode_extrude_filament_until_bottom_of_well_ the gcode instruction
+   * for extruding the filament until its tip touches the bottom of the well
    */
   GcodeInstruction gcode_extrude_filament_until_bottom_of_well_;
 
@@ -166,9 +166,9 @@ class GcodeGenerator {
   GcodeInstruction gcode_raise_filament_above_plate_;
 
   /**
-   * @brief gcode_move_to_cut_filament_position_above_trigger_ the gcode instruction for
-   * moving the nozzle to the position where the filament is cut but the trigger is not yet
-   * pushed.
+   * @brief gcode_move_to_cut_filament_position_above_trigger_ the gcode
+   * instruction for moving the nozzle to the position where the filament is cut
+   * but the trigger is not yet pushed.
    */
   GcodeInstruction gcode_move_to_cut_filament_position_above_trigger_;
 
@@ -207,5 +207,5 @@ class GcodeGenerator {
    */
   std::vector<GlobalMasterCoordinates> global_master_xy_coordinates_;
 };
-}  // namespace c3picko
-#endif  // GCODEGENERATOR_H
+} // namespace c3picko
+#endif // GCODEGENERATOR_H
