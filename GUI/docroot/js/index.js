@@ -247,6 +247,9 @@ function GetDetectionAlgorithmSettings(id){
 		}
 		new_input_html += '</div>';
 		detection_settings.insertAdjacentHTML('beforeend', new_input_html);
+		$('#slider-'+settings_id).on('input', function(){
+    		if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+  		}).trigger('input');
 	}
 }
 
@@ -298,7 +301,7 @@ function AddJobToList(job)
 		</p>
 		</div>
 		<div class="card-footer bg-white">
-		<a href="#" class="btn btn-dark ">edit</a>
+		<a href="#" class="btn btn-primary ">edit</a>
 		</div>
 		</div>`;
 
@@ -398,7 +401,7 @@ function SetChosen(image_id){
 		console.log("Selecting image ", image_id);
 		div_chosen.innerHTML = `
 		<ul><li>Dateiname: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
-		<button class="btn btn-dark" onclick="cutTab()">Choose image ></button>\
+		<button class="btn btn-primary" onclick="cutTab()">Choose image ></button>\
 		`;
 		class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
 		class_dropzone.removeClass('empty');
@@ -483,10 +486,12 @@ function selectionTab(){
 		api("getdetectionalgorithms");	// TODO should we put this in the init?
 		// TODO Remove (only for debugging)
 		GetDetectionAlgorithms({});
+		$('#detection-settings-div').show();
 	} 
 }
 
 function strategyTab(){
+	$('#detection-settings-div').hide();
 	let plate_selection = document.getElementById("select-plate-profile");
 	for(let profile_id in all_profiles){
 		let profile = all_profiles[profile_id];

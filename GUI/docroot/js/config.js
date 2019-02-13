@@ -252,7 +252,7 @@ function AddPrinterProfile(printer_profile){
   Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate.
   </small>
   </div>
-  <button type="submit" class="btn btn-dark">${button_text}</button>
+  <button type="submit" class="btn btn-primary">${button_text}</button>
   </form>
   </div>
   </div>
@@ -263,6 +263,11 @@ function AddPrinterProfile(printer_profile){
   $('#form-'+printer_profile.id).on('submit', UpdateSettingsProfile);
   $('#form-'+printer_profile.id).on('focus', 'input', function(){this.select();});
 
+  $('#form-'+printer_profile.id+' input[type="number"]').on('input', function(){
+    if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+    console.log(this.value.length);
+  }).trigger('input');
+  
   if(printer_profile.profile_name != ""){
     let printer_profile_option = document.createElement('option');
     printer_profile_option.value = printer_profile.id;
@@ -357,7 +362,7 @@ function AddSocketProfile(socket_profile){
   Orientation of goal- and masterplate compared to the cutout it is lying in.
   </small>
   </div>
-  <button type="submit" class="btn btn-dark">${button_text}</button>
+  <button type="submit" class="btn btn-primary">${button_text}</button>
   </form>
   </div>
   </div>
@@ -367,6 +372,10 @@ function AddSocketProfile(socket_profile){
   document.getElementById('socket-profiles').insertAdjacentHTML('beforeend',html);
   $('#form-'+socket_profile.id).on('submit', UpdateSettingsProfile);
   $('#form-'+socket_profile.id).on('focus', 'input', function(){this.select();});
+
+  $('#form-'+socket_profile.id+' input[type="number"]').on('input', function(){
+    if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+  }).trigger('input');
 
   if(socket_profile.profile_name != ""){
     let socket_profile_option = document.createElement('option');
@@ -477,7 +486,7 @@ function AddPlateProfile(plate_profile){
   The thickness of the used culture medium inside the source and master plate, for instance agars.
   </small>
   </div>
-  <button type="submit" class="btn btn-dark">${button_text}</button>
+  <button type="submit" class="btn btn-primary">${button_text}</button>
   </form>
   </div>
   </div>
@@ -487,4 +496,8 @@ function AddPlateProfile(plate_profile){
   document.getElementById('plate-profiles').insertAdjacentHTML('beforeend',html);
   $('#form-'+plate_profile.id).on('submit', UpdateSettingsProfile);
   $('#form-'+plate_profile.id).on('focus', 'input', function(){this.select();});
+
+  $('#form-'+plate_profile.id+' input[type="number"]').on('input', function(){
+    if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+  }).trigger('input');
 }

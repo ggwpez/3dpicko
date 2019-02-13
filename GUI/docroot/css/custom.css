@@ -111,11 +111,11 @@ input[type=range]{
 /* Profile Settings Page */
 /* remove number input spinner */
 #nav-settings input[type=number]{
-	max-width: 30px;
 	padding: 0px;
 	line-height: 1;
 	text-align: right;
-	-moz-appearance:textfield;
+	width: 2ch;
+	min-width: 2ch;
 }
 input[type=number]{
 	-moz-appearance:textfield;

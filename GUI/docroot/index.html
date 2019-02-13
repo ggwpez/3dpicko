@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -32,7 +31,7 @@
       <div class="container justify-content-start">
         <div class="row ">
           <div class="col-lg-8">
-            <h1>Intro &hellip;</h1>
+            <h1>Intro …</h1>
           </div>
         </div>
       </div>
@@ -42,30 +41,42 @@
         <div class="row">
           <div class="col-sm-4 col-md-3 col-lg-2">
             <div class="nav flex-column nav-pills" id="steps">
-              <h4 id="headertag">Entwurf</h4>
-              <div class="nav-link active" id="browse-tab" href="#browse">1. Bild ausw&auml;hlen</div>
+              <h4 id ="headertag">Entwurf</h4>
+              <div class="nav-link active" id="browse-tab" href="#browse">1. Bild auswählen</div>
               <div class="nav-link" id="cut-tab" href="#cut">2. Bild zuschneiden</div>
               <div class="nav-link" id="attributes-tab" href="#attributes">3. Attribute angeben</div>
               <!--<div class="nav-link" id="settings-tab" href="#settings" onclick="startImageProcessing()">Parameter anpassen</div>-->
-              <div class="nav-link" id="selection-tab" href="#selection">4. Kolonien ausw&auml;hlen</div>
-              <div class="nav-link" id="strategy-tab" href="#strategy">5. Pickstrategie w&auml;hlen</div>
-              <div class="nav-link" id="overview-tab" href="#overview">6. &Uuml;bersicht</div>
+              <div class="nav-link" id="selection-tab" href="#selection">4. Kolonien auswählen</div>
+              <div class="nav-link" id="strategy-tab" href="#strategy">5. Pickstrategie wählen</div>
+              <div class="nav-link" id="overview-tab" href="#overview">6. Übersicht</div>
               <div class="nav-link" id="execute-tab" href="#execute">7. Pickjob starten</div>
             </div>
+            <div id="detection-settings-div" style="display: none">
+              <h4>Detection Settings</h4>
+              <div class="form-group">
+                <label for="select-algorithm">Algorithm:</label>
+                <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
+              </div>
+              <form id="detection-settings-form">
+                <div id="detection-settings"></div>
+                <button type="submit" class="btn btn-primary">Apply</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+              </form>
+            </div>
           </div>
-          <div class="col-sm-8 col-md-9 col-lg-10">
+          <div class="col-sm-8 col-md-9 col-lg-10" >
             <div class="tab-content" id="tabContent">
               <div class="tab-pane fade show active" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-4">
                     <h2>Choose image</h2>
-                    <form><input id="classicUpload" type="file" multiple style="display: none;"></form>
+                    <form><input id="classicUpload" type="file" multiple style="display: none;"/></form>
                     <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
                     <div id="chosen-image"></div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col">
+                  <div class="col" >
                     <h2>All images</h2>
                     <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
                     <div id="all-images" style="display: none;"></div>
@@ -80,7 +91,7 @@
                   </div>
                 </div>
                 <br>
-                <button class="btn btn-dark m-2" onclick="attributesTab()">Next Step</button>
+                <button class="btn btn-primary m-2" onclick="attributesTab()">Next Step</button>
               </div>
               <div class="tab-pane fade col-md-6" id="attributes">
                 <h2>Pickjob attributes</h2>
@@ -107,178 +118,162 @@
                     <textarea class="form-control" id="description-input" rows="3"></textarea>
                   </div>
                 </form>
-                <button class="btn btn-dark m-2" onclick="selectionTab()">Next Step</button>
+                <button class="btn btn-primary m-2" onclick="selectionTab()">Next Step</button>
               </div>
               <div class="tab-pane fade col-md-12 col-xl-10" id="selection">
-                <div class="row">
-                  <div class="col-lg-9">
-                    <h2>Choose colonys</h2>
-                     <div style="position: relative;">
-                       <canvas id="layer0" style="z-index: 0;"></canvas>
-                       <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
-                    </div>
-                    <div id="buttons">
-                      <button class="btn btn-dark" onclick="getPositions()">Automatische Kolonieerkennung</button>
-                      <button class="btn btn-dark" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
-                      <button class="btn btn-dark" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
-                      <button class="btn btn-dark" onclick="strategyTab()">Weiter</button>
+                <h2>Choose colonys</h2>
+                <div style="position: relative;">
+                 <canvas id="layer0" style="z-index: 0;"></canvas>
+                 <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+               </div>
+               <div id="buttons">
+                <button class="btn btn-primary" onclick="getPositions()">Automatische Kolonieerkennung</button>
+                <button class="btn btn-primary" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
+                <button class="btn btn-primary" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
+                <button class="btn btn-primary" onclick="strategyTab()">Weiter</button>
+              </div>
+              <div id="showCoordinates"></div>
+            </div>
+            <div class="tab-pane fade col-md-8" id="strategy">
+              <h2>Pick strategy</h2>
+              <form id="strategy-form" name="strategy-form">
+                <div class="form-group">
+                  <label for="select-plate-profile">Plates:</label>
+                  <select id="select-plate-profile"></select>
+                </div>
+              </form>
+              <h2>Choose starting well</h2>
+              <canvas id="pickstrategy-canvas"></canvas>
+              <br>
+              <button class="btn btn-primary m-2" onclick="overviewTab()">Overview ></button>
+            </div>
+            <div class="tab-pane fade col-md-8" id="overview">
+              <h2>Overview</h2>
+              <div id="overview-content"></div>
+              <h2>Check preconditions</h2>
+              <form id="check-preconditions" class="needs-validation" novalidate>
+                <div class="form-group">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" type="checkbox" value="" id="check-plates" required>
+                    <label class="custom-control-label" for="check-plates">
+                      Plates correctly positioned in colony picker?
+                    </label>
+                    <div class="invalid-feedback">
+                      Check plates and confirm!
                     </div>
                   </div>
-                  <div class="col-lg-3" style="z-index: 2;">
-                    <h2 class="d-none d-lg-block">Settings</h2>
-                    <div class="form-group">
-                      <label for="select-algorithm">Algorithm:</label>
-                      <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="custom-control-label" for="invalidCheck">
+                      Agree to terms and conditions.
+                    </label>
+                    <div class="invalid-feedback">
+                      You must agree!
                     </div>
-                    <form id="detection-settings-form">
-                      <div id="detection-settings"></div>
-                      <button type="submit" class="btn btn-primary">Apply</button>
-                      <button type="reset" class="btn btn-secondary">Reset</button>
-                    </form>
                   </div>
                 </div>
-                <div id="showCoordinates"></div>
-              </div>
-              <div class="tab-pane fade col-md-8" id="strategy">
-                <h2>Pick strategy</h2>
-                <form id="strategy-form" name="strategy-form">
-                  <div class="form-group">
-                    <label for="select-plate-profile">Plates:</label>
-                    <select id="select-plate-profile"></select>
-                  </div>
-                </form>
-                <h2>Choose starting well</h2>
-                <canvas id="pickstrategy-canvas"></canvas>
-                <br>
-                <button class="btn btn-dark m-2" onclick="overviewTab()">Overview &gt;</button>
-              </div>
-              <div class="tab-pane fade col-md-8" id="overview">
-                <h2>Overview</h2>
-                <div id="overview-content"></div>
-                <h2>Check preconditions</h2>
-                <form id="check-preconditions" class="needs-validation" novalidate>
-                  <div class="form-group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="check-plates" required>
-                      <label class="form-check-label" for="check-plates">
-                        Plates correctly positioned in colony picker?
-                      </label>
-                      <div class="invalid-feedback">
-                        Check plates and confirm!
-                      </div>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
-                      <label class="form-check-label" for="invalidCheck">
-                        Agree to terms and conditions.
-                      </label>
-                      <div class="invalid-feedback">
-                        You must agree!
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                <button class="btn btn-dark m-2" onclick="executeTab()">Start picking &gt;</button>
-              </div>
-              <div class="tab-pane fade col-md-8" id="execute">
-                <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->
-                <h1>Picking...</h1>
-                <div class="spinner-border"></div>
-                <br>
-                <button class="btn btn-dark m-2" onclick="">Export pdf</button>
-              </div>
+              </form>
+              <button class="btn btn-primary m-2" onclick="executeTab()">Start picking ></button>
+            </div>
+            <div class="tab-pane fade col-md-8" id="execute">
+              <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->
+              <h1>Picking...</h1>
+              <div class="spinner-border"></div>
+              <br>
+              <button class="btn btn-primary m-2" onclick="">Export pdf</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="tab-pane fade" id="nav-all-jobs" role="tabpanel" aria-labelledby="nav-all-jobs-tab">
-      <div class="container">
-        <h1>Pickjobs</h1>
-        <form class="form-inline">
-          <input class="form-control my-2 mr-2" type="search" placeholder="Suchbegriff">
-          <button class="btn btn-dark my-2" type="submit">Filter</button>
-        </form>
-        <div id="allJobList"></div>
-      </div>
-    </div>
-    <div class="tab-pane fade" id="nav-historic-jobs" role="tabpanel" aria-labelledby="nav-historic-jobs-tab">
-      <div class="container">
-        <h1>Job History</h1>
-      </div> 
-    </div>
-    <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
-      <div class="container">
-        <div class="row mb-2" id="group">
-          <div class="col">
-            <h2>Printer Porfiles</h2>
-            <div class="accordion" id="printer-profiles"></div>
-          </div>
-          <div class="col">
-            <h2>Socket Profiles</h2>
-            <div class="accordion" id="socket-profiles"></div>
-          </div>
-          <div class="col">
-            <h2>Plate Profiles</h2>
-            <div class="accordion" id="plate-profiles"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="tab-pane fade" id="nav-admin" role="tabpanel" aria-labelledby="nav-admin-tab">
-      <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
-      <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
-      <button type="button" class="btn btn-success" onclick="api('backup')">Backup</button>
-      <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
-      <div id="debug-output"></div>
+  </div>
+  <div class="tab-pane fade" id="nav-all-jobs" role="tabpanel" aria-labelledby="nav-all-jobs-tab">
+    <div class="container">
+      <h1>Pickjobs</h1>
+      <form class="form-inline">
+        <input class="form-control my-2 mr-2" type="search" placeholder="Suchbegriff">
+        <button class="btn btn-primary my-2" type="submit">Filter</button>
+      </form>
+      <div id="allJobList"></div>
     </div>
   </div>
-  <!-- Info-Dialog -->
-  <div class="modal fade" id="info-dialog" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="info-dialog-title"></h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+  <div class="tab-pane fade" id="nav-historic-jobs" role="tabpanel" aria-labelledby="nav-historic-jobs-tab">
+    <div class="container">
+      <h1>Job History</h1>
+    </div> 
+  </div>
+  <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
+    <div class="container">
+      <div class="row mb-2" id="group">
+        <div class="col">
+          <h2>Printer Porfiles</h2>
+          <div class="accordion" id="printer-profiles"></div>
         </div>
-        <div class="modal-body">
-          <button type="button" class="btn btn-dark" data-dismiss="modal">Ok</button>
+        <div class="col">
+          <h2>Socket Profiles</h2>
+          <div class="accordion" id="socket-profiles"></div>
+        </div>
+        <div class="col">
+          <h2>Plate Profiles</h2>
+          <div class="accordion" id="plate-profiles"></div>
         </div>
       </div>
     </div>
   </div>
-  <!-- Delete-Dialog -->
-  <div class="modal fade" id="delete-dialog" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="delete-dialog-title"></h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-dark" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
-        </div>
+  <div class="tab-pane fade" id="nav-admin" role="tabpanel" aria-labelledby="nav-admin-tab">
+    <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
+    <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
+    <button type="button" class="btn btn-success" onclick="api('backup')">Backup</button>
+    <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
+    <div id="debug-output"></div>
+  </div>
+</div>
+<!-- Info-Dialog -->
+<div class="modal fade" id="info-dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="info-dialog-title"></h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
       </div>
     </div>
   </div>
-  <!-- Global Alert: call ShowAlert(message, type) -->
-  <div id="alert-window">
-    <div id="global-alert" style="display: none;">Disconnected from server.</div>
+</div>
+<!-- Delete-Dialog -->
+<div class="modal fade" id="delete-dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delete-dialog-title"></h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
+      </div>
+    </div>
   </div>
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Bootstrap JS -->
-  <script src="js/jquery-3.3.1.js"></script>
-  <script src="js/bootstrap.bundle.js"></script>
-  <script type="text/javascript" src="js/api.js"></script>
-  <script type="text/javascript" src="js/dropzone.js"></script>
-  <script type="text/javascript" src="js/index.js"></script>
-  <script type="text/javascript" src="js/colonydetection.js"></script>
-  <script type="text/javascript" src="js/config.js"></script>
-  <script type="text/javascript" src="js/cropper.js"></script>
-  <script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
-  <script type="text/javascript" src="js/pickstrategie.js"></script>
-  <script type="text/javascript" src="js/circle.js"></script>
+</div>
+<!-- Global Alert: call ShowAlert(message, type) -->
+<div id="alert-window">
+  <div id="global-alert" style="display: none;">Disconnected from server.</div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Bootstrap JS -->
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+<script type="text/javascript" src="js/api.js"></script>
+<script type="text/javascript" src="js/dropzone.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/colonydetection.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/cropper.js"></script>
+<script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
+<script type="text/javascript" src="js/pickstrategie.js"></script>
+<script type="text/javascript" src="js/circle.js"></script>
 </body>
 </html>
