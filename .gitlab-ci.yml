@@ -10,7 +10,7 @@ dependencies:linux:
   stage: dependencies
   script:
     - apt update -qq
-    - apt -y -qq install qt5-default g++ build-essential doxygen cppcheck clang-format
+    - apt -y -qq install qt5-default libqt5websockets5-dev g++ build-essential doxygen cppcheck clang-format
     - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
   except:
     - /^.*-format$/
