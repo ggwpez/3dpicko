@@ -7,7 +7,6 @@
 #include <QThreadPool>
 #include <QJsonObject>
 #include <QProcess>
-#include <QRandomGenerator>
 #include <algorithm>
 #include "httplistener.h"
 #include "include/global.h"
