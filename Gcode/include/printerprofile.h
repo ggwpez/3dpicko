@@ -1,7 +1,6 @@
 ﻿#ifndef PRINTERPROFILE_H
 #define PRINTERPROFILE_H
 
-#include "include/json_constructable.hpp"
 #include "include/point.h"
 
 namespace c3picko {
@@ -13,11 +12,10 @@ namespace c3picko {
  * used 3D printer.
  *
  */
-class PrinterProfile : public JsonConstructable {
- public:
-  explicit PrinterProfile(QJsonObject const&);
+class PrinterProfile {
+public:
   explicit PrinterProfile(
-      int movement_speed, const Point& cut_filament_position_above_trigger,
+      int movement_speed, const Point &cut_filament_position_above_trigger,
       float z_coordinate_pushing_the_trigger,
       float distance_between_pushed_trigger_and_gap_between_scissors_blade,
       float filament_extrusion_length_on_move_offset = 0,
@@ -31,10 +29,11 @@ class PrinterProfile : public JsonConstructable {
   float filamentExtrusionLengthOnMove() const;
   float filamentExtrusionLengthOnPickAndPutOntoMasterPlate() const;
   float safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const;
+  float filamentExtrusionLengthOnPickAndPutOntoMasterPlateOffset() const;
+  float filamentExtrusionLengthOnMoveOffset() const;
+  float filamentExtrusionLengthDefault() const;
 
-  void write(QJsonObject&) const;
-
- private:
+private:
   /**
    * @brief movement_speed_ the speed the nozzle is moved with,
    * in mm/min
@@ -70,11 +69,26 @@ class PrinterProfile : public JsonConstructable {
   const float filament_extrusion_length_default_;
 
   /**
+   * @brief filament_extrusion_length_on_move_offset_ additive offset for
+   * filament_extrusion_length_on_move_
+   * millimeter
+   */
+  const float filament_extrusion_length_on_move_offset_;
+
+  /**
    * @brief filament_extrusion_length_on_move_ the length up to which the
    * filament shall be extruded while moving the nozzle above the plates, in
    * millimeter
    */
   const float filament_extrusion_length_on_move_;
+
+  /**
+   * @brief filament_extrusion_length_on_pick_and_put_onto_master_plate_offset_
+   * additive offset for
+   * filament_extrusion_length_on_pick_and_put_onto_master_plate_
+   */
+  const float
+      filament_extrusion_length_on_pick_and_put_onto_master_plate_offset_;
 
   /**
    * @brief filament_extrusion_length_on_pick_and_put_onto_master_plate_
@@ -93,5 +107,5 @@ class PrinterProfile : public JsonConstructable {
   const float
       safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 };
-}  // namespace c3picko
-#endif  // PRINTERPROFILE_H
+} // namespace c3picko
+#endif // PRINTERPROFILE_H

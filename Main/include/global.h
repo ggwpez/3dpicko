@@ -8,12 +8,13 @@
 #include <QVariant>
 
 class QSslConfiguration;
-namespace c3picko
-{
+namespace c3picko {
 
-QSslConfiguration* LoadSslConfig(QSettings* settings);
+QSslConfiguration *LoadSslConfig(QSettings *settings);
 
-inline QDateTime parseDateTime(QJsonValue obj) { return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong()); }
+inline QDateTime parseDateTime(QJsonValue obj) {
+  return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
+}
 
 inline QString Root() { return "/home/vados/Code/Projects/3cpicko/GUI/"; }
 
@@ -25,11 +26,10 @@ inline QString UploadFolderName() { return "uploads"; }
 
 inline QString UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
-inline void Setup()
-{
-	if (!QDir(UploadFolder()).exists())
-		QDir().mkdir(UploadFolder());
+inline void Setup() {
+  if (!QDir(UploadFolder()).exists())
+    QDir().mkdir(UploadFolder());
 }
 
-inline char const* defaultImageExtension() { return "jpg"; }
+inline char const *defaultImageExtension() { return "jpg"; }
 } // namespace c3picko

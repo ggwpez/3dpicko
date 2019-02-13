@@ -19,5 +19,6 @@ HEADERS += \
 	include/platesocketprofile.h \
 	include/plateprofile.h
 
+QMAKE_CXXFLAGS += -Werror=return-type
 INCLUDEPATH += ../Main
 LIBS =

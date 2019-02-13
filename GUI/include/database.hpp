@@ -7,46 +7,44 @@
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "include/types/profile.hpp"
 
-namespace c3picko
-{
-class Database : public QObject, JsonConvertable
-{
-	Q_OBJECT
-  public:
-	typedef Table<Job>   JobTable;
-	typedef Table<Image> ImageTable;
-	typedef Table<ProfileWrapper> ProfileTable;
+namespace c3picko {
+class Database : public QObject, JsonConvertable {
+  Q_OBJECT
+public:
+  typedef Table<Job> JobTable;
+  typedef Table<Image> ImageTable;
+  typedef Table<Profile> ProfileTable;
 
-	Database(QString file_path, QObject* parent);
-	~Database() override;
+  Database(QString file_path, QObject *parent);
+  ~Database() override;
 
-	void saveToFile();
+  void saveToFile();
 
-	JobTable&   jobs();
-	JobTable&   deletedJobs(); // Tracks deleted jobs TODO neeeded?
-	ImageTable& images();
-	ImageTable& deletedImages(); // "
-	ProfileTable& profiles();
+  JobTable &jobs();
+  JobTable &deletedJobs(); // Tracks deleted jobs TODO neeeded?
+  ImageTable &images();
+  ImageTable &deletedImages(); // "
+  ProfileTable &profiles();
 
-	Image::ID newImageId();
-	Job::ID newJobId();
-	ProfileWrapper::ID newProfileId();
+  Image::ID newImageId();
+  Job::ID newJobId();
+  Profile::ID newProfileId();
 
-  public:
-	void read(const QJsonObject&) override;
-	void write(QJsonObject&) const override;
+public:
+  void read(const QJsonObject &) override;
+  void write(QJsonObject &) const override;
 
-  private:
-	QString file_path_;
+private:
+  QString file_path_;
 
-	JobTable   jobs_;
-	JobTable   deleted_jobs_;
-	ImageTable images_;
-	ImageTable deleted_images_;
-	ProfileTable profiles_;
+  JobTable jobs_;
+  JobTable deleted_jobs_;
+  ImageTable images_;
+  ImageTable deleted_images_;
+  ProfileTable profiles_;
 
-	qint32 image_id_;
-	qint32 job_id_;
-	qint32 profile_id_;
+  qint32 image_id_;
+  qint32 job_id_;
+  qint32 profile_id_;
 };
-}
+} // namespace c3picko

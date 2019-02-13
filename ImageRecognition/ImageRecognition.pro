@@ -5,27 +5,33 @@ TEMPLATE = lib
 CONFIG   += staticlib
 
 SOURCES += \
-	src/colonydetection.cpp \
 	src/conversion.cpp \
 	src/detectionsettings.cpp \
 	src/dishdetection.cpp \
 	src/imageediting.cpp \
 	src/preprocessing.cpp \
-	src/test.cpp
+	src/test.cpp \
+	src/colony.cc \
+	src/colony_type.cc \
+	src/colonydetector.cpp
 
 	#src/main.cpp
 
 HEADERS += \
-	include/colonydetection.h \
 	include/conversion.h \
 	include/detectionsettings.h \
 	include/dishdetection.h \
 	include/imageediting.h \
 	include/preprocessing.h \
 	include/test.h \
-include/main.h
+include/main.h \
+	include/colony.hpp \
+	include/colony_type.h \
+	include/colonydetector.h
 
 INCLUDEPATH += /usr/local/include/opencv
+INCLUDEPATH += $$PWD/../Main
+QMAKE_CXXFLAGS += -Werror=return-type
 
 LIBS += -L/usr/local/lib/ \
 		-lopencv_core \

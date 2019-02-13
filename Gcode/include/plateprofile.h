@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "include/point.h"
-#include "include/json_constructable.hpp"
 
 namespace c3picko {
 
@@ -16,19 +15,13 @@ namespace c3picko {
  * the master plate the same way they are to the goal plate
  * these characteristics count for the master plate as well.
  */
-class PlateProfile : public JsonConstructable {
- public:
-	PlateProfile(QJsonObject const& obj);
-  PlateProfile(int number_of_rows,
-			   int number_of_columns,
-			   float a1_row_offset,
-			   float a1_column_offset,
-			   float well_spacing_center_to_center,
-			   float height_source_plate,
-			   float height_master_plate,
-			   float height_goal_plate,
-			   float well_depth,
-			   float culture_medium_thickness);
+class PlateProfile {
+public:
+  PlateProfile(int number_of_rows, int number_of_columns, float a1_row_offset,
+               float a1_column_offset, float well_spacing_center_to_center,
+               float height_source_plate, float height_master_plate,
+               float height_goal_plate, float well_depth,
+               float culture_medium_thickness);
 
   int numberOfRows() const;
   int numberOfColumns() const;
@@ -42,9 +35,7 @@ class PlateProfile : public JsonConstructable {
   float wellDepth() const;
   float cultureMediumThickness() const;
 
-  void write(QJsonObject& obj) const;
-
- private:
+private:
   /**
    * @brief number_of_rows_ The number of rows the goal plate has.
    */
@@ -61,19 +52,22 @@ class PlateProfile : public JsonConstructable {
   const int number_of_wells_;
 
   /**
-   * @brief a1_row_offset_ The offset of the center of the first well A1 to the upper
+   * @brief a1_row_offset_ The offset of the center of the first well A1 to the
+   * upper
    * edge of the goal plate.
    */
   const float a1_row_offset_;
 
   /**
-   * @brief a1_column_offset_ The offset of the center of the first well A1 to the left
+   * @brief a1_column_offset_ The offset of the center of the first well A1 to
+   * the left
    * edge of the goal plate.
    */
   const float a1_column_offset_;
 
   /**
-   * @brief well_spacing_center_to_center_ The distance between the center of a well
+   * @brief well_spacing_center_to_center_ The distance between the center of a
+   * well
    * to the center of any directly adjacent wells.
    */
   const float well_spacing_center_to_center_;

@@ -1,9 +1,9 @@
 #ifndef TEMPLATECACHE_H
 #define TEMPLATECACHE_H
 
-#include <QCache>
 #include "templateglobal.h"
 #include "templateloader.h"
+#include <QCache>
 
 namespace stefanfrings {
 
@@ -16,9 +16,9 @@ namespace stefanfrings {
   In case of local file system, the use of this cache is optionally, since
   the operating system caches files already.
   <p>
-  Loads localized versions of template files. If the caller requests a file with the
-  name "index" and the suffix is ".tpl" and the requested locale is "de_DE, de, en-US",
-  then files are searched in the following order:
+  Loads localized versions of template files. If the caller requests a file with
+  the name "index" and the suffix is ".tpl" and the requested locale is "de_DE,
+  de, en-US", then files are searched in the following order:
 
   - index-de_DE.tpl
   - index-de.tpl
@@ -34,51 +34,47 @@ namespace stefanfrings {
   cacheSize=1000000
   cacheTime=60000
   </pre></code>
-  The path is relative to the directory of the config file. In case of windows, if the
-  settings are in the registry, the path is relative to the current working directory.
-  <p>
-  Files are cached as long as possible, when cacheTime=0.
+  The path is relative to the directory of the config file. In case of windows,
+  if the settings are in the registry, the path is relative to the current
+  working directory. <p> Files are cached as long as possible, when cacheTime=0.
   @see TemplateLoader
 */
 
 class DECLSPEC TemplateCache : public TemplateLoader {
-    Q_OBJECT
-    Q_DISABLE_COPY(TemplateCache)
+  Q_OBJECT
+  Q_DISABLE_COPY(TemplateCache)
 public:
-
-    /**
-      Constructor.
-      @param settings configurations settings
-      @param parent Parent object
-    */
-    TemplateCache(QSettings* settings, QObject* parent=0);
+  /**
+    Constructor.
+    @param settings configurations settings
+    @param parent Parent object
+  */
+  TemplateCache(QSettings *settings, QObject *parent = 0);
 
 protected:
-
-    /**
-      Try to get a file from cache or filesystem.
-      @param localizedName Name of the template with locale to find
-      @return The template document, or empty string if not found
-    */
-    virtual QString tryFile(QString localizedName);
+  /**
+    Try to get a file from cache or filesystem.
+    @param localizedName Name of the template with locale to find
+    @return The template document, or empty string if not found
+  */
+  virtual QString tryFile(QString localizedName);
 
 private:
+  struct CacheEntry {
+    QString document;
+    qint64 created;
+  };
 
-    struct CacheEntry {
-        QString document;
-        qint64 created;
-    };
+  /** Timeout for each cached file */
+  int cacheTimeout;
 
-    /** Timeout for each cached file */
-    int cacheTimeout;
+  /** Cache storage */
+  QCache<QString, CacheEntry> cache;
 
-    /** Cache storage */
-    QCache<QString,CacheEntry> cache;
-
-    /** Used to synchronize threads */
-    QMutex mutex;
+  /** Used to synchronize threads */
+  QMutex mutex;
 };
 
-} // end of namespace
+} // namespace stefanfrings
 
 #endif // TEMPLATECACHE_H

@@ -8,32 +8,28 @@
 
 class QJsonObject;
 
-namespace c3picko
-{
-namespace pi
-{
-	namespace data
-	{
-		/**
-		 * @brief [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
-		 *
-		 * Sadly this is a datamodel and a response, so it needs to be both…
-		 */
-		struct AbridgedFileInfo : public responses::Response
-		{
-			AbridgedFileInfo() = default;
-			AbridgedFileInfo(QJsonObject const& obj);
+namespace c3picko {
+namespace pi {
+namespace data {
+/**
+ * @brief
+ * [API](http://docs.octoprint.org/en/master/api/datamodel.html#sec-api-datamodel-files-file)
+ *
+ * Sadly this is a datamodel and a response, so it needs to be both…
+ */
+struct AbridgedFileInfo : public responses::Response {
+  AbridgedFileInfo() = default;
+  AbridgedFileInfo(QJsonObject const &obj);
 
-			QString			name, display, path;
-			data::Location  origin;
-			data::Reference ref;
-		};
-	} // namespace data
-	namespace responses
-	{
-		typedef data::AbridgedFileInfo AbridgedFileInfo;
-	}
-} // namespace commands
+  QString name, display, path;
+  data::Location origin;
+  data::Reference ref;
+};
+} // namespace data
+namespace responses {
+typedef data::AbridgedFileInfo AbridgedFileInfo;
+}
+} // namespace pi
 } // namespace c3picko
 
 #endif // ABRIDGED_FILE_INFORMATION_H_
