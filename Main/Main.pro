@@ -1,5 +1,3 @@
-!versionAtLeast(QT_VERSION, 5.3):error("Use at least Qt version 5.3")
-
 TEMPLATE = app
 CONFIG += console c++11
 QT = network core websockets gui
