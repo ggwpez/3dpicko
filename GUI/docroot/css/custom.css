@@ -1,6 +1,7 @@
 label{
 	font-weight: bold;
 	margin-bottom: 0px;
+	margin-right: 5px;
 }
 /* close button */
 .close{
@@ -106,6 +107,10 @@ img {
 }
 input[type=range]{
 	height: auto;
+}
+#detection-settings input[type=number]{
+	width: 2ch;
+	min-width: 5ch;
 }
 
 /* Profile Settings Page */

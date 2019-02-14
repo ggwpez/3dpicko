@@ -227,29 +227,25 @@ function GetDetectionAlgorithmSettings(id){
 	const algorithm = algorithms[id];
 	for (let settings_id in algorithm.settings){
 		let settings = algorithm.settings[settings_id];
-		let new_input_html = `
-		<div class="form-group">
-		<label for="${settings_id}">${settings.name}:</label>
-		`;
-
-		if(settings.type == "slider"){
-			new_input_html += `
-			<input type="range" class="custom-range" id="${settings_id}" name="${settings_id}" min="${settings.min}" max="${settings.max}" step="${settings.step}" value="${settings.defaultValue}" oninput="$('#slider-${settings_id}')[0].value=this.value;">
-			<div style="text-align: center;"><span style="float:left;">${settings.min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${settings.min}" max="${settings.max}" step="${settings.step}" id="slider-${settings_id}" value="${settings.defaultValue}" oninput="$('#${settings_id}')[0].value=this.value;"><span style="float:right">${settings.max}</span></div>
-			`;
-		}
-		else if(settings.type == "checkbox"){
-			new_input_html += `<div class="custom-control custom-checkbox d-inline"><input type="checkbox" class="custom-control-input" id="${settings_id}" name="${settings_id}" ${(settings.defaultValue)?`checked`:``}><label class="custom-control-label" for="${settings_id}"></label></div>`;
-		}
+		settings.value = settings.defaultValue;
+		settings.id = settings_id;
 		
-		if(settings.description){
-			new_input_html += `<small class="form-text text-muted">${settings.description}</small>`;
-		}
-		new_input_html += '</div>';
-		detection_settings.insertAdjacentHTML('beforeend', new_input_html);
-		$('#slider-'+settings_id).on('input', function(){
-    		if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
-  		}).trigger('input');
+		let form_group = CreateFormGroupHtml(settings);	
+		detection_settings.insertAdjacentHTML("beforeend", form_group);
+		
+		if(settings.type == "slider"){
+			$('#slider-'+settings_id).on('input', function(){
+				// dynamic input field size 
+				if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+				// change slider value on number input 
+				document.getElementById(settings_id).value=this.value;
+			}).trigger('input');
+			$('#'+settings_id).on('input', function(){
+				// change number input value on slider change 
+				document.getElementById('slider-'+settings_id).value=this.value;
+				$('#slider-'+settings_id).trigger('input');
+			})	
+		}		
 	}
 }
 
@@ -266,7 +262,7 @@ var UpdateDetectionSettings = function (e){
 	e.preventDefault();
 	let settings_object = {};
 	let algorithm_id = document.getElementById('select-algorithm').value;
- 	let settings = algorithms[algorithm_id].settings;
+	let settings = algorithms[algorithm_id].settings;
 	for(let key in settings){
 		if(settings[key].type=="slider") settings_object[key] = Number(document.getElementById(key).value);
 		else if(settings[key].type=="checkbox") settings_object[key] = document.getElementById(key).checked;
