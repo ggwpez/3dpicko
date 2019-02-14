@@ -7,18 +7,18 @@
 
 using namespace stefanfrings;
 
-namespace c3picko {
+namespace c3picko
+{
 
-class RequestMapper : public HttpRequestHandler {
-  Q_OBJECT
-public:
-  RequestMapper(StaticFileController *file_controller, APIController *api,
-                QObject *parent = nullptr);
-  void service(HttpRequest &request, HttpResponse &response);
+class RequestMapper : public HttpRequestHandler
+{
+	Q_OBJECT
+  public:
+	RequestMapper(StaticFileController* file_controller, QObject* parent = nullptr);
+	void service(HttpRequest& request, HttpResponse& response);
 
-private:
-  StaticFileController *staticFileController;
-  APIController *api_;
+  private:
+	StaticFileController* staticFileController;
 };
 } // namespace c3picko
 #endif // REQUESTMAPPER_H

@@ -7,189 +7,133 @@
 #include <QWebSocketServer>
 #include <QtWebSockets>
 
-namespace c3picko {
-
-WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
-                   APIController *api, QObject *_parent)
-    : QObject(_parent), api_(api),
-      server_(new QWebSocketServer(QStringLiteral("Echo Server"),
-                                   (ssl ? QWebSocketServer::SecureMode
-                                        : QWebSocketServer::NonSecureMode),
-                                   this)) {
-  if (ssl)
-    server_->setSslConfiguration(*ssl);
-
-  QString host = settings->value("host").toString();
-  if (server_->listen((host.isEmpty() ? QHostAddress::Any : QHostAddress(host)),
-                      8888)) {
-    qDebug() << "WebSocket server listening on port" << 8888;
-
-    connect(server_, SIGNAL(sslErrors(const QList<QSslError> &)), this,
-            SLOT(SslErrors(const QList<QSslError> &)));
-    connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
-    connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
-    emit OnStarted();
-  }
-}
-
-void WsServer::NewConnection() {
-  QWebSocket *pSocket = server_->nextPendingConnection();
-  if (!pSocket)
-    return;
-
-  connect(pSocket, SIGNAL(textMessageReceived(QString)), this,
-          SLOT(NewTextData(QString)));
-  connect(pSocket, SIGNAL(binaryMessageReceived(QByteArray)), this,
-          SLOT(NewBinaryData(QByteArray)));
-  connect(pSocket, SIGNAL(disconnected()), this, SLOT(ConnectionClosed()));
-
-  clients_ << pSocket;
-  // qDebug() << "### NewClient" << pSocket;
-}
-
-void WsServer::NewTextData(QString data) {
-  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
-
-  // qDebug() << "Text data" << data;
-  if (client) {
-    QJsonObject req = QJsonDocument::fromJson(data.toUtf8()).object();
-    ServiceRequestForClient(req, client);
-  } else
-    qFatal(
-        "%s",
-        "qobject_cast<QWebSocket*>(sender()) was null"); // if this fails, check
-                                                         // that this function
-                                                         // was never manually
-                                                         // called but only as
-                                                         // slot
-}
-
-void WsServer::NewBinaryData(QByteArray data) {
-  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
-
-  if (client) {
-    qWarning() << "Binary from client ignored " << client;
-  }
-}
-
-void WsServer::ConnectionClosed() {
-  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
-
-  // qDebug() << "Client disconnected" << client;
-  if (client) {
-    clients_.removeAll(client);
-    client->deleteLater();
-  }
-}
-
-/*void WsServer::NewFile(Image img, QObject* socket)
+namespace c3picko
 {
-        qDebug() << "New image #" << img.path();
-        QJsonObject json = api_->createImageList(img);
 
-        for (QWebSocket* client : clients_)
-        {
-                if (client != socket)
-                        this->SendToClient("getimagelist", json, client);
-        }
-}
-
-void WsServer::NewJob(Job job, QObject* socket)
+WsServer::WsServer(QSettings* settings, QSslConfiguration* ssl, QObject* _parent)
+	: QObject(_parent), server_(new QWebSocketServer(QStringLiteral("Echo Server"),
+													 (ssl ? QWebSocketServer::SecureMode : QWebSocketServer::NonSecureMode), this))
 {
-        qDebug() << "New job #" << job.id();
-        QJsonObject json = api_->createJobList(job);
+	if (ssl)
+		server_->setSslConfiguration(*ssl);
 
-        for (QWebSocket* client : clients_)
-        {
-                if (client != socket)
-                        this->SendToClient("getjoblist", json, client);
-        }
+	host_ = settings->value("host").toString();
 }
 
-void WsServer::FileDeleted(Image img, QObject*)
+void WsServer::NewConnection()
 {
-        qDebug() << "Deleting image #" << img.id();
-        QJsonObject json = api_->createDeleteImage(img);
+	QWebSocket* pSocket = server_->nextPendingConnection();
+	if (!pSocket)
+		return;
 
-        for (QWebSocket* client : clients_)
-                this->SendToClient("deleteimage", json, client);
+	connect(pSocket, SIGNAL(textMessageReceived(QString)), this, SLOT(NewTextData(QString)));
+	connect(pSocket, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(NewBinaryData(QByteArray)));
+	connect(pSocket, SIGNAL(disconnected()), this, SLOT(ConnectionClosed()));
+
+	clients_ << pSocket;
+	// qDebug() << "### NewClient" << pSocket;
 }
 
-void WsServer::JobDeleted(Job job, QObject*)
+void WsServer::NewTextData(QString data)
 {
-        qDebug() << "Deleting job #" << job.id();
-        QJsonObject json = api_->createDeleteJob(job);
+	QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
-        for (QWebSocket* client : clients_)
-                this->SendToClient("deletejob", json, client);
+	// qDebug() << "Text data" << data;
+	if (client)
+	{
+		QJsonObject req = QJsonDocument::fromJson(data.toUtf8()).object();
+		ServiceRequestForClient(req, client);
+	}
+	else
+		qFatal("%s", "qobject_cast<QWebSocket*>(sender()) was null"); // if this fails, check
+																	  // that this function
+																	  // was never manually
+																	  // called but only as
+																	  // slot
 }
 
-void WsServer::FileUploadError(QString path, QObject* client) { qDebug() <<
-"Error uploading image #" << path; }
-
-void WsServer::JobCreateError(QString path, QObject* client) { qDebug() <<
-"Error creating job #" << path; }
-
-void WsServer::FileDeleteError(QString path, QObject* client) { qDebug() <<
-"Error deleting image #" << path; }
-
-void WsServer::JobDeleteError(QString path, QObject*) { qDebug() << "Error
-deleting job #" << path; }
-
-void WsServer::FileCropped(Image img, QObject*)
+void WsServer::NewBinaryData(QByteArray data)
 {
-        qDebug() << "File cropped " << img.id();
+	QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
-        QJsonObject json = api_->createImageList(img);
-
-        for (QWebSocket* client : clients_)
-                this->SendToClient("getimagelist", json, client);
+	if (client)
+	{
+		qWarning() << "Binary from client ignored " << client;
+	}
 }
 
-void WsServer::FileCropError(QString id, QObject*) { qDebug() << "File crop
-error " << id; }
-*/
-void WsServer::NewDebugLine(QString line) {
-  for (auto client : clients_)
-    SendToClient("debug", {{"line", line}}, client);
+void WsServer::ConnectionClosed()
+{
+	QWebSocket* client = qobject_cast<QWebSocket*>(sender());
+
+	// qDebug() << "Client disconnected" << client;
+	if (client)
+	{
+		clients_.removeAll(client);
+		client->deleteLater();
+	}
 }
 
-void WsServer::SslErrors(const QList<QSslError> &errors) {
-  for (QSslError error : errors)
-    qWarning() << "Ssl error:" << error.errorString();
+void WsServer::StartListen()
+{
+	if (server_->listen((host_.isEmpty() ? QHostAddress::Any : QHostAddress(host_)), 8888))
+	{
+		qDebug() << "WebSocket server listening on port" << 8888;
+
+		connect(server_, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(SslErrors(const QList<QSslError>&)));
+		connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
+		connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
+		emit OnStarted();
+	}
 }
 
-void WsServer::SendToClient(QJsonValue type, JsonConvertable &data,
-                            QWebSocket *client) {
-  QJsonObject json;
-  data.write(json);
-
-  SendToClient(type, json, client);
+void WsServer::NewDebugLine(QString line)
+{
+	for (auto client : clients_)
+		SendToClient(client, "debug", {{"line", line}});
 }
 
-void WsServer::SendToClient(QJsonValue type, QJsonObject data,
-                            QWebSocket *client) {
-  QJsonObject json = {{"type", type}, {"data", data}};
-
-  SendToClient(json, client);
+void WsServer::SslErrors(const QList<QSslError>& errors)
+{
+	for (QSslError error : errors)
+		qWarning() << "Ssl error:" << error.errorString();
 }
 
-void WsServer::SendToClient(QJsonObject packet, QWebSocket *client) {
-  client->sendTextMessage(QJsonDocument(packet).toJson());
+void WsServer::ToClient(QObject* client, QString type, QJsonObject data) { SendToClient(qobject_cast<QWebSocket*>(client), type, data); }
+
+void WsServer::ToAll(QString type, QJsonObject data)
+{
+	for (auto client : clients_)
+		SendToClient(client, type, data);
 }
 
-void WsServer::ServiceRequestForClient(QJsonObject request,
-                                       QWebSocket *socket) {
-  // QJsonObject json_data, json;
-  api_->service(request, socket);
-
-  // if (!json_data.empty())
-  // SendToClient(request["request"], json_data, socket);
+void WsServer::ToAllExClient(QObject* excluded, QString type, QJsonObject data)
+{
+	for (auto client : clients_)
+	{
+		if (client != excluded)
+			SendToClient(client, type, data);
+	}
 }
 
-WsServer::~WsServer() {
-  server_->close();
-  server_->deleteLater();
-  qDeleteAll(clients_);
+void WsServer::SendToClient(QWebSocket* client, QString type, QJsonObject packet)
+{
+	client->sendTextMessage(QJsonDocument({{"type", type}, {"data", packet}}).toJson());
+}
+
+void WsServer::ServiceRequestForClient(QJsonObject request, QWebSocket* socket)
+{
+	// QJsonObject json_data, json;
+	emit OnRequest(request, socket);
+
+	// if (!json_data.empty())
+	// SendToClient(request["request"], json_data, socket);
+}
+
+WsServer::~WsServer()
+{
+	server_->close();
+	server_->deleteLater();
+	qDeleteAll(clients_);
 }
 } // namespace c3picko

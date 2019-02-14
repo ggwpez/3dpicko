@@ -109,11 +109,11 @@ var algorithms;
 			}
 			else if (type == "getpositions")
 			{
-				console.log("Positions\n" +JSON.stringify(data));
 				drawPositions(data);
 			}
 			else if (type == "getdetectionalgorithms"){
-				GetDetectionAlgorithms(data);
+				//GetDetectionAlgorithms(data);
+				console.log("########## Algos", JSON.stringify(data));
 			}
 			else if (type == "updatedetectionsettings"){
 				// TODO
@@ -139,7 +139,7 @@ var algorithms;
 function GetDetectionAlgorithms(detection_algorithms){
 	algorithms = detection_algorithms;
 	// TODO Remove (only for debugging)
-	algorithms = {
+	/*algorithms = {
 		"321":
 		{
 			name: "Fluro",
@@ -203,7 +203,7 @@ function GetDetectionAlgorithms(detection_algorithms){
 				}
 			}
 		}
-	}
+	}*/
 	
 	const algorithm_selection = document.getElementById("select-algorithm");
 	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
@@ -485,7 +485,7 @@ function selectionTab(){
 		api("createjob", current_job);
 		api("getdetectionalgorithms");	// TODO should we put this in the init?
 		// TODO Remove (only for debugging)
-		GetDetectionAlgorithms({});
+		//GetDetectionAlgorithms({});
 		$('#detection-settings-div').show();
 	} 
 }

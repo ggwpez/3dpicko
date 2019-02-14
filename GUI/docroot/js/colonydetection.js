@@ -79,8 +79,8 @@ function drawPositions(coords)
     
     coords.coords.forEach((value) => {
         colony_coords.push({
-            x: value[0] * img.width  /100,
-            y: value[1] * img.height /100,
+            x: value[0] * img.width,
+            y: value[1] * img.height,
             r: value[2]
         });
     });

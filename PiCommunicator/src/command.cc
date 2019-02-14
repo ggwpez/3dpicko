@@ -1,41 +1,50 @@
-#include "command.h"
+#include "include/command.h"
 #include <QMetaEnum>
 #include <QVariant>
 
 namespace c3picko {
 namespace pi {
 Command::Command(QString api_url, QSet<int> status_ok, Command::HTTPType type)
-    : api_url_(api_url), data_(QByteArray()), status_ok_(status_ok),
-      type_(type), content_type_("application/json; charset=utf-8") {
+	: api_url_(api_url),
+	  data_(QByteArray()),
+	  status_ok_(status_ok),
+	  type_(type),
+	  content_type_("application/json; charset=utf-8") {
   SetupSlots();
 }
 
 Command::Command(QString api_url, QByteArray data, QSet<int> status_ok,
-                 HTTPType type, QString content_type)
-    : api_url_(api_url), data_(data), status_ok_(status_ok), type_(type),
-      content_type_(content_type) {
+				 HTTPType type, QString content_type)
+	: api_url_(api_url),
+	  data_(data),
+	  status_ok_(status_ok),
+	  type_(type),
+	  content_type_(content_type) {
   SetupSlots();
 }
 
 Command::Command(QString api_url, QHttpMultiPart *query, QSet<int> status_ok,
-                 HTTPType type, QString content_type)
-    : api_url_(api_url), query_(query), status_ok_(status_ok), type_(type),
-      content_type_(content_type) {
+				 HTTPType type, QString content_type)
+	: api_url_(api_url),
+	  query_(query),
+	  status_ok_(status_ok),
+	  type_(type),
+	  content_type_(content_type) {
   SetupSlots();
 }
 
 Command::~Command() {
-  if (query_)
-    delete query_;
+  if (query_) delete query_;
 }
 
 Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok,
-                 HTTPType type, QString content_type)
-    : api_url_(api_url), status_ok_(status_ok), type_(type),
-      content_type_(content_type) {
+				 HTTPType type, QString content_type)
+	: api_url_(api_url),
+	  status_ok_(status_ok),
+	  type_(type),
+	  content_type_(content_type) {
   SetupSlots();
-  if (data.isEmpty())
-    return;
+  if (data.isEmpty()) return;
 
   QJsonDocument doc(data);
   data_ = doc.toJson();
@@ -43,9 +52,9 @@ Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok,
 
 void Command::SetupSlots() {
   connect(this, SIGNAL(OnStatusOk(int, Response *)), this,
-          SIGNAL(OnFinished()));
+		  SIGNAL(OnFinished()));
   connect(this, SIGNAL(OnStatusErr(QVariant, Response *)), this,
-          SIGNAL(OnFinished()));
+		  SIGNAL(OnFinished()));
   connect(this, SIGNAL(OnNetworkErr(QString)), this, SIGNAL(OnFinished()));
 }
 
@@ -64,16 +73,16 @@ void Command::CheckStatusCode(QNetworkReply *reply, Command::Response *answer) {
   QVariant status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
   if (status.canConvert<int>()) {
-    int code = status.toInt();
+	int code = status.toInt();
 
-    if (status_ok_.contains(code))
-      emit OnStatusOk(code, answer);
-    else
-      emit OnStatusErr(code, answer);
+	if (status_ok_.contains(code))
+	  emit OnStatusOk(code, answer);
+	else
+	  emit OnStatusErr(code, answer);
   } else
-    emit OnStatusErr("The webserver returned a non int HTTP status code " +
-                         status.toString(),
-                     answer);
+	emit OnStatusErr("The webserver returned a non int HTTP status code " +
+						 status.toString(),
+					 answer);
 }
 
 Command::HTTPType Command::type() const { return type_; }
@@ -90,5 +99,5 @@ void Command::OnReplyError(QNetworkReply::NetworkError error) {
 
   emit OnNetworkErr(menum.valueToKey(error));
 }
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko

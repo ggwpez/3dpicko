@@ -1,17 +1,15 @@
+include(../Main/config.pri)
+
 TEMPLATE = app
-CONFIG += console c++11
-QT = network core websockets gui
 
 SOURCES += main.cpp \
 	global.cc \
-	marshalling.cc
+	marshalling.cc \
+    signal_daemon.cc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../GUI/release/ -lGUIWebserver
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../GUI/debug/ -lGUIWebserver
 else:unix: LIBS += -L$$OUT_PWD/../GUI/ -lGUIWebserver
-
-INCLUDEPATH += $$PWD/../GUI
-DEPENDPATH += $$PWD/../GUI
 
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../GUI/release/libGUIWebserver.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../GUI/debug/libGUIWebserver.a
@@ -24,9 +22,6 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Gcode/release/ -lGc
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Gcode/debug/ -lGcode
 else:unix: LIBS += -L$$OUT_PWD/../Gcode/ -lGcode
 
-INCLUDEPATH += $$PWD/../Gcode
-DEPENDPATH += $$PWD/../Gcode
-
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Gcode/release/libGcode.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Gcode/debug/libGcode.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Gcode/release/Gcode.lib
@@ -38,9 +33,6 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PiCommunicator/rele
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../PiCommunicator/debug/ -lPiCommunicator
 else:unix: LIBS += -L$$OUT_PWD/../PiCommunicator/ -lPiCommunicator
 
-INCLUDEPATH += $$PWD/../PiCommunicator $$PWD/../PiCommunicator/include
-DEPENDPATH += $$PWD/../PiCommunicator
-
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../PiCommunicator/release/libPiCommunicator.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../PiCommunicator/debug/libPiCommunicator.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../PiCommunicator/release/PiCommunicator.lib
@@ -51,26 +43,25 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ImageRecognition/re
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ImageRecognition/debug/ -lImageRecognition
 else:unix: LIBS += -L$$OUT_PWD/../ImageRecognition/ -lImageRecognition
 
-INCLUDEPATH += $$PWD/../ImageRecognition
-DEPENDPATH += $$PWD/../ImageRecognition
-
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/release/libImageRecognition.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/debug/libImageRecognition.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/release/ImageRecognition.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/debug/ImageRecognition.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/libImageRecognition.a
 
-
-INCLUDEPATH += ../QtWebApp/httpserver/
-DEPENDPATH += ../QtWebApp/httpserver/
-
 HEADERS += \
 	include/json_constructable.hpp \
 	include/json_convertable.h \
 	include/global.h \
-	include/marshalling.hpp
+	include/marshalling.hpp \
+    include/signal_daemon.h
 
 LIBS += -lopencv_core \
 		-lopencv_imgproc \
 		-lopencv_highgui \
 		-lopencv_imgcodecs
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target

@@ -1,4 +1,4 @@
-QT  = core network websockets
+include(../Main/config.pri)
 
 #TEMPLATE = app
 TEMPLATE = lib
@@ -24,14 +24,12 @@ HEADERS += \
 	include/imageediting.h \
 	include/preprocessing.h \
 	include/test.h \
-include/main.h \
+	include/main.h \
 	include/colony.hpp \
 	include/colony_type.h \
 	include/colonydetector.h
 
 INCLUDEPATH += /usr/local/include/opencv
-INCLUDEPATH += $$PWD/../Main
-QMAKE_CXXFLAGS += -Werror=return-type
 
 LIBS += -L/usr/local/lib/ \
 		-lopencv_core \

@@ -1,4 +1,4 @@
-QT  = gui core network websockets
+include(../Main/config.pri)
 
 TARGET = GUIWebserver
 
@@ -29,15 +29,7 @@ HEADERS += \
 	include/api_input.h \
 	include/api_controller.h
 
-INCLUDEPATH += $$PWD/../Main
-INCLUDEPATH += $$PWD/../Gcode
-
-LIBS =
 DEFINES += QT_NO_INFO_OUTPUT
 OTHER_FILES += etc/serverconfig.ini
-QMAKE_CXXFLAGS += -Werror=return-type
-
-INCLUDEPATH += $$PWD/../ImageRecognition
-INCLUDEPATH += $$PWD/../PiCommunicator $$PWD/../PiCommunicator/include
 
 include(../QtWebApp/httpserver/httpserver.pri)

@@ -10,50 +10,45 @@ using namespace stefanfrings;
 
 class QWebSocket;
 class QWebSocketServer;
-namespace c3picko {
+namespace c3picko
+{
 
-class WsServer : public QObject {
-  Q_OBJECT
-public:
-  WsServer(QSettings *settings, QSslConfiguration *ssl, APIController *api,
-           QObject *_parent = nullptr);
-  ~WsServer();
+class WsServer : public QObject
+{
+	Q_OBJECT
+  public:
+	WsServer(QSettings* settings, QSslConfiguration* ssl, QObject* _parent = nullptr);
+	~WsServer();
 
-private slots:
-  void NewConnection();
-  void NewTextData(QString data);
-  void NewBinaryData(QByteArray data);
-  void ConnectionClosed();
+  private slots:
+	void NewConnection();
+	void NewTextData(QString data);
+	void NewBinaryData(QByteArray data);
+	void ConnectionClosed();
 
-public slots:
-  /*void NewFile(Image img, QObject* socket);
-  void NewJob(Job job, QObject* socket);
-  void FileDeleted(Image img, QObject*);
-  void JobDeleted(Job job, QObject*);
-  void FileUploadError(QString path, QObject* client);
-  void JobCreateError(QString path, QObject* client);
-  void FileDeleteError(QString path, QObject* client);
-  void JobDeleteError(QString path, QObject* client);
-  void FileCropped(Image img, QObject* client);
-  void FileCropError(QString id, QObject* client);*/
+  public slots:
 
-  void NewDebugLine(QString line);
-  void SslErrors(const QList<QSslError> &errors);
+	void StartListen();
+	void NewDebugLine(QString line);
+	void SslErrors(const QList<QSslError>& errors);
 
-public:
-  void SendToClient(QJsonValue type, JsonConvertable &data, QWebSocket *client);
-  void SendToClient(QJsonValue type, QJsonObject data, QWebSocket *client);
-  void SendToClient(QJsonObject packet, QWebSocket *client);
-  void ServiceRequestForClient(QJsonObject request, QWebSocket *socket);
+	void ToClient(QObject* client, QString type, QJsonObject data);
+	void ToAll(QString type, QJsonObject data);
+	void ToAllExClient(QObject* excluded, QString type, QJsonObject data);
 
-signals:
-  void OnStarted();
-  void OnStopped();
+  public:
+	void SendToClient(QWebSocket* client, QString type, QJsonObject packet);
+	void ServiceRequestForClient(QJsonObject request, QWebSocket* socket);
 
-private:
-  QWebSocketServer *server_;
-  QList<QWebSocket *> clients_;
-  APIController *api_;
+  signals:
+	void OnStarted();
+	void OnStopped();
+	void OnRequest(QJsonObject request, QObject* client);
+
+  private:
+	QWebSocketServer*  server_;
+	QList<QWebSocket*> clients_;
+	QString			   host_;
 };
 
 } // namespace c3picko
