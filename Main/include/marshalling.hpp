@@ -14,12 +14,18 @@ public:
   template <typename T> static void fromJson(QJsonObject const &, T &output);
 };
 
-#define MAKE_MARSHALLABLE(T)                                                   \
+#define MAKE_SERIALIZABLE(T)                                                   \
                                                                                \
   template <> QJsonObject Marshalling::toJson(T const &);                      \
-  template <> void Marshalling::toJson(T const &, QJsonObject &);              \
+  template <> void Marshalling::toJson(T const &, QJsonObject &);
+
+#define MAKE_DESEZIALIZABLE(T)                                                 \
   template <> T Marshalling::fromJson(QJsonObject const &);                    \
   template <> void Marshalling::fromJson(QJsonObject const &, T &output);
+
+#define MAKE_MARSHALLABLE(T)                                                   \
+  MAKE_SERIALIZABLE(T)                                                         \
+  MAKE_DESEZIALIZABLE(T)
 
 #define MAKE_MARSHALLABLE_CLASS(T)                                             \
   class T;                                                                     \

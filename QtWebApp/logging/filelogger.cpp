@@ -24,8 +24,8 @@ void FileLogger::refreshSettings() {
   // Load new config settings
   settings->sync();
   fileName = settings->value("fileName").toString();
-  // Convert relative fileName to absolute, based on the directory of the config
-  // file.
+// Convert relative fileName to absolute, based on the directory of the config
+// file.
 #ifdef Q_OS_WIN32
   if (QDir::isRelativePath(fileName) &&
       settings->format() != QSettings::NativeFormat)

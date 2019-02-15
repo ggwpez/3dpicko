@@ -25,10 +25,6 @@ Profile::Profile(const QJsonObject &obj)
 }
 
 void Profile::write(QJsonObject &obj) const {
-  obj["type"] = type_;
-  obj["profile_name"] = name_;
-  obj["id"] = id_;
-
   // TODO also dumb
   if (type_ == "printer-profile")
     obj = Marshalling::toJson(*printer_);
@@ -38,9 +34,15 @@ void Profile::write(QJsonObject &obj) const {
     obj = Marshalling::toJson(*plate_);
   else
     qWarning() << "Cant write profile of unknown type";
+
+  obj["type"] = type_;
+  obj["profile_name"] = name_;
+  obj["id"] = id_;
 }
 
 Profile::ID Profile::id() const { return id_; }
+
+void Profile::setId(Profile::ID id) { id_ = id; }
 
 QString Profile::name() const { return name_; }
 

@@ -103,7 +103,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
       plate_profile_.cultureMediumThickness() +
       printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
       1 // push a little into the culture medium
-  );
+      );
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
@@ -113,7 +113,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
       plate_profile_.cultureMediumThickness() +
       printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
       1 // push a little into the culture medium
-  );
+      );
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeAlignTipOfNozzleWithTopOfWell() {

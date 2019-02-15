@@ -112,7 +112,7 @@ var algorithms;
 				drawPositions(data);
 			}
 			else if (type == "getdetectionalgorithms"){
-				//GetDetectionAlgorithms(data);
+				GetDetectionAlgorithms(data);
 				console.log("########## Algos", JSON.stringify(data));
 			}
 			else if (type == "updatedetectionsettings"){

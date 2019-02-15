@@ -8,18 +8,16 @@ namespace pi {
 namespace commands {
 ArbitraryCommand *ArbitraryCommand::SingleCommand(QString command) {
   return new ArbitraryCommand("printer/command",
-							  QJsonObject({{"command", command}}),  // ugly
-							  {204}, Command::HTTPType::POST);
+                              QJsonObject({{"command", command}}), // ugly
+                              {204}, Command::HTTPType::POST);
 }
 
 ArbitraryCommand *ArbitraryCommand::MultiCommand(QStringList commands) {
   return new ArbitraryCommand(
-	  "printer/command",
-	  QJsonObject(
-		  {{"commands", QJsonArray::fromStringList(commands)}}),  // ugly
-	  {204},
-	  Command::HTTPType::POST);
+      "printer/command",
+      QJsonObject({{"commands", QJsonArray::fromStringList(commands)}}), // ugly
+      {204}, Command::HTTPType::POST);
 }
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko

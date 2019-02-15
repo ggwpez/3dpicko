@@ -1,140 +1,355 @@
 #include "include/api_controller.h"
+#include "include/colonydetector.h"
+#include "include/gcodegenerator.h"
+
+#include "include/algo1_test.h"
+#include "include/algo_setting.h"
+
+#include "include/commands/arbitrary_command.h"
+
+#include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QMetaMethod>
+#include <QThreadPool>
 
-namespace c3picko
-{
+using namespace c3picko::pi;
+namespace c3picko {
+APIController::APIController(QThreadPool *pool, Database *db, QObject *parent)
+    : QObject(parent), pool_(pool), db_(db), input_(new APIInput(this)),
+      output_(new APIOutput(this)) {
+  QMetaObject const *meta = this->metaObject();
+  QMetaMethod default_handler =
+      meta->method(meta->indexOfSlot(qPrintable("defaultSignalHandler()")));
 
-APIController::APIController(QThreadPool* pool, Database* db, QObject* parent)
-	: QObject(parent), pool_(pool), db_(db), input_(new APIInput(this)), output_(new APIOutput(this))
-{
-	QMetaObject const* meta			   = this->metaObject();
-	QMetaMethod		   default_handler = meta->method(meta->indexOfSlot(qPrintable("defaultSignalHandler()")));
+  // TODO use QMetaObject::connectSlotsByName ?
+  for (int i = meta->methodOffset(); i < meta->methodCount(); ++i) {
+    QMetaMethod signal = meta->method(i);
+    QString slot_name =
+        QMetaObject::normalizedSignature(qPrintable(signal.methodSignature()));
 
-	// TODO use QMetaObject::connectSlotsByName ?
-	for (int i = meta->methodOffset(); i < meta->methodCount(); ++i)
-	{
-		QMetaMethod signal	= meta->method(i);
-		QString		slot_name = QMetaObject::normalizedSignature(qPrintable(signal.methodSignature()));
+    if (signal.methodType() == QMetaMethod::Signal) {
+      if (!slot_name.startsWith("On"))
+        continue;
+      slot_name = slot_name.mid(2);
+      QObject::connect(this, signal, this, default_handler);
 
-		if (signal.methodType() == QMetaMethod::Signal)
-		{
-			if (!slot_name.startsWith("On"))
-				continue;
-			slot_name = slot_name.mid(2);
-			QObject::connect(this, signal, this, default_handler);
+      int slot_index =
+          output_->metaObject()->indexOfSlot(qPrintable(slot_name));
+      if (slot_index == -1)
+        qDebug("Could not find slot APIOutput::%s", qPrintable(slot_name));
+      {
+        QMetaMethod slot = output_->metaObject()->method(slot_index);
 
-			int slot_index = output_->metaObject()->indexOfSlot(qPrintable(slot_name));
-			if (slot_index == -1)
-				qDebug("Could not find slot APIOutput::%s", qPrintable(slot_name));
-			{
-				QMetaMethod slot = output_->metaObject()->method(slot_index);
-
-				QObject::connect(this, signal, output_, slot);
-			}
-		}
-	}
+        QObject::connect(this, signal, output_, slot);
+        // qDebug("Connecting APIOutput::%s", qPrintable(slot_name));
+      }
+    }
+  }
 }
 
-void APIController::defaultSignalHandler()
-{
-	QMetaObject const* meta_sender = QObject::sender()->metaObject();
-	QString			   signal_name = QMetaObject::normalizedSignature(meta_sender->method(QObject::senderSignalIndex()).name());
+void APIController::defaultSignalHandler() {
+  QMetaObject const *meta_sender = QObject::sender()->metaObject();
+  QString signal_name = QMetaObject::normalizedSignature(
+      meta_sender->method(QObject::senderSignalIndex()).name());
 
-	qDebug("Event %s::%s", qPrintable(meta_sender->className()), qPrintable(signal_name));
+  qDebug("Event %s::%s", qPrintable(meta_sender->className()),
+         qPrintable(signal_name));
 }
 
-QJsonObject APIController::createImageList() const
-{
-	QJsonArray image_list;
-	for (auto const& image : db_->images())
-	{
-		QJsonObject json;
+void APIController::DeleteImage(Image::ID id, QObject *client) {
+  // Does the image exist?
+  if (!db_->images().exists(id)) {
+    emit OnImageDeleteError(id, client);
+    return;
+  }
+  // Is the image	used by a job?
+  for (auto const &job : db_->jobs()) {
+    if (job.img_id() == id) {
+      emit OnImageDeleteError(id, client);
+      return;
+    }
+  }
 
-		image.write(json);
-		image_list.push_back(json);
-	}
+  Image image = db_->images().get(id);
+  image.clearCache();
 
-	return {{"images", image_list}};
+  if (image.deleteFile()) {
+    db_->deletedImages().add(id, image);
+    db_->images().remove(
+        id); // Carefull here, if we use a reference to image instead, it will
+             // go out of scope after deletion
+    emit OnImageDeleted(image, client);
+  } else {
+    emit OnImageDeleteError(image.path(), client);
+  }
 }
 
-QJsonObject APIController::createImageList(Image img)
-{
-	QJsonArray  json_jobs;
-	QJsonObject json_job;
+void APIController::DeleteJob(Job::ID id, QObject *client) {
+  // Does the job exist?
+  if (!db_->jobs().exists(id)) {
+    emit OnJobDeleteError(id, client);
+  } else {
+    Job job = db_->jobs().get(id);
+    db_->jobs().remove(id);
+    db_->deletedJobs().add(id, job);
 
-	img.write(json_job);
-	json_jobs.append(json_job);
-
-	return {{"images", json_jobs}};
+    emit OnJobDeleted(job, client);
+  }
 }
 
-QJsonObject APIController::createJobList()
-{
-	QJsonArray json_jobs;
+void APIController::UploadImage(Image &image, QObject *client) {
+  // Is the user trying to upload an image twice?
+  if (db_->images().exists(image.id())) {
+    qDebug() << "Ignoring doubled image";
+    // TODO inform client?
+    emit OnImageCreateError("<cropped>", client);
+  } else if (!image.writeToFile()) {
+    emit OnImageCreateError(image.id(), client);
+  } else {
+    db_->images().add(image.id(), image);
+    // image.write(response);
 
-	for (auto const& job : db_->jobs())
-	{
-		QJsonObject json;
-		job.write(json);
-		json_jobs.append(json);
-	}
-
-	return {{"jobs", json_jobs}};
+    emit OnImageCreated(image, client);
+  }
 }
 
-QJsonObject APIController::createJobList(Job job)
-{
-	QJsonArray  json_jobs;
-	QJsonObject json_job;
+void APIController::cropImage(Image::ID id, int x, int y, int w, int h,
+                              QObject *client) {
+  if (!db_->images().exists(id))
+    return emit OnImageCropError(id, client);
+  else {
+    QString error;
+    Image cropped;
+    Image &original = db_->images().get(id);
 
-	job.write(json_job);
-	json_jobs.append(json_job);
+    // Is the cropped image empty?
+    if (!original.crop(x, y, w, h, cropped, error)) {
+      emit OnImageCropError(id, client); // TODO inform client
+      return;
+    }
+    if (!cropped.writeToFile()) // save cropped image to the hdd
+    {
+      emit OnImageCreateError("<cropped>", client);
+      return;
+    }
 
-	return {{"jobs", json_jobs}};
+    db_->images().add(cropped.id(), cropped);
+    // response = {{"id", cropped.id()}}; // TODO
+    emit OnImageCropped(cropped, client);
+  }
 }
 
-QJsonObject APIController::createProfileList()
-{
-	QJsonArray json_jobs;
+void APIController::createSettingsProfile(Profile &profile_wo_id,
+                                          QObject *client) {
+  Profile::ID id = db_->newProfileId();
+  profile_wo_id.setId(id);
 
-	for (auto const& profile : db_->profiles())
-	{
-		QJsonObject json;
-		profile.write(json);
-		json_jobs.append(json);
-	}
-
-	return {{"profiles", json_jobs}};
+  db_->profiles().add(id, profile_wo_id);
+  // profile.write(response);
+  emit OnProfileCreated(profile_wo_id, client);
 }
 
-QJsonObject APIController::CreateAlgorithmList()
-{
-	return QJsonDocument::fromJson("{ \"321\": { name: \"Fluro\", description: \"Good for detecting fluorescent colonies\", settings: { "
-								   "\"1234\": { name: \"Threshold "
-								   "1\", type: \"slider\", valueType: \"float\", min: 0, max: 10, step: 0.1, defaultValue: 1.2, "
-								   "description: \"\" }, \"123\": { name: "
-								   "\"Erode & Dilate\", type: \"checkbox\", defaultValue: true, description: \"\" }, \"12sad3\": { name: "
-								   "\"Erode & Dilate 2\", type: "
-								   "\"checkbox\", defaultValue: false, description: \"do not touch me!\" } } }, \"423\": { name: \"Fluro "
-								   "2\", description: \"Good for "
-								   "detecting more fluorescent colonies\", settings: { \"1234\": { name: \"Thres\", type: \"slider\", "
-								   "valueType: \"float\", min: -10, "
-								   "max: 10, step: 1, defaultValue: 1, description: \"Hi this is very descriptive\" }, \"123\": { name: "
-								   "\"Zahl\", type: \"slider\", "
-								   "valueType: \"float\", min: -10, max: 10, step: 1, defaultValue: 1, description: \"\" } } } }",
-								   nullptr)
-		.object();
+void APIController::updateSettingsProfile(Profile &profile, QObject *client) {
+  if (!db_->profiles().exists(profile.id())) {
+    // response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
+    emit OnProfileUpdateError(profile.id(), client);
+  } else {
+    db_->profiles().add(profile.id(), profile);
+    // response = json_profile;
+    emit OnProfileUpdated(profile, client);
+  }
 }
 
-QJsonObject APIController::createDeleteImage(Image img) { return {{"id", img.id()}}; }
+void APIController::deleteSettingsProfile(Profile::ID id, QObject *client) {
+  if (!db_->profiles().exists(id)) {
+    emit OnProfileDeleteError(id, client);
+  } else {
+    // FIXME cant delete profiles used by jobs
+    emit OnProfileDeleted(id, client);
+    db_->profiles().remove(id);
+  }
+}
 
-QJsonObject APIController::createDeleteJob(Job job) { return {{"id", job.id()}}; }
+void APIController::createJob(Job &job, QObject *client) {
+  Job::ID id = db_->newJobId();
+  job.setCreationDate(QDateTime::currentDateTime());
 
-void APIController::request(QJsonObject request, QObject* client) { input_->serviceRequest(request, client); }
+  if (!db_->profiles().exists(job.printer()))
+    emit OnJobCreateError("Printer profile " + id + " unknown", client);
+  else if (!db_->profiles().exists(job.socket()))
+    emit OnJobCreateError("Socket profile " + id + " unknown", client);
+  else {
+    db_->jobs().add(id, job);
+    emit OnJobCreated(job, client);
+  }
+}
 
-Database& APIController::db() const { return *db_; }
+void APIController::getPositions(Image::ID id, void *algorithm,
+                                 void *algo_settings, QObject *client) {
+  if (!db_->images().exists(id)) {
+    qWarning() << "Colony detection error: image not found (#" << id << ")";
+    emit OnColonyDetectionError("Image not found", client);
+  } else {
+    Image &img =
+        db_->images().get(id); // Non const& bc readCvMat() can set the cache
+    cv::Mat data;
 
-QThreadPool* APIController::pool() const { return pool_; }
+    if (!img.readCvMat(data)) {
+      qCritical() << "CV could not read image" << img.path();
+      emit OnColonyDetectionError("Image not readable or empty", client);
+      return;
+    }
+
+    ColonyDetector *detector = new ColonyDetector(
+        data.clone(),
+        new Algo1Test()); // Clone to avoid thread problems TODO debug
+    // Set the connection context to client, so in case it disconnects we
+    // dont leak memory
+    connect(detector, &ColonyDetector::OnFinished, client,
+            [this, client, detector](qint64 ms) {
+              qDebug() << "Colonies detected in" << ms << "ms";
+              emit this->OnColonyDetected(detector, client);
+            },
+            Qt::QueuedConnection);
+    connect(detector, SIGNAL(OnFinished(qint64)), detector,
+            SLOT(deleteLater()));
+
+    detector->setAutoDelete(false);
+    pool_->start(detector);
+  }
+}
+
+void APIController::startJob(Job::ID id, QObject *client) {
+  /*PrinterProfile*		printerp =
+  (PrinterProfile*)(db_->profiles().get("302"));
+  PlateSocketProfile* socket   =
+  (PlateSocketProfile*)(db_->profiles().get("303"));
+  PlateProfile*		plate	= (PlateProfile*)(db_->profiles().get("305"));
+
+  GcodeGenerator gen(*socket, *printerp, *plate);
+
+  std::vector<LocalColonyCoordinates> coords;
+  for (int x = 0; x < 4; ++x)
+          for (int y = 0; y < 5; ++y)
+                  coords.push_back(Point(10 * x + 70, y * 10 + 20));
+
+  auto			   code = gen.CreateGcodeForTheEntirePickingProcess(1,
+  8, coords);
+  std::ostringstream s;
+
+  QStringList sum;
+  for (auto c : code)
+          sum << QString::fromStdString(c.ToString());
+
+  Command* cmd = commands::ArbitraryCommand::MultiCommand(sum);
+
+  QObject::connect(cmd, &Command::OnStatusOk, &OnStatusOk);
+  QObject::connect(cmd, &Command::OnStatusErr, &OnStatusErr);
+  QObject::connect(cmd, &Command::OnNetworkErr, &OnNetworkErr);
+
+  QObject::connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));
+
+  printer.SendCommand(cmd);*/
+}
+
+void APIController::shutdown(QObject *client) {
+  qDebug() << "Client requested shutdown at"
+           << QDateTime::currentDateTime().toString();
+  qApp->exit(0);
+}
+
+void APIController::restart(QObject *client) {
+  qDebug() << "Client requested restart at"
+           << QDateTime::currentDateTime().toString();
+  qApp->exit(123);
+}
+
+QJsonObject APIController::createImageList() const {
+  QJsonArray image_list;
+  for (auto const &image : db_->images()) {
+    QJsonObject json;
+
+    image.write(json);
+    image_list.push_back(json);
+  }
+
+  return {{"images", image_list}};
+}
+
+QJsonObject APIController::createImageList(Image img) {
+  QJsonArray json_jobs;
+  QJsonObject json_job;
+
+  img.write(json_job);
+  json_jobs.append(json_job);
+
+  return {{"images", json_jobs}};
+}
+
+QJsonObject APIController::createJobList() {
+  QJsonArray json_jobs;
+
+  for (auto const &job : db_->jobs()) {
+    QJsonObject json;
+    job.write(json);
+    json_jobs.append(json);
+  }
+
+  return {{"jobs", json_jobs}};
+}
+
+QJsonObject APIController::createJobList(Job job) {
+  QJsonArray json_jobs;
+  QJsonObject json_job;
+
+  job.write(json_job);
+  json_jobs.append(json_job);
+
+  return {{"jobs", json_jobs}};
+}
+
+QJsonObject APIController::createProfileList() {
+  QJsonArray json_jobs;
+
+  for (auto const &profile : db_->profiles()) {
+    QJsonObject json;
+    profile.write(json);
+    json_jobs.append(json);
+  }
+
+  return {{"profiles", json_jobs}};
+}
+
+QJsonObject APIController::CreateAlgorithmList() {
+  Algorithm const &algo = Algo1Test();
+
+  QJsonObject json;
+  json[algo.id()] = Marshalling::toJson(algo);
+
+  return json;
+}
+
+QJsonObject APIController::createDeleteImage(Image img) {
+  return {{"id", img.id()}};
+}
+
+QJsonObject APIController::createDeleteJob(Job job) {
+  return {{"id", job.id()}};
+}
+
+void APIController::request(QJsonObject request, QString raw_request,
+                            QObject *client) {
+  try {
+    input_->serviceRequest(request, raw_request, client);
+  } catch (std::exception const &e) {
+    output_->Error("Exception", e.what(), client);
+  } catch (...) {
+    output_->Error("Exception", "unknown", client);
+  }
+}
+
+Database &APIController::db() const { return *db_; }
+
+QThreadPool *APIController::pool() const { return pool_; }
 } // namespace c3picko

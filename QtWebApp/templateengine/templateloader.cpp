@@ -15,8 +15,8 @@ using namespace stefanfrings;
 TemplateLoader::TemplateLoader(QSettings *settings, QObject *parent)
     : QObject(parent) {
   templatePath = settings->value("path", ".").toString();
-  // Convert relative path to absolute, based on the directory of the config
-  // file.
+// Convert relative path to absolute, based on the directory of the config
+// file.
 #ifdef Q_OS_WIN32
   if (QDir::isRelativePath(templatePath) &&
       settings->format() != QSettings::NativeFormat)

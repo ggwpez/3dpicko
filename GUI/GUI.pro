@@ -5,7 +5,7 @@ TARGET = GUIWebserver
 TEMPLATE = lib
 CONFIG   += staticlib
 
-SOURCES += src/main.cpp \
+SOURCES += \
 	src/requestmapper.cpp \
 	src/ws_server.cc \
 	src/types/job.cc \
