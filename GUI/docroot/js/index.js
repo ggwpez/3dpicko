@@ -75,6 +75,7 @@ var algorithms;
 			else if (type == "createjob")
 			{
 				AddJobToList(data);
+				current_job = data;
 				document.getElementById("headertag").innerHTML = "Entwurf #" +data.id;
 				// current_job = data;
 				ShowAlert("Pickjob "+data.id+" saved.", "success");
@@ -212,7 +213,7 @@ function GetDetectionAlgorithms(detection_algorithms){
 		let algorithm = algorithms[id];
 		let algorithm_option = document.createElement('option');
 		algorithm_option.value = id;
-		algorithm_option.text = algorithm.name + " (" + algorithm.description + ")";
+		algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
 		algorithm_option.title = algorithm.description;
 		algorithm_selection.appendChild(algorithm_option);
 	}
@@ -227,35 +228,32 @@ function GetDetectionAlgorithmSettings(id){
 	const algorithm = algorithms[id];
 	for (let settings_id in algorithm.settings){
 		let settings = algorithm.settings[settings_id];
-		let new_input_html = `
-		<div class="form-group">
-		<label for="${settings_id}">${settings.name}:</label>
-		`;
-
-		if(settings.type == "slider"){
-			new_input_html += `
-			<input type="range" class="custom-range" id="${settings_id}" name="${settings_id}" min="${settings.min}" max="${settings.max}" step="${settings.step}" value="${settings.defaultValue}" oninput="$('#slider-${settings_id}')[0].value=this.value;">
-			<div style="text-align: center;"><span style="float:left;">${settings.min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${settings.min}" max="${settings.max}" step="${settings.step}" id="slider-${settings_id}" value="${settings.defaultValue}" oninput="$('#${settings_id}')[0].value=this.value;"><span style="float:right">${settings.max}</span></div>
-			`;
-		}
-		else if(settings.type == "checkbox"){
-			new_input_html += `<div class="custom-control custom-checkbox d-inline"><input type="checkbox" class="custom-control-input" id="${settings_id}" name="${settings_id}" ${(settings.defaultValue)?`checked`:``}><label class="custom-control-label" for="${settings_id}"></label></div>`;
-		}
+		settings.value = settings.defaultValue;
+		settings.id = settings_id;
 		
-		if(settings.description){
-			new_input_html += `<small class="form-text text-muted">${settings.description}</small>`;
-		}
-		new_input_html += '</div>';
-		detection_settings.insertAdjacentHTML('beforeend', new_input_html);
-		$('#slider-'+settings_id).on('input', function(){
-    		if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
-  		}).trigger('input');
+		let form_group = CreateFormGroupHtml(settings);	
+		detection_settings.insertAdjacentHTML("beforeend", form_group);
+		
+		if(settings.type == "slider"){
+			$('#slider-'+settings_id).on('input', function(){
+				// dynamic input field size 
+				if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+				// change slider value on number input 
+				document.getElementById(settings_id).value=this.value;
+			}).trigger('input');
+			$('#'+settings_id).on('input', function(){
+				// change number input value on slider change 
+				document.getElementById('slider-'+settings_id).value=this.value;
+				$('#slider-'+settings_id).trigger('input');
+			})	
+		}		
 	}
 }
 
 var UpdateDetectionSettings = function (e){
 	// Send as:
 	// {
+	//	job_id: "222",
 	// 	algorithm: "321",
 	// 	settings:
 	// 	{
@@ -273,6 +271,7 @@ var UpdateDetectionSettings = function (e){
 	}
 
 	new_settings = {
+		job_id : current_job.id,
 		algorithm: algorithm_id,
 		settings: settings_object
 	};
@@ -400,8 +399,8 @@ function SetChosen(image_id){
 		chosen_image = images_list[image_id];
 		console.log("Selecting image ", image_id);
 		div_chosen.innerHTML = `
-		<ul><li>Dateiname: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
-		<button class="btn btn-primary" onclick="cutTab()">Choose image ></button>\
+		<ul><li>Filename: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
+		<button class="btn btn-primary" onclick="cutTab()">Choose This Image &gt;</button>\
 		`;
 		class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
 		class_dropzone.removeClass('empty');
@@ -493,11 +492,12 @@ function selectionTab(){
 function strategyTab(){
 	$('#detection-settings-div').hide();
 	let plate_selection = document.getElementById("select-plate-profile");
+	console.log(all_profiles);
 	for(let profile_id in all_profiles){
 		let profile = all_profiles[profile_id];
 		if(profile.type=="plate-profile"){
 			//TODO read number of colonys
-			if(profile.number_of_rows*profile.number_of_columns >= 96){
+			if(profile.settings.number_of_rows*profile.settings.number_of_columns >= 96){
 				let plate_profile_option = document.createElement('option');
 				plate_profile_option.value = profile.id;
 				plate_profile_option.text = profile.profile_name;
@@ -506,10 +506,10 @@ function strategyTab(){
 		}
 	}
 	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-	drawWells(all_profiles[plate_id].number_of_columns, all_profiles[plate_id].number_of_rows);
+	drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
 	plate_selection.addEventListener("change", function(){
 		const plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-		drawWells(all_profiles[plate_id].number_of_columns, all_profiles[plate_id].number_of_rows);
+		drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
 	});
 
 	tabEnter(4);
@@ -519,9 +519,14 @@ function overviewTab(){
 	tabEnter(5);
 	console.log(all_jobs);
 	console.log(current_job);
-	// TODO get processed images
+	canvas_layer0 = document.getElementById('layer0');
+	canvas_layer1 = document.getElementById('layer1');
+	// TODO onclick resize
 	const html = `
-	<img id="processed-image" src="${images_list[current_job.img_id].path}" width="50%">
+	<div style="position: relative;">
+	<img id="processed-layer0" src="${canvas_layer0.toDataURL()}" width="100%" style="z-index: 0;">
+	<img id="processed-layer1" src="${canvas_layer1.toDataURL()}" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
+	</div>
 	<ul class="mt-2">
 	<li>Job name: ${current_job.name}</li>
 	<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>

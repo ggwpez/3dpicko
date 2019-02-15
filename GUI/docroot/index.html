@@ -40,16 +40,16 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-4 col-md-3 col-lg-2">
-            <div class="nav flex-column nav-pills" id="steps">
+            <div class="nav flex-column nav-pills mb-2" id="steps">
               <h4 id ="headertag">Entwurf</h4>
-              <div class="nav-link active" id="browse-tab" href="#browse">1. Bild auswählen</div>
-              <div class="nav-link" id="cut-tab" href="#cut">2. Bild zuschneiden</div>
-              <div class="nav-link" id="attributes-tab" href="#attributes">3. Attribute angeben</div>
+              <div class="nav-link active" id="browse-tab" href="#browse">1. Choose Image</div>
+              <div class="nav-link" id="cut-tab" href="#cut">2. Cut Image</div>
+              <div class="nav-link" id="attributes-tab" href="#attributes">3. Set Attributes</div>
               <!--<div class="nav-link" id="settings-tab" href="#settings" onclick="startImageProcessing()">Parameter anpassen</div>-->
-              <div class="nav-link" id="selection-tab" href="#selection">4. Kolonien auswählen</div>
-              <div class="nav-link" id="strategy-tab" href="#strategy">5. Pickstrategie wählen</div>
-              <div class="nav-link" id="overview-tab" href="#overview">6. Übersicht</div>
-              <div class="nav-link" id="execute-tab" href="#execute">7. Pickjob starten</div>
+              <div class="nav-link" id="selection-tab" href="#selection">4. Choose Colonys</div>
+              <div class="nav-link" id="strategy-tab" href="#strategy">5. Choose Plates</div>
+              <div class="nav-link" id="overview-tab" href="#overview">6. Overview</div>
+              <div class="nav-link" id="execute-tab" href="#execute">7. Start Picking</div>
             </div>
             <div id="detection-settings-div" style="display: none">
               <h4>Detection Settings</h4>
@@ -69,7 +69,7 @@
               <div class="tab-pane fade show active" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-4">
-                    <h2>Choose image</h2>
+                    <h2>Choose Image</h2>
                     <form><input id="classicUpload" type="file" multiple style="display: none;"/></form>
                     <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
                     <div id="chosen-image"></div>
@@ -77,14 +77,14 @@
                 </div>
                 <div class="row">
                   <div class="col" >
-                    <h2>All images</h2>
+                    <h2>All Images</h2>
                     <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
                     <div id="all-images" style="display: none;"></div>
                   </div>
                 </div>
               </div>
               <div class="tab-pane fade col-md-8" id="cut">
-                <h2>Cut image</h2>
+                <h2>Cut Image</h2>
                 <div class="crop_container">
                   <div>
                     <img id="cutImg" src="" alt="Picture">
@@ -94,7 +94,7 @@
                 <button class="btn btn-primary m-2" onclick="attributesTab()">Next Step</button>
               </div>
               <div class="tab-pane fade col-md-6" id="attributes">
-                <h2>Pickjob attributes</h2>
+                <h2>Pickjob Attributes</h2>
                 <form id="attributes-form" name="attributes-form">
                   <div class="form-group">
                     <label for="staticImgName">Image:&nbsp;</label><span id="staticImgName"></span>
@@ -121,28 +121,28 @@
                 <button class="btn btn-primary m-2" onclick="selectionTab()">Next Step</button>
               </div>
               <div class="tab-pane fade col-md-12 col-xl-10" id="selection">
-                <h2>Choose colonys</h2>
+                <h2>Choose Colonys</h2>
                 <div style="position: relative;">
                  <canvas id="layer0" style="z-index: 0;"></canvas>
                  <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
                </div>
                <div id="buttons">
-                <button class="btn btn-primary" onclick="getPositions()">Automatische Kolonieerkennung</button>
-                <button class="btn btn-primary" onclick="editColonyMode('add')">F&uuml;ge Kolinie hinzu</button>
-                <button class="btn btn-primary" onclick="editColonyMode('del')">L&ouml;sche Kolinie</button>
-                <button class="btn btn-primary" onclick="strategyTab()">Weiter</button>
+                <button class="btn btn-primary" onclick="getPositions()">Run Colony Detection</button>
+                <button class="btn btn-primary" onclick="editColonyMode('add')">Add Colony</button>
+                <button class="btn btn-primary" onclick="editColonyMode('del')">Delete Colony</button>
+                <button class="btn btn-primary" onclick="strategyTab()">Next Step &gt;</button>
               </div>
               <div id="showCoordinates"></div>
             </div>
             <div class="tab-pane fade col-md-8" id="strategy">
-              <h2>Pick strategy</h2>
+              <h2>Goal Plate</h2>
               <form id="strategy-form" name="strategy-form">
                 <div class="form-group">
-                  <label for="select-plate-profile">Plates:</label>
+                  <!-- <label for="select-plate-profile">Plates:</label> -->
                   <select id="select-plate-profile"></select>
                 </div>
               </form>
-              <h2>Choose starting well</h2>
+              <h2>Choose Starting Well</h2>
               <canvas id="pickstrategy-canvas"></canvas>
               <br>
               <button class="btn btn-primary m-2" onclick="overviewTab()">Overview ></button>
@@ -150,7 +150,7 @@
             <div class="tab-pane fade col-md-8" id="overview">
               <h2>Overview</h2>
               <div id="overview-content"></div>
-              <h2>Check preconditions</h2>
+              <h2>Check Preconditions</h2>
               <form id="check-preconditions" class="needs-validation" novalidate>
                 <div class="form-group">
                   <div class="custom-control custom-checkbox">
@@ -206,7 +206,7 @@
     <div class="container">
       <div class="row mb-2" id="group">
         <div class="col">
-          <h2>Printer Porfiles</h2>
+          <h2>Printer Profiles</h2>
           <div class="accordion" id="printer-profiles"></div>
         </div>
         <div class="col">
@@ -252,7 +252,7 @@
       </div>
       <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
       </div>
     </div>
