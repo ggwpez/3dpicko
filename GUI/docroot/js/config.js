@@ -27,16 +27,16 @@ var UpdateSettingsProfile = function (e){
   
   for (let key of form_data.keys()) {
     if(key in prototyp_settings){
-    let values = form_data.getAll(key);
-    if(prototyp_settings[key].type == 'vector3'){
-      value = {x: Number(values[0]), y: Number(values[1]), z: Number(values[2])};
+      let values = form_data.getAll(key);
+      if(prototyp_settings[key].type == 'vector3'){
+        value = {x: Number(values[0]), y: Number(values[1]), z: Number(values[2])};
+      }
+      else if(prototyp_settings[key].type == 'vector2'){
+        value = {x: Number(values[0]), y: Number(values[1])};
+      }
+      else value = Number(values[0]);
+      json_object.settings[key] = value;
     }
-    else if(prototyp_settings[key].type == 'vector2'){
-      value = {x: Number(values[0]), y: Number(values[1])};
-    }
-    else value = Number(values[0]);
-    json_object.settings[key] = value;
-  }
   }
   if (json_object.id == "new-printer-profile" || json_object.id == "new-socket-profile" || json_object.id == "new-plate-profile"){
     $('#form-new-'+json_object.type)[0].reset();
@@ -113,6 +113,7 @@ function CreateRadioInputHtml(id, option_id, option, value){
 function AddProfileToList(profile){
  if(profile.id in all_profiles){
     // update profile (delete old profile)
+    // TODO check if new values
     DeleteProfile(profile.id);
   }
   let link_text = profile.profile_name;
@@ -161,8 +162,8 @@ function AddProfileToList(profile){
   for(let setting_id in profile_prototyp.settings){
     let setting = profile_prototyp.settings[setting_id];
     setting.id = setting_id;
-    if(!(typeof profile.settings[setting_id] === 'object')||!(profile.settings[setting_id].value)) html += CreateFormGroupHtml(setting, profile.settings[setting_id]);
-    else html += CreateFormGroupHtml(setting);
+    if(!(typeof profile.settings[setting_id] === 'object')||!(profile.settings[setting_id].name)) html += CreateFormGroupHtml(setting, profile.settings[setting_id]);
+    else html += CreateFormGroupHtml(profile.settings[setting_id]);
   }
   html += `<button type="submit" class="btn btn-primary">${button_text}</button></form></div></div></div>`;
 
@@ -232,7 +233,7 @@ let printer_prototype = {
       step: 0.01,
       value: "",
       unit: "mm",
-      description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut.",
+      description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut."
     },
     "movement_speed": {
       name: "Movement speed",
@@ -241,7 +242,7 @@ let printer_prototype = {
       step: 1,
       value: "",
       unit: "mm/min",
-      description: "The speed the nozzle is moved with.",
+      description: "The speed the nozzle is moved with."
     },
     "filament_extrusion_length_on_move_offset": {
       name: "Filament offset (move)",
@@ -250,7 +251,7 @@ let printer_prototype = {
       step: 0.01,
       value: "",
       unit: "mm",
-      description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates.",
+      description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates."
     },
     "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": {
       name: "Filament offset (pick)",
@@ -259,7 +260,7 @@ let printer_prototype = {
       step: 0.01,
       value: "",
       unit: "mm",
-      description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate.",
+      description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate."
     }
   }
 };
