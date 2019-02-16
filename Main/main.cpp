@@ -1,4 +1,6 @@
 #include "httplistener.h"
+#include "include/algo1_test.h"
+#include "include/algorithm_pipeline.h"
 #include "include/api_controller.h"
 #include "include/command.h"
 #include "include/commands/arbitrary_command.h"
@@ -78,9 +80,11 @@ static int start(int argc, char **argv) {
   setupSignals(&app);
   QString configFileName = searchConfigFile();
 
+  AlgorithmPipeline *detector = new AlgorithmPipeline(
+      QThreadPool::globalInstance(), {new Algo1Test()}, &app);
+
   Database *db = new Database("database.json", &app);
-  APIController *api =
-      new APIController(QThreadPool::globalInstance(), db, &app);
+  APIController *api = new APIController(detector, db, &app);
 
   // Static file controller
   QSettings *fileSettings =
@@ -89,13 +93,14 @@ static int start(int argc, char **argv) {
   StaticFileController *staticFileController =
       new StaticFileController(fileSettings, &app);
 
-  QSslConfiguration *ssl = nullptr;
-  QSettings *listenerSettings =
+  // SSL
+  QSettings *ssl_settings =
       new QSettings(configFileName, QSettings::IniFormat, &app);
-  listenerSettings->beginGroup("listener");
+  ssl_settings->beginGroup("ssl");
 
-  if (listenerSettings->value("ssl").toBool()) {
-    ssl = LoadSslConfig(listenerSettings);
+  QSslConfiguration *ssl = nullptr;
+  if (ssl_settings->value("enabled", false).toBool()) {
+    ssl = LoadSslConfig(ssl_settings);
     if (!ssl) {
       qCritical() << "SSL setup failed";
       return 1;
@@ -105,10 +110,16 @@ static int start(int argc, char **argv) {
     qDebug() << "SSL disabled";
 
   // HTTP server
+  QSettings *listenerSettings =
+      new QSettings(configFileName, QSettings::IniFormat, &app);
+  listenerSettings->beginGroup("http");
   HttpListener listener(listenerSettings, ssl,
                         new RequestMapper(staticFileController, &app), &app);
   // WS server
-  WsServer *ws_server = new WsServer(listenerSettings, ssl, &app);
+  QSettings *ws_settings =
+      new QSettings(configFileName, QSettings::IniFormat, &app);
+  ws_settings->beginGroup("websockets");
+  WsServer *ws_server = new WsServer(ws_settings, ssl, &app);
   ws_ptr = ws_server;
 
   QObject::connect(ws_server, &WsServer::OnRequest, api,

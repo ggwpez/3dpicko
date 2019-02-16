@@ -1,5 +1,5 @@
 #include "include/api_controller.h"
-#include "include/colonydetector.h"
+#include "include/algorithm_pipeline.h"
 #include "include/gcodegenerator.h"
 
 #include "include/algo1_test.h"
@@ -15,8 +15,9 @@
 
 using namespace c3picko::pi;
 namespace c3picko {
-APIController::APIController(QThreadPool *pool, Database *db, QObject *parent)
-    : QObject(parent), pool_(pool), db_(db), input_(new APIInput(this)),
+APIController::APIController(AlgorithmPipeline *detector, Database *db,
+                             QObject *parent)
+    : QObject(parent), detector_(detector), db_(db), input_(new APIInput(this)),
       output_(new APIOutput(this)) {
   QMetaObject const *meta = this->metaObject();
   QMetaMethod default_handler =
@@ -180,6 +181,7 @@ void APIController::createJob(Job &job, QObject *client) {
   else if (!db_->profiles().exists(job.socket()))
     emit OnJobCreateError("Socket profile " + id + " unknown", client);
   else {
+    job.setId(id);
     db_->jobs().add(id, job);
     emit OnJobCreated(job, client);
   }
@@ -201,22 +203,65 @@ void APIController::getPositions(Image::ID id, void *algorithm,
       return;
     }
 
-    ColonyDetector *detector = new ColonyDetector(
-        data.clone(),
-        new Algo1Test()); // Clone to avoid thread problems TODO debug
-    // Set the connection context to client, so in case it disconnects we
-    // dont leak memory
-    connect(detector, &ColonyDetector::OnFinished, client,
-            [this, client, detector](qint64 ms) {
-              qDebug() << "Colonies detected in" << ms << "ms";
-              emit this->OnColonyDetected(detector, client);
-            },
-            Qt::QueuedConnection);
-    connect(detector, SIGNAL(OnFinished(qint64)), detector,
-            SLOT(deleteLater()));
+    /*		AlgorithmPipeline* detector = new AlgorithmPipeline(data.clone(), new
+Algo1Test()); // Clone to avoid thread problems TODO
+       debug
+                    // Set the connection context to client, so in case it
+disconnects we
+                    // dont leak memory
+                    connect(detector, &AlgorithmPipeline::OnFinished, client,
+                                    [this, client, detector](qint64 ms) {
+                                            qDebug() << "Colonies detected in"
+<< ms << "ms";
+                                            emit
+this->OnColonyDetected(detector, client);
+                                    },
+                                    Qt::QueuedConnection);
+                    connect(detector, SIGNAL(OnFinished(qint64)), detector,
+SLOT(deleteLater()));
+FIXME
+                    detector->setAutoDelete(false);
+                    pool_->start(detector);*/
+  }
+}
 
-    detector->setAutoDelete(false);
-    pool_->start(detector);
+void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
+                                            QJsonObject settings,
+                                            QObject *client) {
+  if (!db_->jobs().exists(job_id)) {
+    qWarning() << "Client requested colony detection for unknown job, id="
+               << job_id;
+    emit OnColonyDetectionError("Job not found", client);
+  } else {
+    Image::ID img_id = db_->jobs().get(job_id).img_id();
+
+    if (!db_->images().exists(img_id)) {
+      qWarning() << "Colony detection error: image not found (#" << img_id
+                 << ")";
+      emit OnColonyDetectionError("Image not found", client);
+    } else {
+      Image &img = db_->images().get(
+          img_id); // Non const& bc readCvMat() can set the cache
+      cv::Mat data;
+
+      if (!img.readCvMat(data)) {
+        qCritical() << "CV could not read image" << img.path();
+        emit OnColonyDetectionError("Image not readable or empty", client);
+      } else {
+        AlgorithmJob *job = detector_->createJob(data, algo_id, settings);
+
+        if (!job) {
+          emit OnColonyDetectionError("Algorithm not found", client);
+        } else {
+          connect(job, &AlgorithmJob::OnFinished, client, [this, client](
+                                                              void *output) {
+            emit this->OnColonyDetected(
+                reinterpret_cast<std::vector<Colony> *>(output), client);
+          });
+          job->start(true, true);
+        }
+      }
+    }
   }
 }
 
@@ -231,8 +276,9 @@ void APIController::startJob(Job::ID id, QObject *client) {
 
   std::vector<LocalColonyCoordinates> coords;
   for (int x = 0; x < 4; ++x)
-          for (int y = 0; y < 5; ++y)
-                  coords.push_back(Point(10 * x + 70, y * 10 + 20));
+                  for (int y = 0; y < 5; ++y)
+                                  coords.push_back(Point(10 * x + 70, y * 10 +
+  20));
 
   auto			   code = gen.CreateGcodeForTheEntirePickingProcess(1,
   8, coords);
@@ -240,7 +286,7 @@ void APIController::startJob(Job::ID id, QObject *client) {
 
   QStringList sum;
   for (auto c : code)
-          sum << QString::fromStdString(c.ToString());
+                  sum << QString::fromStdString(c.ToString());
 
   Command* cmd = commands::ArbitraryCommand::MultiCommand(sum);
 
@@ -322,10 +368,10 @@ QJsonObject APIController::createProfileList() {
 }
 
 QJsonObject APIController::CreateAlgorithmList() {
-  Algorithm const &algo = Algo1Test();
-
   QJsonObject json;
-  json[algo.id()] = Marshalling::toJson(algo);
+
+  for (Algorithm *algo : detector_->algos())
+    json[algo->id()] = Marshalling::toJson(*algo);
 
   return json;
 }
@@ -344,12 +390,12 @@ void APIController::request(QJsonObject request, QString raw_request,
     input_->serviceRequest(request, raw_request, client);
   } catch (std::exception const &e) {
     output_->Error("Exception", e.what(), client);
+    qWarning("std::exception %s", e.what());
   } catch (...) {
     output_->Error("Exception", "unknown", client);
+    qWarning("unknown exception");
   }
 }
 
 Database &APIController::db() const { return *db_; }
-
-QThreadPool *APIController::pool() const { return pool_; }
 } // namespace c3picko

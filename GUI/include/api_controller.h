@@ -23,7 +23,7 @@ class APIController : public QObject {
   friend class APIOutput;
 
 public:
-  APIController(QThreadPool *pool, Database *db, QObject *parent);
+  APIController(AlgorithmPipeline *detector, Database *db, QObject *parent);
 
   // Forwarded to APIInput
   void request(QJsonObject request, QString raw_request, QObject *client);
@@ -63,6 +63,8 @@ public slots:
 
   void getPositions(Image::ID id, void *algorithm, void *algo_settings,
                     QObject *client);
+  void updateDetectionSettings(Job::ID job, QString algo_id,
+                               QJsonObject settings, QObject *client);
   void startJob(Job::ID id, QObject *client);
 
   void shutdown(QObject *client);
@@ -99,12 +101,14 @@ signals:
   void OnProfileDeleted(Profile::ID profile, QObject *client);
   void OnProfileDeleteError(Profile::ID profile, QObject *client);
 
+  void OnColonyDetectionStarted(Job::ID, QObject *client);
   /**
    * @brief OnColonyDetected
-   * @param detector Needs to be deleted
+   * @param colonies Needs to be deleted. Normally done in
+   * APIOutput::ColonyDetected
    * @param client
    */
-  void OnColonyDetected(ColonyDetector *detector, QObject *client);
+  void OnColonyDetected(std::vector<Colony> *colonies, QObject *client);
   void OnColonyDetectionError(QString error, QObject *client);
 
 private:
@@ -118,7 +122,7 @@ private:
   QJsonObject CreateAlgorithmList();
 
 protected:
-  QThreadPool *pool_;
+  AlgorithmPipeline *detector_;
   Database *db_;
 
   // Deleted by this

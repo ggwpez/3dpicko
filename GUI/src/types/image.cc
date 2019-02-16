@@ -16,7 +16,8 @@ Image::Image(const QJsonObject &obj)
       path_(obj["path"].toString()), uploaded_(parseDateTime(obj["uploaded"])),
       width_(obj["width"].toInt()), height_(obj["height"].toInt()) {
   Q_ASSERT(!id_.isEmpty());
-  qWarning() << "Image path was empty, image lost";
+  if (path_.isEmpty())
+    qWarning() << "Image path was empty, image lost";
   Q_ASSERT(width_ && height_);
 }
 

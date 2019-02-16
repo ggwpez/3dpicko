@@ -13,7 +13,7 @@ Database::Database(QString file_path, QObject *parent)
     QJsonObject json = QJsonDocument::fromJson(data).object();
     read(json);
 
-    qDebug() << "Loaded database form file" << file_path_;
+    qDebug() << "Loaded database from file" << file_path_;
   } else
     qCritical() << "Error reading database from file" << file_path_;
 }

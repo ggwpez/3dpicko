@@ -1,6 +1,6 @@
 #include "include/api_output.h"
+#include "include/algorithm_pipeline.h"
 #include "include/api_controller.h"
-#include "include/colonydetector.h"
 #include <QJsonArray>
 #include <QThread>
 
@@ -36,7 +36,8 @@ void APIOutput::JobCreated(Job job, QObject *client) {
 }
 
 void APIOutput::JobCreateError(QString id, QObject *client) {
-  Error("jobcreate", "", client);
+  Error("jobcreate", id, client);
+  qDebug("JobCreateError %s", qPrintable(id));
 }
 
 void APIOutput::JobDeleted(Job job, QObject *client) {
@@ -95,16 +96,21 @@ void APIOutput::ProfileDeleteError(Profile::ID profile, QObject *client) {
         client);
 }
 
-void APIOutput::ColonyDetected(ColonyDetector *detector, QObject *client) {
-  std::vector<cv::Vec3f> const &coords = detector->pos();
+void APIOutput::ColonyDetectionStarted(
+    Job::ID,
+    QObject *client) { /* TODO inform client, maybe add a loading animtion */
+}
+
+void APIOutput::ColonyDetected(std::vector<Colony> *colonies, QObject *client) {
   QJsonArray json_coords;
 
-  for (int i = 0; i < coords.size(); ++i) {
-    json_coords.push_back(
-        QJsonArray({coords[i][0], coords[i][1], coords[i][2]}));
+  for (Colony const &colony : *colonies) {
+    json_coords.push_back(QJsonArray{colony.x(), colony.y(),
+                                     colony.circumference() / (2 * M_PI)});
   }
 
   emit op->toClient(client, "getpositions", {{"coords", json_coords}});
+  delete colonies;
 }
 
 void APIOutput::ColonyDetectionError(QString error, QObject *client) {

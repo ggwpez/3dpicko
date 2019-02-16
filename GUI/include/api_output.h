@@ -8,7 +8,8 @@
 #include <QObject>
 
 namespace c3picko {
-class ColonyDetector;
+class Colony;
+class AlgorithmPipeline;
 class APIInput;
 class APIController;
 class APIOutput : public QObject {
@@ -45,10 +46,11 @@ protected slots:
   void ProfileDeleted(Profile::ID profile, QObject *client);
   void ProfileDeleteError(Profile::ID profile, QObject *client);
 
+  void ColonyDetectionStarted(Job::ID, QObject *client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */
-  void ColonyDetected(ColonyDetector *detector, QObject *client);
+  void ColonyDetected(std::vector<Colony> *detector, QObject *client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */

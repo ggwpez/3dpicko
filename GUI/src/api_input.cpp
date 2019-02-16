@@ -67,8 +67,14 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     api->createJob(job_wo_id, client);
   } else if (path == "getpositions") {
     QString img_id = req_data["id"].toString();
-
     api->getPositions(img_id, nullptr, nullptr, client);
+  } else if (path == "updatedetectionsettings") {
+    Job::ID job_id = req_data["job_id"].toString();
+    QString algo_id = req_data["algorithm"].toString();
+    QJsonObject settings = req_data["settings"].toObject();
+
+    emit api->OnColonyDetectionStarted(job_id, client);
+    api->updateDetectionSettings(job_id, algo_id, settings, client);
   } else if (path == "startjob") {
     api->startJob("", client);
   } else if (path == "shutdown") {

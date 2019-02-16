@@ -17,6 +17,7 @@ namespace c3picko {
  * TODO addAsJson and getAsJson are probably buggy with Value=QJsonObject
  */
 template <typename Value> class Table : public JsonConvertable {
+
   static_assert(std::is_base_of<JsonConstructable, Value>(),
                 "Value type must implement interface JsonConvertable");
 

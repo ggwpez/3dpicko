@@ -10,10 +10,10 @@ Algo1Test::Algo1Test()
     : Algorithm("1", "Fluro1", "",
                 {AlgoSetting::make_checkbox("123", "Erode & Dilate", "CHECK ME",
                                             true),
-                 AlgoSetting::make_slider_double("1234", "Threshold 1", "lel",
-                                                 0, 10, .1, 1.2),
-                 AlgoSetting::make_checkbox("12sad3", "Erode & Dilate2 ",
-                                            "cant touch this!", false)}) {}
+                 AlgoSetting::make_slider_int("max_area", "Max Area", "lel",
+                                              500, 2000, 10, 1000),
+                 AlgoSetting::make_slider_int("min_area", "Min Area", "lel", 10,
+                                              1000, 1, 100)}) {}
 
 Algo1Test::~Algo1Test() {}
 
@@ -105,17 +105,17 @@ bool Algo1Test::roundness(cv::Mat &out, int area, int w, int h,
   return true;
 }
 
-void Algo1Test::run(void *const input, void *output) {
-  cv::Mat const &source_ = *reinterpret_cast<cv::Mat *const>(input);
-  std::vector<Colony> &colonies_ =
-      *reinterpret_cast<std::vector<Colony> *>(output);
+void Algo1Test::run() {
+  cv::Mat orig = reinterpret_cast<cv::Mat const *>(input_)
+                     ->clone(); // TODO legit for cross thread?
+  auto output_ = new std::vector<Colony>();
 
   Colony::ID id = 0;
   // create variables for images
   cv::Mat stats, labeled, centers;
   cv::Scalar mean, stddev;
 
-  cv::Mat &src = new_stage(source_);
+  cv::Mat &src = new_stage(orig);
   cv::Mat &grey = new_stage();
   // Greyscale
   cv::cvtColor(src, grey, CV_BGR2GRAY);
@@ -145,72 +145,73 @@ void Algo1Test::run(void *const input, void *output) {
   labeled = cv::Mat(erroded.rows, erroded.cols, CV_32S);
   cv::connectedComponentsWithStats(erroded, labeled, stats, centers);
 
-  std::set<int> good_labels, bad_labels;
+  int min_area = settingById("min_area").value<int>(),
+      max_area = settingById("max_area").value<int>();
+
   cv::Mat &all_structs = new_stage(src);
   cv::Mat &labeled_stage = new_stage(src);
-  for (int r = 0; r < labeled_stage.rows; ++r) {
-    for (int c = 0; c < labeled_stage.cols; ++c) {
-      int label = labeled.at<int>(r, c);
-      if (!label || (good_labels.find(label) != good_labels.end()) ||
-          (bad_labels.find(label) != bad_labels.end()))
+  for (int i = 0; i < centers.rows; ++i) {
+    // In this much quicker approach we assume, that the center always lies
+    // ontop of a pixel of the component.
+    // Should be no problem with convex colonies.
+    auto center =
+        cv::Point2d(centers.at<double>(i, 0), centers.at<double>(i, 1));
+    int r = center.y, c = center.x;
+    int label = labeled.at<int>(r, c);
+
+    if (!label)
+      continue;
+
+    int area = stats.at<int>(label, cv::CC_STAT_AREA);
+    int w = stats.at<int>(label, cv::CC_STAT_WIDTH);
+    int h = stats.at<int>(label, cv::CC_STAT_HEIGHT);
+    int top = stats.at<int>(label, cv::CC_STAT_TOP);
+    int left = stats.at<int>(label, cv::CC_STAT_LEFT);
+
+    double round = .9;
+    // Filter by area
+    if (area > max_area || area < min_area) {
+      all_structs.at<cv::Vec3b>(r, c) = cv::Vec3b(255, 0, 0); // blau
+    }
+    // Filter by roundness
+    else {
+      std::vector<std::vector<cv::Point>> contours;
+
+      if ((std::min(w, h) / double(std::max(w, h))) < .7) {
         continue;
-      int area = stats.at<int>(label, cv::CC_STAT_AREA);
-      int w = stats.at<int>(label, cv::CC_STAT_WIDTH);
-      int h = stats.at<int>(label, cv::CC_STAT_HEIGHT);
-      int top = stats.at<int>(label, cv::CC_STAT_TOP);
-      int left = stats.at<int>(label, cv::CC_STAT_LEFT);
-      auto center = cv::Point2d(
-          centers.at<double>(label, 0),
-          centers.at<double>(
-              label, 1)); // centers are doubles, despite the documentation!
-
-      double round = .9;
-      // Filter by area
-      if (area > 1000 || area < 100) {
-        all_structs.at<cv::Vec3b>(r, c) = cv::Vec3b(255, 0, 0); // blau
-        bad_labels.insert(label);
       }
-      // Filter by roundness
-      else {
-        std::vector<std::vector<cv::Point>> contours;
 
-        if ((std::min(w, h) / double(std::max(w, h))) < .7) {
-          bad_labels.insert(label);
-          continue;
-        }
+      cv::Mat submat(erroded, cv::Rect(left, top, w, h));
+      cv::findContours(submat, contours, cv::RETR_EXTERNAL,
+                       cv::CHAIN_APPROX_SIMPLE);
 
-        cv::Mat submat(erroded, cv::Rect(left, top, w, h));
-        cv::findContours(submat, contours, cv::RETR_EXTERNAL,
-                         cv::CHAIN_APPROX_SIMPLE);
+      if (!roundness(all_structs, area, w, h, contours[0], round)) {
+        all_structs.at<cv::Vec3b>(r, c) = cv::Vec3b(0, 0, 255); // rot
+      } else {
+        labeled_stage.at<cv::Vec3b>(r, c) = cv::Vec3i(0, 255, 0);
 
-        if (!roundness(all_structs, area, w, h, contours[0], round)) {
-          bad_labels.insert(label);
-          all_structs.at<cv::Vec3b>(r, c) = cv::Vec3b(0, 0, 255); // rot
-        } else {
-          labeled_stage.at<cv::Vec3b>(r, c) = cv::Vec3i(0, 255, 0);
-
-          Colony detected(center.x / double(source_.cols),
-                          center.y / double(source_.rows), area,
-                          cv::arcLength(contours[0], true), 0, 0, ++id,
-                          Colony::Type::INCLUDED);
-          colonies_.push_back(detected);
-          good_labels.insert(label);
-        }
+        Colony detected(center.x / double(orig.cols),
+                        center.y / double(orig.rows), area,
+                        cv::arcLength(contours[0], true), 0, 0, ++id,
+                        Colony::Type::INCLUDED);
+        output_->push_back(detected);
       }
     }
   }
 
-  std::cout << "good bois: " << good_labels.size() << std::endl;
+  qDebug() << "Detected" << output_->size() << "colonies";
+  emit OnFinished(output_);
   /*drawText(stages_.back(), pos);
 
   int i = 0;
   for (cv::Mat& stage : stages_)
   {
-                  std::string name = "stage" +std::to_string(i++);
+                                  std::string name = "stage"
+  +std::to_string(i++);
 
-                  cv::namedWindow(name, cv::WINDOW_NORMAL);
-                  cv::resizeWindow(name, 1920,1080);
-                  cv::imshow(name, stage);
+                                  cv::namedWindow(name, cv::WINDOW_NORMAL);
+                                  cv::resizeWindow(name, 1920,1080);
+                                  cv::imshow(name, stage);
   }
 
   while (cv::waitKey(0) != 'q');

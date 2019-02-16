@@ -11,7 +11,7 @@ namespace c3picko {
 
 WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
                    QObject *_parent)
-    : QObject(_parent),
+    : QObject(_parent), settings_(settings),
       server_(new QWebSocketServer(QStringLiteral("Echo Server"),
                                    (ssl ? QWebSocketServer::SecureMode
                                         : QWebSocketServer::NonSecureMode),
@@ -19,7 +19,14 @@ WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
   if (ssl)
     server_->setSslConfiguration(*ssl);
 
-  host_ = settings->value("host").toString();
+  host_ = settings->value("host", defaultHost()).toString();
+  int port = settings->value("port", defaultPort()).toInt();
+
+  if (port >= (1 << 16) || port < 0) {
+    port_ = defaultPort();
+    qWarning() << "Port invalid (" << port << "), defaulted to" << port_;
+  } else
+    port_ = quint16(port);
 }
 
 void WsServer::NewConnection() {
@@ -27,6 +34,8 @@ void WsServer::NewConnection() {
   if (!pSocket)
     return;
 
+  connect(pSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+          SLOT(clientError(QAbstractSocket::SocketError)));
   connect(pSocket, SIGNAL(textMessageReceived(QString)), this,
           SLOT(NewTextData(QString)));
   connect(pSocket, SIGNAL(binaryMessageReceived(QByteArray)), this,
@@ -59,7 +68,7 @@ void WsServer::NewBinaryData(QByteArray data) {
   QWebSocket *client = qobject_cast<QWebSocket *>(sender());
 
   if (client) {
-    qWarning() << "Binary from client ignored " << client;
+    qWarning() << "Binary from client ignored" << client;
   }
 }
 
@@ -73,16 +82,28 @@ void WsServer::ConnectionClosed() {
   }
 }
 
-void WsServer::StartListen() {
-  if (server_->listen(
-          (host_.isEmpty() ? QHostAddress::Any : QHostAddress(host_)), 8888)) {
-    qDebug() << "WebSocket server listening on port" << 8888;
+void WsServer::clientError(QAbstractSocket::SocketError ec) {
+  qDebug() << "WsServer::clientError" << ec;
+}
 
-    connect(server_, SIGNAL(sslErrors(const QList<QSslError> &)), this,
-            SLOT(SslErrors(const QList<QSslError> &)));
+bool WsServer::StartListen() {
+  if (server_->listen(QHostAddress(host_), port_)) {
+    qDebug("WebSocket server up at %s:%d", qPrintable(host_), port_);
+
+    connect(server_, &QWebSocketServer::acceptError, this,
+            &WsServer::acceptError);
+    connect(server_, &QWebSocketServer::peerVerifyError, this,
+            &WsServer::peerVerifyError);
+    connect(server_, &QWebSocketServer::sslErrors, this, &WsServer::sslErrors);
+    connect(server_, &QWebSocketServer::serverError, this,
+            &WsServer::serverError);
     connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
     connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
     emit OnStarted();
+    return true;
+  } else {
+    qFatal("%s", qPrintable(server_->errorString()));
+    return false;
   }
 }
 
@@ -91,7 +112,19 @@ void WsServer::NewDebugLine(QString line) {
     SendToClient(client, "debug", {{"line", line}});
 }
 
-void WsServer::SslErrors(const QList<QSslError> &errors) {
+void WsServer::acceptError(QAbstractSocket::SocketError ec) {
+  qWarning() << "WsServer::acceptError " << ec;
+}
+
+void WsServer::peerVerifyError(const QSslError &error) {
+  qWarning() << "WsServer::peerVerifyError " << error;
+}
+
+void WsServer::serverError(QWebSocketProtocol::CloseCode ec) {
+  qWarning() << "WsServer::serverError " << ec;
+}
+
+void WsServer::sslErrors(const QList<QSslError> &errors) {
   for (QSslError error : errors)
     qWarning() << "Ssl error:" << error.errorString();
 }
@@ -115,9 +148,17 @@ void WsServer::ToAllExClient(QObject *excluded, QString type,
 
 void WsServer::SendToClient(QWebSocket *client, QString type,
                             QJsonObject packet) {
-  client->sendTextMessage(
-      QJsonDocument({{"type", type}, {"data", packet}}).toJson());
+  QByteArray data = QJsonDocument({{"type", type}, {"data", packet}}).toJson();
+
+  if (!client->isValid())
+    qCritical() << "Send error";
+  else if (client->sendTextMessage(data) != data.size())
+    qCritical() << "Send error";
 }
+
+QString WsServer::defaultHost() { return "0.0.0.0"; }
+
+quint16 WsServer::defaultPort() { return 8888; }
 
 WsServer::~WsServer() {
   server_->close();

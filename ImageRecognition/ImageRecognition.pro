@@ -13,10 +13,10 @@ SOURCES += \
 	src/test.cpp \
 	src/colony.cc \
 	src/colony_type.cc \
-	src/colonydetector.cpp \
     src/algo_setting.cc \
     src/algorithm.cc \
-    src/algo1_test.cc
+    src/algo1_test.cc \
+    src/algorithm_pipeline.cpp
 
 	#src/main.cpp
 
@@ -30,10 +30,10 @@ HEADERS += \
 	include/main.h \
 	include/colony.hpp \
 	include/colony_type.h \
-	include/colonydetector.h \
     include/algo_setting.h \
     include/algorithm.h \
-    include/algo1_test.h
+    include/algo1_test.h \
+    include/algorithm_pipeline.h
 
 INCLUDEPATH += /usr/local/include/opencv
 

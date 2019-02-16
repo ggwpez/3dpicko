@@ -6,11 +6,17 @@ namespace c3picko {
 
 Algorithm::~Algorithm() {}
 
+void Algorithm::setInput(const void *input) {
+  Q_ASSERT(input);
+
+  input_ = input;
+}
+
 Algorithm::Algorithm(Algorithm::ID id, QString name, QString description,
                      QList<AlgoSetting> settings)
     : id_(id), name_(name), description_(description), settings_(settings) {}
 
-Algorithm::ID Algorithm::id() const { return id_; }
+typename Algorithm::ID Algorithm::id() const { return id_; }
 
 QString Algorithm::name() const { return name_; }
 
@@ -56,6 +62,11 @@ void Algorithm::setSettingsValueByName(QString name, QVariant value) {
   }
 
   qWarning() << "Ignoring AlgoSetting name=" << name;
+}
+
+void Algorithm::setSettings(const QJsonObject &sett) {
+  for (auto key : sett.keys())
+    setSettingsValueByID(key, sett[key]);
 }
 
 template <> QJsonObject Marshalling::toJson(const Algorithm &value) {

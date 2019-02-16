@@ -75,15 +75,7 @@ function selectionTabEnter()
 
 function drawPositions(coords)
 {
-    pickstrategy_context = layer1.context;
-    
-    coords.coords.forEach((value) => {
-        colony_coords.push({
-            x: value[0] * img.width,
-            y: value[1] * img.height,
-            r: value[2]
-        });
-    });
+    colony_coords = coords.coords;
 
     printPositions();
 }
@@ -92,15 +84,19 @@ var balls = [];
 // Print colonies
 function printPositions(){
     // show coordinatesPx
-    showCoordinates.innerHTML = JSON.stringify(colony_coords, null, 4);
+    for (ball in balls)
+        delete ball;
+    balls = [];
+
+    layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
 
     // Print new positions
-    for (i in colony_coords)
+    colony_coords.forEach((colony) =>
     {
         var ball = new Circle({
-            x: colony_coords[i].x,
-            y: colony_coords[i].y,
-            radius: colony_coords[i].r,
+            x: colony[0] *layer1.canvas.width,
+            y: colony[1] *layer1.canvas.height,
+            radius: colony[2],
             linecolor: 'green',
             background: 'transparent',
             canvas: layer1.canvas
@@ -114,31 +110,32 @@ function printPositions(){
             this.set('linecolor', 'green');
         });
         balls.push(ball);
-    }
+    });
 
-    layer1.canvas.addEvent('mousemove', function (e)
-    {
-        var rect = layer1.canvas.getBoundingClientRect();
-        var x = e.client.x -rect.left,
-        y = e.client.y -rect.top;
-
-        for (var i = 0; i < balls.length; ++i)
+    layer1.canvas.onmousemove =
+        function (e)
         {
-            var ball = balls[i];
+            var rect = layer1.canvas.getBoundingClientRect();
+            var x = e.clientX -rect.left,
+            y = e.clientY -rect.top;
 
-            if (ball.isMouseOver(x, y))
+            for (var i = 0; i < balls.length; ++i)
             {
-                if (! ball.mouseover)
+                var ball = balls[i];
+
+                if (ball.isMouseOver(x, y))
                 {
-                    ball.fireEvent('mouseenter');
-                    ball.mouseover = true;
+                    if (! ball.mouseover)
+                    {
+                        ball.fireEvent('mouseenter');
+                        ball.mouseover = true;
+                    }
+                }
+                else if (ball.mouseover)
+                {
+                    ball.mouseover = false;
+                    ball.fireEvent('mouseleave');
                 }
             }
-            else if (ball.mouseover)
-            {
-                ball.mouseover = false;
-                ball.fireEvent('mouseleave');
-            }
-        }
-    });
+        };
 }
