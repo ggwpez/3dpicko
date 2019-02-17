@@ -89,6 +89,10 @@ function printPositions(){
     balls = [];
 
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
+    layer1.context.font = "30px Arial";
+    layer1.context.fillStyle = "red";
+    layer1.context.textAlign = "left";
+    layer1.context.fillText(colony_coords.length,50,50);
 
     // Print new positions
     colony_coords.forEach((colony) =>

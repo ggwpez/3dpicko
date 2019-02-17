@@ -5,25 +5,28 @@
 
 #include "include/algorithm.h"
 
-namespace c3picko {
-class Algo1Test : public Algorithm {
-  Q_OBJECT
-public:
-  Algo1Test();
-  virtual ~Algo1Test() override;
-  virtual void run() override;
-  virtual inline Algorithm *cloneEmpty() const override {
-    return new Algo1Test();
-  }
+namespace c3picko
+{
+class Algo1Test : public Algorithm
+{
+	Q_OBJECT
+  public:
+	Algo1Test();
+	virtual ~Algo1Test() override;
 
-  cv::Mat &new_stage();
-  cv::Mat &new_stage(cv::Mat const &src);
-  void render_rrect(cv::Mat &out, cv::RotatedRect rect);
-  void drawText(cv::Mat &img, std::vector<cv::Vec3f> &colonies);
-  bool roundness(cv::Mat &out, int area, int w, int h,
-                 std::vector<cv::Point> const &contour, double roundness);
+	static void cvt(Algorithm* base, const cv::Mat* input, cv::Mat** output);
+	static void threshold(Algorithm* base, const cv::Mat* input, cv::Mat** output);
+	static void erodeAndDilate(Algorithm* base, const cv::Mat* input, cv::Mat** output);
+	static void label(Algorithm* base, const cv::Mat* input, std::vector<Colony>** output);
+	static void relativeFiltering(Algorithm* base, std::vector<Colony>* input, std::vector<Colony>** output);
 
-private:
-  std::list<cv::Mat> stages_;
+	static void cleanup(Algorithm* base);
+
+	virtual inline Algorithm* cloneEmpty() const override { return new Algo1Test(); }
+
+	void render_rrect(cv::Mat& out, cv::RotatedRect rect);
+	void drawText(cv::Mat& img, cv::Mat& output, std::vector<cv::Vec3f>& colonies);
+
+  private:
 };
 }

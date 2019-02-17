@@ -25,8 +25,8 @@ var algorithms;
 			console.log("Message type: '" +type +"'");
 			console.log("Response: ", data);
 
-			if ("error" in data)				// TODO unclean
-				ShowAlert(data.error, "danger");
+			if (type == "error")				// TODO unclean
+				ShowAlert(JSON.stringify(data), "danger");
 			else if (type == "getimagelist")
 			{
 				console.log(data);
@@ -261,7 +261,8 @@ var UpdateDetectionSettings = function (e){
 	// 		"123": true
 	// 	}
 	// }
-	e.preventDefault();
+	if (e)
+		e.preventDefault();
 	let settings_object = {};
 	let algorithm_id = document.getElementById('select-algorithm').value;
  	let settings = algorithms[algorithm_id].settings;

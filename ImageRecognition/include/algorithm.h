@@ -2,71 +2,85 @@
 
 #include "include/algo_setting.h"
 #include <QRunnable>
+#include <QStack>
 #include <QVector>
-#include <memory>
+#include <functional>
 
-namespace c3picko {
+namespace c3picko
+{
 class AlgoSetting;
 /**
  * @brief Algorithm class
  * @tparam Input data type
  * @tparam Output data type
  */
-class Algorithm : public QObject, public QRunnable {
-  Q_OBJECT
-public:
-  typedef QString ID;
+class Algorithm : public QObject, public QRunnable
+{
+	Q_OBJECT
+  public:
+	typedef QString ID;
+	typedef void (*AlgoStep)(Algorithm*, const void*, void**);
+	typedef void (*AlgoCleanup)(Algorithm*);
 
-  Algorithm(ID id, QString name, QString description,
-            QList<AlgoSetting> settings);
-  virtual ~Algorithm() override;
+	Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup, QList<AlgoSetting> settings);
+	virtual ~Algorithm() override;
 
-  /**
-   * @brief Call with according input data pointer before run()
-   * @param input
-   */
-  void setInput(const void *input);
-  /**
-   * @brief Executes the algorithm. Emits OnFinished() when done.
-   */
-  virtual void run() override = 0;
-  /**
-   * @brief Returns a new instance of the derived class.
-   * Function is similar to common clone() but returns an empty instance, hence
-   * the name.
-   * Used instead of a factory.
-   * @return Pointer to instance.
-   */
-  virtual Algorithm *cloneEmpty() const = 0;
+	/**
+	 * @brief Call with according input data pointer before run()
+	 * @param input
+	 */
+	void setInput(const void* input);
 
-signals:
-  void OnFinished(void *);
+	/**
+	 * @brief Executes the algorithm. Emits OnFinished() when done.
+	 */
+	virtual void run() override;
 
-public:
-  ID id() const;
-  QString name() const;
-  QString description() const;
-  QList<AlgoSetting> settings() const;
+	/**
+	 * @brief Returns a new instance of the derived class.
+	 * Function is similar to common clone() but returns an empty instance, hence
+	 * the name.
+	 * Used instead of a factory.
+	 * @return Pointer to instance.
+	 */
+	virtual Algorithm* cloneEmpty() const = 0;
 
-  AlgoSetting const &settingById(AlgoSetting::ID id) const;
-  AlgoSetting const &settingByName(QString name) const;
+  signals:
+	void OnFinished(void*);
 
-  void setSettingsValueByID(AlgoSetting::ID id, QVariant value);
-  void setSettingsValueByName(QString name, QVariant value);
+  public:
+	ID				   id() const;
+	QString			   name() const;
+	QString			   description() const;
+	QList<AlgoSetting> settings() const;
 
-  void setSettings(QJsonObject const &);
+	AlgoSetting const& settingById(AlgoSetting::ID id) const;
+	AlgoSetting const& settingByName(QString name) const;
 
-  /**
-   * @brief Abstract classes can not be marshallable.
-   */
-  QJsonObject baseToJson() const;
+	void setSettingsValueByID(AlgoSetting::ID id, QVariant value);
+	void setSettingsValueByName(QString name, QVariant value);
 
-protected:
-  const ID id_;
-  const QString name_, description_;
-  QList<AlgoSetting> settings_;
-  // Algorithmic data
-  const void *input_;
+	void setSettings(QJsonObject const&);
+
+	/**
+	 * @brief Abstract classes can not be marshallable.
+	 */
+	QJsonObject baseToJson() const;
+
+	QStack<void*>& stack();
+
+  protected:
+	const ID		   id_;
+	const QString	  name_, description_;
+	QList<AlgoStep>	steps_;
+	AlgoCleanup		   cleanup_;
+	QList<AlgoSetting> settings_;
+	// Algorithmic data
+	const void* input_;
+	/**
+	 * @brief Agorithms can use this stack for storing data until deleting in in the cleanup function
+	 */
+	QStack<void*> stack_;
 };
 MAKE_SERIALIZABLE(Algorithm);
 }
