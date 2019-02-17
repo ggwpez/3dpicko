@@ -265,7 +265,7 @@ var UpdateDetectionSettings = function (e){
 		e.preventDefault();
 	let settings_object = {};
 	let algorithm_id = document.getElementById('select-algorithm').value;
- 	let settings = algorithms[algorithm_id].settings;
+	let settings = algorithms[algorithm_id].settings;
 	for(let key in settings){
 		if(settings[key].type=="slider") settings_object[key] = Number(document.getElementById(key).value);
 		else if(settings[key].type=="checkbox") settings_object[key] = document.getElementById(key).checked;
