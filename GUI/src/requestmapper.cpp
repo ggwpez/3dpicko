@@ -9,9 +9,8 @@
 namespace c3picko {
 
 RequestMapper::RequestMapper(StaticFileController *file_controller,
-                             APIController *api, QObject *parent)
-    : HttpRequestHandler(parent), staticFileController(file_controller),
-      api_(api) {
+                             QObject *parent)
+    : HttpRequestHandler(parent), staticFileController(file_controller) {
   // empty
 }
 

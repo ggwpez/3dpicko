@@ -12,13 +12,12 @@ namespace c3picko {
 class RequestMapper : public HttpRequestHandler {
   Q_OBJECT
 public:
-  RequestMapper(StaticFileController *file_controller, APIController *api,
+  RequestMapper(StaticFileController *file_controller,
                 QObject *parent = nullptr);
   void service(HttpRequest &request, HttpResponse &response);
 
 private:
   StaticFileController *staticFileController;
-  APIController *api_;
 };
 } // namespace c3picko
 #endif // REQUESTMAPPER_H

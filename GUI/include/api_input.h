@@ -22,15 +22,8 @@ public:
   APIInput(APIController *parent);
 
   // WS Version
-  void service(QJsonObject &request, QObject *client);
-
-  QJsonObject createImageList();
-  QJsonObject createImageList(Image);
-  QJsonObject createJobList();
-  QJsonObject createJobList(Job);
-  QJsonObject createDeleteImage(Image);
-  QJsonObject createDeleteJob(Job job);
-  QJsonObject createProfileList();
+  void serviceRequest(QJsonObject &request, const QString &raw_request,
+                      QObject *client);
 
 signals:
   /**

@@ -1,4 +1,4 @@
-QT  = core network websockets
+include(../Main/config.pri)
 
 #TEMPLATE = app
 TEMPLATE = lib
@@ -13,7 +13,10 @@ SOURCES += \
 	src/test.cpp \
 	src/colony.cc \
 	src/colony_type.cc \
-	src/colonydetector.cpp
+    src/algo_setting.cc \
+    src/algorithm.cc \
+    src/algo1_test.cc \
+    src/algorithm_pipeline.cpp
 
 	#src/main.cpp
 
@@ -24,14 +27,15 @@ HEADERS += \
 	include/imageediting.h \
 	include/preprocessing.h \
 	include/test.h \
-include/main.h \
+	include/main.h \
 	include/colony.hpp \
 	include/colony_type.h \
-	include/colonydetector.h
+    include/algo_setting.h \
+    include/algorithm.h \
+    include/algo1_test.h \
+    include/algorithm_pipeline.h
 
 INCLUDEPATH += /usr/local/include/opencv
-INCLUDEPATH += $$PWD/../Main
-QMAKE_CXXFLAGS += -Werror=return-type
 
 LIBS += -L/usr/local/lib/ \
 		-lopencv_core \

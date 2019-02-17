@@ -150,7 +150,7 @@ void StaticFileController::setContentType(QString fileName,
   }
   // Todo: add all of your content types
   else {
-    qDebug("StaticFileController: unknown MIME type for filename '%s'",
-           qPrintable(fileName));
+    /* qDebug("StaticFileController: unknown MIME type for filename '%s'",
+                    qPrintable(fileName));*/
   }
 }

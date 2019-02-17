@@ -29,22 +29,22 @@ private:
    * @brief Center X position relative to the image size. Value in interval
    * [0,1]
    */
-  const double x_;
+  double x_;
   /**
    * @brief Center Y position relative to the image size. Value in interval
    * [0,1]
    */
-  const double y_;
+  double y_;
 
   /**
    * @brief Estimated area in pixel
    */
-  const double area_;
+  double area_;
 
   /**
    * @brief Estimated circumference in pixel widths
    */
-  const double circumference_;
+  double circumference_;
 
   /**
    * @brief Length of the major axis when laying a minimum area ellipse over the
@@ -52,14 +52,14 @@ private:
    *
    * Use this as size when drawing bounding cirles/rectangles!
    */
-  const double major_length_;
+  double major_length_;
 
   /**
    * @brief Absolute detected brightness of the colony. Value in intervall [0,1]
    */
-  const double brightness_;
+  double brightness_;
 
-  const ID id_;
+  ID id_;
 
   Type type_;
 };

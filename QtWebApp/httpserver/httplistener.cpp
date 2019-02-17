@@ -26,7 +26,7 @@ HttpListener::HttpListener(QSettings *settings, QSslConfiguration *ssl,
 
 HttpListener::~HttpListener() {
   close();
-  qDebug("HttpListener: destroyed");
+  qInfo("HttpListener: destroyed");
 }
 
 void HttpListener::listen() {
@@ -41,13 +41,13 @@ void HttpListener::listen() {
     qCritical("HttpListener: Cannot bind on port %i: %s", port,
               qPrintable(errorString()));
   } else {
-    qDebug("HttpListener: Listening on port %i", port);
+    qDebug("HttpListener up at %s:%i", qPrintable(host), port);
   }
 }
 
 void HttpListener::close() {
   QTcpServer::close();
-  qDebug("HttpListener: closed");
+  qInfo("HttpListener: closed");
   if (pool) {
     delete pool;
     pool = NULL;
@@ -56,7 +56,7 @@ void HttpListener::close() {
 
 void HttpListener::incomingConnection(tSocketDescriptor socketDescriptor) {
 #ifdef SUPERVERBOSE
-  qDebug("HttpListener: New connection");
+  qInfo("HttpListener: New connection");
 #endif
 
   HttpConnectionHandler *freeHandler = NULL;
@@ -73,7 +73,7 @@ void HttpListener::incomingConnection(tSocketDescriptor socketDescriptor) {
                               Q_ARG(tSocketDescriptor, socketDescriptor));
   } else {
     // Reject the connection
-    qDebug("HttpListener: Too many incoming connections");
+    qInfo("HttpListener: Too many incoming connections");
     QTcpSocket *socket = new QTcpSocket(this);
     socket->setSocketDescriptor(socketDescriptor);
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));

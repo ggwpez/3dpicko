@@ -8,12 +8,8 @@ template <> QJsonObject Marshalling::toJson(const PrinterProfile &value) {
   QJsonObject obj;
 
   obj["movement_speed"] = QString::number(value.movementSpeed());
-  obj["cut_filament_position_above_trigger_x"] =
-      QString::number(value.cutFilamentPosition().xCoordinate());
-  obj["cut_filament_position_above_trigger_y"] =
-      QString::number(value.cutFilamentPosition().yCoordinate());
-  obj["cut_filament_position_above_trigger_z"] =
-      QString::number(value.cutFilamentPosition().zCoordinate());
+  obj["cut_filament_position_above_trigger"] =
+      Marshalling::toJson(value.cutFilamentPosition());
   obj["z_coordinate_pushing_the_trigger"] =
       QString::number(value.zCoordinatePushingTheTrigger());
   obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"] =
@@ -31,9 +27,8 @@ template <> QJsonObject Marshalling::toJson(const PrinterProfile &value) {
 template <> PrinterProfile Marshalling::fromJson(const QJsonObject &obj) {
   return PrinterProfile(
       obj["movement_speed"].toString().toInt(),
-      Point(obj["cut_filament_position_above_trigger_x"].toString().toDouble(),
-            obj["cut_filament_position_above_trigger_y"].toString().toDouble(),
-            obj["cut_filament_position_above_trigger_z"].toString().toDouble()),
+      Marshalling::fromJson<Point>(
+          obj["cut_filament_position_above_trigger"].toObject()),
       obj["z_coordinate_pushing_the_trigger"].toString().toDouble(),
       obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"]
           .toString()
@@ -54,40 +49,36 @@ template <> QJsonObject Marshalling::toJson(const PlateSocketProfile &value) {
   obj["depth_of_cutout_the_source_plate_lies_in"] =
       QString::number(value.depthOfCutoutSourcePlateLiesIn());
 
-  obj["global_origin_of_goal_plate_x"] =
-      QString::number(value.originOfGoalPlate().xCoordinate());
-  obj["global_origin_of_goal_plate_y"] =
-      QString::number(value.originOfGoalPlate().yCoordinate());
-
-  obj["global_origin_of_master_plate_x"] =
-      QString::number(value.originOfMasterPlate().xCoordinate());
-  obj["global_origin_of_master_plate_y"] =
-      QString::number(value.originOfMasterPlate().yCoordinate());
-
-  obj["global_origin_of_source_plate_x"] =
-      QString::number(value.originOfSourcePlate().xCoordinate());
-  obj["global_origin_of_source_plate_y"] =
-      QString::number(value.originOfSourcePlate().yCoordinate());
+  obj["global_origin_of_source_plate"] =
+      Marshalling::toJson(value.originOfSourcePlate());
+  obj["global_origin_of_master_plate"] =
+      Marshalling::toJson(value.originOfMasterPlate());
+  obj["global_origin_of_goal_plate"] =
+      Marshalling::toJson(value.originOfGoalPlate());
 
   obj["orientation_of_goal_plate"] =
       (value.orientationOfGoalPlate() == kFirstRowFirstColumnAtCutoutOrigin
            ? "kFirstRowFirstColumnAtCutoutOrigin"
            : "kLastRowFirstColumnAtCutoutOrigin");
-  obj["socket_origin_offset_x"] = QString::number(value.originOffsetX());
-  obj["socket_origin_offset_y"] = QString::number(value.originOffsetY());
-  obj["socket_origin_offset_z"] = QString::number(value.originOffsetZ());
+
+  obj["socket_origin_offset"] =
+      Marshalling::toJson(Point(value.originOffsetX(), value.originOffsetY(),
+                                value.originOffsetZ())); // TODO Dumb
 
   return obj;
 }
 
 template <> PlateSocketProfile Marshalling::fromJson(const QJsonObject &obj) {
+  Point socket_origin_offset(
+      Marshalling::fromJson<Point>(obj["socket_origin_offset"].toObject()));
+
   return PlateSocketProfile(
-      Point(obj["global_origin_of_source_plate_x"].toString().toDouble(),
-            obj["global_origin_of_source_plate_y"].toString().toDouble()),
-      Point(obj["global_origin_of_master_plate_x"].toString().toDouble(),
-            obj["global_origin_of_master_plate_y"].toString().toDouble()),
-      Point(obj["global_origin_of_goal_plate_x"].toString().toDouble(),
-            obj["global_origin_of_goal_plate_y"].toString().toDouble()),
+      Marshalling::fromJson<Point>(
+          obj["global_origin_of_source_plate"].toObject()),
+      Marshalling::fromJson<Point>(
+          obj["global_origin_of_master_plate"].toObject()),
+      Marshalling::fromJson<Point>(
+          obj["global_origin_of_goal_plate"].toObject()),
       obj["orientation_of_goal_plate"].toString() ==
               "kFirstRowFirstColumnAtCutoutOrigin"
           ? kFirstRowFirstColumnAtCutoutOrigin
@@ -96,11 +87,8 @@ template <> PlateSocketProfile Marshalling::fromJson(const QJsonObject &obj) {
       obj["depth_of_cutout_the_master_plate_lies_in"].toString().toDouble(),
 
       obj["depth_of_cutout_the_goal_plate_lies_in"].toString().toDouble(),
-
-      obj["socket_origin_offset_x"].toString().toDouble(),
-      obj["socket_origin_offset_y"].toString().toDouble(),
-
-      obj["socket_origin_offset_z"].toString().toDouble());
+      socket_origin_offset.xCoordinate(), socket_origin_offset.yCoordinate(),
+      socket_origin_offset.zCoordinate());
 }
 
 template <> QJsonObject Marshalling::toJson(const PlateProfile &value) {

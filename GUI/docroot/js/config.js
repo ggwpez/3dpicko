@@ -1,33 +1,57 @@
 var UpdateSettingsProfile = function (e){
+  // var send = {
+  //   id: "XYZ",
+  //   type: "printer-profile",
+  //   profile_name: "Example Printer",
+  //   settings: {
+  //     "cut_filament_position_above_trigger": {x: 1,y: 2, z: 3},
+  //     "z_coordinate_pushing_the_trigger": 4,
+  //     ...
+  //   }
+  // };
+  
   e.preventDefault();
   
   const form_data = new FormData(this);
-  var json_object = {};
-  for (const [key, value]  of form_data.entries()) {
-    json_object[key] = value;
+  let type = form_data.get('type');
+  let value = "";
+  var json_object = {
+    id: form_data.get('id'),
+    type: form_data.get('type'),
+    profile_name: form_data.get('profile_name'),
+    settings: {}
+  };
+  let template = profile_templates[type].settings;
+  for (let id in template){
+    if (template[id].type == 'number' || template[id].type == 'slider' || template[id].type == 'range') value = Number(form_data.get(id));
+    else if (template[id].type == 'checkbox') value = form_data.has(id);
+    else if (template[id].type == 'radio') value = form_data.get(id);
+    else if (template[id].type == 'vector3') value = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1]), z: Number(form_data.getAll(id)[2])};
+    else if (template[id].type == 'vector2') value = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1])};
+    json_object.settings[id] = value;
   }
-  if(json_object.id == "new-printer-profile" || json_object.id == "new-socket-profile" || json_object.id == "new-plate-profile"){
-    $('#form-new-'+json_object.type)[0].reset();
-    $('#collapse-new-'+json_object.type).collapse('hide');
+
+  // console.log({json_object});
+  $('#collapse-'+json_object.id).collapse('hide');
+  if (json_object.id == "new-printer-profile" || json_object.id == "new-socket-profile" || json_object.id == "new-plate-profile"){
+    $('#form-new-'+type)[0].reset();
     api("createsettingsprofile", json_object);
   } 
-  else{
-    $('#collapse-'+json_object.id).collapse('hide');
-    api("updatesettingsprofile", json_object);
-  } 
+  else api("updatesettingsprofile", json_object);
 }
 
 $(function LoadProfiles(){
   // empty "new-profiles"
-  AddProfileToList(printer_prototype);
-  AddProfileToList(socket_prototype);
-  AddProfileToList(plate_prototype);
+  AddProfileToList(profile_templates['printer-profile']);
+  AddProfileToList(profile_templates['socket-profile']);
+  AddProfileToList(profile_templates['plate-profile']);
   // debugging profiles
   AddProfileToList(example_printer);
   AddProfileToList(makergear);
   AddProfileToList(creality);  
   AddProfileToList(prototyp1);
   AddProfileToList(default_plate);
+  AddProfileToList(large_plate);
 });
 
 function CreateFormGroupHtml({id, name, type, value, description="", min="" , max="", step=1, unit="mm", options={}}, new_value = ""){
@@ -39,10 +63,10 @@ function CreateFormGroupHtml({id, name, type, value, description="", min="" , ma
     form_group += `${CreateNumberInputHtml(id, min, max, step, value)} ${unit}.`;
   }
   else if (type == "vector3"){
-    form_group += `(${CreateNumberInputHtml(id+"_x", min, max, step, value[0])},${CreateNumberInputHtml(id+"_y", min, max, step, value[1])},${CreateNumberInputHtml(id+"_z", min, max, step, value[2])}) ${unit}.`;
+    form_group += `(${CreateNumberInputHtml(id, min, max, step, value.x)},${CreateNumberInputHtml(id, min, max, step, value.y)},${CreateNumberInputHtml(id, min, max, step, value.z)}) ${unit}.`;
   }
   else if (type == "vector2"){
-    form_group += `(${CreateNumberInputHtml(id+"_x", min, max, step, value[0])},${CreateNumberInputHtml(id+"_y", min, max, step, value[1])}) ${unit}.`;
+    form_group += `(${CreateNumberInputHtml(id, min, max, step, value.x)},${CreateNumberInputHtml(id, min, max, step, value.y)}) ${unit}.`;
   }
   else if (type == "slider" || type == "range"){
     form_group += `
@@ -79,26 +103,24 @@ function CreateRadioInputHtml(id, option_id, option, value){
 function AddProfileToList(profile){
  if(profile.id in all_profiles){
     // update profile (delete old profile)
+    // TODO check if new values
     DeleteProfile(profile.id);
   }
-  let link_text = profile.profile_name;
   let button_text = "Save changes";
-  let deletable = true;
+  let new_profile = false;
 
   if(profile.id == "new-"+profile.type){
-    link_text = "Create new " + profile.type + " &gt;"; 
     button_text = "Create profile";
-    deletable = false;
+    new_profile = true;
   }
   else all_profiles[profile.id] = profile;
-
   let html = `
   <div class="card" id="card-${profile.id}">
   <div class="card-header">
   <h2 class="mb-0">
-  ${deletable ? `<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${profile.id}">&times;</button>` : ``}
+  ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${profile.id}">&times;</button>`}
   <button id="link-${profile.id}" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-${profile.id}">
-  ${link_text}
+  ${profile.profile_name}
   </button>
   </h2>
   </div>
@@ -109,57 +131,38 @@ function AddProfileToList(profile){
   <input type="hidden" id="type" name="type" value="${profile.type}">
   <div class="form-group">
   <label for="profile_name">Profile identifier:</label>
-  <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${profile.profile_name}">
+  <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
   </div>`;
 
+  // TODO? filament_extrusion_length_on_move_offset and filament_extrusion_length_on_pick_and_put_onto_master_plate_offset not send by server
+  if(profile.type == "printer-profile"&&!("filament_extrusion_length_on_move_offset" in profile.settings)){
+    profile.settings.filament_extrusion_length_on_move_offset = profile.settings.filament_extrusion_length_on_move - profile.settings.filament_extrusion_length_default;
+    profile.settings.filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = profile.settings.filament_extrusion_length_on_pick_and_put_onto_master_plate - profile.settings.filament_extrusion_length_default;
+  } 
 
-  let profile_prototyp;
-  if(!("settings" in profile)){
-    if(profile.type == "printer-profile"){
-      // TODO?
-      if(!("filament_extrusion_length_on_move_offset" in profile)){
-        profile.filament_extrusion_length_on_move_offset = profile.filament_extrusion_length_on_move - profile.filament_extrusion_length_default;
-        profile.filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = profile.filament_extrusion_length_on_pick_and_put_onto_master_plate - profile.filament_extrusion_length_default;
-      } 
-      profile_prototyp = printer_prototype;
-    }
-    else if(profile.type == "socket-profile") profile_prototyp = socket_prototype;
-    else if(profile.type == "plate-profile") profile_prototyp = plate_prototype;
-
-    for(let settings_id in profile_prototyp.settings){
-      let settings = profile_prototyp.settings[settings_id];
-      settings.id = settings_id;
-      let new_value;
-      if(settings.type == "vector3") new_value = [profile[settings_id+"_x"], profile[settings_id+"_y"], profile[settings_id+"_z"]];
-      else if(settings.type == "vector2")new_value = [profile[settings_id+"_x"], profile[settings_id+"_y"]];
-      else new_value = profile[settings_id];  
-      html += CreateFormGroupHtml(settings, new_value);
-    }
+  let template = profile_templates[profile.type].settings;
+  for(let setting_id in template){
+    let setting = template[setting_id];
+    setting.id = setting_id;
+    if(typeof(profile.settings[setting_id]) === 'object'&&profile.settings[setting_id].name) html += CreateFormGroupHtml(profile.settings[setting_id]);
+    else html += CreateFormGroupHtml(setting, profile.settings[setting_id]);
   }
-  else{
-    for(let settings_id in profile.settings){
-      let settings = profile.settings[settings_id];
-      settings.id = settings_id;
-      html += CreateFormGroupHtml(settings);
-    }
-  }
-
   html += `<button type="submit" class="btn btn-primary">${button_text}</button></form></div></div></div>`;
 
   document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
 
   $('#form-'+profile.id).on('submit', UpdateSettingsProfile);
   $('#form-'+profile.id).on('focus', 'input', function(){this.select();});
-
   $('#form-'+profile.id+' input[type="number"]').on('input', function(){
     if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
   }).trigger('input');
 
-  if(profile.profile_name != "" && (profile.type == "printer-profile" || profile.type == "socket-profile")){
+  if(!(new_profile) && (profile.type == "printer-profile" || profile.type == "socket-profile")){
     let profile_option = document.createElement('option');
     profile_option.value = profile.id;
     profile_option.text = profile.profile_name;
-    document.getElementById("select-"+profile.type).appendChild(profile_option);
+    // TODO issue#18 .add(profile_option, 0); and select
+    document.getElementById("select-"+profile.type).add(profile_option);
   }
 }
 
@@ -182,240 +185,240 @@ function DeleteProfile(id){
   }
 }
 
-let printer_prototype = {
-  id : "new-printer-profile",
-  type : "printer-profile",
-  profile_name : "",
-  settings: {
-    "cut_filament_position_above_trigger": {
-      name: "Cut position",
-      type: "vector3",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The (x,y,z) position, in the coordinate system of the printer, the nozzle needs to move to in order to be above the trigger of the scissor and directly above the center of the space between the scissors blades."
-    },
-    "z_coordinate_pushing_the_trigger": {
-      name: "Push trigger at",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
-    },    
-    "distance_between_pushed_trigger_and_gap_between_scissors_blade": {
-      name: "Cut distance",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut.",
-    },
-    "movement_speed": {
-      name: "Movement speed",
-      type: "number",
-      min: 0,
-      step: 1,
-      value: "",
-      unit: "mm/min",
-      description: "The speed the nozzle is moved with.",
-    },
-    "filament_extrusion_length_on_move_offset": {
-      name: "Filament offset (move)",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates.",
-    },
-    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": {
-      name: "Filament offset (pick)",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate.",
-    }
-  }
-};
-
-let socket_prototype = {
-  id : "new-socket-profile",
-  type : "socket-profile",
-  profile_name : "",
-  settings: {
-    "socket_origin_offset": {
-      name: "Socket origin offset",
-      type: "vector3",
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The (x,y,z) offset of the socket origin (with z-origin on socket surface) to the origin of the printers coordinate system (home)."
-    },
-    "global_origin_of_source_plate": {
-      name: "Source plate cutout origin",
-      type: "vector2",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The (x,y) origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket."
-    },    
-    "depth_of_cutout_the_source_plate_lies_in": {
-      name: "Source plate cutout depth",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The source plate cutout depth."
-    },
-    "global_origin_of_master_plate": {
-      name: "Master plate cutout origin",
-      type: "vector2",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The (x,y) origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket."
-    },    
-    "depth_of_cutout_the_master_plate_lies_in": {
-      name: "Master plate cutout depth",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The master plate cutout depth."
-    },
-    "global_origin_of_goal_plate": {
-      name: "Goal plate cutout origin",
-      type: "vector2",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The (x,y) origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket."
-    },    
-    "depth_of_cutout_the_goal_plate_lies_in": {
-      name: "Goal plate cutout depth",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The goal plate cutout depth."
-    },
-    "orientation_of_goal_plate" : {
-      name: "Goal and master plate orientation",
-      type: "radio",
-      description: "Orientation of goal- and masterplate compared to the cutout it is lying in.",
-      options: {
-        kFirstRowFirstColumnAtCutoutOrigin : "Well 'A1' at cutout origin.",
-        kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m = last row)"
+let profile_templates = {
+  "printer-profile": {
+    id : "new-printer-profile",
+    type : "printer-profile",
+    profile_name : "Create New Printer Profile &gt;",
+    settings: {
+      "cut_filament_position_above_trigger": {
+        name: "Cut position",
+        type: "vector3",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The (x,y,z) position, in the coordinate system of the printer, the nozzle needs to move to in order to be above the trigger of the scissor and directly above the center of the space between the scissors blades."
       },
-      value: "kFirstRowFirstColumnAtCutoutOrigin" 
+      "z_coordinate_pushing_the_trigger": {
+        name: "Push trigger at",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
+      },    
+      "distance_between_pushed_trigger_and_gap_between_scissors_blade": {
+        name: "Cut distance",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut."
+      },
+      "movement_speed": {
+        name: "Movement speed",
+        type: "number",
+        min: 0,
+        step: 1,
+        value: "",
+        unit: "mm/min",
+        description: "The speed the nozzle is moved with."
+      },
+      "filament_extrusion_length_on_move_offset": {
+        name: "Filament offset (move)",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates."
+      },
+      "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": {
+        name: "Filament offset (pick)",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate."
+      }
     }
-  }
-};
-
-let plate_prototype = {
-  id : "new-plate-profile",
-  type : "plate-profile",
-  profile_name : "",
-  settings: {
-    "number_of_rows": {
-      name: "Number of rows",
-      type: "number",
-      step: 1,
-      value: "",
-      unit: "",
-      description: "Number of rows the goal plate has."
-    },
-    "number_of_columns": {
-      name: "Number of columns",
-      type: "number",
-      step: 1,
-      value: "",
-      unit: "",
-      description: "Number of columns the goal plate has."
-    },
-    "a1_row_offset": {
-      name: "A1 row offset:",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The offset of the center of the first well A1 to the upper edge of the goal plate."
-    },    
-    "a1_column_offset": {
-      name: "A1 column offset",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The offset of the center of the first well A1 to the left edge of the goal plate."
-    }, 
-    "well_spacing_center_to_center": {
-      name: "Well spacing center to center",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The distance between the center of a well to the center of any directly adjacent well."
-    }, 
-    "height_source_plate": {
-      name: "Source plate height",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The height of the source plate."
-    },
-    "height_master_plate": {
-      name: "Master plate height",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The height of the master plate."
-    }, 
-    "height_goal_plate": {
-      name: "Goal plate height",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The height of the goal plate."
-    },  
-    "well_depth": {
-      name: "Well depth",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The depth of every well."
-    }, 
-    "well_depth": {
-      name: "Culture medium thickness",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: "",
-      unit: "mm",
-      description: "The thickness of the used culture medium inside the source and master plate, for instance agars."
+  },
+  "socket-profile" : {
+    id : "new-socket-profile",
+    type : "socket-profile",
+    profile_name : "Create New Socket Profile &gt;",
+    settings: {
+      "socket_origin_offset": {
+        name: "Socket origin offset",
+        type: "vector3",
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The (x,y,z) offset of the socket origin (with z-origin on socket surface) to the origin of the printers coordinate system (home)."
+      },
+      "global_origin_of_source_plate": {
+        name: "Source plate cutout origin",
+        type: "vector2",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The (x,y) origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket."
+      },    
+      "depth_of_cutout_the_source_plate_lies_in": {
+        name: "Source plate cutout depth",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The source plate cutout depth."
+      },
+      "global_origin_of_master_plate": {
+        name: "Master plate cutout origin",
+        type: "vector2",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The (x,y) origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket."
+      },    
+      "depth_of_cutout_the_master_plate_lies_in": {
+        name: "Master plate cutout depth",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The master plate cutout depth."
+      },
+      "global_origin_of_goal_plate": {
+        name: "Goal plate cutout origin",
+        type: "vector2",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The (x,y) origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket."
+      },    
+      "depth_of_cutout_the_goal_plate_lies_in": {
+        name: "Goal plate cutout depth",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The goal plate cutout depth."
+      },
+      "orientation_of_goal_plate" : {
+        name: "Goal and master plate orientation",
+        type: "radio",
+        description: "Orientation of goal- and masterplate compared to the cutout it is lying in.",
+        options: {
+          kFirstRowFirstColumnAtCutoutOrigin : "Well 'A1' at cutout origin.",
+          kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m = last row)"
+        },
+        value: "kFirstRowFirstColumnAtCutoutOrigin" 
+      }
+    }
+  },
+  "plate-profile" : {
+    id : "new-plate-profile",
+    type : "plate-profile",
+    profile_name : "Create New Plate Profile &gt;",
+    settings: {
+      "number_of_rows": {
+        name: "Number of rows",
+        type: "number",
+        step: 1,
+        value: "",
+        unit: "",
+        description: "Number of rows the goal plate has."
+      },
+      "number_of_columns": {
+        name: "Number of columns",
+        type: "number",
+        step: 1,
+        value: "",
+        unit: "",
+        description: "Number of columns the goal plate has."
+      },
+      "a1_row_offset": {
+        name: "A1 row offset:",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The offset of the center of the first well A1 to the upper edge of the goal plate."
+      },    
+      "a1_column_offset": {
+        name: "A1 column offset",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The offset of the center of the first well A1 to the left edge of the goal plate."
+      }, 
+      "well_spacing_center_to_center": {
+        name: "Well spacing center to center",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The distance between the center of a well to the center of any directly adjacent well."
+      }, 
+      "height_source_plate": {
+        name: "Source plate height",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The height of the source plate."
+      },
+      "height_master_plate": {
+        name: "Master plate height",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The height of the master plate."
+      }, 
+      "height_goal_plate": {
+        name: "Goal plate height",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The height of the goal plate."
+      },  
+      "well_depth": {
+        name: "Well depth",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The depth of every well."
+      }, 
+      "well_depth": {
+        name: "Culture medium thickness",
+        type: "number",
+        min: 0,
+        step: 0.01,
+        value: "",
+        unit: "mm",
+        description: "The thickness of the used culture medium inside the source and master plate, for instance agars."
+      }
     }
   }
 };
@@ -434,7 +437,7 @@ let example_printer = {
       type: "vector3",
       min: 0,
       step: 0.01,
-      value: [11,12,13],
+      value: {x:11,y:12,z:13},
       unit: "mm",
       description: "The (x,y,z) position, in the coordinate system of the printer, the nozzle needs to move to in order to be above the trigger of the scissor and directly above the center of the space between the scissors blades."
     },
@@ -485,62 +488,79 @@ let example_printer = {
     }
   }
 };
+
 let prototyp1 = {
   "id" : "DEFAULTBLUE",
   "type" : "socket-profile",
-  "socket_origin_offset_x" : "1",
-  "socket_origin_offset_y" : "2",
-  "socket_origin_offset_z" : "3",
   "profile_name" : "Default Socket Blue",
-  "global_origin_of_source_plate_x" : "4",
-  "global_origin_of_source_plate_y" : "5",
-  "depth_of_cutout_the_source_plate_lies_in" : "6",
-  "global_origin_of_master_plate_x" : "7",
-  "global_origin_of_master_plate_y" : "8",
-  "depth_of_cutout_the_master_plate_lies_in" : "9",
-  "global_origin_of_goal_plate_x" : "10",
-  "global_origin_of_goal_plate_y" : "11",
-  "depth_of_cutout_the_goal_plate_lies_in" : "12",
-  "orientation_of_goal_plate" : "kFirstRowFirstColumnAtCutoutOrigin"
+  settings: {
+    "socket_origin_offset" : {x: 1, y: 2, z: 3},
+    "global_origin_of_source_plate" : {x:4, y:5},
+    "depth_of_cutout_the_source_plate_lies_in" : 6,
+    "global_origin_of_master_plate" : {x:7,y:8},
+    "depth_of_cutout_the_master_plate_lies_in" : 9,
+    "global_origin_of_goal_plate" : {x:10,y:11},
+    "depth_of_cutout_the_goal_plate_lies_in" : 12,
+    "orientation_of_goal_plate" : "kLastRowFirstColumnAtCutoutOrigin"
+  }
 };
 let default_plate = {
   "id" : "DEFALUTPLATE",
   "type" : "plate-profile",
   "profile_name" : "Default Plates - 96 Wells",
-  "number_of_rows" : "8",
-  "number_of_columns" : "12",
-  "a1_row_offset" : "1",
-  "a1_column_offset" : "2",
-  "well_spacing_center_to_center" : "3",
-  "height_source_plate" : "4",
-  "height_master_plate" : "5",
-  "height_goal_plate" : "6",
-  "well_depth" : "7",
-  "culture_medium_thickness" : "8"
-}
+  settings:{
+    "number_of_rows" : 8,
+    "number_of_columns" : 12,
+    "a1_row_offset" : 1,
+    "a1_column_offset" : 2,
+    "well_spacing_center_to_center" : 3,
+    "height_source_plate" : 4,
+    "height_master_plate" : 5,
+    "height_goal_plate" : 6,
+    "well_depth" : 7,
+    "culture_medium_thickness" : 8
+  }
+};
+let large_plate = {
+  "id" : "LARGEPLATE",
+  "type" : "plate-profile",
+  "profile_name" : "LargePlate - 16x24=384 Wells",
+  settings:{
+    "number_of_rows" : 16,
+    "number_of_columns" : 24,
+    "a1_row_offset" : 1,
+    "a1_column_offset" : 2,
+    "well_spacing_center_to_center" : 3,
+    "height_source_plate" : 4,
+    "height_master_plate" : 5,
+    "height_goal_plate" : 6,
+    "well_depth" : 7,
+    "culture_medium_thickness" : 8
+  }
+};
 let makergear = {
   "id" : "XYZ",
   "type" : "printer-profile",
   "profile_name" : "Makergear M3",
-  "cut_filament_position_above_trigger_x" : "1",
-  "cut_filament_position_above_trigger_y" : "2",
-  "cut_filament_position_above_trigger_z" : "3",
-  "z_coordinate_pushing_the_trigger" : "4",
-  "distance_between_pushed_trigger_and_gap_between_scissors_blade" : "5",
-  "movement_speed" : "6",
-  "filament_extrusion_length_on_move_offset": "7",
-  "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : "8"
+  settings:{
+    "cut_filament_position_above_trigger" : {x:1,y:2,z:3},
+    "z_coordinate_pushing_the_trigger" : 4,
+    "distance_between_pushed_trigger_and_gap_between_scissors_blade" : 5,
+    "movement_speed" : 6,
+    "filament_extrusion_length_on_move_offset": 7,
+    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : 8
+  }
 };
 let creality = {
   "id" : "ABC",
   "type" : "printer-profile",
   "profile_name" : "Creality Ender-3",
-  "cut_filament_position_above_trigger_x" : "1",
-  "cut_filament_position_above_trigger_y" : "2",
-  "cut_filament_position_above_trigger_z" : "3",
-  "z_coordinate_pushing_the_trigger" : "4",
-  "distance_between_pushed_trigger_and_gap_between_scissors_blade" : "5",
-  "movement_speed" : "6",
-  "filament_extrusion_length_on_move_offset": "7",
-  "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : "8"
+  settings:{
+    "cut_filament_position_above_trigger" : {x:1,y:2,z:3},
+    "z_coordinate_pushing_the_trigger" : 4,
+    "distance_between_pushed_trigger_and_gap_between_scissors_blade" : 5,
+    "movement_speed" : 6,
+    "filament_extrusion_length_on_move_offset": 7,
+    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : 8
+  }
 };

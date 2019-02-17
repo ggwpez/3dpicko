@@ -25,8 +25,8 @@ var algorithms;
 			console.log("Message type: '" +type +"'");
 			console.log("Response: ", data);
 
-			if ("error" in data)				// TODO unclean
-				ShowAlert(data.error, "danger");
+			if (type == "error")				// TODO unclean
+				ShowAlert(JSON.stringify(data), "danger");
 			else if (type == "getimagelist")
 			{
 				console.log(data);
@@ -75,6 +75,7 @@ var algorithms;
 			else if (type == "createjob")
 			{
 				AddJobToList(data);
+				current_job = data;
 				document.getElementById("headertag").innerHTML = "Entwurf #" +data.id;
 				// current_job = data;
 				ShowAlert("Pickjob "+data.id+" saved.", "success");
@@ -109,11 +110,11 @@ var algorithms;
 			}
 			else if (type == "getpositions")
 			{
-				console.log("Positions\n" +JSON.stringify(data));
 				drawPositions(data);
 			}
 			else if (type == "getdetectionalgorithms"){
 				GetDetectionAlgorithms(data);
+				console.log("########## Algos", JSON.stringify(data));
 			}
 			else if (type == "updatedetectionsettings"){
 				// TODO
@@ -139,7 +140,7 @@ var algorithms;
 function GetDetectionAlgorithms(detection_algorithms){
 	algorithms = detection_algorithms;
 	// TODO Remove (only for debugging)
-	algorithms = {
+	/*algorithms = {
 		"321":
 		{
 			name: "Fluro",
@@ -203,7 +204,7 @@ function GetDetectionAlgorithms(detection_algorithms){
 				}
 			}
 		}
-	}
+	}*/
 	
 	const algorithm_selection = document.getElementById("select-algorithm");
 	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
@@ -212,7 +213,7 @@ function GetDetectionAlgorithms(detection_algorithms){
 		let algorithm = algorithms[id];
 		let algorithm_option = document.createElement('option');
 		algorithm_option.value = id;
-		algorithm_option.text = algorithm.name + " (" + algorithm.description + ")";
+		algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
 		algorithm_option.title = algorithm.description;
 		algorithm_selection.appendChild(algorithm_option);
 	}
@@ -252,6 +253,7 @@ function GetDetectionAlgorithmSettings(id){
 var UpdateDetectionSettings = function (e){
 	// Send as:
 	// {
+	//	job_id: "222",
 	// 	algorithm: "321",
 	// 	settings:
 	// 	{
@@ -259,7 +261,8 @@ var UpdateDetectionSettings = function (e){
 	// 		"123": true
 	// 	}
 	// }
-	e.preventDefault();
+	if (e)
+		e.preventDefault();
 	let settings_object = {};
 	let algorithm_id = document.getElementById('select-algorithm').value;
 	let settings = algorithms[algorithm_id].settings;
@@ -269,6 +272,7 @@ var UpdateDetectionSettings = function (e){
 	}
 
 	new_settings = {
+		job_id : current_job.id,
 		algorithm: algorithm_id,
 		settings: settings_object
 	};
@@ -396,8 +400,8 @@ function SetChosen(image_id){
 		chosen_image = images_list[image_id];
 		console.log("Selecting image ", image_id);
 		div_chosen.innerHTML = `
-		<ul><li>Dateiname: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
-		<button class="btn btn-primary" onclick="cutTab()">Choose image ></button>\
+		<ul><li>Filename: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
+		<button class="btn btn-primary" onclick="cutTab()">Choose This Image &gt;</button>\
 		`;
 		class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
 		class_dropzone.removeClass('empty');
@@ -481,7 +485,7 @@ function selectionTab(){
 		api("createjob", current_job);
 		api("getdetectionalgorithms");	// TODO should we put this in the init?
 		// TODO Remove (only for debugging)
-		GetDetectionAlgorithms({});
+		//GetDetectionAlgorithms({});
 		$('#detection-settings-div').show();
 	} 
 }
@@ -489,11 +493,12 @@ function selectionTab(){
 function strategyTab(){
 	$('#detection-settings-div').hide();
 	let plate_selection = document.getElementById("select-plate-profile");
+	console.log(all_profiles);
 	for(let profile_id in all_profiles){
 		let profile = all_profiles[profile_id];
 		if(profile.type=="plate-profile"){
 			//TODO read number of colonys
-			if(profile.number_of_rows*profile.number_of_columns >= 96){
+			if(profile.settings.number_of_rows*profile.settings.number_of_columns >= 96){
 				let plate_profile_option = document.createElement('option');
 				plate_profile_option.value = profile.id;
 				plate_profile_option.text = profile.profile_name;
@@ -502,10 +507,10 @@ function strategyTab(){
 		}
 	}
 	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-	drawWells(all_profiles[plate_id].number_of_columns, all_profiles[plate_id].number_of_rows);
+	drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
 	plate_selection.addEventListener("change", function(){
 		const plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-		drawWells(all_profiles[plate_id].number_of_columns, all_profiles[plate_id].number_of_rows);
+		drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
 	});
 
 	tabEnter(4);
@@ -515,9 +520,14 @@ function overviewTab(){
 	tabEnter(5);
 	console.log(all_jobs);
 	console.log(current_job);
-	// TODO get processed images
+	canvas_layer0 = document.getElementById('layer0');
+	canvas_layer1 = document.getElementById('layer1');
+	// TODO onclick resize
 	const html = `
-	<img id="processed-image" src="${images_list[current_job.img_id].path}" width="50%">
+	<div style="position: relative;">
+	<img id="processed-layer0" src="${canvas_layer0.toDataURL()}" width="100%" style="z-index: 0;">
+	<img id="processed-layer1" src="${canvas_layer1.toDataURL()}" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
+	</div>
 	<ul class="mt-2">
 	<li>Job name: ${current_job.name}</li>
 	<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>

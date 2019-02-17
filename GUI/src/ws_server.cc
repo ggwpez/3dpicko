@@ -10,8 +10,8 @@
 namespace c3picko {
 
 WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
-                   APIController *api, QObject *_parent)
-    : QObject(_parent), api_(api),
+                   QObject *_parent)
+    : QObject(_parent), settings_(settings),
       server_(new QWebSocketServer(QStringLiteral("Echo Server"),
                                    (ssl ? QWebSocketServer::SecureMode
                                         : QWebSocketServer::NonSecureMode),
@@ -19,17 +19,14 @@ WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
   if (ssl)
     server_->setSslConfiguration(*ssl);
 
-  QString host = settings->value("host").toString();
-  if (server_->listen((host.isEmpty() ? QHostAddress::Any : QHostAddress(host)),
-                      8888)) {
-    qDebug() << "WebSocket server listening on port" << 8888;
+  host_ = settings->value("host", defaultHost()).toString();
+  int port = settings->value("port", defaultPort()).toInt();
 
-    connect(server_, SIGNAL(sslErrors(const QList<QSslError> &)), this,
-            SLOT(SslErrors(const QList<QSslError> &)));
-    connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
-    connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
-    emit OnStarted();
-  }
+  if (port >= (1 << 16) || port < 0) {
+    port_ = defaultPort();
+    qWarning() << "Port invalid (" << port << "), defaulted to" << port_;
+  } else
+    port_ = quint16(port);
 }
 
 void WsServer::NewConnection() {
@@ -37,6 +34,8 @@ void WsServer::NewConnection() {
   if (!pSocket)
     return;
 
+  connect(pSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+          SLOT(clientError(QAbstractSocket::SocketError)));
   connect(pSocket, SIGNAL(textMessageReceived(QString)), this,
           SLOT(NewTextData(QString)));
   connect(pSocket, SIGNAL(binaryMessageReceived(QByteArray)), this,
@@ -53,7 +52,8 @@ void WsServer::NewTextData(QString data) {
   // qDebug() << "Text data" << data;
   if (client) {
     QJsonObject req = QJsonDocument::fromJson(data.toUtf8()).object();
-    ServiceRequestForClient(req, client);
+
+    emit OnRequest(req, data, client);
   } else
     qFatal(
         "%s",
@@ -64,11 +64,11 @@ void WsServer::NewTextData(QString data) {
                                                          // slot
 }
 
-void WsServer::NewBinaryData(QByteArray data) {
+void WsServer::NewBinaryData(QByteArray) {
   QWebSocket *client = qobject_cast<QWebSocket *>(sender());
 
   if (client) {
-    qWarning() << "Binary from client ignored " << client;
+    qWarning() << "Binary from client ignored" << client;
   }
 }
 
@@ -82,110 +82,83 @@ void WsServer::ConnectionClosed() {
   }
 }
 
-/*void WsServer::NewFile(Image img, QObject* socket)
-{
-        qDebug() << "New image #" << img.path();
-        QJsonObject json = api_->createImageList(img);
-
-        for (QWebSocket* client : clients_)
-        {
-                if (client != socket)
-                        this->SendToClient("getimagelist", json, client);
-        }
+void WsServer::clientError(QAbstractSocket::SocketError ec) {
+  qDebug() << "WsServer::clientError" << ec;
 }
 
-void WsServer::NewJob(Job job, QObject* socket)
-{
-        qDebug() << "New job #" << job.id();
-        QJsonObject json = api_->createJobList(job);
+bool WsServer::StartListen() {
+  if (server_->listen(QHostAddress(host_), port_)) {
+    qDebug("WebSocket server up at %s:%d", qPrintable(host_), port_);
 
-        for (QWebSocket* client : clients_)
-        {
-                if (client != socket)
-                        this->SendToClient("getjoblist", json, client);
-        }
+    connect(server_, &QWebSocketServer::acceptError, this,
+            &WsServer::acceptError);
+    connect(server_, &QWebSocketServer::peerVerifyError, this,
+            &WsServer::peerVerifyError);
+    connect(server_, &QWebSocketServer::sslErrors, this, &WsServer::sslErrors);
+    connect(server_, &QWebSocketServer::serverError, this,
+            &WsServer::serverError);
+    connect(server_, SIGNAL(newConnection()), this, SLOT(NewConnection()));
+    connect(server_, SIGNAL(closed()), this, SIGNAL(OnStopped()));
+    emit OnStarted();
+    return true;
+  } else {
+    qCritical("%s", qPrintable(server_->errorString()));
+    return false;
+  }
 }
 
-void WsServer::FileDeleted(Image img, QObject*)
-{
-        qDebug() << "Deleting image #" << img.id();
-        QJsonObject json = api_->createDeleteImage(img);
-
-        for (QWebSocket* client : clients_)
-                this->SendToClient("deleteimage", json, client);
-}
-
-void WsServer::JobDeleted(Job job, QObject*)
-{
-        qDebug() << "Deleting job #" << job.id();
-        QJsonObject json = api_->createDeleteJob(job);
-
-        for (QWebSocket* client : clients_)
-                this->SendToClient("deletejob", json, client);
-}
-
-void WsServer::FileUploadError(QString path, QObject* client) { qDebug() <<
-"Error uploading image #" << path; }
-
-void WsServer::JobCreateError(QString path, QObject* client) { qDebug() <<
-"Error creating job #" << path; }
-
-void WsServer::FileDeleteError(QString path, QObject* client) { qDebug() <<
-"Error deleting image #" << path; }
-
-void WsServer::JobDeleteError(QString path, QObject*) { qDebug() << "Error
-deleting job #" << path; }
-
-void WsServer::FileCropped(Image img, QObject*)
-{
-        qDebug() << "File cropped " << img.id();
-
-        QJsonObject json = api_->createImageList(img);
-
-        for (QWebSocket* client : clients_)
-                this->SendToClient("getimagelist", json, client);
-}
-
-void WsServer::FileCropError(QString id, QObject*) { qDebug() << "File crop
-error " << id; }
-*/
 void WsServer::NewDebugLine(QString line) {
   for (auto client : clients_)
-    SendToClient("debug", {{"line", line}}, client);
+    SendToClient(client, "debug", {{"line", line}});
 }
 
-void WsServer::SslErrors(const QList<QSslError> &errors) {
+void WsServer::acceptError(QAbstractSocket::SocketError ec) {
+  qWarning() << "WsServer::acceptError " << ec;
+}
+
+void WsServer::peerVerifyError(const QSslError &error) {
+  qWarning() << "WsServer::peerVerifyError " << error;
+}
+
+void WsServer::serverError(QWebSocketProtocol::CloseCode ec) {
+  qWarning() << "WsServer::serverError " << ec;
+}
+
+void WsServer::sslErrors(const QList<QSslError> &errors) {
   for (QSslError error : errors)
     qWarning() << "Ssl error:" << error.errorString();
 }
 
-void WsServer::SendToClient(QJsonValue type, JsonConvertable &data,
-                            QWebSocket *client) {
-  QJsonObject json;
-  data.write(json);
-
-  SendToClient(type, json, client);
+void WsServer::ToClient(QObject *client, QString type, QJsonObject data) {
+  SendToClient(qobject_cast<QWebSocket *>(client), type, data);
 }
 
-void WsServer::SendToClient(QJsonValue type, QJsonObject data,
-                            QWebSocket *client) {
-  QJsonObject json = {{"type", type}, {"data", data}};
-
-  SendToClient(json, client);
+void WsServer::ToAll(QString type, QJsonObject data) {
+  for (auto client : clients_)
+    SendToClient(client, type, data);
 }
 
-void WsServer::SendToClient(QJsonObject packet, QWebSocket *client) {
-  client->sendTextMessage(QJsonDocument(packet).toJson());
+void WsServer::ToAllExClient(QObject *excluded, QString type,
+                             QJsonObject data) {
+  for (auto client : clients_) {
+    if (client != excluded)
+      SendToClient(client, type, data);
+  }
 }
 
-void WsServer::ServiceRequestForClient(QJsonObject request,
-                                       QWebSocket *socket) {
-  // QJsonObject json_data, json;
-  api_->service(request, socket);
+void WsServer::SendToClient(QWebSocket *client, QString type,
+                            QJsonObject packet) {
+  QByteArray data = QJsonDocument({{"type", type}, {"data", packet}}).toJson();
 
-  // if (!json_data.empty())
-  // SendToClient(request["request"], json_data, socket);
+  if (!client->isValid())
+    qCritical() << "Send error";
+  else if (client->sendTextMessage(data) != data.size())
+    qCritical() << "Send error";
 }
+
+QString WsServer::defaultHost() { return "0.0.0.0"; }
+
+quint16 WsServer::defaultPort() { return 8888; }
 
 WsServer::~WsServer() {
   server_->close();

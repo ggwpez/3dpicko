@@ -3,6 +3,12 @@ label{
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
+.nav{
+	white-space: nowrap;
+}
+h4{
+	white-space: nowrap;
+}
 /* close button */
 .close{
 	position: absolute;
@@ -15,18 +21,19 @@ label{
   pointer-events: none;
 }
 .nav-pills .nav-link{
-	color: black;
+	color: #888888;
+	font-weight: bold;
 } 
 .nav-pills .nav-link:hover{
 	color: #888888;
 } 
 .nav-pills .nav-link.active{
 	color: white;
-	background-color: #212529;
+	/*background-color: #212529;*/
 }
 .nav-pills .nav-link.disabled{
-	color: #DDDDDD;
-	background-color: #11d100
+	color: #11d100;
+	background-color: transparent;
 }
 .card-header{
 	padding-bottom: 0px;

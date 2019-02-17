@@ -165,8 +165,7 @@ GcodeInstruction GcodeInstruction::MoveToXYZ(const float x_coordinate,
 GcodeInstruction GcodeInstruction::MoveToXY(const float x_coordinate,
                                             const float y_coordinate) {
   return GcodeInstruction({
-      GcodeField::Command::G1(),
-      GcodeField::Parameter::X(x_coordinate),
+      GcodeField::Command::G1(), GcodeField::Parameter::X(x_coordinate),
       GcodeField::Parameter::Y(y_coordinate),
   });
 }

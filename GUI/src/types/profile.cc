@@ -9,15 +9,18 @@ namespace c3picko {
 Profile::Profile(const QJsonObject &obj)
     : JsonConstructable(obj), type_(obj["type"].toString()),
       name_(obj["profile_name"].toString()), id_(obj["id"].toString()) {
+
+  QJsonObject settings = obj["settings"].toObject();
+
   if (type_ == "printer-profile") {
     printer_ = std::make_shared<PrinterProfile>(
-        Marshalling::fromJson<PrinterProfile>(obj));
+        Marshalling::fromJson<PrinterProfile>(settings));
   } else if (type_ == "socket-profile") {
     socket_ = std::make_shared<PlateSocketProfile>(
-        Marshalling::fromJson<PlateSocketProfile>(obj));
+        Marshalling::fromJson<PlateSocketProfile>(settings));
   } else if (type_ == "plate-profile") {
     plate_ = std::make_shared<PlateProfile>(
-        Marshalling::fromJson<PlateProfile>(obj));
+        Marshalling::fromJson<PlateProfile>(settings));
   } else {
     plate_ = nullptr;
     qWarning() << "Unknown profile type" << type_;
@@ -25,22 +28,26 @@ Profile::Profile(const QJsonObject &obj)
 }
 
 void Profile::write(QJsonObject &obj) const {
+  // TODO also dumb
+  QJsonObject settings;
+  if (type_ == "printer-profile")
+    settings = Marshalling::toJson(*printer_);
+  else if (type_ == "socket-profile")
+    settings = Marshalling::toJson(*socket_);
+  else if (type_ == "plate-profile")
+    settings = Marshalling::toJson(*plate_);
+  else
+    qWarning() << "Cant write profile of unknown type";
+
+  obj["settings"] = settings;
   obj["type"] = type_;
   obj["profile_name"] = name_;
   obj["id"] = id_;
-
-  // TODO also dumb
-  if (type_ == "printer-profile")
-    obj = Marshalling::toJson(*printer_);
-  else if (type_ == "socket-profile")
-    obj = Marshalling::toJson(*socket_);
-  else if (type_ == "plate-profile")
-    obj = Marshalling::toJson(*plate_);
-  else
-    qWarning() << "Cant write profile of unknown type";
 }
 
 Profile::ID Profile::id() const { return id_; }
+
+void Profile::setId(Profile::ID id) { id_ = id; }
 
 QString Profile::name() const { return name_; }
 

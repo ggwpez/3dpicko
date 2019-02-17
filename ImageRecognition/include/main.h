@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "colonydetector.h"
+#include "algorithm_pipeline.h"
 
 namespace c3picko {
 

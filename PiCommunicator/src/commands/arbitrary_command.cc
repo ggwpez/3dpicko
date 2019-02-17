@@ -1,4 +1,4 @@
-#include "commands/arbitrary_command.h"
+#include "include/commands/arbitrary_command.h"
 
 #include <QJsonArray>
 #include <QJsonObject>

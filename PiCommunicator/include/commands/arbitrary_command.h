@@ -1,7 +1,7 @@
 #ifndef ARBITRARY_COMMAND_H_
 #define ARBITRARY_COMMAND_H_
 
-#include "command.h"
+#include "include/command.h"
 
 namespace c3picko {
 namespace pi {

@@ -8,6 +8,8 @@
 #include <QObject>
 
 namespace c3picko {
+class Colony;
+class AlgorithmPipeline;
 class APIInput;
 class APIController;
 class APIOutput : public QObject {
@@ -38,14 +40,23 @@ protected slots:
   void ImageCropped(Image, QObject *client);
   void ImageCropError(QString id, QObject *client);
 
-  void ProfileCreated(Profile::ID profile, QObject *client);
-  void ProfileUpdated(Profile::ID, QObject *client);
+  void ProfileCreated(Profile profile, QObject *client);
+  void ProfileUpdated(Profile, QObject *client);
   void ProfileUpdateError(Profile::ID, QObject *client);
-  void ProfileDeleted(Profile profile, QObject *client);
+  void ProfileDeleted(Profile::ID profile, QObject *client);
   void ProfileDeleteError(Profile::ID profile, QObject *client);
 
-  void ColonyDetected();
+  void ColonyDetectionStarted(Job::ID, QObject *client);
+  /**
+   * @brief Always call this from ColonyDetector or derived!
+   */
+  void ColonyDetected(std::vector<Colony> *detector, QObject *client);
+  /**
+   * @brief Always call this from ColonyDetector or derived!
+   */
   void ColonyDetectionError(QString error, QObject *client);
+
+  void Error(QString where, QString what, QObject *client);
 
 private:
   // TODO change name

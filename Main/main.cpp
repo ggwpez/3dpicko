@@ -1,10 +1,13 @@
 #include "httplistener.h"
+#include "include/algo1_test.h"
+#include "include/algorithm_pipeline.h"
 #include "include/api_controller.h"
 #include "include/command.h"
 #include "include/commands/arbitrary_command.h"
 #include "include/global.h"
 #include "include/octoprint.h"
 #include "include/requestmapper.h"
+#include "include/signal_daemon.h"
 #include "include/ws_server.hpp"
 #include <QCoreApplication>
 #include <QDir>
@@ -17,6 +20,7 @@
 #include <QThreadPool>
 #include <QtGlobal>
 #include <csignal>
+#include <signal.h>
 
 using namespace stefanfrings;
 using namespace c3picko;
@@ -28,7 +32,7 @@ using namespace c3picko::pi::commands;
  * Aborts the application if not found.
  * @return The valid filename
  */
-QString searchConfigFile() {
+static QString searchConfigFile() {
   QFile file;
   file.setFileName(Etc() + "serverconfig.ini");
 
@@ -44,44 +48,43 @@ QString searchConfigFile() {
   return "";
 }
 
-void signalHandler(int id) {
-  // Check that the signal is valid, i doubt that the handler will ever get an
-  // invalid id, but otherwise a simple implemented strsignal method would allow
-  // memory extraction of the hostmachine in the %s
-  char const *sig_name = (id > 1 && id < 32) ? strsignal(id) : "<unknown>";
+static void setupSignals(QCoreApplication *app) {
+  SignalDaemon *sigwatch = new SignalDaemon(app);
+  sigwatch->registerSignals({SIGABRT, SIGALRM, SIGFPE, SIGHUP, SIGILL, SIGINT,
+                             SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM, SIGUSR1,
+                             SIGUSR2});
 
-  // qFatal("Shutting down for Signal %s", sig_name);
-  if (qApp) {
-    qApp->exit(1); // FIXME this is not allowed see
-                   // https://doc.qt.io/qt-5/unix-signals.html
-  }
-  // qFatal("Shutdown completed");
+  QObject::connect(sigwatch, &SignalDaemon::OnSignal, [&app](int signum) {
+    qWarning("Shutdown by signal: %s", ::strsignal(signum));
+    app->quit();
+  });
 }
 
 static WsServer *ws_ptr = nullptr;
-void msg_handler(QtMsgType type, const QMessageLogContext &context,
-                 const QString &msg) {
+static void msg_handler(QtMsgType type, const QMessageLogContext &context,
+                        const QString &msg) {
   QString formated = qFormatLogMessage(type, context, msg);
 
   if (ws_ptr)
     QMetaObject::invokeMethod(ws_ptr, "NewDebugLine", Q_ARG(QString, formated));
-  fprintf(stderr, "%s\n", formated.toLocal8Bit().constData());
+  QString now = QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
+
+  fprintf(stderr, "[ %s ]  %s\n", qPrintable(now), qPrintable(formated));
 };
 
-int start(int argc, char **argv) {
+static int start(int argc, char **argv) {
   qInstallMessageHandler(msg_handler);
-  for (int i = 1; i < 7; ++i)
-    std::signal(i, &signalHandler); // TODO check error SIG_ERR
-
   // FIXME memory managment
   Setup();
   QCoreApplication app(argc, argv);
+  setupSignals(&app);
   QString configFileName = searchConfigFile();
 
-  Database db("database.json", &app);
-  // API Controller
-  APIController *api =
-      new APIController(QThreadPool::globalInstance(), db, &app);
+  AlgorithmPipeline *detector = new AlgorithmPipeline(
+      QThreadPool::globalInstance(), {new Algo1Test()}, &app);
+
+  Database *db = new Database("database.json", &app);
+  APIController *api = new APIController(detector, db, &app);
 
   // Static file controller
   QSettings *fileSettings =
@@ -90,34 +93,52 @@ int start(int argc, char **argv) {
   StaticFileController *staticFileController =
       new StaticFileController(fileSettings, &app);
 
-  QSslConfiguration *ssl = nullptr;
-  QSettings *listenerSettings =
+  // SSL
+  QSettings *ssl_settings =
       new QSettings(configFileName, QSettings::IniFormat, &app);
-  listenerSettings->beginGroup("listener");
+  ssl_settings->beginGroup("ssl");
 
-  if (listenerSettings->value("ssl").toBool()) {
-    ssl = LoadSslConfig(listenerSettings);
+  QSslConfiguration *ssl = nullptr;
+  if (ssl_settings->value("enabled", false).toBool()) {
+    ssl = LoadSslConfig(ssl_settings);
     if (!ssl) {
       qCritical() << "SSL setup failed";
       return 1;
     }
-    qDebug() << "SSL setup complete";
+    qDebug() << "SSL setup completed";
   } else
     qDebug() << "SSL disabled";
 
   // HTTP server
+  QSettings *listenerSettings =
+      new QSettings(configFileName, QSettings::IniFormat, &app);
+  listenerSettings->beginGroup("http");
   HttpListener listener(listenerSettings, ssl,
-                        new RequestMapper(staticFileController, api, &app),
-                        &app);
+                        new RequestMapper(staticFileController, &app), &app);
   // WS server
-  WsServer _ws(listenerSettings, ssl, api, &app);
-  ws_ptr = &_ws;
+  QSettings *ws_settings =
+      new QSettings(configFileName, QSettings::IniFormat, &app);
+  ws_settings->beginGroup("websockets");
+  WsServer *ws_server = new WsServer(ws_settings, ssl, &app);
+  ws_ptr = ws_server;
+
+  QObject::connect(ws_server, &WsServer::OnRequest, api,
+                   &APIController::request);
+  QObject::connect(api, &APIController::toClient, ws_server,
+                   &WsServer::ToClient);
+  QObject::connect(api, &APIController::toAll, ws_server, &WsServer::ToAll);
+  QObject::connect(api, &APIController::toAllExClient, ws_server,
+                   &WsServer::ToAllExClient);
 
   QObject::connect(&app, &QCoreApplication::aboutToQuit, [] {
     qInstallMessageHandler(nullptr); // reset message handlers
     ws_ptr =
         nullptr; // also dont redirect the console output to WsServer anymore
   });
+
+  if (!ws_server->StartListen())
+    app.exit(1);
+
   return app.exec();
 }
 

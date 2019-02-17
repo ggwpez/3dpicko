@@ -21,6 +21,7 @@ public:
   explicit operator PlateProfile *() const;
 
   ID id() const;
+  void setId(ID id);
   QString name() const;
 
 private:
