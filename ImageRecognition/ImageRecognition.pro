@@ -16,7 +16,8 @@ SOURCES += \
     src/algo_setting.cc \
     src/algorithm.cc \
     src/algo1_test.cc \
-    src/algorithm_pipeline.cpp
+    src/algorithm_manager.cpp \
+    src/algorithm_job.cc
 
 	#src/main.cpp
 
@@ -33,7 +34,8 @@ HEADERS += \
     include/algo_setting.h \
     include/algorithm.h \
     include/algo1_test.h \
-    include/algorithm_pipeline.h
+    include/algorithm_manager.h \
+    include/algorithm_job.h
 
 INCLUDEPATH += /usr/local/include/opencv
 

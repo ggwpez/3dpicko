@@ -9,7 +9,7 @@
 
 namespace c3picko {
 class Colony;
-class AlgorithmPipeline;
+class AlgorithmManager;
 class APIInput;
 class APIController;
 class APIOutput : public QObject {

@@ -1,6 +1,6 @@
 #include "httplistener.h"
 #include "include/algo1_test.h"
-#include "include/algorithm_pipeline.h"
+#include "include/algorithm_manager.h"
 #include "include/api_controller.h"
 #include "include/command.h"
 #include "include/commands/arbitrary_command.h"
@@ -80,7 +80,7 @@ static int start(int argc, char **argv) {
   setupSignals(&app);
   QString configFileName = searchConfigFile();
 
-  AlgorithmPipeline *detector = new AlgorithmPipeline(
+  AlgorithmManager *detector = new AlgorithmManager(
       QThreadPool::globalInstance(), {new Algo1Test()}, &app);
 
   Database *db = new Database("database.json", &app);

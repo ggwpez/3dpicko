@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "algorithm_pipeline.h"
+#include "algorithm_manager.h"
 
 namespace c3picko {
 
