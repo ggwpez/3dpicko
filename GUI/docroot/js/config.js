@@ -19,25 +19,28 @@ var UpdateSettingsProfile = function (e){
     id: form_data.get('id'),
     type: form_data.get('type'),
     profile_name: form_data.get('profile_name'),
-    settings: {}
   };
-  let template = profile_templates[type].settings;
-  for (let id in template){
-    if (template[id].type == 'number' || template[id].type == 'slider' || template[id].type == 'range') value = Number(form_data.get(id));
-    else if (template[id].type == 'checkbox') value = form_data.has(id);
-    else if (template[id].type == 'radio') value = form_data.get(id);
-    else if (template[id].type == 'vector3') value = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1]), z: Number(form_data.getAll(id)[2])};
-    else if (template[id].type == 'vector2') value = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1])};
-    json_object.settings[id] = value;
-  }
-
+  json_object.settings = ReadSettings(profile_templates[type].settings, form_data);
   // console.log({json_object});
+  
   $('#collapse-'+json_object.id).collapse('hide');
   if (json_object.id == "new-printer-profile" || json_object.id == "new-socket-profile" || json_object.id == "new-plate-profile"){
     $('#form-new-'+type)[0].reset();
     api("createsettingsprofile", json_object);
   } 
   else api("updatesettingsprofile", json_object);
+}
+
+function ReadSettings(template, form_data){
+  let settings = {};
+  for (let id in template){
+    if (template[id].type == 'number' || template[id].type == 'slider' || template[id].type == 'range') settings[id] = Number(form_data.get(id));
+    else if (template[id].type == 'checkbox') settings[id] = form_data.has(id);
+    else if (template[id].type == 'vector3') settings[id] = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1]), z: Number(form_data.getAll(id)[2])};
+    else if (template[id].type == 'vector2') settings[id] = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1])};
+    else if (form_data.has(id)) settings[id] = form_data.get(id);
+  }
+  return settings;
 }
 
 $(function LoadProfiles(){
@@ -54,10 +57,10 @@ $(function LoadProfiles(){
   AddProfileToList(large_plate);
 });
 
-function CreateFormGroupHtml({id, name, type, value, description="", min="" , max="", step=1, unit="mm", options={}}, new_value = ""){
+function CreateFormGroupHtml({id, name, type, value, description="", min="" , max="", step=1, unit="", options={}}, form_id = "", new_value = ""){
   if(new_value !== "") value = new_value;
   // console.log("Input-Field:",{id, name, type, value, description, min , max, step, unit, options});
-  let form_group = `<div class="form-group"><label for="${id}">${name}:</label>`;
+  let form_group = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label for="${id}">${name}:</label>`;
   
   if (type == "number"){
     form_group += `${CreateNumberInputHtml(id, min, max, step, value)} ${unit}.`;
@@ -68,20 +71,26 @@ function CreateFormGroupHtml({id, name, type, value, description="", min="" , ma
   else if (type == "vector2"){
     form_group += `(${CreateNumberInputHtml(id, min, max, step, value.x)},${CreateNumberInputHtml(id, min, max, step, value.y)}) ${unit}.`;
   }
-  else if (type == "slider" || type == "range"){
+  else if (type == "slider"){
     form_group += `
-    <input type="range" class="custom-range" id="${id}" name="${id}" min="${min}" max="${max}" step="${step}" value="${value}">
-    <div style="text-align: center;"><span style="float:left;">${min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="slider-${id}" value="${value}"><span style="float:right">${max}</span></div>
+    <input type="range" class="custom-range" id="slider-${id}${form_id}" name="${id}" min="${min}" max="${max}" step="${step}" value="${value}" oninput="$('#number-${id}${form_id}')[0].value=this.value;$('#number-${id}${form_id}').trigger('input');">
+    <div style="text-align: center;"><span style="float:left;">${min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${form_id}" value="${value}" oninput="$('#slider-${id}${form_id}')[0].value=this.value;"><span style="float:right">${max}</span></div>
     `;
   }
   else if (type == "checkbox"){
-    form_group += `<div class="custom-control custom-checkbox d-inline"><input type="checkbox" class="custom-control-input" id="${id}" name="${id}" ${(value)?`checked`:``}><label class="custom-control-label" for="${id}"></label></div>`;
+    form_group += `<div class="custom-control custom-checkbox d-inline"><input type="checkbox" class="custom-control-input" id="${id}${form_id}" name="${id}" ${(value)?`checked`:``}><label class="custom-control-label" for="${id}${form_id}"></label></div>`;
   }
   else if (type == "radio"){
-    for(let option_id in options){
-      form_group += `<br>`;
-      form_group += CreateRadioInputHtml(id, option_id, options[option_id], value);
+    for (let option_id in options){
+      form_group += CreateRadioOptionHtml(id, option_id, options[option_id], value, form_id);
     }
+  }
+  else if (type == "dropdown"){
+    form_group += `<select class="form-control" id="${id}" name="${id}">`;
+    for (let option_id in options){
+      form_group += CreateSelectOptionHtml(option_id, options[option_id], value);
+    }
+    form_group += `</select>`;
   }
   
   if (description && description.length>0) form_group += `<small class="form-text text-muted">${description}</small>`;
@@ -93,15 +102,19 @@ function CreateNumberInputHtml(id, min, max, step = 1, value = "", placeholder =
   return `<input type="number" id="${id}" name="${id}" class="d-inline form-control-plaintext" ${required?`required="required"`:``} placeholder="${placeholder}" ${(min!="")?`min=${min}`:``} ${(max!="")?`max=${max}`:``} ${(step)?`step=${step}`:`1`} value="${value}">`;
 }
 
-function CreateRadioInputHtml(id, option_id, option, value){
-  return `<div class="form-check form-check-inline">
-  <input class="form-check-input" type="radio" name="${id}" id="${option_id}" value="${option_id}" ${(value==option_id)?`checked`:``}>
-  <label class="form-check-label font-weight-normal" for="${option_id}">${option}</label>
+function CreateRadioOptionHtml(id, option_id, option, value, form_id){
+  return `<div class="custom-control custom-radio">
+  <input class="custom-control-input" type="radio" name="${id}" id="${option_id}${form_id}" value="${option_id}" ${(value==option_id)?`checked`:``}>
+  <label class="custom-control-label font-weight-normal" for="${option_id}${form_id}">${option}</label>
   </div>`;
 }
 
+function CreateSelectOptionHtml(option_id, option, value){
+  return `<option value=${option_id} ${(value==option_id)?`selected`:``}>${option}</option>`;
+}
+
 function AddProfileToList(profile){
- if(profile.id in all_profiles){
+  if(profile.id in all_profiles){
     // update profile (delete old profile)
     // TODO check if new values
     DeleteProfile(profile.id);
@@ -114,6 +127,7 @@ function AddProfileToList(profile){
     new_profile = true;
   }
   else all_profiles[profile.id] = profile;
+  
   let html = `
   <div class="card" id="card-${profile.id}">
   <div class="card-header">
@@ -134,21 +148,14 @@ function AddProfileToList(profile){
   <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
   </div>`;
 
-  // TODO? filament_extrusion_length_on_move_offset and filament_extrusion_length_on_pick_and_put_onto_master_plate_offset not send by server
-  if(profile.type == "printer-profile"&&!("filament_extrusion_length_on_move_offset" in profile.settings)){
-    profile.settings.filament_extrusion_length_on_move_offset = profile.settings.filament_extrusion_length_on_move - profile.settings.filament_extrusion_length_default;
-    profile.settings.filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = profile.settings.filament_extrusion_length_on_pick_and_put_onto_master_plate - profile.settings.filament_extrusion_length_default;
-  } 
-
   let template = profile_templates[profile.type].settings;
   for(let setting_id in template){
     let setting = template[setting_id];
     setting.id = setting_id;
-    if(typeof(profile.settings[setting_id]) === 'object'&&profile.settings[setting_id].name) html += CreateFormGroupHtml(profile.settings[setting_id]);
-    else html += CreateFormGroupHtml(setting, profile.settings[setting_id]);
+    if(typeof(profile.settings[setting_id]) === 'object'&&profile.settings[setting_id].name) html += CreateFormGroupHtml(profile.settings[setting_id], profile.id);
+    else html += CreateFormGroupHtml(setting, profile.id, profile.settings[setting_id]);
   }
   html += `<button type="submit" class="btn btn-primary">${button_text}</button></form></div></div></div>`;
-
   document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
 
   $('#form-'+profile.id).on('submit', UpdateSettingsProfile);
@@ -317,12 +324,12 @@ let profile_templates = {
       "orientation_of_goal_plate" : {
         name: "Goal and master plate orientation",
         type: "radio",
-        description: "Orientation of goal- and masterplate compared to the cutout it is lying in.",
         options: {
           kFirstRowFirstColumnAtCutoutOrigin : "Well 'A1' at cutout origin.",
-          kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m = last row)"
+          kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m=last row)"
         },
-        value: "kFirstRowFirstColumnAtCutoutOrigin" 
+        value: "kFirstRowFirstColumnAtCutoutOrigin", 
+        description: "Orientation of goal- and masterplate compared to the cutout it is lying in."
       }
     }
   },
@@ -410,7 +417,7 @@ let profile_templates = {
         unit: "mm",
         description: "The depth of every well."
       }, 
-      "well_depth": {
+      "culture_medium_thickness": {
         name: "Culture medium thickness",
         type: "number",
         min: 0,
@@ -485,6 +492,17 @@ let example_printer = {
       value: 18,
       unit: "mm",
       description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate."
+    },
+    "ttrtwtr":
+    {
+      name: "Zahl",
+      type: "slider",
+      valueType: "float",
+      min: -10,
+      max: 10,
+      step: 1,
+      value: 1,
+      description: ""
     }
   }
 };

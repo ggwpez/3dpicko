@@ -113,8 +113,8 @@ var algorithms;
 				drawPositions(data);
 			}
 			else if (type == "getdetectionalgorithms"){
-				GetDetectionAlgorithms(data);
 				console.log("########## Algos", JSON.stringify(data));
+				GetDetectionAlgorithms(data);
 			}
 			else if (type == "updatedetectionsettings"){
 				// TODO
@@ -140,72 +140,81 @@ var algorithms;
 function GetDetectionAlgorithms(detection_algorithms){
 	algorithms = detection_algorithms;
 	// TODO Remove (only for debugging)
-	/*algorithms = {
-		"321":
+	/*algorithms["321"] =	{
+		name: "Fluro",
+		description: "Good for detecting fluorescent colonies",
+		settings:
 		{
-			name: "Fluro",
-			description: "Good for detecting fluorescent colonies",
-			settings:
+			"1234":
 			{
-				"1234":
-				{
-					name: "Threshold 1",
-					type: "slider",
-					valueType: "float",
-					min: 0,
-					max: 10,
-					step: 0.1,
-					defaultValue: 1.2,
-					description: ""
-				},
-				"123":
-				{
-					name: "Erode & Dilate",
-					type: "checkbox",
-					defaultValue: true,
-					description: ""
-				},
-				"12sad3":
-				{
-					name: "Erode & Dilate 2",
-					type: "checkbox",
-					defaultValue: false,
-					description: "do not touch me!"
-				}
-			}
-		},
-		"423":
-		{
-			name: "Fluro 2",
-			description: "Good for detecting more fluorescent colonies",
-			settings:
+				name: "Threshold 1",
+				type: "slider",
+				valueType: "float",
+				min: 0,
+				max: 10,
+				step: 0.1,
+				defaultValue: 1.2,
+				description: ""
+			},
+			"123":
 			{
-				"1234":
-				{
-					name: "Thres",
-					type: "slider",
-					valueType: "float",
-					min: -10,
-					max: 10,
-					step: 1,
-					defaultValue: 1,
-					description: "Hi this is very descriptive"
-				},
-				"123":
-				{
-					name: "Zahl",
-					type: "slider",
-					valueType: "float",
-					min: -10,
-					max: 10,
-					step: 1,
-					defaultValue: 1,
-					description: ""
-				}
+				name: "Erode & Dilate",
+				type: "checkbox",
+				defaultValue: true,
+				description: ""
+			},
+			"12sad3":
+			{
+				name: "Erode & Dilate 2",
+				type: "checkbox",
+				defaultValue: false,
+				description: "do not touch me!"
 			}
 		}
-	}*/
-	
+	};
+	algorithms["423"] = {
+		name: "Fluro 2",
+		description: "Good for detecting more fluorescent colonies",
+		settings:
+		{
+			"ft":{
+				"defaultValue":"1",
+				"description":"lel",
+				"id":"ft",
+				"name":"Filter Type",
+				"options":
+				{
+					"0":"Option A",
+					"1":"Option B",
+					"lol":"Option V"
+				},
+				"type":"dropdown"
+			},
+			"1234":
+			{
+				name: "Thres",
+				type: "number",
+				valueType: "float",
+				min: -10,
+				max: 10,
+				step: 1,
+				defaultValue: 1,
+				description: "Hi this is very descriptive"
+			},
+			"123":
+			{
+				name: "Zahl",
+				type: "slider",
+				valueType: "float",
+				min: -10,
+				max: 10,
+				step: 1,
+				defaultValue: 1,
+				description: ""
+			}
+		}
+	};*/
+		
 	const algorithm_selection = document.getElementById("select-algorithm");
 	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
 
@@ -231,23 +240,12 @@ function GetDetectionAlgorithmSettings(id){
 		settings.value = settings.defaultValue;
 		settings.id = settings_id;
 		
-		let form_group = CreateFormGroupHtml(settings);	
+		let form_group = CreateFormGroupHtml(settings, id);	
 		detection_settings.insertAdjacentHTML("beforeend", form_group);
-		
-		if(settings.type == "slider"){
-			$('#slider-'+settings_id).on('input', function(){
-				// dynamic input field size 
-				if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
-				// change slider value on number input 
-				document.getElementById(settings_id).value=this.value;
-			}).trigger('input');
-			$('#'+settings_id).on('input', function(){
-				// change number input value on slider change 
-				document.getElementById('slider-'+settings_id).value=this.value;
-				$('#slider-'+settings_id).trigger('input');
-			})	
-		}		
 	}
+	$('#detection-settings input[type="number"]').on('input', function(){
+		if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+	}).trigger('input');
 }
 
 var UpdateDetectionSettings = function (e){
@@ -261,23 +259,20 @@ var UpdateDetectionSettings = function (e){
 	// 		"123": true
 	// 	}
 	// }
-	if (e)
+	if (e){
 		e.preventDefault();
-	let settings_object = {};
-	let algorithm_id = document.getElementById('select-algorithm').value;
-	let settings = algorithms[algorithm_id].settings;
-	for(let key in settings){
-		if(settings[key].type=="slider") settings_object[key] = Number(document.getElementById(key).value);
-		else if(settings[key].type=="checkbox") settings_object[key] = document.getElementById(key).checked;
-	}
+		const form_data = new FormData(this);
+		const algorithm_id = document.getElementById('select-algorithm').value;
+		const settings = algorithms[algorithm_id].settings;
+		let new_settings = {
+			job_id : current_job.id,
+			algorithm: algorithm_id,
+		};
+		new_settings.settings = ReadSettings(settings, form_data);
 
-	new_settings = {
-		job_id : current_job.id,
-		algorithm: algorithm_id,
-		settings: settings_object
-	};
-	console.log("New Settings:", new_settings);
-	api('updatedetectionsettings', new_settings); 
+		console.log("New Settings:", new_settings);
+		api('updatedetectionsettings', new_settings); 
+	}
 }
 
 function AddJobToList(job)
@@ -467,7 +462,7 @@ function attributesTab(){
 function selectionTab(){
 	if(chosen_image.path){
 		tabEnter(3);
-	
+
 		selectionTabEnter();
 		const printer_selection = document.getElementById('select-printer-profile');
 		const socket_selection = document.getElementById('select-socket-profile');
