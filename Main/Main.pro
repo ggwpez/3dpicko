@@ -2,11 +2,6 @@ include(../Main/config.pri)
 
 TEMPLATE = app
 
-SOURCES += main.cpp \
-	global.cc \
-	marshalling.cc \
-    signal_daemon.cc
-
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../GUI/release/ -lGUIWebserver
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../GUI/debug/ -lGUIWebserver
 else:unix: LIBS += -L$$OUT_PWD/../GUI/ -lGUIWebserver
@@ -49,17 +44,25 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/debug/ImageRecognition.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/libImageRecognition.a
 
+SOURCES += main.cpp \
+	global.cc \
+	marshalling.cc
+
 HEADERS += \
 	include/json_constructable.hpp \
 	include/json_convertable.h \
 	include/global.h \
-	include/marshalling.hpp \
-    include/signal_daemon.h
+	include/marshalling.hpp
 
 LIBS += -lopencv_core \
 		-lopencv_imgproc \
 		-lopencv_highgui \
 		-lopencv_imgcodecs
+
+unix {
+	HEADERS += include/signal_daemon.h
+	SOURCES += signal_daemon.cc
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

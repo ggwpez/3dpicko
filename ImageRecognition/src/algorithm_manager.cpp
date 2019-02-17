@@ -46,7 +46,7 @@ void AlgorithmJob::start(bool threaded, bool delete_when_done)
 	if (delete_when_done)
 		connect(this, SIGNAL(OnFinished(void*)), this, SLOT(deleteLater()));
 
-	if (threaded)
+	if (threaded && algo_->isThreadable())
 		pool_->start(algo_);
 	else
 		algo_->run();

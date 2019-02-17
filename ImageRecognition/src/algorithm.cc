@@ -2,35 +2,39 @@
 #include "include/algo_setting.h"
 #include <QJsonArray>
 
-namespace c3picko {
+namespace c3picko
+{
 
 Algorithm::~Algorithm() {}
 
-void Algorithm::setInput(const void *input) {
-  Q_ASSERT(input);
+void Algorithm::setInput(const void* input)
+{
+	Q_ASSERT(input);
 
-  input_ = input;
+	input_ = input;
 }
 
-void Algorithm::run() {
-  const void *input = input_;
-  void *output = nullptr;
+void Algorithm::run()
+{
+	const void* input  = input_;
+	void*		output = nullptr;
 
-  for (int i = 0; i < steps_.size(); ++i) {
-    steps_[i](this, input, &output);
-    input = output;
-  }
+	for (int i = 0; i < steps_.size(); ++i)
+	{
+		steps_[i](this, input, &output);
+		input = output;
+	}
 
-  emit OnFinished(output);
+	emit OnFinished(output);
 
-  cleanup_(this);
+	cleanup_(this);
 }
 
-Algorithm::Algorithm(Algorithm::ID id, QString name, QString description,
-                     QList<AlgoStep> steps, AlgoCleanup cleanup,
-                     QList<AlgoSetting> settings)
-    : id_(id), name_(name), description_(description), steps_(steps),
-      cleanup_(cleanup), settings_(settings) {}
+Algorithm::Algorithm(Algorithm::ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup,
+					 QList<AlgoSetting> settings, bool is_threadable)
+	: id_(id), name_(name), description_(description), steps_(steps), cleanup_(cleanup), settings_(settings), is_threadable_(is_threadable)
+{
+}
 
 typename Algorithm::ID Algorithm::id() const { return id_; }
 
@@ -40,65 +44,79 @@ QString Algorithm::description() const { return description_; }
 
 QList<AlgoSetting> Algorithm::settings() const { return settings_; }
 
-const AlgoSetting &Algorithm::settingById(AlgoSetting::ID id) const {
-  for (AlgoSetting const &setting : settings_) {
-    if (setting.id() == id)
-      return setting;
-  }
+const AlgoSetting& Algorithm::settingById(AlgoSetting::ID id) const
+{
+	for (AlgoSetting const& setting : settings_)
+	{
+		if (setting.id() == id)
+			return setting;
+	}
 
-  throw std::runtime_error("Could not find AlgoSetting (by id)");
+	throw std::runtime_error("Could not find AlgoSetting (by id)");
 }
 
-const AlgoSetting &Algorithm::settingByName(QString name) const {
-  for (AlgoSetting const &setting : settings_) {
-    if (setting.name() == name)
-      return setting;
-  }
+const AlgoSetting& Algorithm::settingByName(QString name) const
+{
+	for (AlgoSetting const& setting : settings_)
+	{
+		if (setting.name() == name)
+			return setting;
+	}
 
-  throw std::runtime_error("Could not find AlgoSetting (by name)");
+	throw std::runtime_error("Could not find AlgoSetting (by name)");
 }
 
-void Algorithm::setSettingsValueByID(AlgoSetting::ID id, QVariant value) {
-  for (AlgoSetting &setting : settings_) {
-    if (setting.id() == id) {
-      setting.setValue(value);
-      return;
-    }
-  }
+void Algorithm::setSettingsValueByID(AlgoSetting::ID id, QVariant value)
+{
+	for (AlgoSetting& setting : settings_)
+	{
+		if (setting.id() == id)
+		{
+			setting.setValue(value);
+			return;
+		}
+	}
 
-  qWarning() << "Ignoring AlgoSetting id=" << id;
+	qWarning() << "Ignoring AlgoSetting id=" << id;
 }
 
-void Algorithm::setSettingsValueByName(QString name, QVariant value) {
-  for (AlgoSetting &setting : settings_) {
-    if (setting.name() == name) {
-      setting.setValue(value);
-      return;
-    }
-  }
+void Algorithm::setSettingsValueByName(QString name, QVariant value)
+{
+	for (AlgoSetting& setting : settings_)
+	{
+		if (setting.name() == name)
+		{
+			setting.setValue(value);
+			return;
+		}
+	}
 
-  qWarning() << "Ignoring AlgoSetting name=" << name;
+	qWarning() << "Ignoring AlgoSetting name=" << name;
 }
 
-void Algorithm::setSettings(const QJsonObject &sett) {
-  for (auto key : sett.keys())
-    setSettingsValueByID(key, sett[key]);
+void Algorithm::setSettings(const QJsonObject& sett)
+{
+	for (auto key : sett.keys())
+		setSettingsValueByID(key, sett[key]);
 }
 
-QStack<void *> &Algorithm::stack() { return stack_; }
+QVector<void*>& Algorithm::stack() { return stack_; }
 
-template <> QJsonObject Marshalling::toJson(const Algorithm &value) {
-  QJsonObject obj;
+bool Algorithm::isThreadable() const { return is_threadable_; }
 
-  obj["name"] = value.name();
-  obj["description"] = value.description();
+template <> QJsonObject Marshalling::toJson(const Algorithm& value)
+{
+	QJsonObject obj;
 
-  QJsonObject json_settings;
-  for (AlgoSetting const &setting : value.settings())
-    json_settings[setting.id()] = Marshalling::toJson(setting);
+	obj["name"]		   = value.name();
+	obj["description"] = value.description();
 
-  obj["settings"] = json_settings;
+	QJsonObject json_settings;
+	for (AlgoSetting const& setting : value.settings())
+		json_settings[setting.id()] = Marshalling::toJson(setting);
 
-  return obj;
+	obj["settings"] = json_settings;
+
+	return obj;
 }
 }

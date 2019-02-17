@@ -27,7 +27,7 @@ class AlgorithmJob : public QObject
 	/**
 	 * @brief Starts the job
 	 * @param Indicates whether the job should be executed in another thread or
-	 * not.
+	 * not if permitted by the algorithm.
 	 * @param Indicates wheter the job should delete itself after the Algorithm
 	 * finished.
 	 */

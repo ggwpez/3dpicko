@@ -2,9 +2,9 @@
 
 #include "include/algo_setting.h"
 #include <QRunnable>
-#include <QStack>
 #include <QVector>
 #include <functional>
+#include <stack>
 
 namespace c3picko
 {
@@ -23,7 +23,8 @@ class Algorithm : public QObject, public QRunnable
 	typedef void (*AlgoStep)(Algorithm*, const void*, void**);
 	typedef void (*AlgoCleanup)(Algorithm*);
 
-	Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup, QList<AlgoSetting> settings);
+	Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup, QList<AlgoSetting> settings,
+			  bool isThreadable);
 	virtual ~Algorithm() override;
 
 	/**
@@ -55,6 +56,7 @@ class Algorithm : public QObject, public QRunnable
 	QString			   name() const;
 	QString			   description() const;
 	QList<AlgoSetting> settings() const;
+	bool			   isThreadable() const;
 
 	AlgoSetting const& settingById(AlgoSetting::ID id) const;
 	AlgoSetting const& settingByName(QString name) const;
@@ -69,7 +71,7 @@ class Algorithm : public QObject, public QRunnable
 	 */
 	QJsonObject baseToJson() const;
 
-	QStack<void*>& stack();
+	QVector<void*>& stack();
 
   protected:
 	const ID		   id_;
@@ -77,13 +79,14 @@ class Algorithm : public QObject, public QRunnable
 	QList<AlgoStep>	steps_;
 	AlgoCleanup		   cleanup_;
 	QList<AlgoSetting> settings_;
+	bool			   is_threadable_;
 	// Algorithmic data
 	const void* input_;
 	/**
 	 * @brief Agorithms can use this stack for storing data until deleting in in
 	 * the cleanup function.
 	 */
-	QStack<void*> stack_;
+	QVector<void*> stack_;
 };
 MAKE_SERIALIZABLE(Algorithm);
 }
