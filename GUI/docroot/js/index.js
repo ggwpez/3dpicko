@@ -116,9 +116,6 @@ var algorithms;
 				console.log("########## Algos", JSON.stringify(data));
 				GetDetectionAlgorithms(data);
 			}
-			else if (type == "updatedetectionsettings"){
-				// TODO
-			}
 			else if (type == "crop-image"){
 				// TODO
 			} 
@@ -148,12 +145,11 @@ function GetDetectionAlgorithms(detection_algorithms){
 			"1234":
 			{
 				name: "Threshold 1",
-				type: "slider",
-				valueType: "float",
+				type: "rangeslider",
 				min: 0,
-				max: 10,
+				max: 1000,
 				step: 0.1,
-				defaultValue: 1.2,
+				defaultValue: {min: 1, max: 30},
 				description: ""
 			},
 			"123":
@@ -213,8 +209,8 @@ function GetDetectionAlgorithms(detection_algorithms){
 				description: ""
 			}
 		}
-	};*/
-		
+	};
+	*/
 	const algorithm_selection = document.getElementById("select-algorithm");
 	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
 
@@ -246,6 +242,7 @@ function GetDetectionAlgorithmSettings(id){
 	$('#detection-settings input[type="number"]').on('input', function(){
 		if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
 	}).trigger('input');
+	multirange.init();
 }
 
 var UpdateDetectionSettings = function (e){
@@ -272,6 +269,7 @@ var UpdateDetectionSettings = function (e){
 
 		console.log("New Settings:", new_settings);
 		api('updatedetectionsettings', new_settings); 
+		ShowAlert("Updated Detection Settings");
 	}
 }
 

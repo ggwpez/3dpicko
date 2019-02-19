@@ -1,3 +1,9 @@
+var default_profiles = {
+  "printer-profile": "ABC",
+  "socket-profile": "",
+  "plate-profile": "LARGEPLATE"
+}
+
 var UpdateSettingsProfile = function (e){
   // var send = {
   //   id: "XYZ",
@@ -9,7 +15,6 @@ var UpdateSettingsProfile = function (e){
   //     ...
   //   }
   // };
-  
   e.preventDefault();
   
   const form_data = new FormData(this);
@@ -36,6 +41,7 @@ function ReadSettings(template, form_data){
   for (let id in template){
     if (template[id].type == 'number' || template[id].type == 'slider' || template[id].type == 'range') settings[id] = Number(form_data.get(id));
     else if (template[id].type == 'checkbox') settings[id] = form_data.has(id);
+    else if (template[id].type == 'rangeslider') settings[id] = {min: Number(form_data.getAll(id)[0]), max: Number(form_data.getAll(id)[1])};
     else if (template[id].type == 'vector3') settings[id] = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1]), z: Number(form_data.getAll(id)[2])};
     else if (template[id].type == 'vector2') settings[id] = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1])};
     else if (form_data.has(id)) settings[id] = form_data.get(id);
@@ -72,9 +78,20 @@ function CreateFormGroupHtml({id, name, type, value, description="", min="" , ma
     form_group += `(${CreateNumberInputHtml(id, min, max, step, value.x)},${CreateNumberInputHtml(id, min, max, step, value.y)}) ${unit}.`;
   }
   else if (type == "slider"){
-    form_group += `
+    form_group += `<br>
     <input type="range" class="custom-range" id="slider-${id}${form_id}" name="${id}" min="${min}" max="${max}" step="${step}" value="${value}" oninput="$('#number-${id}${form_id}')[0].value=this.value;$('#number-${id}${form_id}').trigger('input');">
-    <div style="text-align: center;"><span style="float:left;">${min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${form_id}" value="${value}" oninput="$('#slider-${id}${form_id}')[0].value=this.value;"><span style="float:right">${max}</span></div>
+    <div style="text-align: center;"><span style="float:left;">${min}</span>
+    <input style="max-width: 40%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${form_id}" value="${value}" oninput="$('#slider-${id}${form_id}')[0].value=this.value;">
+    <span style="float:right">${max}</span></div>
+    `;
+  }
+  else if (type == "rangeslider"){
+    form_group += `<br>
+    <input type="range" class="custom-range" id="slider-${id}${form_id}" multiple value="${value.min},${value.max}" min="${min}" max="${max}" step="${step}" oninput="$('#number-${id}${form_id}-min')[0].value=this.valueLow;$('#number-${id}${form_id}-min').trigger('input');$('#number-${id}${form_id}-max')[0].value=this.valueHigh;$('#number-${id}${form_id}-max').trigger('input');" >
+    <div style="text-align: center;"><span style="float:left;">${min}</span>
+    <input style="max-width: 20%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${form_id}-min" name="${id}" value="${value.min}" onchange="$('#slider-${id}${form_id}')[0].valueLow=this.value;$('#slider-${id}${form_id}').trigger('input');">
+    <input style="max-width: 20%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${form_id}-max" name="${id}" value="${value.max}" onchange="$('#slider-${id}${form_id}')[0].valueHigh=this.value;$('#slider-${id}${form_id}').trigger('input');">
+    <span style="float:right">${max}</span></div>
     `;
   }
   else if (type == "checkbox"){
@@ -119,24 +136,21 @@ function AddProfileToList(profile){
     // TODO check if new values
     DeleteProfile(profile.id);
   }
-  let button_text = "Save changes";
+  
   let new_profile = false;
-
   if(profile.id == "new-"+profile.type){
-    button_text = "Create profile";
     new_profile = true;
   }
   else all_profiles[profile.id] = profile;
   
   let html = `
   <div class="card" id="card-${profile.id}">
-  <div class="card-header">
-  <h2 class="mb-0">
+  <div class="card-header" data-toggle="collapse" data-target="#collapse-${profile.id}">
+  <span id="default-label-{profile.id}" class="badge badge-primary" ${(default_profiles[profile.type]==profile.id)?``:`style="display: none;"`}>Default</span>
+  <h4 class="btn btn-link">
   ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${profile.id}">&times;</button>`}
-  <button id="link-${profile.id}" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-${profile.id}">
   ${profile.profile_name}
-  </button>
-  </h2>
+  </h4>
   </div>
   <div id="collapse-${profile.id}" class="collapse" data-parent="#group">
   <div class="card-body">
@@ -155,9 +169,12 @@ function AddProfileToList(profile){
     if(typeof(profile.settings[setting_id]) === 'object'&&profile.settings[setting_id].name) html += CreateFormGroupHtml(profile.settings[setting_id], profile.id);
     else html += CreateFormGroupHtml(setting, profile.id, profile.settings[setting_id]);
   }
-  html += `<button type="submit" class="btn btn-primary">${button_text}</button></form></div></div></div>`;
+  if(new_profile) html += `<button type="submit" class="btn btn-primary">Create profile</button>`;
+  else html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button><button type="button" class="btn btn-outline-primary" onclick="SetDefaultProfile('${profile.id}');">Set as Default</button>`;
+  html += `</form></div></div></div>`;
   document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
 
+  multirange.init();
   $('#form-'+profile.id).on('submit', UpdateSettingsProfile);
   $('#form-'+profile.id).on('focus', 'input', function(){this.select();});
   $('#form-'+profile.id+' input[type="number"]').on('input', function(){
@@ -165,11 +182,23 @@ function AddProfileToList(profile){
   }).trigger('input');
 
   if(!(new_profile) && (profile.type == "printer-profile" || profile.type == "socket-profile")){
-    let profile_option = document.createElement('option');
-    profile_option.value = profile.id;
-    profile_option.text = profile.profile_name;
-    // TODO issue#18 .add(profile_option, 0); and select
-    document.getElementById("select-"+profile.type).add(profile_option);
+    if(profile.id == default_profiles[profile.type]){
+      document.getElementById("select-"+profile.type).add(new Option(profile.profile_name,  profile.id, true, true), 0);
+    }
+    else document.getElementById("select-"+profile.type).add(new Option(profile.profile_name, profile.id));
+  }
+}
+
+function SetDefaultProfile(id){
+  if(id in all_profiles){
+    let profile = all_profiles[id];
+    default_profiles[profile.type] = id;
+    console.log(default_profiles);
+    $(`#${profile.type}s .card-header .badge`).hide();
+    $(`#${profile.type}s #card-${id} .badge`).show();
+    document.getElementById("select-"+profile.type).value = id; 
+    api("setdefaultsettingsprofile", id);
+    ShowAlert("Set Profile "+profile.profile_name+" as Default");
   }
 }
 
