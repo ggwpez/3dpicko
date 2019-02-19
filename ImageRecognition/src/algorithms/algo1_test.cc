@@ -9,18 +9,27 @@ namespace c3picko
 {
 
 Algo1Test::Algo1Test()
-	: Algorithm(
-		  "1", "Fluro1", "", {(AlgoStep)&Algo1Test::cvt, (AlgoStep)&Algo1Test::threshold, (AlgoStep)&Algo1Test::erodeAndDilate,
-							  (AlgoStep)&Algo1Test::plateDetection, (AlgoStep)&Algo1Test::label, (AlgoStep)&Algo1Test::relativeFiltering},
-		  &Algo1Test::cleanup,
-		  {AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "", true),
-		   AlgoSetting::make_checkbox("fluro_thresh", "Threshold by brightness", "", false),
-		   AlgoSetting::make_slider_int("max_area", "Max Radius", "lel", 10, 1000, 1, 300),
-		   AlgoSetting::make_slider_int("min_area", "Min Radius", "lel", 10, 1000, 1, 100),
-		   AlgoSetting::make_checkbox("relative_filter", "Filter Colonies", "Filter the detected colonies by the predicate above", false),
-		   AlgoSetting::make_slider_double("rel_max_area", "Max Mean Radius", "Mean +x*Standard deviation", -5, 5, .01, 5),
-		   AlgoSetting::make_slider_double("rel_min_area", "Min Mean Radius", "Mean +x*Standard deviation", -5, 5, .01, -5)},
-		  false)
+	: Algorithm("1", "Fluro1", "",
+				{(AlgoStep)&Algo1Test::cvt, (AlgoStep)&Algo1Test::threshold, (AlgoStep)&Algo1Test::erodeAndDilate,
+				 (AlgoStep)&Algo1Test::plateDetection, (AlgoStep)&Algo1Test::label, (AlgoStep)&Algo1Test::relativeFiltering},
+				&Algo1Test::cleanup,
+				{AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "", true),
+				 AlgoSetting::make_checkbox("fluro_thresh", "Threshold by brightness", "", false),
+				 AlgoSetting::make_slider_int("area_max", "Max Radius", "lel", 10, 2000, 1, 500),
+				 AlgoSetting::make_slider_int("area_min", "Min Radius", "lel", 10, 2000, 1, 100),
+				 AlgoSetting::make_dropdown("relative_filter", "Filter Colonies", "Select an attribute to filter",
+											{{"n", "None"}, {"a", "Area"}, {"r", "Circumference"}, {"b", "brightness"}}, "n"),
+				 AlgoSetting::make_slider_double("rel_max", "Max Mean", "Mean +x*Standard deviation", -5, 5, .01, 5),
+				 AlgoSetting::make_slider_double("rel_min", "Min Mean", "Mean +x*Standard deviation", -5, 5, .01, -5),
+				 AlgoSetting::make_slider_double("aabb_ratio_min", "AABB Side Ratio max", "", 0, 1, .001, .7),
+				 AlgoSetting::make_slider_double("aabb_ratio_max", "AABB Side Ratio min", "", 0, 1, .001, 1),
+				 AlgoSetting::make_slider_double("bb_ratio_min", "BB Side Ratio min", "", 0, 1, .001, .7),
+				 AlgoSetting::make_slider_double("bb_ratio_max", "BB Side Ratio max", "", 0, 1, .001, 1),
+				 AlgoSetting::make_slider_double("convexity_min", "Convexitx min", "", 0, 1, .001, .8),
+				 AlgoSetting::make_slider_double("convexity_max", "Convexitx max", "", 0, 1, .001, 1),
+				 AlgoSetting::make_slider_double("circularity_min", "Circularity min", "", 0, 1, .001, .6),
+				 AlgoSetting::make_slider_double("circularity_max", "Circularity max", "", 0, 1, .001, 1)},
+				true)
 {
 }
 
@@ -62,21 +71,24 @@ void Algo1Test::drawText(cv::Mat& img, cv::Mat& output, std::vector<cv::Vec3f>& 
 	}
 }
 
-static bool roundness(int area, int w, int h, std::vector<cv::Point> const& contour, double roundness)
+static bool roundness(int area, int w, int h, std::vector<cv::Point> const& contour, math::Range<double> aabb_ratio,
+					  math::Range<double> bb_ratio, math::Range<double> circularity, math::Range<double> convexity)
 {
-	if ((std::min(w, h) / double(std::max(w, h))) < .7)
+	double ratio = (std::min(w, h) / double(std::max(w, h)));
+
+	if (aabb_ratio.excludes(ratio))
 		return false;
 
 	// TODO try watershed algorithm
 
 	cv::RotatedRect rrect = cv::minAreaRect(contour);
 
-	double ratio(std::min(rrect.size.width, rrect.size.height) / double(std::max(rrect.size.width, rrect.size.height)));
-	if (ratio < .7 || std::isnan(ratio))
+	ratio = (std::min(rrect.size.width, rrect.size.height) / double(std::max(rrect.size.width, rrect.size.height)));
+	if (bb_ratio.excludes(ratio))
 		return false;
 
-	double circularity((4 * M_PI * area) / std::pow(cv::arcLength(contour, true), 2));
-	if (circularity < .6 || std::isnan(circularity)) // flouro .8
+	double circ((4 * M_PI * area) / std::pow(cv::arcLength(contour, true), 2));
+	if (circularity.excludes(circ)) // flouro .8
 	{
 		return false;
 	}
@@ -85,15 +97,12 @@ static bool roundness(int area, int w, int h, std::vector<cv::Point> const& cont
 	cv::convexHull(contour, hull, false, false);
 	cv::approxPolyDP(hull, hull_contour, .001, true);
 
-	double convexity(cv::contourArea(contour) / cv::contourArea(hull_contour));
+	double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-	if (convexity < .8 || std::isnan(convexity)) // flouro .91
-		return false;
-
-	return true;
+	return convexity.contains(convex); // flouro .91
 }
 
-void Algo1Test::cvt(Algorithm* base, const cv::Mat* input, cv::Mat** output)
+void Algo1Test::cvt(Algorithm* base, cv::Mat* input, cv::Mat** output)
 {
 	*output = new cv::Mat();
 	base->stack().push_back(new cv::Mat(*input)); // For debugging
@@ -102,7 +111,7 @@ void Algo1Test::cvt(Algorithm* base, const cv::Mat* input, cv::Mat** output)
 	cv::cvtColor(*input, **output, CV_BGR2GRAY);
 }
 
-void Algo1Test::threshold(Algorithm* base, const cv::Mat* input, cv::Mat** output)
+void Algo1Test::threshold(Algorithm* base, cv::Mat* input, cv::Mat** output)
 {
 	bool fluro_thresh = base->settingById("fluro_thresh").value<bool>();
 	// Calculate mean and standart deviation
@@ -120,7 +129,7 @@ void Algo1Test::threshold(Algorithm* base, const cv::Mat* input, cv::Mat** outpu
 		cv::adaptiveThreshold(*input, **output, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 1); // non flour
 }
 
-void Algo1Test::erodeAndDilate(Algorithm* base, const cv::Mat* input, cv::Mat** output)
+void Algo1Test::erodeAndDilate(Algorithm* base, cv::Mat* input, cv::Mat** output)
 {
 	*output = new cv::Mat();
 	base->stack().push_back(*output);
@@ -134,13 +143,13 @@ void Algo1Test::erodeAndDilate(Algorithm* base, const cv::Mat* input, cv::Mat** 
 	cv::dilate(**output, **output, kernel);
 }
 
-void Algo1Test::plateDetection(Algorithm* base, const cv::Mat* input, cv::Mat** output)
+void Algo1Test::plateDetection(Algorithm* base, cv::Mat* input, cv::Mat** output)
 {
 	cv::Mat  erroded = *input;
-	cv::Mat& result  = *new cv::Mat(*reinterpret_cast<cv::Mat*>(base->stack().first()));
+	cv::Mat* result  = new cv::Mat(*reinterpret_cast<cv::Mat*>(base->stack().first()));
 	*output			 = new cv::Mat(*input);
 	base->stack().push_back(*output);
-	base->stack().push_back(std::addressof(result));
+	base->stack().push_back(result);
 
 	if (!base->settingById("plate_detection").value<bool>())
 		return;
@@ -185,45 +194,57 @@ void Algo1Test::plateDetection(Algorithm* base, const cv::Mat* input, cv::Mat** 
 	std::vector<cv::Scalar>  bin_clrs;
 	cv::Mat					 labels;
 	std::vector<cv::Point2f> centers;
-	cv::Mat					 points(lines.size(), 1, CV_32FC2);
+	// kmeans only works with floats
+	std::vector<cv::Point2f> points(lines.size(), cv::Point2f());
 	cv::TermCriteria		 crit(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 10, 1);
 
 	for (std::size_t i = 0; i < lines.size(); ++i)
 	{
 		cv::Point2d p(-lines[i].angle.imag(), lines[i].angle.real());
-		std::cout << (std::arg(lines[i].angle) / M_PI) * 180.f << "°\n";
-		points.at<cv::Point2f>(i, 0) = p;
-		cv::line(result, cv::Point(result.cols / 2, result.rows / 2),
-				 cv::Point(result.cols / 2 + p.x * 1000, result.rows / 2 + p.y * 1000), cv::Scalar::all(255), 1);
+		// std::cout << (std::arg(lines[i].angle) / M_PI) * 180.f << "°\n";
+		points[i] = p;
+		cv::line(*result, cv::Point(result->cols / 2, result->rows / 2),
+				 cv::Point2f(result->cols / 2 + p.x * 1000, result->rows / 2 + p.y * 1000), cv::Scalar::all(255), 1);
 	}
 
 	int const ks = 3;
+	// We need atleast as many points as possible centers
+	if (points.size() < ks)
+		return;
 	cv::kmeans(points, ks, labels, crit, 3, cv::KMEANS_PP_CENTERS, centers);
 
 	for (int i = 0; i < ks; ++i)
 		bin_clrs.push_back(cv::Scalar(rand() % 255, rand() % 255, rand() % 255));
 
-	cv::circle(result, cv::Point2f(result.cols / 2, result.rows / 2), 10, cv::Scalar::all(255), 4);
+	cv::circle(*result, cv::Point2f(result->cols / 2, result->rows / 2), 10, cv::Scalar::all(255), 4);
 	for (auto const& center : centers)
 	{
-		cv::line(result, cv::Point2f(result.cols / 2, result.rows / 2),
-				 cv::Point2f(result.cols / 2, result.rows / 2) + cv::Point2f(center.x * 60, center.y * 60), cv::Scalar(0, 0, 255), 3);
-		std::cout << "c " << center.x << " / " << center.y << "\n";
+		cv::line(*result, cv::Point2f(result->cols / 2, result->rows / 2),
+				 cv::Point2f(result->cols / 2, result->rows / 2) + cv::Point2f(center.x * 60, center.y * 60), cv::Scalar(0, 0, 255), 3);
+		// std::cout << "c " << center.x << " / " << center.y << "\n";
 	}
 
 	for (int i = 0; i < lines.size(); ++i)
 	{
-		cv::line(result, cv::Point(lines[i].x, lines[i].y), cv::Point(lines[i].endx, lines[i].endy), bin_clrs[labels.at<int>(i)], 2);
+		cv::line(*result, cv::Point(lines[i].x, lines[i].y), cv::Point(lines[i].endx, lines[i].endy), bin_clrs[labels.at<int>(i)], 2);
 	}
 }
 
-void Algo1Test::label(Algorithm* base, const cv::Mat* input, std::vector<Colony>** output)
+void Algo1Test::label(Algorithm* base, cv::Mat* input, std::vector<Colony>** output)
 {
-	auto colonies = (*output = new std::vector<Colony>());
+	auto& colonies = (*output = new std::vector<Colony>());
 
-	Colony::ID id		= 0;
-	int		   min_area = base->settingById("min_area").value<int>(), max_area = base->settingById("max_area").value<int>();
-	cv::Mat	stats, labeled, centers;
+	Colony::ID			id	= 0;
+	math::Range<double> _area = {base->settingById("area_min").value<double>(), base->settingById("area_max").value<double>()};
+	math::Range<double> _aabb_ratio
+		= {base->settingById("aabb_ratio_min").value<double>(), base->settingById("aabb_ratio_max").value<double>()};
+	math::Range<double> _bb_ratio = {base->settingById("bb_ratio_min").value<double>(), base->settingById("bb_ratio_max").value<double>()};
+	math::Range<double> _circularity
+		= {base->settingById("circularity_min").value<double>(), base->settingById("circularity_max").value<double>()};
+	math::Range<double> _convexity
+		= {base->settingById("convexity_min").value<double>(), base->settingById("convexity_max").value<double>()};
+
+	cv::Mat stats, labeled, centers;
 
 	// Label every connected component
 	labeled = cv::Mat(input->rows, input->cols, CV_32S);
@@ -247,28 +268,28 @@ void Algo1Test::label(Algorithm* base, const cv::Mat* input, std::vector<Colony>
 		int top  = stats.at<int>(label, cv::CC_STAT_TOP);
 		int left = stats.at<int>(label, cv::CC_STAT_LEFT);
 
-		double round = .9;
-		// Filter by area
-		if (area > max_area || area < min_area)
+		if (!_area.contains(area))
 			continue;
 		// Filter by roundness
 		else
 		{
 			std::vector<std::vector<cv::Point>> contours;
 
-			if ((std::min(w, h) / double(std::max(w, h))) < .7)
+			if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h))))
 				continue;
 
 			cv::Mat submat(*input, cv::Rect(left, top, w, h));
 			cv::findContours(submat, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-			if (!roundness(area, w, h, contours[0], round))
+			if (!roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio, _circularity, _convexity))
 				continue;
 			else
 			{
 				double circ = cv::arcLength(contours[0], true);
 
-				Colony detected(center.x / double(input->cols), center.y / double(input->rows), area, circ, circ / (2 * M_PI), 0, ++id,
+				// NOTE Brightness only works on unmasked original image contours, otherwise they need conversion
+				double br = math::brightness(contours[0], *reinterpret_cast<cv::Mat*>(base->stack()[1]));
+				Colony detected(center.x / double(input->cols), center.y / double(input->rows), area, circ, circ / (2 * M_PI), br, ++id,
 								Colony::Type::INCLUDED);
 				colonies->push_back(detected);
 			}
@@ -282,17 +303,28 @@ void Algo1Test::relativeFiltering(Algorithm* base, std::vector<Colony>* input, s
 {
 	*output = input;
 	// Should we skip the step?
-	if (!base->settingById("relative_filter").value<bool>())
+	QString option = base->settingById("relative_filter").option<QString>().toLower();
+	if (option == "none" || option == "") // Skip or invalid option
 		return;
 
-	double rel_min_area = base->settingById("rel_min_area").value<double>(),
-		   rel_max_area = base->settingById("rel_max_area").value<double>();
+	double rel_min_area = base->settingById("rel_min").value<double>(), rel_max_area = base->settingById("rel_max").value<double>();
 
 	cv::Scalar				mean, stddev;
 	std::vector<cv::Scalar> values(input->size(), 0);
 
+	double (Colony::*get_data)(void) const = nullptr;
+
+	if (option == "area")
+		get_data = &Colony::area;
+	else if (option == "circumference")
+		get_data = &Colony::circumference;
+	else if (option == "brightness")
+		get_data = &Colony::brightness;
+	else
+		throw std::runtime_error("Unreachable");
+
 	for (std::size_t i = 0; i < input->size(); ++i)
-		values[i]	  = input->at(i).circumference();
+		values[i]	  = (input->at(i).*get_data)();
 
 	cv::meanStdDev(values, mean, stddev);
 	double meand   = cv::sum(mean)[0];
@@ -303,7 +335,7 @@ void Algo1Test::relativeFiltering(Algorithm* base, std::vector<Colony>* input, s
 
 	for (auto it = input->begin(); it != input->end();)
 	{
-		if (it->circumference() < rel_min_area || it->circumference() > rel_max_area)
+		if ((*(it).*get_data)() < rel_min_area || (*(it).*get_data)() > rel_max_area)
 			input->erase(it);
 		else
 			++it;
@@ -312,7 +344,7 @@ void Algo1Test::relativeFiltering(Algorithm* base, std::vector<Colony>* input, s
 
 void Algo1Test::cleanup(Algorithm* base)
 {
-	int i = 0;
+	/*int i = 0;
 	for (void* stage : base->stack())
 	{
 		std::string name = "stage" + std::to_string(i++);
@@ -324,7 +356,7 @@ void Algo1Test::cleanup(Algorithm* base)
 
 	while (cv::waitKey(0) != 'q')
 		;
-	cv::destroyAllWindows();
+	cv::destroyAllWindows();*/
 
 	while (!base->stack().empty())
 		delete static_cast<cv::Mat*>(base->stack().takeFirst());

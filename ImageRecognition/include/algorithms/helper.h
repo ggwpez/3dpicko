@@ -1,6 +1,7 @@
 #pragma once
 
 #include <complex>
+#include <opencv2/core.hpp>
 
 namespace c3picko
 {
@@ -15,6 +16,36 @@ namespace math
 		 */
 		std::complex<double> angle;
 		double				 length;
+	};
+
+	template <typename T> struct Range
+	{
+		inline Range(T const& lower, T const& upper, bool lower_closed = true, bool upper_closed = true)
+			: lower_(lower), upper_(upper), lower_closed_(lower_closed), upper_closed_(upper_closed)
+		{
+		}
+
+		inline bool contains(T const& value)
+		{
+			bool ok = !std::isnan(value);
+
+			if (lower_closed_)
+				ok &= value >= lower_;
+			else
+				ok &= value > lower_;
+
+			if (upper_closed_)
+				ok &= value <= upper_;
+			else
+				ok &= value < upper_;
+
+			return ok;
+		}
+
+		inline bool excludes(T const& value) { return !contains(value); }
+
+		bool lower_closed_, upper_closed_;
+		T	lower_, upper_;
 	};
 
 	/**
@@ -37,5 +68,7 @@ namespace math
 						   double x3, double y3, // Line 2 start
 						   double x4, double y4, // Line 2 end
 						   double& ixOut, double& iyOut);
+
+	double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat);
 }
 }

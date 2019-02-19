@@ -20,7 +20,7 @@ class Algorithm : public QObject, public QRunnable
 	Q_OBJECT
   public:
 	typedef QString ID;
-	typedef void (*AlgoStep)(Algorithm*, const void*, void**);
+	typedef void (*AlgoStep)(Algorithm*, void*, void**);
 	typedef void (*AlgoCleanup)(Algorithm*);
 
 	Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup, QList<AlgoSetting> settings,
@@ -31,7 +31,7 @@ class Algorithm : public QObject, public QRunnable
 	 * @brief Call with according input data pointer before run()
 	 * @param input
 	 */
-	void setInput(const void* input);
+	void setInput(void* input);
 
 	/**
 	 * @brief Executes all steps of algorithm one by one.
@@ -81,7 +81,7 @@ class Algorithm : public QObject, public QRunnable
 	QList<AlgoSetting> settings_;
 	bool			   is_threadable_;
 	// Algorithmic data
-	const void* input_;
+	void* input_;
 	/**
 	 * @brief Agorithms can use this stack for storing data until deleting in in
 	 * the cleanup function.

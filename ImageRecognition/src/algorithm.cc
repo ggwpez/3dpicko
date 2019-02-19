@@ -1,13 +1,14 @@
 #include "include/algorithm.h"
 #include "include/algo_setting.h"
 #include <QJsonArray>
+#include <QThread>
 
 namespace c3picko
 {
 
 Algorithm::~Algorithm() {}
 
-void Algorithm::setInput(const void* input)
+void Algorithm::setInput(void* input)
 {
 	Q_ASSERT(input);
 
@@ -16,18 +17,48 @@ void Algorithm::setInput(const void* input)
 
 void Algorithm::run()
 {
-	const void* input  = input_;
-	void*		output = nullptr;
+	void* input  = input_;
+	void* output = nullptr;
+
+	QString error_prefix, error_infix, error_postfix;
+	QTextStream(&error_prefix) << "Algorithm " << name_ << " (" << this->metaObject()->className() << ")"
+							   << " crashed (step=";
+	QTextStream(&error_postfix) << ",job=" << this->parent() << ",thread=" << QThread::currentThreadId() << ")";
 
 	for (int i = 0; i < steps_.size(); ++i)
 	{
-		steps_[i](this, input, &output);
+		// Lets format an error string, in case it crashes
+
+		try
+		{
+			steps_[i](this, input, &output);
+		}
+		catch (std::exception const& e)
+		{
+			qCritical("%s%d%s: %s", qPrintable(error_prefix), i, qPrintable(error_postfix), e.what());
+		}
+		catch (...) // FIXME abort
+		{
+			qCritical("%s%d%s: %s", qPrintable(error_prefix), i, qPrintable(error_postfix), "unknown");
+		}
+
 		input = output;
 	}
 
 	emit OnFinished(output);
 
-	cleanup_(this);
+	try
+	{
+		cleanup_(this);
+	}
+	catch (std::exception const& e)
+	{
+		qCritical("%s%s%s: %s", qPrintable(error_prefix), "cleanup", qPrintable(error_postfix), e.what());
+	}
+	catch (...)
+	{
+		qCritical("%s%s%s: %s", qPrintable(error_prefix), "cleanup", qPrintable(error_postfix), "unknown");
+	}
 }
 
 Algorithm::Algorithm(Algorithm::ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup,

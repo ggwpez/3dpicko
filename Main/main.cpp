@@ -130,7 +130,7 @@ static int start(int argc, char** argv)
 	});
 
 	if (!ws_server->StartListen())
-		app.exit(1);
+		return 1;
 
 	return app.exec();
 }
