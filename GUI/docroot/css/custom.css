@@ -1,4 +1,5 @@
 label{
+	display: inline;
 	font-weight: bold;
 	margin-bottom: 0px;
 	margin-right: 5px;
@@ -6,7 +7,7 @@ label{
 .nav{
 	white-space: nowrap;
 }
-h4{
+#nav-new-job h4{
 	white-space: nowrap;
 }
 /* close button */
@@ -18,7 +19,7 @@ h4{
 	right: 10px;
 }
 #steps{
-  pointer-events: none;
+	pointer-events: none;
 }
 .nav-pills .nav-link{
 	color: #888888;
@@ -57,7 +58,7 @@ h4{
 #alert-window{
 	position: fixed;
 	left: 50%;
-    transform: translateX(-50%);
+	transform: translateX(-50%);
 	top: 15px;
 	z-index: 10;
 	pointer-events: none;
@@ -112,12 +113,12 @@ img {
 .del{
 	cursor: no-drop;
 }
-input[type=range]{
-	height: auto;
-}
 #detection-settings input[type=number]{
 	width: 2ch;
 	min-width: 5ch;
+}
+#detection-settings{
+	position: relative;
 }
 
 /* Profile Settings Page */
@@ -137,12 +138,69 @@ input[type=number]::-webkit-outer-spin-button {
 	-webkit-appearance: none; 
 	margin: 0; 
 }
-#group h2 {
+#group h2{
 	text-align: center;
 }
 #nav-settings .card{
+	min-width: 300px;
+}
+#nav-settings .card-body{
 	white-space: nowrap;
 }
 small{
 	white-space: normal;
+}
+#nav-settings .card-header{
+	text-align: center;
+}
+#nav-settings .badge{
+	/*float: left;
+	margin-top: 1em;*/
+	position: absolute;
+	top: 1em;
+	left: 1em;
+}
+
+/* Multirange CSS */
+input[type="range"].multirange {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	vertical-align: top;
+	pointer-events: none;
+}
+input[type="range"].multirange::-moz-range-thumb {
+	pointer-events: auto !important;
+}
+input[type="range"].multirange::-webkit-slider-thumb {
+	pointer-events: auto !important;
+}
+input[type="range"].multirange::-ms-thumb {
+	pointer-events: auto !important;
+}
+input[type="range"].multirange.original::-webkit-slider-thumb {
+	position: relative;
+	z-index: 1;
+}
+input[type="range"].multirange.original::-moz-range-thumb {
+	transform: scale(1); /* FF doesn't apply position it seems */
+	z-index: 1;
+}
+input[type="range"].multirange::-moz-range-track {
+	border-color: transparent; /* needed to switch FF to "styleable" control */
+}
+input[type="range"].multirange.ghost {
+	position: relative;
+	background: var(--track-background);
+	--track-background: linear-gradient(to right,
+		transparent var(--low), var(--range-color) 0,
+		var(--range-color) var(--high), transparent 0
+		) no-repeat 0 45% / 100% 40%;
+	--range-color: var(--blue);
+}
+input[type="range"].multirange.ghost::-webkit-slider-runnable-track {
+	background: var(--track-background);
+}
+input[type="range"].multirange.ghost::-moz-range-track {
+	background: var(--track-background);
 }
