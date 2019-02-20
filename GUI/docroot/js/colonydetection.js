@@ -100,19 +100,20 @@ function printPositions(){
         var ball = new Circle({
             x: colony[0] *layer1.canvas.width,
             y: colony[1] *layer1.canvas.height,
-            radius: colony[2],
-            linecolor: 'green',
+            radius: colony[2] *1.25,            // Make them a bit better to see
+            linecolor: 'white',
             background: 'transparent',
             canvas: layer1.canvas
         });
 
-        ball.addEvent('mouseenter', function () {
+        /*ball.addEvent('mouseenter', function () {
             this.set('linecolor', 'red');
         });
 
         ball.addEvent('mouseleave', function () {
-            this.set('linecolor', 'green');
-        });
+            this.set('linecolor', 'white');
+        });*/
+
         balls.push(ball);
     });
 
@@ -142,4 +143,29 @@ function printPositions(){
                 }
             }
         };
+
+    layer1.canvas.onmousedown = (e) =>
+    {
+        for (var i = 0; i < balls.length; ++i)
+        {
+            var ball = balls[i];
+
+            if (ball.mouseover && !ball.mousedown)  // superfluous
+            {
+                ball.fireEvent('toggle-select');
+                ball.mousedown = true;  // TODO issue #4
+                break;
+            }
+            else if (ball.mouseover && ball.mousedown)   // a bit superflous
+            {
+                const pos = ball.getPosition();
+                const rad = ball.options.radius *Math.sqrt(2);
+
+                layer1.context.clearRect(pos.x -rad/2, pos.y -rad/2, rad,rad);
+                ball.fireEvent('toggle-select');
+                ball.mousedown = false;
+                // break; // TODO issue #4
+            }
+        }
+    };
 }

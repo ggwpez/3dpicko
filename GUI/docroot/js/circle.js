@@ -9,6 +9,23 @@ const Circle = new Class({
 
    attach: function () {
       this.addEvent('change', this.draw);
+      this.addEvent('toggle-select', this.toggleSelect);
+   },
+
+   toggleSelect: function ()
+   {
+      if (this.options.selected == true)
+      {
+         this.options.selected = false;  
+         this.set('linecolor', 'white');
+      }
+      else
+      {
+         this.options.selected = true;
+         this.set('linecolor', 'red');
+      }
+
+      console.log("Selected: ", this.options.selected);
    },
 
    // This function implies that a null value is as good as a nonexistent one.
@@ -29,11 +46,11 @@ const Circle = new Class({
       var canvas = this.options.canvas;
       var context = canvas.getContext('2d');
 
-      // pickstrategy_context.clearRect(this.options.x, this.options.y, this.options.radius * 2, this.options.radius * 2); 
       context.beginPath();
-      context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
       context.fillStyle = this.options.background;
+      context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
       context.fill();
+
       context.lineWidth = 3;
       context.strokeStyle = this.options.linecolor;
       context.stroke();

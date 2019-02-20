@@ -3,6 +3,7 @@
 #include "include/algorithm_job.h"
 #include "include/algorithm_result.h"
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QThread>
 
 namespace c3picko
@@ -127,7 +128,7 @@ const AlgoSetting& Algorithm::settingByName(QString name) const
 	throw std::runtime_error("Could not find AlgoSetting (by name)");
 }
 
-void Algorithm::setSettingsValueByID(AlgoSetting::ID id, QVariant value)
+void Algorithm::setSettingsValueByID(AlgoSetting::ID id, QJsonValue value)
 {
 	for (AlgoSetting& setting : settings_)
 	{
@@ -141,7 +142,7 @@ void Algorithm::setSettingsValueByID(AlgoSetting::ID id, QVariant value)
 	qWarning() << "Ignoring AlgoSetting id=" << id;
 }
 
-void Algorithm::setSettingsValueByName(QString name, QVariant value)
+void Algorithm::setSettingsValueByName(QString name, QJsonValue value)
 {
 	for (AlgoSetting& setting : settings_)
 	{

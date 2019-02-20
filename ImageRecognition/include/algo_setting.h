@@ -1,15 +1,12 @@
 #ifndef ALGO_SETTING_H
 #define ALGO_SETTING_H
 
+#include "include/algorithms/helper.h"
 #include "include/marshalling.hpp"
 #include <QDebug>
 #include <QPair>
 #include <QString>
 #include <QVariant>
-
-// FIXME hack
-typedef QPair<double, double> _unused_pair;
-Q_DECLARE_METATYPE(_unused_pair);
 
 namespace c3picko
 {
@@ -30,7 +27,7 @@ class AlgoSetting
 	static AlgoSetting make_dropdown(AlgoSetting::ID id, QString name, QString description, QVariantMap options,
 									 QString default_option_index);
 	static AlgoSetting make_rangeslider_double(ID id, QString name, QString description, double min, double max, double step,
-											   QPair<double, double> default_value);
+											   math::Range<double> default_value);
 
 	AlgoSetting(ID id, QString name, QString type, QString description, QVariant min, QVariant max, QVariant step, QVariantMap options,
 				QVariant default_value, QVariant value = QVariant());
@@ -40,8 +37,18 @@ class AlgoSetting
 	ID			type() const;
 	QString		name() const;
 	QString		description() const;
-	inline void setValue(QVariant const& value) { value_ = value; }
-	template <typename T> inline void setValue(T const& value) { value_ = QVariant::fromValue(value); } // TODO check cast
+	inline void setValue(QJsonValue const& value)
+	{
+		if (type_ == "rangeslider")
+		{
+			QJsonObject range = value.toObject();
+
+			value_ = QVariant::fromValue(math::Range<double>(range["min"].toDouble(), range["max"].toDouble()));
+		}
+		else
+			value_ = value;
+	}
+	// template <typename T> inline void setValue(T const& value) { QVariant::fromValue(value); } // TODO check cast
 
 	template <typename T> inline T value() const
 	{

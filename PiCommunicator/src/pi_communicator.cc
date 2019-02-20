@@ -20,7 +20,7 @@ void PiCommunicator::Connect() {
   commands::Connection *cmd = commands::Connection::GetInfo();
 
   connect(cmd, SIGNAL(OnStatusOk(int, Response *)), this, SIGNAL(OnConnected));
-  connect(cmd, &Command::OnStatusErr, this /* ctx */, [this](QVariant code) {
+  connect(cmd, &Command::OnStatusErr, this /* ctx */, [this](QJsonValue code) {
     emit OnConnectionError("Wrong status code: " + code.toString());
   });
   connect(cmd, SIGNAL(OnNetworkErr()), this, SIGNAL(OnNetworkErr()));

@@ -2,7 +2,7 @@
 
 namespace c3picko
 {
-static QVariant empty_qv = QVariant();
+static QVariant empty_qv = QJsonValue();
 
 AlgoSetting AlgoSetting::make_checkbox(ID id, QString name, QString description, bool default_value)
 {
@@ -16,7 +16,7 @@ AlgoSetting AlgoSetting::make_dropdown(AlgoSetting::ID id, QString name, QString
 }
 
 AlgoSetting AlgoSetting::make_rangeslider_double(AlgoSetting::ID id, QString name, QString description, double min, double max,
-												 double step, QPair<double, double> default_value)
+												 double step, math::Range<double> default_value)
 {
 	return AlgoSetting(id, name, "rangeslider", description, min, max, step, {}, QVariant::fromValue(default_value));
 }
@@ -75,12 +75,12 @@ QVariantMap const& AlgoSetting::options() const { return options_; }
 template <> QJsonObject Marshalling::toJson(const AlgoSetting& value)
 {
 	QJsonObject obj;
+	QString		link = "/wiki/index.html#" + value.name().toLower().replace(' ', '-');
 
-	obj["id"]   = value.id();
-	obj["type"] = value.type();
-	obj["name"] = "<a href=\"https://gitlab.com/ggwpez/3cpicko/wikis/Initial-Setup/Initial-Setup-%E2%80%90-Software\" target=\"_blank\">"
-				  + value.name() + "</a>";
-	obj["description"] = value.description();
+	obj["id"]		   = value.id();
+	obj["type"]		   = value.type();
+	obj["name"]		   = value.name();
+	obj["description"] = "<a href=\"" + link + "\" target=\"_blank\">" + value.name() + "</a>";
 
 	if (value.type() == "slider")
 	{
@@ -102,9 +102,19 @@ template <> QJsonObject Marshalling::toJson(const AlgoSetting& value)
 	}
 	else if (value.type() == "rangeslider")
 	{
-		QPair<double, double> def = value.defaultValue<QPair<double, double>>();
+		math::Range<double> def = value.defaultValue<math::Range<double>>();
 
-		obj["defaultValue"] = QJsonObject{{"min", def.first}, {"max", def.second}};
+		// TODO is this legit?
+		if (!def.lower_closed_)
+			def.lower_ += value.step<double>();
+		if (!def.upper_closed_)
+			def.upper_ -= value.step<double>();
+
+		obj["defaultValue"] = QJsonObject{{"min", def.lower_}, {"max", def.upper_}};
+		obj["min"]			= QJsonValue::fromVariant(value.minVariant());
+		obj["max"]			= QJsonValue::fromVariant(value.maxVariant());
+		obj["valueType"]	= value.defaultValueVariant().typeName();
+		obj["step"]			= QJsonValue::fromVariant(value.stepVariant());
 	}
 	else
 		Q_UNREACHABLE();

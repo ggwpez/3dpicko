@@ -14,20 +14,14 @@ Algo1Test::Algo1Test()
 									&Algo1Test::label, &Algo1Test::relativeFiltering},
 				{AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "", true),
 				 AlgoSetting::make_checkbox("fluro_thresh", "Threshold by brightness", "", false),
-				 AlgoSetting::make_slider_int("area_max", "Max Radius", "lel", 10, 2000, 1, 500),
-				 AlgoSetting::make_slider_int("area_min", "Min Radius", "lel", 10, 2000, 1, 100),
+				 AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000, 1, {10, 1000}),
 				 AlgoSetting::make_dropdown("relative_filter", "Filter Colonies", "Select an attribute to filter",
 											{{"n", "None"}, {"a", "Area"}, {"r", "Circumference"}, {"b", "brightness"}}, "n"),
-				 AlgoSetting::make_slider_double("rel_max", "Max Mean", "Mean +x*Standard deviation", -5, 5, .01, 5),
-				 AlgoSetting::make_slider_double("rel_min", "Min Mean", "Mean +x*Standard deviation", -5, 5, .01, -5),
-				 AlgoSetting::make_slider_double("aabb_ratio_min", "AABB Side Ratio max", "", 0, 1, .001, .7),
-				 AlgoSetting::make_slider_double("aabb_ratio_max", "AABB Side Ratio min", "", 0, 1, .001, 1),
-				 AlgoSetting::make_slider_double("bb_ratio_min", "BB Side Ratio min", "", 0, 1, .001, .7),
-				 AlgoSetting::make_slider_double("bb_ratio_max", "BB Side Ratio max", "", 0, 1, .001, 1),
-				 AlgoSetting::make_slider_double("convexity_min", "Convexitx min", "", 0, 1, .001, .8),
-				 AlgoSetting::make_slider_double("convexity_max", "Convexitx max", "", 0, 1, .001, 1),
-				 AlgoSetting::make_slider_double("circularity_min", "Circularity min", "", 0, 1, .001, .6),
-				 AlgoSetting::make_slider_double("circularity_max", "Circularity max", "", 0, 1, .001, 1)},
+				 AlgoSetting::make_rangeslider_double("rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01, {-5, 5}),
+				 AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio", "", 0, 1, .001, {.7, 1}),
+				 AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "", 0, 1, .001, {.7, 1}),
+				 AlgoSetting::make_rangeslider_double("convexity", "Convexitx", "", 0, 1, .001, {.8, 1}),
+				 AlgoSetting::make_rangeslider_double("circularity", "Circularity", "", 0, 1, .001, {.6, 1})},
 				true)
 {
 }
@@ -231,15 +225,12 @@ void Algo1Test::label(Algorithm* base, AlgorithmResult* result)
 	cv::Mat& input	= result->oldMat();
 	auto&	colonies = result->colonies_;
 
-	Colony::ID			id	= 0;
-	math::Range<double> _area = {base->settingById("area_min").value<double>(), base->settingById("area_max").value<double>()};
-	math::Range<double> _aabb_ratio
-		= {base->settingById("aabb_ratio_min").value<double>(), base->settingById("aabb_ratio_max").value<double>()};
-	math::Range<double> _bb_ratio = {base->settingById("bb_ratio_min").value<double>(), base->settingById("bb_ratio_max").value<double>()};
-	math::Range<double> _circularity
-		= {base->settingById("circularity_min").value<double>(), base->settingById("circularity_max").value<double>()};
-	math::Range<double> _convexity
-		= {base->settingById("convexity_min").value<double>(), base->settingById("convexity_max").value<double>()};
+	Colony::ID			id			 = 0;
+	math::Range<double> _area		 = base->settingById("area").value<math::Range<double>>();
+	math::Range<double> _aabb_ratio  = base->settingById("aabb_ratio").value<math::Range<double>>();
+	math::Range<double> _bb_ratio	= base->settingById("bb_ratio").value<math::Range<double>>();
+	math::Range<double> _circularity = base->settingById("circularity").value<math::Range<double>>();
+	math::Range<double> _convexity   = base->settingById("convexity").value<math::Range<double>>();
 
 	cv::Mat stats, labeled, centers;
 

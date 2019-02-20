@@ -20,6 +20,11 @@ namespace math
 
 	template <typename T> struct Range
 	{
+		inline Range(Range const& other)
+			: lower_(other.lower_), upper_(other.upper_), lower_closed_(other.lower_closed_), upper_closed_(other.upper_closed_)
+		{
+		}
+		inline Range() : lower_(T()), upper_(T()), lower_closed_(true), upper_closed_(true) {}
 		inline Range(T const& lower, T const& upper, bool lower_closed = true, bool upper_closed = true)
 			: lower_(lower), upper_(upper), lower_closed_(lower_closed), upper_closed_(upper_closed)
 		{
@@ -44,8 +49,10 @@ namespace math
 
 		inline bool excludes(T const& value) { return !contains(value); }
 
-		bool lower_closed_, upper_closed_;
-		T	lower_, upper_;
+		T	 lower_, upper_;
+		short _pad;
+		bool  lower_closed_, upper_closed_;
+		int   _pad2;
 	};
 
 	/**
@@ -72,3 +79,5 @@ namespace math
 	double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat);
 }
 }
+#include <QMetaType>
+Q_DECLARE_METATYPE(c3picko::math::Range<double>);

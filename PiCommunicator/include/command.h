@@ -69,7 +69,7 @@ protected:
 
 signals:
   void OnStatusOk(int status, Response *);
-  void OnStatusErr(QVariant status, Response *);
+  void OnStatusErr(QJsonValue status, Response *);
   void OnNetworkErr(QString error);
   /**
    * @brief This will be always emitted after one of the above was raised.

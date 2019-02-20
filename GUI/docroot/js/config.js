@@ -1,7 +1,7 @@
 var default_profiles = {
-  "printer-profile": "ABC",
-  "socket-profile": "",
-  "plate-profile": "LARGEPLATE"
+  "printer-profile": "302",
+  "socket-profile": "303",
+  "plate-profile": "305"
 }
 
 var UpdateSettingsProfile = function (e){

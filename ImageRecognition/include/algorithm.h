@@ -58,8 +58,8 @@ class Algorithm : public QObject, public QRunnable
 	AlgoSetting const& settingById(AlgoSetting::ID id) const;
 	AlgoSetting const& settingByName(QString name) const;
 
-	void setSettingsValueByID(AlgoSetting::ID id, QVariant value);
-	void setSettingsValueByName(QString name, QVariant value);
+	void setSettingsValueByID(AlgoSetting::ID id, QJsonValue value);
+	void setSettingsValueByName(QString name, QJsonValue value);
 
 	void setSettings(QJsonObject const&);
 
