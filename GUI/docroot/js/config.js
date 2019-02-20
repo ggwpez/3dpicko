@@ -63,9 +63,9 @@ $(function LoadProfiles(){
   AddProfileToList(large_plate);
 });
 
-function CreateFormGroupHtml({id, name, type, value, description="", min="" , max="", step=1, unit="", options={}}, form_id = "", new_value = ""){
-  if(new_value !== "") value = new_value;
-  // console.log("Input-Field:",{id, name, type, value, description, min , max, step, unit, options});
+function CreateFormGroupHtml({id, name, type, defaultValue, value = "", description="", min="" , max="", step=1, unit="", options={}}, form_id = ""){
+  // console.log("Input-Field:",{id, name, type, defaultValue, value, description, min , max, step, unit, options});
+  if(value === "") value = defaultValue;
   let form_group = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label for="${id}">${name}:</label>`;
   
   if (type == "number"){
@@ -167,7 +167,11 @@ function AddProfileToList(profile){
     let setting = template[setting_id];
     setting.id = setting_id;
     if(typeof(profile.settings[setting_id]) === 'object'&&profile.settings[setting_id].name) html += CreateFormGroupHtml(profile.settings[setting_id], profile.id);
-    else html += CreateFormGroupHtml(setting, profile.id, profile.settings[setting_id]);
+    else{
+      setting.value = profile.settings[setting_id];
+      html += CreateFormGroupHtml(setting, profile.id);
+      delete setting.value;
+    }
   }
   if(new_profile) html += `<button type="submit" class="btn btn-primary">Create profile</button>`;
   else html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button><button type="button" class="btn btn-outline-primary" onclick="SetDefaultProfile('${profile.id}');">Set as Default</button>`;
@@ -189,7 +193,8 @@ function AddProfileToList(profile){
   }
 }
 
-function SetDefaultProfile(id){
+function SetDefaultProfile(id, send = true){
+  // TODO Default Plate Profile
   if(id in all_profiles){
     let profile = all_profiles[id];
     default_profiles[profile.type] = id;
@@ -197,8 +202,10 @@ function SetDefaultProfile(id){
     $(`#${profile.type}s .card-header .badge`).hide();
     $(`#${profile.type}s #card-${id} .badge`).show();
     document.getElementById("select-"+profile.type).value = id; 
-    api("setdefaultsettingsprofile", id);
-    ShowAlert("Set Profile "+profile.profile_name+" as Default");
+    if(send){
+      api("setdefaultsettingsprofile", id);
+      ShowAlert("Set Profile "+profile.profile_name+" as Default");
+    }
   }
 }
 
@@ -232,7 +239,7 @@ let profile_templates = {
         type: "vector3",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The (x,y,z) position, in the coordinate system of the printer, the nozzle needs to move to in order to be above the trigger of the scissor and directly above the center of the space between the scissors blades."
       },
@@ -241,7 +248,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
       },    
@@ -250,7 +257,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut."
       },
@@ -259,7 +266,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 1,
-        value: "",
+        defaultValue: "",
         unit: "mm/min",
         description: "The speed the nozzle is moved with."
       },
@@ -268,7 +275,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates."
       },
@@ -277,7 +284,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate."
       }
@@ -292,7 +299,7 @@ let profile_templates = {
         name: "Socket origin offset",
         type: "vector3",
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The (x,y,z) offset of the socket origin (with z-origin on socket surface) to the origin of the printers coordinate system (home)."
       },
@@ -301,7 +308,7 @@ let profile_templates = {
         type: "vector2",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The (x,y) origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket."
       },    
@@ -310,7 +317,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The source plate cutout depth."
       },
@@ -319,7 +326,7 @@ let profile_templates = {
         type: "vector2",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The (x,y) origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket."
       },    
@@ -328,7 +335,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The master plate cutout depth."
       },
@@ -337,7 +344,7 @@ let profile_templates = {
         type: "vector2",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The (x,y) origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket."
       },    
@@ -346,7 +353,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The goal plate cutout depth."
       },
@@ -357,7 +364,7 @@ let profile_templates = {
           kFirstRowFirstColumnAtCutoutOrigin : "Well 'A1' at cutout origin.",
           kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m=last row)"
         },
-        value: "kFirstRowFirstColumnAtCutoutOrigin", 
+        defaultValue: "kFirstRowFirstColumnAtCutoutOrigin", 
         description: "Orientation of goal- and masterplate compared to the cutout it is lying in."
       }
     }
@@ -371,7 +378,7 @@ let profile_templates = {
         name: "Number of rows",
         type: "number",
         step: 1,
-        value: "",
+        defaultValue: "",
         unit: "",
         description: "Number of rows the goal plate has."
       },
@@ -379,7 +386,7 @@ let profile_templates = {
         name: "Number of columns",
         type: "number",
         step: 1,
-        value: "",
+        defaultValue: "",
         unit: "",
         description: "Number of columns the goal plate has."
       },
@@ -388,7 +395,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The offset of the center of the first well A1 to the upper edge of the goal plate."
       },    
@@ -397,7 +404,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The offset of the center of the first well A1 to the left edge of the goal plate."
       }, 
@@ -406,7 +413,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The distance between the center of a well to the center of any directly adjacent well."
       }, 
@@ -415,7 +422,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The height of the source plate."
       },
@@ -424,7 +431,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The height of the master plate."
       }, 
@@ -433,7 +440,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The height of the goal plate."
       },  
@@ -442,7 +449,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The depth of every well."
       }, 
@@ -451,7 +458,7 @@ let profile_templates = {
         type: "number",
         min: 0,
         step: 0.01,
-        value: "",
+        defaultValue: "",
         unit: "mm",
         description: "The thickness of the used culture medium inside the source and master plate, for instance agars."
       }

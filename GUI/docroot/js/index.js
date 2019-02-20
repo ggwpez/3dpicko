@@ -233,7 +233,6 @@ function GetDetectionAlgorithmSettings(id){
 	const algorithm = algorithms[id];
 	for (let settings_id in algorithm.settings){
 		let settings = algorithm.settings[settings_id];
-		settings.value = settings.defaultValue;
 		settings.id = settings_id;
 		
 		let form_group = CreateFormGroupHtml(settings, id);	
