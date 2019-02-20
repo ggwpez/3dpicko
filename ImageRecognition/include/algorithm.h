@@ -8,6 +8,7 @@
 
 namespace c3picko
 {
+class AlgorithmResult;
 class AlgoSetting;
 /**
  * @brief Performs calculations stepwise.
@@ -20,18 +21,17 @@ class Algorithm : public QObject, public QRunnable
 	Q_OBJECT
   public:
 	typedef QString ID;
-	typedef void (*AlgoStep)(Algorithm*, void*, void**);
+	typedef void (*AlgoStep)(Algorithm*, AlgorithmResult*);
 	typedef void (*AlgoCleanup)(Algorithm*);
 
-	Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup, QList<AlgoSetting> settings,
-			  bool isThreadable);
+	Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps, QList<AlgoSetting> settings, bool isThreadable);
 	virtual ~Algorithm() override;
 
 	/**
 	 * @brief Call with according input data pointer before run()
 	 * @param input
 	 */
-	void setInput(void* input);
+	void setPointers(void* input, AlgorithmResult* output);
 
 	/**
 	 * @brief Executes all steps of algorithm one by one.
@@ -47,9 +47,6 @@ class Algorithm : public QObject, public QRunnable
 	 * @return Pointer to instance.
 	 */
 	virtual Algorithm* cloneEmpty() const = 0;
-
-  signals:
-	void OnFinished(void*);
 
   public:
 	ID				   id() const;
@@ -71,22 +68,22 @@ class Algorithm : public QObject, public QRunnable
 	 */
 	QJsonObject baseToJson() const;
 
-	QVector<void*>& stack();
+	AlgorithmResult* result() const;
+
+	void* input() const;
 
   protected:
-	const ID		   id_;
-	const QString	  name_, description_;
+	const ID	  id_;
+	const QString name_, description_;
+	/**
+	 * @brief Steps of the algorithm. Consecutively executed.
+	 */
 	QList<AlgoStep>	steps_;
-	AlgoCleanup		   cleanup_;
 	QList<AlgoSetting> settings_;
 	bool			   is_threadable_;
 	// Algorithmic data
-	void* input_;
-	/**
-	 * @brief Agorithms can use this stack for storing data until deleting in in
-	 * the cleanup function.
-	 */
-	QVector<void*> stack_;
+	void*			 input_;
+	AlgorithmResult* result_;
 };
 MAKE_SERIALIZABLE(Algorithm);
 }

@@ -14,12 +14,12 @@ class Algo1Test : public Algorithm
 	Algo1Test();
 	virtual ~Algo1Test() override;
 
-	static void cvt(Algorithm* base, cv::Mat* input, cv::Mat** output);
-	static void threshold(Algorithm* base, cv::Mat* input, cv::Mat** output);
-	static void erodeAndDilate(Algorithm* base, cv::Mat* input, cv::Mat** output);
-	static void plateDetection(Algorithm* base, cv::Mat* input, cv::Mat** output);
-	static void label(Algorithm* base, cv::Mat* input, std::vector<Colony>** output);
-	static void relativeFiltering(Algorithm* base, std::vector<Colony>* input, std::vector<Colony>** output);
+	static void cvt(Algorithm* base, AlgorithmResult* result);
+	static void threshold(Algorithm* base, AlgorithmResult* result);
+	static void erodeAndDilate(Algorithm* base, AlgorithmResult* result);
+	static void plateDetection(Algorithm* base, AlgorithmResult* result);
+	static void label(Algorithm* base, AlgorithmResult* result);
+	static void relativeFiltering(Algorithm* base, AlgorithmResult* result);
 
 	static void cleanup(Algorithm* base);
 

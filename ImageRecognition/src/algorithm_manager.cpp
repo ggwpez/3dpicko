@@ -1,5 +1,6 @@
 #include "include/algorithm_manager.h"
 #include "include/algorithm_job.h"
+#include "include/algorithm_result.h"
 #include <QThreadPool>
 
 using namespace c3picko;
@@ -19,12 +20,11 @@ AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID id, QJso
 	{
 		if (algo->id() == id)
 		{
-			cv::Mat*   input	= new cv::Mat(source.clone());
-			Algorithm* new_algo = algo->cloneEmpty();
-			new_algo->setSettings(settings);
-			new_algo->setInput(input); // TODO does this work across thread border?
+			cv::Mat*		 input	= new cv::Mat(source.clone());
+			Algorithm*		 new_algo = algo->cloneEmpty();
+			AlgorithmResult* result   = new AlgorithmResult();
 
-			AlgorithmJob* job = new AlgorithmJob(new_algo, pool_, nullptr);
+			AlgorithmJob* job = new AlgorithmJob(new_algo, settings, input, result, pool_, nullptr);
 			connect(job, &AlgorithmJob::OnFinished, job, [input, job]() { // TODO do we need a context object here?
 				delete input;
 				job->deleteLater();
@@ -41,10 +41,8 @@ QList<Algorithm*> AlgorithmManager::algos() const { return algos_; }
 
 void AlgorithmJob::start(bool threaded, bool delete_when_done)
 {
-	timer_.start();
-
 	if (delete_when_done)
-		connect(this, SIGNAL(OnFinished(void*)), this, SLOT(deleteLater()));
+		connect(this, SIGNAL(OnFinished()), this, SLOT(deleteLater()));
 
 	if (threaded && algo_->isThreadable())
 		pool_->start(algo_);

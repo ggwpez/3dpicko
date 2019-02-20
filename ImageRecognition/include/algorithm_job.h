@@ -6,8 +6,9 @@
 class QThreadPool;
 namespace c3picko
 {
-class AlgorithmManager;
 class Algorithm;
+class AlgorithmResult;
+class AlgorithmManager;
 /**
  * @brief Used by AlgorithmManager to encapsulate runnable Algorithms potentially on different threads.
  * Obtain it with AlgorithmManager::createJob .
@@ -18,10 +19,21 @@ class AlgorithmJob : public QObject
 	friend class AlgorithmManager;
 
   private:
-	AlgorithmJob(Algorithm* algo, QThreadPool* pool, QObject* _parent);
+	AlgorithmJob(Algorithm* algo, QJsonObject settings, void* input, AlgorithmResult* result, QThreadPool* pool, QObject* _parent);
 
   public:
 	~AlgorithmJob();
+
+	AlgorithmResult* result() const;
+
+  signals:
+	void OnAlgoSucceeded();
+	void OnAlgoFailed();
+
+	void OnCleanupSucceeded();
+	void OnCleanupFailed();
+
+	void OnFinished();
 
   public slots:
 	/**
@@ -33,12 +45,9 @@ class AlgorithmJob : public QObject
 	 */
 	void start(bool threaded, bool delete_when_done);
 
-  signals:
-	void OnFinished(void*);
-
   private:
-	QElapsedTimer timer_;
-	Algorithm*	algo_ = nullptr;
-	QThreadPool*  pool_;
+	Algorithm*		 algo_ = nullptr;
+	QThreadPool*	 pool_;
+	AlgorithmResult* result_;
 };
 }

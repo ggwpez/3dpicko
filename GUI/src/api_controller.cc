@@ -1,6 +1,10 @@
 #include "include/api_controller.h"
 #include "include/algorithm_job.h"
 #include "include/algorithm_manager.h"
+#include "include/algorithm_result.h"
+#include "include/commands/arbitrary_command.h"
+#include "include/gcodegenerator.h"
+#include "include/octoprint.h"
 
 #include <QCoreApplication>
 #include <QJsonArray>
@@ -258,9 +262,8 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id, QJs
 				}
 				else
 				{
-					connect(job, &AlgorithmJob::OnFinished, client, [this, client](void* output) {
-						emit this->OnColonyDetected(reinterpret_cast<std::vector<Colony>*>(output), client);
-					});
+					connect(job, &AlgorithmJob::OnFinished, client,
+							[this, client, job]() { emit this->OnColonyDetected(&job->result()->colonies_, client); });
 
 					return job;
 				}
@@ -275,43 +278,40 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id, QJs
 	AlgorithmJob* job = detectColonies(job_id, algo_id, settings, client);
 
 	if (job)
-		job->start(true, true);
+		job->start(false, true);
 }
 
 void APIController::startJob(Job::ID id, QObject* client)
 {
-	/*PrinterProfile*		printerp =
-	(PrinterProfile*)(db_->profiles().get("302"));
-	PlateSocketProfile* socket   =
-	(PlateSocketProfile*)(db_->profiles().get("303"));
+	static OctoPrint* printer = new OctoPrint("", "", this);
+
+	PrinterProfile*		printerp = (PrinterProfile*)(db_->profiles().get("302"));
+	PlateSocketProfile* socket   = (PlateSocketProfile*)(db_->profiles().get("303"));
 	PlateProfile*		plate	= (PlateProfile*)(db_->profiles().get("305"));
 
 	GcodeGenerator gen(*socket, *printerp, *plate);
 
 	std::vector<LocalColonyCoordinates> coords;
 	for (int x = 0; x < 4; ++x)
-									for (int y = 0; y < 5; ++y)
-																	coords.push_back(Point(10
-	* x + 70, y * 10 +
-	20));
+		for (int y = 0; y < 5; ++y)
+			coords.push_back(Point(10 * x + 70, y * 10 + 20));
 
-	auto			   code = gen.CreateGcodeForTheEntirePickingProcess(1,
-	8, coords);
+	auto			   code = gen.CreateGcodeForTheEntirePickingProcess(1, 8, coords);
 	std::ostringstream s;
 
 	QStringList sum;
 	for (auto c : code)
-									sum << QString::fromStdString(c.ToString());
+		sum << QString::fromStdString(c.ToString());
 
 	Command* cmd = commands::ArbitraryCommand::MultiCommand(sum);
 
-	QObject::connect(cmd, &Command::OnStatusOk, &OnStatusOk);
-	QObject::connect(cmd, &Command::OnStatusErr, &OnStatusErr);
-	QObject::connect(cmd, &Command::OnNetworkErr, &OnNetworkErr);
+	QObject::connect(cmd, &Command::OnStatusOk, []() {});
+	QObject::connect(cmd, &Command::OnStatusErr, []() {});
+	QObject::connect(cmd, &Command::OnNetworkErr, []() {});
 
 	QObject::connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));
 
-	printer.SendCommand(cmd);*/
+	printer->SendCommand(cmd);
 }
 
 void APIController::shutdown(QObject*)

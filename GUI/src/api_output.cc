@@ -78,7 +78,7 @@ void APIOutput::ColonyDetected(std::vector<Colony>* colonies, QObject* client)
 	}
 
 	emit op->toClient(client, "getpositions", {{"coords", json_coords}});
-	delete colonies;
+	//	delete colonies;
 }
 
 void APIOutput::ColonyDetectionError(QString error, QObject* client) { Error("getpositions", "Could not detect colonies", client); }

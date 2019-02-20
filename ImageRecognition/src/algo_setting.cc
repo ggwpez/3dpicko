@@ -15,6 +15,12 @@ AlgoSetting AlgoSetting::make_dropdown(AlgoSetting::ID id, QString name, QString
 	return AlgoSetting(id, name, "dropdown", description, empty_qv, empty_qv, empty_qv, options, default_option_index);
 }
 
+AlgoSetting AlgoSetting::make_rangeslider_double(AlgoSetting::ID id, QString name, QString description, double min, double max,
+												 double step, QPair<double, double> default_value)
+{
+	return AlgoSetting(id, name, "rangeslider", description, min, max, step, {}, QVariant::fromValue(default_value));
+}
+
 AlgoSetting AlgoSetting::make_slider_int(ID id, QString name, QString description, int min, int max, int step, int default_value)
 {
 	return AlgoSetting(id, name, "slider", description, min, max, step, {}, default_value);
@@ -94,6 +100,12 @@ template <> QJsonObject Marshalling::toJson(const AlgoSetting& value)
 		obj["defaultValue"] = value.defaultValueVariant().toString();
 		obj["options"]		= QJsonObject::fromVariantMap(value.options());
 	}
+	else if (value.type() == "rangeslider")
+	{
+		QPair<double, double> def = value.defaultValue<QPair<double, double>>();
+
+		obj["defaultValue"] = QJsonObject{{"min", def.first}, {"max", def.second}};
+	}
 	else
 		Q_UNREACHABLE();
 
@@ -135,6 +147,9 @@ template <> Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObjec
 			throw std::runtime_error("Could not convert default value for dropdown to int");
 
 		return AlgoSetting(id, name, "dropdown", description, empty_qv, empty_qv, empty_qv, options, default_value);
+	}
+	else if (type == "rangeslider")
+	{
 	}
 	else
 		throw std::runtime_error("Parsing exception");

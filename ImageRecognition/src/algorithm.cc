@@ -1,5 +1,7 @@
 #include "include/algorithm.h"
 #include "include/algo_setting.h"
+#include "include/algorithm_job.h"
+#include "include/algorithm_result.h"
 #include <QJsonArray>
 #include <QThread>
 
@@ -8,62 +10,90 @@ namespace c3picko
 
 Algorithm::~Algorithm() {}
 
-void Algorithm::setInput(void* input)
+void Algorithm::setPointers(void* input, AlgorithmResult* output)
 {
 	Q_ASSERT(input);
 
-	input_ = input;
+	input_  = input;
+	result_ = output;
 }
 
 void Algorithm::run()
 {
-	void* input  = input_;
-	void* output = nullptr;
+	AlgorithmJob* job = qobject_cast<AlgorithmJob*>(this->parent());
+	if (!job)
+	{
+		qCritical() << "Algorithm always needs AlgorithmJob as parent";
+		return;
+	}
 
-	QString error_prefix, error_infix, error_postfix;
+	void* input = input_;
+
+	QString		error_prefix, error_infix, error_postfix, error;
+	QTextStream error_ts(&error);
 	QTextStream(&error_prefix) << "Algorithm " << name_ << " (" << this->metaObject()->className() << ")"
 							   << " crashed (step=";
 	QTextStream(&error_postfix) << ",job=" << this->parent() << ",thread=" << QThread::currentThreadId() << ")";
 
 	for (int i = 0; i < steps_.size(); ++i)
 	{
+		result_->last_stage_ = i;
 		// Lets format an error string, in case it crashes
 
 		try
 		{
-			steps_[i](this, input, &output);
+			steps_[i](this, result_);
+			result_->stages_succeeded_ = true;
 		}
 		catch (std::exception const& e)
 		{
-			qCritical("%s%d%s: %s", qPrintable(error_prefix), i, qPrintable(error_postfix), e.what());
+			error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix) << e.what();
+			result_->stages_succeeded_ = false;
+			break;
 		}
 		catch (...) // FIXME abort
 		{
-			qCritical("%s%d%s: %s", qPrintable(error_prefix), i, qPrintable(error_postfix), "unknown");
+			error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix) << "unknown";
+			result_->stages_succeeded_ = false;
+			break;
 		}
-
-		input = output;
 	}
-
-	emit OnFinished(output);
 
 	try
 	{
-		cleanup_(this);
+		result_->cleanup();
+		result_->cleanup_succseeded_ = true;
 	}
 	catch (std::exception const& e)
 	{
 		qCritical("%s%s%s: %s", qPrintable(error_prefix), "cleanup", qPrintable(error_postfix), e.what());
+		result_->cleanup_succseeded_ = false;
 	}
 	catch (...)
 	{
 		qCritical("%s%s%s: %s", qPrintable(error_prefix), "cleanup", qPrintable(error_postfix), "unknown");
+		result_->cleanup_succseeded_ = false;
 	}
+
+	if (result_->stages_succeeded_)
+		emit job->OnAlgoSucceeded();
+	else
+		emit job->OnAlgoFailed();
+
+	if (result_->cleanup_succseeded_)
+		emit job->OnCleanupSucceeded();
+	else
+		emit job->OnCleanupFailed();
+
+	if (error.size())
+		qCritical() << error;
+
+	emit job->OnFinished();
 }
 
-Algorithm::Algorithm(Algorithm::ID id, QString name, QString description, QList<AlgoStep> steps, AlgoCleanup cleanup,
-					 QList<AlgoSetting> settings, bool is_threadable)
-	: id_(id), name_(name), description_(description), steps_(steps), cleanup_(cleanup), settings_(settings), is_threadable_(is_threadable)
+Algorithm::Algorithm(Algorithm::ID id, QString name, QString description, QList<AlgoStep> steps, QList<AlgoSetting> settings,
+					 bool is_threadable)
+	: id_(id), name_(name), description_(description), steps_(steps), settings_(settings), is_threadable_(is_threadable)
 {
 }
 
@@ -131,7 +161,9 @@ void Algorithm::setSettings(const QJsonObject& sett)
 		setSettingsValueByID(key, sett[key]);
 }
 
-QVector<void*>& Algorithm::stack() { return stack_; }
+AlgorithmResult* Algorithm::result() const { return result_; }
+
+void* Algorithm::input() const { return input_; }
 
 bool Algorithm::isThreadable() const { return is_threadable_; }
 

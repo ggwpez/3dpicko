@@ -3,8 +3,13 @@
 
 #include "include/marshalling.hpp"
 #include <QDebug>
+#include <QPair>
 #include <QString>
 #include <QVariant>
+
+// FIXME hack
+typedef QPair<double, double> _unused_pair;
+Q_DECLARE_METATYPE(_unused_pair);
 
 namespace c3picko
 {
@@ -24,6 +29,8 @@ class AlgoSetting
 										  double default_value);
 	static AlgoSetting make_dropdown(AlgoSetting::ID id, QString name, QString description, QVariantMap options,
 									 QString default_option_index);
+	static AlgoSetting make_rangeslider_double(ID id, QString name, QString description, double min, double max, double step,
+											   QPair<double, double> default_value);
 
 	AlgoSetting(ID id, QString name, QString type, QString description, QVariant min, QVariant max, QVariant step, QVariantMap options,
 				QVariant default_value, QVariant value = QVariant());

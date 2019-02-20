@@ -1,4 +1,5 @@
 #include "include/algorithms/algo1_test.h"
+#include "include/algorithm_result.h"
 #include "include/algorithms/helper.h"
 #include "include/colony.hpp"
 #include "include/colony_type.h"
@@ -9,10 +10,8 @@ namespace c3picko
 {
 
 Algo1Test::Algo1Test()
-	: Algorithm("1", "Fluro1", "",
-				{(AlgoStep)&Algo1Test::cvt, (AlgoStep)&Algo1Test::threshold, (AlgoStep)&Algo1Test::erodeAndDilate,
-				 (AlgoStep)&Algo1Test::plateDetection, (AlgoStep)&Algo1Test::label, (AlgoStep)&Algo1Test::relativeFiltering},
-				&Algo1Test::cleanup,
+	: Algorithm("1", "Fluro1", "", {&Algo1Test::cvt, &Algo1Test::threshold, &Algo1Test::erodeAndDilate, &Algo1Test::plateDetection,
+									&Algo1Test::label, &Algo1Test::relativeFiltering},
 				{AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "", true),
 				 AlgoSetting::make_checkbox("fluro_thresh", "Threshold by brightness", "", false),
 				 AlgoSetting::make_slider_int("area_max", "Max Radius", "lel", 10, 2000, 1, 500),
@@ -102,54 +101,51 @@ static bool roundness(int area, int w, int h, std::vector<cv::Point> const& cont
 	return convexity.contains(convex); // flouro .91
 }
 
-void Algo1Test::cvt(Algorithm* base, cv::Mat* input, cv::Mat** output)
+void Algo1Test::cvt(Algorithm* base, AlgorithmResult* result)
 {
-	*output = new cv::Mat();
-	base->stack().push_back(new cv::Mat(*input)); // For debugging
-	base->stack().push_back(*output);
+	result->newMat();
 
-	cv::cvtColor(*input, **output, CV_BGR2GRAY);
+	cv::Mat* input = reinterpret_cast<cv::Mat*>(base->input());
+	cv::cvtColor(*input, result->newMat(), CV_BGR2GRAY);
 }
 
-void Algo1Test::threshold(Algorithm* base, cv::Mat* input, cv::Mat** output)
+void Algo1Test::threshold(Algorithm* base, AlgorithmResult* result)
 {
 	bool fluro_thresh = base->settingById("fluro_thresh").value<bool>();
 	// Calculate mean and standart deviation
-	*output = new cv::Mat();
-	base->stack().push_back(*output);
+	cv::Mat& input  = result->oldMat();
+	cv::Mat& output = result->newMat();
 
 	cv::Scalar mean, stddev;
 	// Filter by brightest pixels
 	if (fluro_thresh)
 	{
-		cv::meanStdDev(*input, mean, stddev);
-		cv::threshold(*input, **output, mean[0] + 1.5 * stddev[0], 255, cv::THRESH_BINARY); // flour TODO tryp Otsu's method
+		cv::meanStdDev(input, mean, stddev);
+		cv::threshold(input, output, mean[0] + 1.5 * stddev[0], 255, cv::THRESH_BINARY); // flour TODO tryp Otsu's method
 	}
 	else
-		cv::adaptiveThreshold(*input, **output, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 1); // non flour
+		cv::adaptiveThreshold(input, output, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 1); // non flour
 }
 
-void Algo1Test::erodeAndDilate(Algorithm* base, cv::Mat* input, cv::Mat** output)
+void Algo1Test::erodeAndDilate(Algorithm* base, AlgorithmResult* result)
 {
-	*output = new cv::Mat();
-	base->stack().push_back(*output);
+	cv::Mat& input  = result->oldMat();
+	cv::Mat& output = result->newMat();
 
 	int		erosion_type = cv::MORPH_ELLIPSE;
 	int		erosion_size = 2;
 	cv::Mat kernel
 		= getStructuringElement(erosion_type, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1), cv::Point(erosion_size, erosion_size));
 
-	cv::erode(*input, **output, kernel);
-	cv::dilate(**output, **output, kernel);
+	cv::erode(input, output, kernel);
+	cv::dilate(output, output, kernel);
 }
 
-void Algo1Test::plateDetection(Algorithm* base, cv::Mat* input, cv::Mat** output)
+void Algo1Test::plateDetection(Algorithm* base, AlgorithmResult* result)
 {
-	cv::Mat  erroded = *input;
-	cv::Mat* result  = new cv::Mat(*reinterpret_cast<cv::Mat*>(base->stack().first()));
-	*output			 = new cv::Mat(*input);
-	base->stack().push_back(*output);
-	base->stack().push_back(result);
+	cv::Mat& erroded = result->oldMat();
+	// cv::Mat& output  = result->newMat(*reinterpret_cast<cv::Mat*>(base->input()));
+	cv::Mat output(*reinterpret_cast<cv::Mat*>(base->input()));
 
 	if (!base->settingById("plate_detection").value<bool>())
 		return;
@@ -203,8 +199,8 @@ void Algo1Test::plateDetection(Algorithm* base, cv::Mat* input, cv::Mat** output
 		cv::Point2d p(-lines[i].angle.imag(), lines[i].angle.real());
 		// std::cout << (std::arg(lines[i].angle) / M_PI) * 180.f << "°\n";
 		points[i] = p;
-		cv::line(*result, cv::Point(result->cols / 2, result->rows / 2),
-				 cv::Point2f(result->cols / 2 + p.x * 1000, result->rows / 2 + p.y * 1000), cv::Scalar::all(255), 1);
+		cv::line(output, cv::Point(output.cols / 2, output.rows / 2),
+				 cv::Point2f(output.cols / 2 + p.x * 1000, output.rows / 2 + p.y * 1000), cv::Scalar::all(255), 1);
 	}
 
 	int const ks = 3;
@@ -216,23 +212,24 @@ void Algo1Test::plateDetection(Algorithm* base, cv::Mat* input, cv::Mat** output
 	for (int i = 0; i < ks; ++i)
 		bin_clrs.push_back(cv::Scalar(rand() % 255, rand() % 255, rand() % 255));
 
-	cv::circle(*result, cv::Point2f(result->cols / 2, result->rows / 2), 10, cv::Scalar::all(255), 4);
+	cv::circle(output, cv::Point2f(output.cols / 2, output.rows / 2), 10, cv::Scalar::all(255), 4);
 	for (auto const& center : centers)
 	{
-		cv::line(*result, cv::Point2f(result->cols / 2, result->rows / 2),
-				 cv::Point2f(result->cols / 2, result->rows / 2) + cv::Point2f(center.x * 60, center.y * 60), cv::Scalar(0, 0, 255), 3);
+		cv::line(output, cv::Point2f(output.cols / 2, output.rows / 2),
+				 cv::Point2f(output.cols / 2, output.rows / 2) + cv::Point2f(center.x * 60, center.y * 60), cv::Scalar(0, 0, 255), 3);
 		// std::cout << "c " << center.x << " / " << center.y << "\n";
 	}
 
 	for (int i = 0; i < lines.size(); ++i)
 	{
-		cv::line(*result, cv::Point(lines[i].x, lines[i].y), cv::Point(lines[i].endx, lines[i].endy), bin_clrs[labels.at<int>(i)], 2);
+		cv::line(output, cv::Point(lines[i].x, lines[i].y), cv::Point(lines[i].endx, lines[i].endy), bin_clrs[labels.at<int>(i)], 2);
 	}
 }
 
-void Algo1Test::label(Algorithm* base, cv::Mat* input, std::vector<Colony>** output)
+void Algo1Test::label(Algorithm* base, AlgorithmResult* result)
 {
-	auto& colonies = (*output = new std::vector<Colony>());
+	cv::Mat& input	= result->oldMat();
+	auto&	colonies = result->colonies_;
 
 	Colony::ID			id	= 0;
 	math::Range<double> _area = {base->settingById("area_min").value<double>(), base->settingById("area_max").value<double>()};
@@ -247,8 +244,8 @@ void Algo1Test::label(Algorithm* base, cv::Mat* input, std::vector<Colony>** out
 	cv::Mat stats, labeled, centers;
 
 	// Label every connected component
-	labeled = cv::Mat(input->rows, input->cols, CV_32S);
-	cv::connectedComponentsWithStats(*input, labeled, stats, centers);
+	labeled = cv::Mat(input.rows, input.cols, CV_32S);
+	cv::connectedComponentsWithStats(input, labeled, stats, centers);
 
 	for (int i = 0; i < centers.rows; ++i)
 	{
@@ -278,7 +275,7 @@ void Algo1Test::label(Algorithm* base, cv::Mat* input, std::vector<Colony>** out
 			if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h))))
 				continue;
 
-			cv::Mat submat(*input, cv::Rect(left, top, w, h));
+			cv::Mat submat(input, cv::Rect(left, top, w, h));
 			cv::findContours(submat, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
 			if (!roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio, _circularity, _convexity))
@@ -288,26 +285,26 @@ void Algo1Test::label(Algorithm* base, cv::Mat* input, std::vector<Colony>** out
 				double circ = cv::arcLength(contours[0], true);
 
 				// NOTE Brightness only works on unmasked original image contours, otherwise they need conversion
-				double br = math::brightness(contours[0], *reinterpret_cast<cv::Mat*>(base->stack()[1]));
-				Colony detected(center.x / double(input->cols), center.y / double(input->rows), area, circ, circ / (2 * M_PI), br, ++id,
+				double br = math::brightness(contours[0], *reinterpret_cast<cv::Mat*>(base->input()));
+				Colony detected(center.x / double(input.cols), center.y / double(input.rows), area, circ, circ / (2 * M_PI), br, ++id,
 								Colony::Type::INCLUDED);
-				colonies->push_back(detected);
+				colonies.push_back(detected);
 			}
 		}
 	}
 
-	qDebug() << "Detected" << colonies->size() << "colonies";
+	qDebug() << "Detected" << colonies.size() << "colonies";
 }
 
-void Algo1Test::relativeFiltering(Algorithm* base, std::vector<Colony>* input, std::vector<Colony>** output)
+void Algo1Test::relativeFiltering(Algorithm* base, AlgorithmResult* result)
 {
-	*output = input;
+	std::vector<Colony>* input = &result->colonies_;
 	// Should we skip the step?
 	QString option = base->settingById("relative_filter").option<QString>().toLower();
 	if (option == "none" || option == "") // Skip or invalid option
 		return;
 
-	double rel_min_area = base->settingById("rel_min").value<double>(), rel_max_area = base->settingById("rel_max").value<double>();
+	double rel_min = base->settingById("rel_min").value<double>(), rel_max = base->settingById("rel_max").value<double>();
 
 	cv::Scalar				mean, stddev;
 	std::vector<cv::Scalar> values(input->size(), 0);
@@ -330,12 +327,12 @@ void Algo1Test::relativeFiltering(Algorithm* base, std::vector<Colony>* input, s
 	double meand   = cv::sum(mean)[0];
 	double stddefd = cv::sum(stddev)[0];
 
-	rel_min_area = meand + rel_min_area * stddefd; // TODO
-	rel_max_area = meand + rel_max_area * stddefd;
+	rel_min = meand + rel_min * stddefd; // TODO
+	rel_max = meand + rel_max * stddefd;
 
 	for (auto it = input->begin(); it != input->end();)
 	{
-		if ((*(it).*get_data)() < rel_min_area || (*(it).*get_data)() > rel_max_area)
+		if ((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max)
 			input->erase(it);
 		else
 			++it;
@@ -357,8 +354,5 @@ void Algo1Test::cleanup(Algorithm* base)
 	while (cv::waitKey(0) != 'q')
 		;
 	cv::destroyAllWindows();*/
-
-	while (!base->stack().empty())
-		delete static_cast<cv::Mat*>(base->stack().takeFirst());
 }
 }
