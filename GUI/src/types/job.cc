@@ -1,13 +1,12 @@
 #include "include/types/job.hpp"
 
-namespace c3picko
-{
-Job::Job(ID id, Image::ID img_id, QString name, QString description, QDateTime job_created, Profile::ID printer, Profile::ID socket,
-		 int step)
-	: id_(id), img_id_(img_id), name_(name), description_(description), job_created_(job_created), printer_(printer), socket_(socket),
-	  step_(step)
-{
-}
+namespace c3picko {
+Job::Job(ID id, Image::ID img_id, QString name, QString description,
+         QDateTime job_created, Profile::ID printer, Profile::ID socket,
+         int step)
+    : id_(id), img_id_(img_id), name_(name), description_(description),
+      job_created_(job_created), printer_(printer), socket_(socket),
+      step_(step) {}
 
 Job::ID Job::id() const { return id_; }
 
@@ -25,7 +24,9 @@ Profile::ID Job::plate() const { return plate_; }
 
 AlgorithmResult::ID Job::resultID() const { return result_id_; }
 
-void Job::setResultID(const AlgorithmResult::ID& result_id) { result_id_ = result_id; }
+void Job::setResultID(const AlgorithmResult::ID &result_id) {
+  result_id_ = result_id;
+}
 
 qint32 Job::step() const { return step_; }
 
@@ -35,25 +36,25 @@ QString Job::name() const { return name_; }
 
 QString Job::description() const { return description_; }
 
-template <> QJsonObject Marshalling::toJson(const Job& value)
-{
-	QJsonObject obj;
+template <> QJsonObject Marshalling::toJson(const Job &value) {
+  QJsonObject obj;
 
-	obj["id"]		   = value.id();
-	obj["img_id"]	  = value.imgID();
-	obj["name"]		   = value.name();
-	obj["description"] = value.description();
-	obj["job_created"] = value.job_created().toMSecsSinceEpoch();
-	obj["printer"]	 = value.printer();
-	obj["socket"]	  = value.socket();
-	obj["step"]		   = value.step();
+  obj["id"] = value.id();
+  obj["img_id"] = value.imgID();
+  obj["name"] = value.name();
+  obj["description"] = value.description();
+  obj["job_created"] = value.job_created().toMSecsSinceEpoch();
+  obj["printer"] = value.printer();
+  obj["socket"] = value.socket();
+  obj["step"] = value.step();
 
-	return obj;
+  return obj;
 }
 
-template <> Job Marshalling::fromJson(const QJsonObject& obj)
-{
-	return Job(obj["id"].toString(), obj["img_id"].toString(), obj["name"].toString(), obj["description"].toString(),
-			   parseDateTime(obj["job_created"]), obj["printer"].toString(), obj["socket"].toString(), obj["step"].toInt());
+template <> Job Marshalling::fromJson(const QJsonObject &obj) {
+  return Job(obj["id"].toString(), obj["img_id"].toString(),
+             obj["name"].toString(), obj["description"].toString(),
+             parseDateTime(obj["job_created"]), obj["printer"].toString(),
+             obj["socket"].toString(), obj["step"].toInt());
 }
 } // namespace c3picko

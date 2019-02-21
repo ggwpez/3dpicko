@@ -5,49 +5,48 @@
 
 using namespace c3picko;
 
-namespace c3picko
-{
-AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos, QObject* _parent)
-	: QObject(_parent), pool_(pool), algos_(algos)
-{
-	for (Algorithm* algo : algos_)
-		algo->setParent(this);
+namespace c3picko {
+AlgorithmManager::AlgorithmManager(QThreadPool *pool, QList<Algorithm *> algos,
+                                   QObject *_parent)
+    : QObject(_parent), pool_(pool), algos_(algos) {
+  for (Algorithm *algo : algos_)
+    algo->setParent(this);
 }
 
-AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id, AlgorithmResult::ID res_id, QJsonObject settings)
-{
-	for (Algorithm* algo : algos_)
-	{
-		if (algo->id() == algo_id)
-		{
-			cv::Mat*		 input	= new cv::Mat(source.clone());
-			Algorithm*		 new_algo = algo->cloneEmpty();
-			AlgorithmResult* result   = new AlgorithmResult(res_id);
+AlgorithmJob *AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
+                                          AlgorithmResult::ID res_id,
+                                          QJsonObject settings) {
+  for (Algorithm *algo : algos_) {
+    if (algo->id() == algo_id) {
+      cv::Mat *input = new cv::Mat(source.clone());
+      Algorithm *new_algo = algo->cloneEmpty();
+      AlgorithmResult *result = new AlgorithmResult(res_id);
 
-			AlgorithmJob* job = new AlgorithmJob(new_algo, settings, input, result, pool_, nullptr);
-			connect(job, &AlgorithmJob::OnFinished, job, [input, job]() { // TODO do we need a context object here?
-				delete input;
-				job->deleteLater();
-			});
+      AlgorithmJob *job =
+          new AlgorithmJob(new_algo, settings, input, result, pool_, nullptr);
+      connect(job, &AlgorithmJob::OnFinished, job,
+              [input, job]() { // TODO do we need a context object here?
+                delete input;
+                job->deleteLater();
+              });
 
-			return job;
-		}
-	}
+      return job;
+    }
+  }
 
-	return nullptr;
+  return nullptr;
 }
 
-QList<Algorithm*> AlgorithmManager::algos() const { return algos_; }
+QList<Algorithm *> AlgorithmManager::algos() const { return algos_; }
 
-void AlgorithmJob::start(bool threaded, bool delete_when_done)
-{
-	if (delete_when_done)
-		connect(this, SIGNAL(OnFinished()), this, SLOT(deleteLater()));
+void AlgorithmJob::start(bool threaded, bool delete_when_done) {
+  if (delete_when_done)
+    connect(this, SIGNAL(OnFinished()), this, SLOT(deleteLater()));
 
-	if (threaded && algo_->isThreadable())
-		pool_->start(algo_);
-	else
-		algo_->run();
+  if (threaded && algo_->isThreadable())
+    pool_->start(algo_);
+  else
+    algo_->run();
 }
 
 } // namespace c3picko
