@@ -195,7 +195,10 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject *client) {
       qCritical() << "Database corrupt or wrong version: Profile" << id
                   << "had unknown type" << profile.type();
       emit OnDefaultSettingsProfileSetError("Database error", client);
+      return;
     }
+
+    emit OnDefaultSettingsProfileSet(id, client);
   }
 }
 
