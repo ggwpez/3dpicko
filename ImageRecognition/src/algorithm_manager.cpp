@@ -14,15 +14,15 @@ AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos, Q
 		algo->setParent(this);
 }
 
-AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID id, QJsonObject settings)
+AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id, AlgorithmResult::ID res_id, QJsonObject settings)
 {
 	for (Algorithm* algo : algos_)
 	{
-		if (algo->id() == id)
+		if (algo->id() == algo_id)
 		{
 			cv::Mat*		 input	= new cv::Mat(source.clone());
 			Algorithm*		 new_algo = algo->cloneEmpty();
-			AlgorithmResult* result   = new AlgorithmResult();
+			AlgorithmResult* result   = new AlgorithmResult(res_id);
 
 			AlgorithmJob* job = new AlgorithmJob(new_algo, settings, input, result, pool_, nullptr);
 			connect(job, &AlgorithmJob::OnFinished, job, [input, job]() { // TODO do we need a context object here?

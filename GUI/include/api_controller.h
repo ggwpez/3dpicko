@@ -62,6 +62,7 @@ class APIController : public QObject
 	void createSettingsProfile(Profile& prof_wo_id, QObject* client);
 	void updateSettingsProfile(Profile& profile, QObject* client);
 	void deleteSettingsProfile(Profile::ID id, QObject* client);
+	void setDefaultSettingsProfile(Profile::ID id, QObject* client);
 	void createJob(Job& job_wo_id, QObject* client);
 
 	/**
@@ -107,6 +108,8 @@ class APIController : public QObject
 	void OnProfileUpdateError(Profile::ID, QObject* client);
 	void OnProfileDeleted(Profile::ID profile, QObject* client);
 	void OnProfileDeleteError(Profile::ID profile, QObject* client);
+	void OnDefaultSettingsProfileSet(Profile::ID profile, QObject* client);
+	void OnDefaultSettingsProfileSetError(QString error, QObject* client);
 
 	void OnColonyDetectionStarted(Job::ID, QObject* client);
 	/**

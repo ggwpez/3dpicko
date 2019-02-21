@@ -239,7 +239,7 @@ function SetDefaultProfile(id){
     $(`#${profile.type}s .card-header .badge`).hide();
     $(`#${profile.type}s #card-${id} .badge`).show();
     document.getElementById("select-"+profile.type).value = id; 
-    api("setdefaultsettingsprofile", id);
+    api("setdefaultsettingsprofile", { "id": id });
     ShowAlert("Set Profile "+profile.profile_name+" as Default");
   }
 }

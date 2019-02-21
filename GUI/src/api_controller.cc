@@ -72,7 +72,7 @@ void APIController::DeleteImage(Image::ID id, QObject* client)
 	// Is the image	used by a job?
 	for (auto const& job : db_->jobs())
 	{
-		if (job.img_id() == id)
+		if (job.second.imgID() == id)
 		{
 			emit OnImageDeleteError(id, client);
 			return;
@@ -201,6 +201,30 @@ void APIController::deleteSettingsProfile(Profile::ID id, QObject* client)
 	}
 }
 
+void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client)
+{
+	if (!db_->profiles().exists(id))
+	{
+		emit OnDefaultSettingsProfileSetError("Profile " + id + " not found", client);
+	}
+	else
+	{
+		Profile& profile = db_->profiles().get(id);
+
+		if (profile.type() == "printer-profile")
+			db_->setdefaultPrinter(id);
+		else if (profile.type() == "socket-profile")
+			db_->setDefaultSocket(id);
+		else if (profile.type() == "plate-profile")
+			db_->setDefaultPlate(id);
+		else
+		{
+			qCritical() << "Database corrupt or wrong version: Profile" << id << "had unknown type" << profile.type();
+			emit OnDefaultSettingsProfileSetError("Database error", client);
+		}
+	}
+}
+
 void APIController::createJob(Job& job, QObject* client)
 {
 	Job::ID id = db_->newJobId();
@@ -235,7 +259,8 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id, QJs
 	}
 	else
 	{
-		Image::ID img_id = db_->jobs().get(job_id).img_id();
+		Job&	  job	= db_->jobs().get(job_id);
+		Image::ID img_id = job.imgID();
 
 		if (!db_->images().exists(img_id))
 		{
@@ -254,18 +279,20 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id, QJs
 			}
 			else
 			{
-				AlgorithmJob* job = detector_->createJob(data, algo_id, settings);
+				AlgorithmResult::ID result_id = db_->newResultId();
+				job.setResultID(result_id);
+				AlgorithmJob* algo_job = detector_->createJob(data, algo_id, result_id, settings);
 
-				if (!job)
+				if (!algo_job)
 				{
 					emit OnColonyDetectionError("Algorithm not found", client);
 				}
 				else
 				{
-					connect(job, &AlgorithmJob::OnFinished, client,
-							[this, client, job]() { emit this->OnColonyDetected(&job->result()->colonies_, client); });
+					connect(algo_job, &AlgorithmJob::OnFinished, client,
+							[this, client, algo_job]() { emit this->OnColonyDetected(&algo_job->result()->colonies_, client); });
 
-					return job;
+					return algo_job;
 				}
 			}
 		}
@@ -278,12 +305,24 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id, QJs
 	AlgorithmJob* job = detectColonies(job_id, algo_id, settings, client);
 
 	if (job)
-		job->start(false, true);
+		job->start(true, true);
 }
 
 void APIController::startJob(Job::ID id, QObject* client)
 {
-	static OctoPrint* printer = new OctoPrint("", "", this);
+	if (!db_->jobs().exists(id))
+	{
+		emit OnColonyDetectionError("Job '" + id + "' job found", client);
+		return;
+	}
+	Job& job = db_->jobs().get(id);
+
+	if (!db_->detections().exists(job.resultID()))
+	{
+		emit OnColonyDetectionError("Job " + id + " could not find its detection results: " + job.resultID(), client);
+		return;
+	}
+	AlgorithmResult& detection = db_->detections().get(job.resultID());
 
 	PrinterProfile*		printerp = (PrinterProfile*)(db_->profiles().get("302"));
 	PlateSocketProfile* socket   = (PlateSocketProfile*)(db_->profiles().get("303"));
@@ -291,27 +330,19 @@ void APIController::startJob(Job::ID id, QObject* client)
 
 	GcodeGenerator gen(*socket, *printerp, *plate);
 
+	std::vector<Colony>					colonies; // FIXME convert to local coordinates
 	std::vector<LocalColonyCoordinates> coords;
-	for (int x = 0; x < 4; ++x)
-		for (int y = 0; y < 5; ++y)
-			coords.push_back(Point(10 * x + 70, y * 10 + 20));
+	for (int i = 0; i < colonies.size(); ++i)
+		coords.push_back(Point(colonies[i].x(), colonies[i].y()));
 
-	auto			   code = gen.CreateGcodeForTheEntirePickingProcess(1, 8, coords);
+	auto			   code = gen.CreateGcodeForTheEntirePickingProcess(0, 0, coords); // FIXME get starting well
 	std::ostringstream s;
 
 	QStringList sum;
 	for (auto c : code)
 		sum << QString::fromStdString(c.ToString());
 
-	Command* cmd = commands::ArbitraryCommand::MultiCommand(sum);
-
-	QObject::connect(cmd, &Command::OnStatusOk, []() {});
-	QObject::connect(cmd, &Command::OnStatusErr, []() {});
-	QObject::connect(cmd, &Command::OnNetworkErr, []() {});
-
-	QObject::connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));
-
-	printer->SendCommand(cmd);
+	qDebug() << sum;
 }
 
 void APIController::shutdown(QObject*)
@@ -328,66 +359,56 @@ void APIController::restart(QObject*)
 
 QJsonObject APIController::createImageList() const
 {
-	QJsonArray image_list;
-	for (auto const& image : db_->images())
-	{
-		QJsonObject json;
+	QJsonArray json_images;
+	for (auto image : db_->images())
+		json_images.push_back(Marshalling::toJson(image.second));
 
-		image.write(json);
-		image_list.push_back(json);
-	}
-
-	return {{"images", image_list}};
+	return {{"images", json_images}};
 }
 
 QJsonObject APIController::createImageList(Image img)
 {
-	QJsonArray  json_jobs;
-	QJsonObject json_job;
+	QJsonArray json_images;
 
-	img.write(json_job);
-	json_jobs.append(json_job);
+	json_images.append(Marshalling::toJson(img));
 
-	return {{"images", json_jobs}};
+	return {{"images", json_images}};
 }
 
 QJsonObject APIController::createJobList()
 {
 	QJsonArray json_jobs;
 
-	for (auto const& job : db_->jobs())
-	{
-		QJsonObject json;
-		job.write(json);
-		json_jobs.append(json);
-	}
+	for (auto job : db_->jobs())
+		json_jobs.append(Marshalling::toJson(job.second));
 
 	return {{"jobs", json_jobs}};
 }
 
 QJsonObject APIController::createJobList(Job job)
 {
-	QJsonArray  json_jobs;
-	QJsonObject json_job;
+	QJsonArray json_jobs;
 
-	job.write(json_job);
-	json_jobs.append(json_job);
+	json_jobs.append(Marshalling::toJson(job));
 
 	return {{"jobs", json_jobs}};
 }
 
 QJsonObject APIController::createProfileList()
 {
-	QJsonArray json_jobs;
+	QJsonObject json;
+	QJsonArray  json_profiles;
 
-	for (auto const& profile : db_->profiles())
-	{
-		QJsonObject json;
-		profile.write(json);
-		json_jobs.append(json);
-	}
+	for (auto profile : db_->profiles())
+		json_profiles.append(Marshalling::toJson(profile.second));
 
-	return {{"profiles", json_jobs}};
+	json["defaultPrinter"] = db_->defaultPrinter();
+	json["defaultSocket"]  = db_->defaultSocket();
+	json["defaultPlate"]   = db_->defaultPlate();
+
+	json["profiles"] = json_profiles;
+
+	return json;
 }
 
 QJsonObject APIController::CreateAlgorithmList()

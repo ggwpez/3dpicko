@@ -14,13 +14,12 @@ class Colony;
 /**
  * @brief Represents a failed or succeeded job.
  */
-class AlgorithmResult : public QObject
+class AlgorithmResult
 {
-	Q_OBJECT
   public:
 	typedef QString ID;
 
-	AlgorithmResult();
+	AlgorithmResult(ID id);
 	~AlgorithmResult();
 
 	cv::Mat& newMat();
@@ -29,6 +28,7 @@ class AlgorithmResult : public QObject
 	cv::Mat& oldMat();
 
   public:
+	ID id_;
 	/**
 	 * @brief Explicit cleanup for debugging
 	 */
@@ -44,7 +44,7 @@ class AlgorithmResult : public QObject
 	 * @brief Last stage that the job was in.
 	 */
 	int		last_stage_;
-	QString error_string_;
+	QString stage_error_, cleanup_error_;
 
 	/**
 	 * @brief Amount of nanoseconds the job took.
@@ -56,7 +56,17 @@ class AlgorithmResult : public QObject
 	} plate_; // TODO
 	std::vector<Colony> colonies_;
 
+	ID					id() const;
+	bool				stagesSucceeded() const;
+	bool				cleanupSuccseeded() const;
+	int					lastStage() const;
+	quint64				tookNs() const;
+	std::vector<Colony> colonies() const;
+	QString				cleanupError() const;
+	QString				stageError() const;
+
   private:
 	std::list<cv::Mat*> stack_;
 };
+MAKE_MARSHALLABLE(AlgorithmResult);
 }

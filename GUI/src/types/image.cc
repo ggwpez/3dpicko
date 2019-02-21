@@ -8,12 +8,8 @@
 namespace c3picko
 {
 
-Image::Image() : JsonConstructable(QJsonObject()) {}
-
-Image::Image(const QJsonObject& obj)
-	: JsonConstructable(obj), id_(obj["id"].toString()), original_name_(obj["original_name"].toString()),
-	  description_(obj["description"].toString()), path_(obj["path"].toString()), uploaded_(parseDateTime(obj["uploaded"])),
-	  width_(obj["width"].toInt()), height_(obj["height"].toInt())
+Image::Image(Image::ID id, QString original_name, QString description, QString path, QDateTime uploaded, int width, int height)
+	: original_name_(original_name), description_(description), path_(path), uploaded_(uploaded), width_(width), height_(height), id_(id)
 {
 	Q_ASSERT(!id_.isEmpty());
 	if (path_.isEmpty())
@@ -22,7 +18,7 @@ Image::Image(const QJsonObject& obj)
 }
 
 Image::Image(QByteArray data, QString original_name, QString description, QDateTime uploaded)
-	: JsonConstructable(QJsonObject()), original_name_(original_name), description_(description), path_(""), uploaded_(uploaded)
+	: original_name_(original_name), description_(description), path_(""), uploaded_(uploaded)
 {
 	// Calculate size
 	if (!decodeCvMat(data, image_))
@@ -39,8 +35,8 @@ Image::Image(QByteArray data, QString original_name, QString description, QDateT
 }
 
 Image::Image(cv::Mat image, QString original_name, QString description, QDateTime uploaded)
-	: JsonConstructable(QJsonObject()), original_name_(original_name), description_(description), uploaded_(uploaded), image_(image),
-	  width_(image.cols), height_(image.rows), id_(calculateId(image_))
+	: original_name_(original_name), description_(description), uploaded_(uploaded), image_(image), width_(image.cols),
+	  height_(image.rows), id_(calculateId(image_))
 {
 	Q_ASSERT(!id_.isEmpty());
 	Q_ASSERT(path_.isEmpty());
@@ -154,6 +150,10 @@ bool Image::decodeCvMat(QByteArray data, cv::Mat& output)
 	return (!output.empty());
 }
 
+QDateTime Image::uploaded() const { return uploaded_; }
+
+QString Image::description() const { return description_; }
+
 Image::ID Image::calculateId(cv::Mat const& image)
 {
 	QCryptographicHash hasher(QCryptographicHash::Sha256);
@@ -176,14 +176,24 @@ QString Image::originalName() const { return original_name_; }
 
 QString Image::path() const { return path_; }
 
-void Image::write(QJsonObject& obj) const
+template <> QJsonObject Marshalling::toJson(const Image& value)
 {
-	obj["id"]			 = id_;
-	obj["original_name"] = original_name_;
-	obj["description"]   = description_;
-	obj["path"]			 = path_;
-	obj["uploaded"]		 = uploaded_.toMSecsSinceEpoch();
-	obj["width"]		 = width_;
-	obj["height"]		 = height_;
+	QJsonObject obj;
+
+	obj["id"]			 = value.id();
+	obj["original_name"] = value.originalName();
+	obj["description"]   = value.description();
+	obj["path"]			 = value.path();
+	obj["uploaded"]		 = value.uploaded().toMSecsSinceEpoch();
+	obj["width"]		 = value.width();
+	obj["height"]		 = value.height();
+
+	return obj;
+}
+
+template <> Image Marshalling::fromJson(const QJsonObject& obj)
+{
+	return Image(obj["id"].toString(), obj["original_name"].toString(), obj["description"].toString(), obj["path"].toString(),
+				 parseDateTime(obj["uploaded"]), obj["width"].toInt(), obj["height"].toInt());
 }
 } // namespace c3picko

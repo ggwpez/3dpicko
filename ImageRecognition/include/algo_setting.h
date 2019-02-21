@@ -11,8 +11,7 @@
 namespace c3picko
 {
 /**
- * @brief Represents a single option/threshold for an algorithm.
- * Used in AlgoSettings.
+ * @brief Represents a single option/threshold for an Algorithm.
  */
 class AlgoSetting
 {

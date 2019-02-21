@@ -30,6 +30,12 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request, 
 	{
 		emit api->OnAlgorithmListRequested(client);
 	}
+	else if (path == "setdefaultsettingsprofile")
+	{
+		Profile::ID id = req_data["id"].toString();
+
+		api->setDefaultSettingsProfile(id, client);
+	}
 	else if (path == "deleteimage")
 	{
 		Image::ID id = req_data["id"].toString();
@@ -61,18 +67,16 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request, 
 	}
 	else if (path == "createsettingsprofile")
 	{
-		QJsonObject json_profile = req_data;
 		// Profile::ID newId		 = api->db().newProfileId();
 
 		// json_profile["id"] = newId; // TODO  hack
-		Profile profile_wo_id(json_profile);
+		Profile profile_wo_id(Marshalling::fromJson<Profile>(req_data));
 
 		api->createSettingsProfile(profile_wo_id, client);
 	}
 	else if (path == "updatesettingsprofile")
 	{
-		QJsonObject json_profile = request["data"].toObject();
-		Profile		profile(json_profile);
+		Profile profile(Marshalling::fromJson<Profile>(req_data));
 
 		api->updateSettingsProfile(profile, client);
 	}
@@ -84,7 +88,7 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request, 
 	}
 	else if (path == "createjob")
 	{
-		Job job_wo_id(req_data);
+		Job job_wo_id(Marshalling::fromJson<Job>(req_data));
 
 		api->createJob(job_wo_id, client);
 	}

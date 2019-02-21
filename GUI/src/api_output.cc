@@ -3,6 +3,8 @@
 #include "include/colony.hpp"
 #include <QJsonArray>
 
+#include <QJsonDocument>
+
 namespace c3picko
 {
 APIOutput::APIOutput(APIController* parent) : QObject((QObject*)parent), op(parent) {}
@@ -19,7 +21,7 @@ void APIOutput::AlgorithmListRequested(QObject* client) { emit op->toClient(clie
 
 void APIOutput::JobCreated(Job job, QObject* client)
 {
-	QJsonObject json(job);
+	QJsonObject json(Marshalling::toJson(job));
 
 	emit op->toClient(client, "createjob", json);
 	emit op->toAllExClient(client, "getjoblist", json); // TODO lazy
@@ -35,17 +37,17 @@ void APIOutput::JobDeleted(Job job, QObject* client) { emit op->toAll("deletejob
 
 void APIOutput::JobDeleteError(QString path, QObject* client) { Error("jobdelete", "", client); }
 
-void APIOutput::ImageCreated(Image image, QObject* client) { emit op->toAll("uploadimage", (QJsonObject)image); }
+void APIOutput::ImageCreated(Image image, QObject* client) { emit op->toAll("uploadimage", Marshalling::toJson(image)); }
 
 void APIOutput::ImageCreateError(QString path, QObject* client) { Error("uploadimage", "", client); }
 
-void APIOutput::ImageDeleted(Image image, QObject* client) { emit op->toAll("deleteimage", (QJsonObject)image); }
+void APIOutput::ImageDeleted(Image image, QObject* client) { emit op->toAll("deleteimage", Marshalling::toJson(image)); }
 
 void APIOutput::ImageDeleteError(QString path, QObject* client) { Error("deleteimage", "", client); }
 
 void APIOutput::ImageCropped(Image image, QObject* client)
 {
-	QJsonObject json(image);
+	QJsonObject json(Marshalling::toJson(image));
 
 	emit op->toClient(client, "crop-image", json);
 	emit op->toAllExClient(client, "getimagelist", json);
@@ -53,9 +55,9 @@ void APIOutput::ImageCropped(Image image, QObject* client)
 
 void APIOutput::ImageCropError(QString id, QObject* client) { Error("crop-image", "", client); }
 
-void APIOutput::ProfileCreated(Profile profile, QObject* client) { emit op->toAll("createsettingsprofile", (QJsonObject)profile); }
+void APIOutput::ProfileCreated(Profile profile, QObject* client) { emit op->toAll("createsettingsprofile", Marshalling::toJson(profile)); }
 
-void APIOutput::ProfileUpdated(Profile profile, QObject* client) { emit op->toAll("updatesettingsprofile", (QJsonObject)profile); }
+void APIOutput::ProfileUpdated(Profile profile, QObject* client) { emit op->toAll("updatesettingsprofile", Marshalling::toJson(profile)); }
 
 void APIOutput::ProfileUpdateError(Profile::ID profile, QObject* client) { Error("updatesettingsprofile", "", client); }
 
@@ -64,6 +66,16 @@ void APIOutput::ProfileDeleted(Profile::ID profile, QObject* client) { emit op->
 void APIOutput::ProfileDeleteError(Profile::ID profile, QObject* client)
 {
 	Error("deletesettingsprofile", "Could not delete profile #" + profile, client);
+}
+
+void APIOutput::DefaultSettingsProfileSet(Profile::ID profile, QObject* client)
+{
+	emit op->toAll("setdefaultsettingsprofile", {{"id", profile}});
+}
+
+void APIOutput::DefaultSettingsProfileSetError(QString error, QObject* client)
+{
+	Error("setdefaultsettingsprofile", "Could not set profile as default: " + error, client);
 }
 
 void APIOutput::ColonyDetectionStarted(Job::ID, QObject* client) { /* TODO inform client, maybe add a loading animtion */}
