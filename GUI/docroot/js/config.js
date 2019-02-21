@@ -5,6 +5,8 @@ var default_profiles = {
 };
 
 // TODO add on job creation
+// TODO on delete
+// TODO check if already in list
 var unsaved_elements = {};
 
 var UpdateSettingsProfile = function (e){
@@ -20,10 +22,9 @@ var UpdateSettingsProfile = function (e){
   // };
   e.preventDefault();
   const form_data = new FormData(this);
-  let id = form_data.get('id'); 
+  let id = form_data.get('id');
   if("form-"+id in unsaved_elements){
     let type = form_data.get('type');
-    let value = "";
     var json_object = {
       id: id,
       type: form_data.get('type'),
@@ -34,8 +35,8 @@ var UpdateSettingsProfile = function (e){
     if (id == "new-printer-profile" || id == "new-socket-profile" || id == "new-plate-profile"){
       $('#form-new-'+type)[0].reset();
       api("createsettingsprofile", json_object);
-    } 
-    else api("updatesettingsprofile", json_object); 
+    }
+    else api("updatesettingsprofile", json_object);
   }
   $('#collapse-'+id).collapse('hide');
 }
@@ -61,7 +62,7 @@ $(function LoadProfiles(){
   // debugging profiles
   AddProfileToList(example_printer);
   AddProfileToList(makergear);
-  AddProfileToList(creality);  
+  AddProfileToList(creality);
   AddProfileToList(prototyp1);
   AddProfileToList(default_plate);
   AddProfileToList(large_plate);
@@ -109,7 +110,7 @@ function CreateFormGroupHtml({id, name, type, defaultValue, value = "", descript
   // console.log("Input-Field:",{id, name, type, defaultValue, value, description, min , max, step, unit, options});
   if(value === "") value = defaultValue;
   let form_group = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label for="${id}">${name}:</label>`;
-  
+
   if (type == "number"){
     form_group += `${CreateNumberInputHtml(id, min, max, step, value)} ${unit}.`;
   }
@@ -151,7 +152,7 @@ function CreateFormGroupHtml({id, name, type, defaultValue, value = "", descript
     }
     form_group += `</select>`;
   }
-  
+
   if (description && description.length>0) form_group += `<small class="form-text text-muted">${description}</small>`;
   form_group += `</div>`;
   return form_group;
@@ -178,13 +179,13 @@ function AddProfileToList(profile){
     // TODO check if new values
     DeleteProfile(profile.id);
   }
-  
+
   let new_profile = false;
   if(profile.id == "new-"+profile.type){
     new_profile = true;
   }
   else all_profiles[profile.id] = profile;
-  
+
   let html = `
   <div class="card" id="card-${profile.id}">
   <div class="card-header" data-toggle="collapse" data-target="#collapse-${profile.id}">
@@ -216,7 +217,7 @@ function AddProfileToList(profile){
     }
   }
   if(new_profile) html += `<button type="submit" class="btn btn-primary">Create profile</button>`;
-  else html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button><button type="button" class="btn btn-outline-primary" onclick="SetDefaultProfile('${profile.id}');">Set as Default</button>`;
+  else html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button><button type="button" class="btn btn-outline-primary" onclick="api('setdefaultsettingsprofile', {'id':'${profile.id}'});">Set as Default</button>`;
   html += `</form></div></div></div>`;
   document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
   AddFormEvents('form-'+profile.id, UpdateSettingsProfile);
@@ -238,9 +239,8 @@ function SetDefaultProfile(id){
     console.log(default_profiles);
     $(`#${profile.type}s .card-header .badge`).hide();
     $(`#${profile.type}s #card-${id} .badge`).show();
-    document.getElementById("select-"+profile.type).value = id; 
-    api("setdefaultsettingsprofile", { "id": id });
-    ShowAlert("Set Profile "+profile.profile_name+" as Default");
+    document.getElementById("select-"+profile.type).value = id;
+    ShowAlert("Set "+profile.profile_name+" as Default");
   }
 }
 
@@ -249,13 +249,13 @@ function DeleteProfile(id){
     $('#card-'+id).remove();
     const profile = all_profiles[id];
     switch(profile.type){
-      case "printer-profile": 
+      case "printer-profile":
       $('#select-printer-profile option[value='+id+']').remove();
       break;
-      case "socket-profile": 
+      case "socket-profile":
       $('#select-socket-profile option[value='+id+']').remove();
       break;
-      case "plate-profile": 
+      case "plate-profile":
       // TODO update options list
       break;
     }
@@ -286,7 +286,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
-      },    
+      },
       "distance_between_pushed_trigger_and_gap_between_scissors_blade": {
         name: "Cut distance",
         type: "number",
@@ -346,7 +346,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The (x,y) origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket."
-      },    
+      },
       "depth_of_cutout_the_source_plate_lies_in": {
         name: "Source plate cutout depth",
         type: "number",
@@ -364,7 +364,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The (x,y) origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket."
-      },    
+      },
       "depth_of_cutout_the_master_plate_lies_in": {
         name: "Master plate cutout depth",
         type: "number",
@@ -382,7 +382,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The (x,y) origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket."
-      },    
+      },
       "depth_of_cutout_the_goal_plate_lies_in": {
         name: "Goal plate cutout depth",
         type: "number",
@@ -399,7 +399,7 @@ let profile_templates = {
           kFirstRowFirstColumnAtCutoutOrigin : "Well 'A1' at cutout origin.",
           kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m=last row)"
         },
-        defaultValue: "kFirstRowFirstColumnAtCutoutOrigin", 
+        defaultValue: "kFirstRowFirstColumnAtCutoutOrigin",
         description: "Orientation of goal- and masterplate compared to the cutout it is lying in."
       }
     }
@@ -433,7 +433,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The offset of the center of the first well A1 to the upper edge of the goal plate."
-      },    
+      },
       "a1_column_offset": {
         name: "A1 column offset",
         type: "number",
@@ -442,7 +442,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The offset of the center of the first well A1 to the left edge of the goal plate."
-      }, 
+      },
       "well_spacing_center_to_center": {
         name: "Well spacing center to center",
         type: "number",
@@ -451,7 +451,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The distance between the center of a well to the center of any directly adjacent well."
-      }, 
+      },
       "height_source_plate": {
         name: "Source plate height",
         type: "number",
@@ -469,7 +469,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The height of the master plate."
-      }, 
+      },
       "height_goal_plate": {
         name: "Goal plate height",
         type: "number",
@@ -478,7 +478,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The height of the goal plate."
-      },  
+      },
       "well_depth": {
         name: "Well depth",
         type: "number",
@@ -487,7 +487,7 @@ let profile_templates = {
         defaultValue: "",
         unit: "mm",
         description: "The depth of every well."
-      }, 
+      },
       "culture_medium_thickness": {
         name: "Culture medium thickness",
         type: "number",
@@ -527,7 +527,7 @@ let example_printer = {
       value: 14,
       unit: "mm",
       description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
-    },    
+    },
     "distance_between_pushed_trigger_and_gap_between_scissors_blade": {
       name: "Cut distance",
       type: "number",

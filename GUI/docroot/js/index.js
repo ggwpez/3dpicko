@@ -1,7 +1,7 @@
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
-// current job (local) 
+// current job (local)
 var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
@@ -41,12 +41,12 @@ var algorithms;
             {
                 if (!(data.id in images_list))
                 {
-                 console.warn("Server trying to delete non existing image: " + JSON.stringify(data));
-                 ShowAlert("Error: Non existing image.", "danger");
-             }
-             else
-             {
-                 console.log("Deleting image: " +data.id);
+                    console.warn("Server trying to delete non existing image: " + JSON.stringify(data));
+                    ShowAlert("Error: Non existing image.", "danger");
+                }
+                else
+                {
+                    console.log("Deleting image: " +data.id);
 					document.getElementById('img-' +data.id).style.display = "none";	// TODO remove deleted from selection
 					ShowAlert(images_list[data.id].original_name+" deleted.", "success");
 					if(chosen_image.id == data.id) SetChosen(false);
@@ -94,23 +94,26 @@ var algorithms;
                 default_profiles["socket-profile"] = data.defaultSocket;
                 default_profiles["plate-profile"] = data.defaultPlate;
                 data.profiles.forEach(AddProfileToList);
-				console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
-			}
-			else if (type == "createsettingsprofile"){
-				AddProfileToList(data);
-				ShowAlert(data.profile_name+" added.", "success");
-			}
-			else if (type == "updatesettingsprofile"){
-				AddProfileToList(data);
-				ShowAlert(data.profile_name+" updated.", "success");
-			}
-			else if (type == "deletesettingsprofile"){
-				ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
-				DeleteProfile(data.id);
-			}
-			else if (type == "debug")
-			{
-				addDebugOutputLine(data.line);
+                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
+            }
+            else if (type == "setdefaultsettingsprofile"){
+                SetDefaultProfile(data.id);
+            }
+            else if (type == "createsettingsprofile"){
+                AddProfileToList(data);
+                ShowAlert(data.profile_name+" added.", "success");
+            }
+            else if (type == "updatesettingsprofile"){
+                AddProfileToList(data);
+                ShowAlert(data.profile_name+" updated.", "success");
+            }
+            else if (type == "deletesettingsprofile"){
+                ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
+                DeleteProfile(data.id);
+            }
+            else if (type == "debug")
+            {
+                addDebugOutputLine(data.line);
 				// TODO...
 				if(data.line == "Ignoring doubled image") ShowAlert("Image already exists.", "danger");
 			}
@@ -127,7 +130,7 @@ var algorithms;
             }
             else if (type == "crop-image"){
 				// TODO
-			} 
+			}
 			else
 			{
 				console.warn("Ignoring message of type '" +type +"'");
@@ -219,7 +222,7 @@ function GetDetectionAlgorithms(detection_algorithms){
 			}
 		}
 	};*/
-	
+
 	const algorithm_selection = document.getElementById("select-algorithm");
 	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
 
@@ -243,12 +246,12 @@ function GetDetectionAlgorithmSettings(id){
 	for (let settings_id in algorithm.settings){
 		let settings = algorithm.settings[settings_id];
 		settings.id = settings_id;
-		
-		let form_group = CreateFormGroupHtml(settings, id);	
+
+		let form_group = CreateFormGroupHtml(settings, id);
 		detection_settings.insertAdjacentHTML("beforeend", form_group);
 	}
     AddInputEvents("detection-settings-form");
-}	
+}
 
 var UpdateDetectionSettings = function (e){
 	// Send as:
@@ -274,7 +277,7 @@ var UpdateDetectionSettings = function (e){
         };
         new_settings.settings = ReadSettings(settings, form_data);
         console.log("New Settings:", new_settings);
-        api('updatedetectionsettings', new_settings); 
+        api('updatedetectionsettings', new_settings);
         // ShowAlert("Updated Detection Settings");
     }
 }
@@ -311,7 +314,7 @@ function AddJobToList(job)
 
 function AddJobToHistoryList(job)
 {
-	
+
 }
 
 function AddImageToList(image_object){
@@ -341,18 +344,18 @@ $(function(){
         if(Object.keys(unsaved_elements).length>0){
             let changes ="Unsaved Changes in:<br><ul class='mb-0'>";
             for(let id in unsaved_elements){
-                changes += "<li>"+unsaved_elements[id]+'</li>'; 
+                changes += "<li>"+unsaved_elements[id]+'</li>';
             }
             changes += "</ul>";
             ShowAlert(changes, "danger", 6000);
             var confirmationMessage = "Unsaved Changes...";
-            (e || window.event).returnValue = confirmationMessage; 
+            (e || window.event).returnValue = confirmationMessage;
             return confirmationMessage;
         } else{
-            return false;  
-        } 
+            return false;
+        }
     });
-  
+
     AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
 
     $('#delete-dialog').on('show.bs.modal', function (e) {
@@ -502,7 +505,7 @@ function selectionTab(){
 		// TODO Remove (only for debugging)
 		//GetDetectionAlgorithms({});
 		$('#detection-settings-div').show();
-	} 
+	}
 }
 
 function strategyTab(){
@@ -563,7 +566,7 @@ function executeTab(){
 var global_alert = $('#global-alert');
 var alert_window = $('#alert-window');
 
-// bootstrap alert-type: success/warning/danger/primary/dark... 
+// bootstrap alert-type: success/warning/danger/primary/dark...
 function ShowAlert(message, type = "success", delay=3000){
 	let new_alert = global_alert.clone();
 	new_alert[0].innerHTML = message;
