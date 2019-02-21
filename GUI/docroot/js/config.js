@@ -1,8 +1,11 @@
 var default_profiles = {
-  "printer-profile": "302",
-  "socket-profile": "303",
-  "plate-profile": "305"
-}
+  "printer-profile": "",
+  "socket-profile": "",
+  "plate-profile": ""
+};
+
+// TODO add on job creation
+var unsaved_elements = {};
 
 var UpdateSettingsProfile = function (e){
   // var send = {
@@ -16,24 +19,25 @@ var UpdateSettingsProfile = function (e){
   //   }
   // };
   e.preventDefault();
-  
   const form_data = new FormData(this);
-  let type = form_data.get('type');
-  let value = "";
-  var json_object = {
-    id: form_data.get('id'),
-    type: form_data.get('type'),
-    profile_name: form_data.get('profile_name'),
-  };
-  json_object.settings = ReadSettings(profile_templates[type].settings, form_data);
-  // console.log({json_object});
-  
-  $('#collapse-'+json_object.id).collapse('hide');
-  if (json_object.id == "new-printer-profile" || json_object.id == "new-socket-profile" || json_object.id == "new-plate-profile"){
-    $('#form-new-'+type)[0].reset();
-    api("createsettingsprofile", json_object);
-  } 
-  else api("updatesettingsprofile", json_object);
+  let id = form_data.get('id'); 
+  if("form-"+id in unsaved_elements){
+    let type = form_data.get('type');
+    let value = "";
+    var json_object = {
+      id: id,
+      type: form_data.get('type'),
+      profile_name: form_data.get('profile_name'),
+    };
+    json_object.settings = ReadSettings(profile_templates[type].settings, form_data);
+    // console.log({json_object});
+    if (id == "new-printer-profile" || id == "new-socket-profile" || id == "new-plate-profile"){
+      $('#form-new-'+type)[0].reset();
+      api("createsettingsprofile", json_object);
+    } 
+    else api("updatesettingsprofile", json_object); 
+  }
+  $('#collapse-'+id).collapse('hide');
 }
 
 function ReadSettings(template, form_data){
@@ -62,6 +66,44 @@ $(function LoadProfiles(){
   AddProfileToList(default_plate);
   AddProfileToList(large_plate);
 });
+
+function AddInputEvents(form_id){
+  // applies necessary events to a forms input elements:
+  let form = document.getElementById(form_id);
+  // enable multirange
+  form.querySelectorAll('input[type=range][multiple]:not(.multirange)').forEach(multirange);
+  // enable auto resize on number input
+  $(form.querySelectorAll('input[type="number"]')).on('input', function(){
+    if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
+  }).trigger('input');
+  // select value on focus
+  // $(form).on('focus', 'input', function(){this.select();});
+}
+
+function AddFormEvents(form_id, onsubmit_function = null, track_changes = true){
+  // applies necessary events to a form
+  let form = document.getElementById(form_id);
+  // assign onsubmit action
+  form.addEventListener('submit', onsubmit_function);
+  // properly reset rangeslider
+  form.addEventListener('reset', function(){
+    let sliders = this.querySelectorAll('input[type=range].multirange.original');
+    setTimeout(function() { sliders.forEach(input => {input.value = input.defaultValue;}); });
+  });
+  // set as unsaved on change, set as saved on submit/reset
+  if(track_changes){
+    // TODO bubble?
+    $(form).change(function(){
+      unsaved_elements[this.getAttribute('id')] = this.dataset.description;
+    });
+    form.addEventListener('submit', function(){
+      delete unsaved_elements[this.getAttribute('id')];
+    });
+    form.addEventListener('reset', function(){
+      delete unsaved_elements[this.getAttribute('id')];
+    });
+  }
+}
 
 function CreateFormGroupHtml({id, name, type, defaultValue, value = "", description="", min="" , max="", step=1, unit="", options={}}, form_id = ""){
   // console.log("Input-Field:",{id, name, type, defaultValue, value, description, min , max, step, unit, options});
@@ -154,7 +196,7 @@ function AddProfileToList(profile){
   </div>
   <div id="collapse-${profile.id}" class="collapse" data-parent="#group">
   <div class="card-body">
-  <form id="form-${profile.id}" name="form-${profile.id}" method="post" enctype="multipart/form-data">
+  <form id="form-${profile.id}" name="form-${profile.id}" data-description="${profile.profile_name}">
   <input type="hidden" id="id" name="id" value="${profile.id}">
   <input type="hidden" id="type" name="type" value="${profile.type}">
   <div class="form-group">
@@ -177,13 +219,8 @@ function AddProfileToList(profile){
   else html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button><button type="button" class="btn btn-outline-primary" onclick="SetDefaultProfile('${profile.id}');">Set as Default</button>`;
   html += `</form></div></div></div>`;
   document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
-
-  multirange.init();
-  $('#form-'+profile.id).on('submit', UpdateSettingsProfile);
-  $('#form-'+profile.id).on('focus', 'input', function(){this.select();});
-  $('#form-'+profile.id+' input[type="number"]').on('input', function(){
-    if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
-  }).trigger('input');
+  AddFormEvents('form-'+profile.id, UpdateSettingsProfile);
+  AddInputEvents('form-'+profile.id);
 
   if(!(new_profile) && (profile.type == "printer-profile" || profile.type == "socket-profile")){
     if(profile.id == default_profiles[profile.type]){
@@ -193,7 +230,7 @@ function AddProfileToList(profile){
   }
 }
 
-function SetDefaultProfile(id, send = true){
+function SetDefaultProfile(id){
   // TODO Default Plate Profile
   if(id in all_profiles){
     let profile = all_profiles[id];
@@ -202,10 +239,8 @@ function SetDefaultProfile(id, send = true){
     $(`#${profile.type}s .card-header .badge`).hide();
     $(`#${profile.type}s #card-${id} .badge`).show();
     document.getElementById("select-"+profile.type).value = id; 
-    if(send){
-      api("setdefaultsettingsprofile", id);
-      ShowAlert("Set Profile "+profile.profile_name+" as Default");
-    }
+    api("setdefaultsettingsprofile", id);
+    ShowAlert("Set Profile "+profile.profile_name+" as Default");
   }
 }
 

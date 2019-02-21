@@ -39,7 +39,7 @@
     <div class="tab-pane fade show active" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-4 col-md-3 col-lg-2 pr-0">
+          <div class="col-sm-4 col-md-3 col-xl-2 pr-0">
             <div class="nav flex-column nav-pills mb-2" id="steps">
               <h4 id ="headertag">Entwurf</h4>
               <div class="nav-link active" id="browse-tab" href="#browse">1. Choose Image</div>
@@ -59,12 +59,13 @@
               </div>
               <form id="detection-settings-form">
                 <div id="detection-settings"></div>
-                <button type="submit" class="btn btn-primary">Apply</button>
+                <button id="apply-detection-settings" type="submit" class="btn btn-primary">Apply</button>
+                <button id="loading-detection-settings" type="button" class="btn btn-primary" disabled style="display: none"><span class="spinner-border spinner-border-sm"></span></button>
                 <button type="reset" class="btn btn-secondary">Reset</button>
               </form>
             </div>
           </div>
-          <div class="col-sm-8 col-md-9 col-lg-10" >
+          <div class="col-sm-8 col-md-9 col-xl-10">
             <div class="tab-content" id="tabContent">
               <div class="tab-pane fade show active" id="browse">
                 <div class="row mb-4">

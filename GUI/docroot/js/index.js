@@ -25,25 +25,28 @@ var algorithms;
 			console.log("Message type: '" +type +"'");
 			console.log("Response: ", data);
 
-			if (type == "error")				// TODO unclean
+			if (type == "error"){				// TODO unclean
 				ShowAlert(JSON.stringify(data), "danger");
-			else if (type == "getimagelist")
-			{
-				console.log(data);
-				div_images = document.getElementById('all-images');
-				data.images.forEach(AddImageToList);
-				div_images.style.display = "block";
-			}
-			else if (type == "deleteimage")
-			{
-				if (!(data.id in images_list))
-				{
-					console.warn("Server trying to delete non existing image: " + JSON.stringify(data));
-					ShowAlert("Error: Non existing image.", "danger");
-				}
-				else
-				{
-					console.log("Deleting image: " +data.id);
+                $('#apply-detection-settings').show();
+                $('#loading-detection-settings').hide();
+            }
+            else if (type == "getimagelist")
+            {
+                console.log(data);
+                div_images = document.getElementById('all-images');
+                data.images.forEach(AddImageToList);
+                div_images.style.display = "block";
+            }
+            else if (type == "deleteimage")
+            {
+                if (!(data.id in images_list))
+                {
+                 console.warn("Server trying to delete non existing image: " + JSON.stringify(data));
+                 ShowAlert("Error: Non existing image.", "danger");
+             }
+             else
+             {
+                 console.log("Deleting image: " +data.id);
 					document.getElementById('img-' +data.id).style.display = "none";	// TODO remove deleted from selection
 					ShowAlert(images_list[data.id].original_name+" deleted.", "success");
 					if(chosen_image.id == data.id) SetChosen(false);
@@ -87,7 +90,10 @@ var algorithms;
 			}
 			else if (type == "getprofilelist")
 			{
-				data.profiles.forEach(AddProfileToList);
+                default_profiles["printer-profile"] = data.defaultPrinter;
+                default_profiles["socket-profile"] = data.defaultSocket;
+                default_profiles["plate-profile"] = data.defaultPlate;
+                data.profiles.forEach(AddProfileToList);
 				console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
 			}
 			else if (type == "createsettingsprofile"){
@@ -110,13 +116,16 @@ var algorithms;
 			}
 			else if (type == "getpositions")
 			{
-				drawPositions(data);
-			}
-			else if (type == "getdetectionalgorithms"){
-				console.log("########## Algos", JSON.stringify(data));
-				GetDetectionAlgorithms(data);
-			}
-			else if (type == "crop-image"){
+                drawPositions(data);
+                $('#apply-detection-settings').show();
+                $('#loading-detection-settings').hide();
+                ShowAlert("Detected "+data.coords.length+" Colonies");
+            }
+            else if (type == "getdetectionalgorithms"){
+                console.log("########## Algos", JSON.stringify(data));
+                GetDetectionAlgorithms(data);
+            }
+            else if (type == "crop-image"){
 				// TODO
 			} 
 			else
@@ -209,8 +218,8 @@ function GetDetectionAlgorithms(detection_algorithms){
 				description: ""
 			}
 		}
-	};
-	*/
+	};*/
+	
 	const algorithm_selection = document.getElementById("select-algorithm");
 	while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
 
@@ -238,11 +247,8 @@ function GetDetectionAlgorithmSettings(id){
 		let form_group = CreateFormGroupHtml(settings, id);	
 		detection_settings.insertAdjacentHTML("beforeend", form_group);
 	}
-	$('#detection-settings input[type="number"]').on('input', function(){
-		if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
-	}).trigger('input');
-	multirange.init();
-}
+    AddInputEvents("detection-settings-form");
+}	
 
 var UpdateDetectionSettings = function (e){
 	// Send as:
@@ -256,20 +262,21 @@ var UpdateDetectionSettings = function (e){
 	// 	}
 	// }
 	if (e){
-		e.preventDefault();
-		const form_data = new FormData(this);
-		const algorithm_id = document.getElementById('select-algorithm').value;
-		const settings = algorithms[algorithm_id].settings;
-		let new_settings = {
-			job_id : current_job.id,
-			algorithm: algorithm_id,
-		};
-		new_settings.settings = ReadSettings(settings, form_data);
-
-		console.log("New Settings:", new_settings);
-		api('updatedetectionsettings', new_settings); 
-		ShowAlert("Updated Detection Settings");
-	}
+        e.preventDefault();
+        $('#apply-detection-settings').hide();
+        $('#loading-detection-settings').show();
+        const form_data = new FormData(this);
+        const algorithm_id = document.getElementById('select-algorithm').value;
+        const settings = algorithms[algorithm_id].settings;
+        let new_settings = {
+            job_id : current_job.id,
+            algorithm: algorithm_id,
+        };
+        new_settings.settings = ReadSettings(settings, form_data);
+        console.log("New Settings:", new_settings);
+        api('updatedetectionsettings', new_settings); 
+        // ShowAlert("Updated Detection Settings");
+    }
 }
 
 function AddJobToList(job)
@@ -330,9 +337,25 @@ function AddImageToList(image_object){
 }
 
 $(function(){
-	$('#detection-settings-form').on('submit', UpdateDetectionSettings);
-	
-	$('#delete-dialog').on('show.bs.modal', function (e) {
+    window.addEventListener("beforeunload", function (e) {
+        if(Object.keys(unsaved_elements).length>0){
+            let changes ="Unsaved Changes in:<br><ul class='mb-0'>";
+            for(let id in unsaved_elements){
+                changes += "<li>"+unsaved_elements[id]+'</li>'; 
+            }
+            changes += "</ul>";
+            ShowAlert(changes, "danger", 6000);
+            var confirmationMessage = "Unsaved Changes...";
+            (e || window.event).returnValue = confirmationMessage; 
+            return confirmationMessage;
+        } else{
+            return false;  
+        } 
+    });
+  
+    AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
+
+    $('#delete-dialog').on('show.bs.modal', function (e) {
   	// use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
   	const type = $(e.relatedTarget).data('type');
   	const id = $(e.relatedTarget).data('id');
