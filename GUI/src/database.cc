@@ -56,11 +56,21 @@ Database::ImageTable& Database::deletedImages() { return deleted_images_; }
 
 Database::ProfileTable& Database::profiles() { return profiles_; }
 
+Database::DetectionTable& Database::detections() { return detections_; }
+
 Image::ID Database::newImageId() { return QString::number(image_id_++); }
 
 Job::ID Database::newJobId() { return QString::number(job_id_++); }
 
 Profile::ID Database::newProfileId() { return QString::number(profile_id_++); }
+
+AlgorithmResult::ID Database::newResultId() { return QString::number(result_id_++); }
+
+Profile::ID Database::defaultPrinter() const { return default_printer_; }
+
+Profile::ID Database::defaultSocket() const { return default_socket_; }
+
+Profile::ID Database::defaultPlate() const { return default_plate_; }
 
 Database::JobTable& Database::deletedJobs() { return deleted_jobs_; }
 
@@ -76,6 +86,10 @@ void Database::read(QJsonObject const& obj)
 	image_id_   = obj["image_id"].toInt();
 	job_id_		= obj["job_id"].toInt();
 	profile_id_ = obj["profile_id"].toInt();
+
+	default_printer_ = obj["default_printer"].toString();
+	default_socket_  = obj["default_socket"].toString();
+	default_plate_   = obj["default_plate"].toString();
 }
 
 void Database::write(QJsonObject& obj) const
@@ -89,5 +103,10 @@ void Database::write(QJsonObject& obj) const
 	obj["image_id"]   = image_id_;
 	obj["job_id"]	 = job_id_;
 	obj["profile_id"] = profile_id_;
+	obj["result_id"]  = result_id_;
+
+	obj["default_printer"] = default_printer_;
+	obj["default_socket"]  = default_socket_;
+	obj["default_plate"]   = default_plate_;
 }
 } // namespace c3picko

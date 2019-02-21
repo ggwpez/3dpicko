@@ -1,13 +1,45 @@
 {
+    "default_plate": "305",
+    "default_printer": "302",
+    "default_socket": "303",
     "deleted_images": {
     },
     "deleted_jobs": {
     },
-    "image_id": 100,
-    "images": {
+    "detections": {
     },
-    "job_id": 200,
+    "images": {
+        "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771": {
+            "description": "descrtiption",
+            "height": 2752,
+            "id": "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771",
+            "original_name": "12.jpg",
+            "path": "/uploads/RmhyfqrR",
+            "uploaded": 1550753066692,
+            "width": 4896
+        },
+        "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302": {
+            "description": "Cropped version of '12.jpg'",
+            "height": 2201,
+            "id": "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302",
+            "original_name": "12.jpg_1",
+            "path": "/uploads/pBSsilHA",
+            "uploaded": 1550753071996,
+            "width": 3302
+        }
+    },
+    "job_id": 204,
     "jobs": {
+        "203": {
+            "description": "",
+            "id": "203",
+            "img_id": "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771",
+            "job_created": 1550701507909,
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "step": 0
+        }
     },
     "profile_id": 306,
     "profiles": {
@@ -93,5 +125,6 @@
             },
             "type": "plate-profile"
         }
-    }
+    },
+    "result_id": 0
 }
