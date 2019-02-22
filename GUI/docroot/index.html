@@ -57,7 +57,7 @@
               </div>
               <form id="detection-settings-form">
                 <div id="detection-settings"></div>
-                <button id="apply-detection-settings" type="submit" class="btn btn-primary">Apply</button>
+                <button id="apply-detection-settings" type="submit" class="btn btn-primary">Detect</button>
                 <button id="loading-detection-settings" type="button" class="btn btn-primary" disabled style="display: none"><span class="spinner-border spinner-border-sm"></span></button>
                 <button type="reset" class="btn btn-secondary">Reset</button>
               </form>
@@ -127,9 +127,6 @@
                  <canvas id="layer2" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas> <!-- For tooltips -->
                </div>
                <div id="buttons">
-                <button class="btn btn-primary" onclick="getPositions()">Run Colony Detection</button>
-                <button class="btn btn-primary" onclick="editColonyMode('add')">Add Colony</button>
-                <button class="btn btn-primary" onclick="editColonyMode('del')">Delete Colony</button>
                 <button class="btn btn-primary" onclick="strategyTab()">Next Step &gt;</button>
               </div>
               <div id="showCoordinates"></div>

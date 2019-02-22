@@ -1,14 +1,3 @@
-var default_profiles = {
-  "printer-profile": "",
-  "socket-profile": "",
-  "plate-profile": ""
-};
-
-// TODO add on job creation
-// TODO on delete
-// TODO check if already in list
-var unsaved_elements = {};
-
 var UpdateSettingsProfile = function (e){
   // var send = {
   //   id: "XYZ",
@@ -93,9 +82,8 @@ function AddFormEvents(form_id, onsubmit_function = null, track_changes = true){
   });
   // set as unsaved on change, set as saved on submit/reset
   if(track_changes){
-    // TODO bubble?
     $(form).change(function(){
-      unsaved_elements[this.getAttribute('id')] = this.dataset.description;
+      if(!(this.getAttribute('id') in unsaved_elements)) unsaved_elements[this.getAttribute('id')] = this.dataset.description;
     });
     form.addEventListener('submit', function(){
       delete unsaved_elements[this.getAttribute('id')];
@@ -260,6 +248,7 @@ function DeleteProfile(id){
       break;
     }
     delete all_profiles[id];
+    delete unsaved_elements["form-"+id];
   }
 }
 

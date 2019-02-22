@@ -3,7 +3,8 @@ var pickstrategy_context;
 
 var balls, cols, rows;
 var collided_id, old_collided_id;
-var collided_row, collided_column;
+// starting at 1
+var collided_row = 1, collided_column = 1;
 var mouse_down = false;
 
 function drawWells(col_arg, rows_arg, colonys = 1)
@@ -91,11 +92,9 @@ pickstrategy_canvas.addEvent('mousemove', function (e)
 			
 			pickstrategy_context.clearRect(0, pickstrategy_context.canvas.height-20, pickstrategy_context.canvas.width, 20); 
 			pickstrategy_context.fillStyle = "black";
-			collided_row = collided_id%rows;
-			collided_column = (collided_id-collided_id%rows)/rows;
-			console.log({collided_row});
-			console.log({collided_column});
-			pickstrategy_context.fillText("Start at well: "+String.fromCharCode(65 + collided_row)+(collided_column+1),0, pickstrategy_context.canvas.height);
+			collided_row = collided_id%rows+1;
+			collided_column = (collided_id-collided_id%rows)/rows+1;
+			pickstrategy_context.fillText("Start at well: "+String.fromCharCode(64 + collided_row)+(collided_column),0, pickstrategy_context.canvas.height);
 		}
 	} else return false;
 });

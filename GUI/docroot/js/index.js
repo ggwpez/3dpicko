@@ -7,6 +7,13 @@ var current_job = {};
 var all_jobs = [];
 var all_profiles = {};
 var algorithms;
+var default_profiles = {
+  "printer-profile": "",
+  "socket-profile": "",
+  "plate-profile": ""
+};
+// TODO delete "new_job" if job saved or executed
+var unsaved_elements = {};
 
 (function Setup()
 {
@@ -80,7 +87,6 @@ var algorithms;
 				AddJobToList(data);
 				current_job = data;
 				document.getElementById("headertag").innerHTML = "Entwurf #" +data.id;
-				// current_job = data;
 				ShowAlert("Pickjob "+data.id+" saved.", "success");
 			}
 			else if (type == "getjoblist")
@@ -442,6 +448,8 @@ const tabOrder = [ "browse", "cut", "attributes", "selection", "strategy", "over
 
 function tabEnter(tabId)
 {
+	if(tabId > 0) unsaved_elements['new_job'] = "New Job: "+tabOrder[tabId];
+	// TODO delete unsaved_elements['new_job']; if job saved or executed
 	console.log("Enabling tab: " +tabOrder[tabId]);
 	for(id = 0; id < tabOrder.length; id++){
 		if(id < tabId){
@@ -471,6 +479,7 @@ function cutTab(){
 			});
 		}, 1000);
 		//setTimeout(function() {cropper.replace(chosen_image.path);}, 1000);
+		if(!("new_job" in unsaved_elements)) unsaved_elements['new_job'] = "New Job";
 	}
 }
 
@@ -536,6 +545,7 @@ function strategyTab(){
 
 function overviewTab(){
 	tabEnter(5);
+	api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id})
 	console.log(all_jobs);
 	console.log(current_job);
 	canvas_layer0 = document.getElementById('layer0');
@@ -551,7 +561,7 @@ function overviewTab(){
 	<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
 	<li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
 	<li>Description: ${current_job.description}</li>
-	<li>Pick strategy:</li>
+	<li>Pick strategy: ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
 	</ul>
 	`;
 
