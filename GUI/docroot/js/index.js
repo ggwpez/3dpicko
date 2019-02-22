@@ -346,10 +346,6 @@ function AddImageToList(image_object){
 }
 
 $(function(){
-	// TODO
-	$('.next-step').on('click', function(){
-		this.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
-	});
 	window.addEventListener("beforeunload", function (e) {
 		if(Object.keys(unsaved_elements).length>0){
 			let changes ="Unsaved Changes in:<br><ul class='mb-0'>";
@@ -470,6 +466,10 @@ function tabEnter(tabId)
 
 var cropper;
 //Navigation
+$('#steps').on('shown.bs.tab', function (e) {
+	// TODO disable/enable button, only execute if disabled
+	$('.next-step').html('Next Step &gt;');
+})
 $('#cut-tab').on('shown.bs.tab', function (e) {
 	cutImg = document.getElementById('cutImg');
 	cropper = new Cropper(cutImg, {
@@ -497,8 +497,6 @@ function attributesTab(){
 
 function selectionTab(){
 	if(chosen_image.path){
-		tabEnter(3);
-
 		selectionTabEnter();
 		const printer_selection = document.getElementById('select-printer-profile');
 		const socket_selection = document.getElementById('select-socket-profile');
@@ -518,18 +516,17 @@ function selectionTab(){
 		// TODO Remove (only for debugging)
 		//GetDetectionAlgorithms({});
 		$('#detection-settings-div').show();
+		tabEnter(3);
 	}
 }
 
 function strategyTab(){
-	$('#detection-settings-div').hide();
 	let plate_selection = document.getElementById("select-plate-profile");
 	console.log(all_profiles);
 	for(let profile_id in all_profiles){
 		let profile = all_profiles[profile_id];
 		if(profile.type=="plate-profile"){
-			//TODO read number of colonys
-			if(profile.settings.number_of_rows*profile.settings.number_of_columns >= 96){
+			if(profile.settings.number_of_rows*profile.settings.number_of_columns >= colony_coords.length){
 				let plate_profile_option = document.createElement('option');
 				plate_profile_option.value = profile.id;
 				plate_profile_option.text = profile.profile_name;
@@ -537,24 +534,26 @@ function strategyTab(){
 			}
 		}
 	}
-	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-	drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
-	plate_selection.addEventListener("change", function(){
+	if(plate_selection.length > 0){
 		let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-		drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
-	});
-
-	tabEnter(4);
+		drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colony_coords.length);
+		plate_selection.addEventListener("change", function(){
+			let plate_id = this.options[this.selectedIndex].value;
+			drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colony_coords.length);
+		});
+		$('#detection-settings-div').hide();
+		tabEnter(4);
+	} else ShowAlert("Too many colonys :(", "danger");
 }
 
 function overviewTab(){
-	let plate_selection = document.getElementById("select-plate-profile");
-	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-	api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id, plate_id: plate_id});
-	console.log(all_jobs);
-	console.log(current_job);
-	// TODO
+	// TODO disable clicks
+	$('.next-step').html(`<span class="spinner-border spinner-border-sm"></span>`);
+	// TODO hack
 	setTimeout(function(){
+		let plate_selection = document.getElementById("select-plate-profile");
+		let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
+		api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id, plate_id: plate_id});
 		canvas_layer0 = document.getElementById('layer0');
 		canvas_layer1 = document.getElementById('layer1');
 		// TODO onclick resize
