@@ -58,6 +58,11 @@ const Circle = new Class({
       return this;
    },
 
+   getRadius: function ()
+   {
+      return this.options.radius;
+   },
+
    getPosition: function () {
       var position = {
       x: this.options.x,
@@ -77,3 +82,31 @@ const Circle = new Class({
       return (d <= this.options.radius);
    }
 });
+
+// source https://stackoverflow.com/questions/17064913/display-tooltip-in-canvas-graph @ 22.2.2019
+CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, lineHeight) {
+
+    var lines = text.split("\n");
+
+    for (var i = 0; i < lines.length; i++) {
+
+        var words = lines[i].split(' ');
+        var line = '';
+
+        for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' ';
+            var metrics = this.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                this.fillText(line, x, y);
+                line = words[n] + ' ';
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+
+        this.fillText(line, x, y);
+        y += lineHeight;
+    }
+};
