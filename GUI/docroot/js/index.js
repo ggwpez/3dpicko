@@ -425,7 +425,7 @@ function SetChosen(image_id){
 		console.log("Selecting image ", image_id);
 		div_chosen.innerHTML = `
 		<ul><li>Filename: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
-		<button class="btn btn-primary" onclick="cutTab()">Choose This Image &gt;</button>\
+		<button class="btn btn-primary next-step" onclick="cutTab()">Choose This Image &gt;</button>\
 		`;
 		class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
 		class_dropzone.removeClass('empty');
@@ -569,6 +569,7 @@ function overviewTab(){
 	tabEnter(5);
 }
 function executeTab(){
+	api('startjob', {id: current_job.id});
 	var form = document.getElementById('check-preconditions');
 	if (form.checkValidity() === true) tabEnter(6);
 	form.classList.add('was-validated');
