@@ -14,7 +14,7 @@ template <> QJsonObject Marshalling::toJson(const PrinterProfile &value) {
       QString::number(value.zCoordinatePushingTheTrigger());
   obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"] =
       QString::number(
-          value.distanceBetweenPushedTriggerAndGapBetweenScissorsBlade());
+          value.distanceBetweenTipOfNozzleAndGapBetweenScissorsBladeWhenTriggerIsPushed());
   obj["filament_extrusion_length_on_move_offset"] =
       QString::number(value.filamentExtrusionLengthOnMoveOffset());
   obj["filament_extrusion_length_on_pick_and_put_onto_master_plate_offset"] =
@@ -97,7 +97,7 @@ template <> QJsonObject Marshalling::toJson(const PlateProfile &value) {
   obj["a1_column_offset"] = QString::number(value.a1ColumnOffset());
   obj["a1_row_offset"] = QString::number(value.a1RowOffset());
   obj["culture_medium_thickness"] =
-      QString::number(value.cultureMediumThickness());
+      QString::number(value.cultureMediumThicknessSourcePlate());
   obj["height_goal_plate"] = QString::number(value.heightGoalPlate());
   obj["height_master_plate"] = QString::number(value.heightMasterPlate());
   obj["height_source_plate"] = QString::number(value.heightSourcePlate());

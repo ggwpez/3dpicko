@@ -11,17 +11,16 @@ namespace c3picko {
  * @file plateprofile.h
  * @author flopicko
  * @brief Class representing the characteristics of
- * the source, master and goal plate. Since colonies are transferred to
- * the master plate the same way they are to the goal plate
- * these characteristics count for the master plate as well.
+ * the source, master and goal plate.
  */
 class PlateProfile {
-public:
+ public:
   PlateProfile(int number_of_rows, int number_of_columns, float a1_row_offset,
                float a1_column_offset, float well_spacing_center_to_center,
                float height_source_plate, float height_master_plate,
                float height_goal_plate, float well_depth,
-               float culture_medium_thickness);
+               float culture_medium_thickness_source_plate,
+               float culture_medium_thickness_master_plate);
 
   int numberOfRows() const;
   int numberOfColumns() const;
@@ -33,9 +32,10 @@ public:
   float heightMasterPlate() const;
   float heightGoalPlate() const;
   float wellDepth() const;
-  float cultureMediumThickness() const;
+  float cultureMediumThicknessSourcePlate() const;
+  float cultureMediumThicknessMasterPlate() const;
 
-private:
+ private:
   /**
    * @brief number_of_rows_ The number of rows the goal plate has.
    */
@@ -88,15 +88,24 @@ private:
   const float height_goal_plate_;
 
   /**
-   * @brief well_height_ the depth of every well
+   * @brief well_depth_ the depth of every well,
+   * this value is used for setting the length
+   * of the extruded filament while dipping the filament
+   * into the fluid inside the well
    */
   const float well_depth_;
 
   /**
-   * @brief culture_medium_thickness_ the thickness of the used culture medium
-   * inside the source and master plate, for instance agars
+   * @brief culture_medium_thickness_source_plate_ the thickness of the used
+   * culture medium inside the source plate, for instance agars
    */
-  const float culture_medium_thickness_;
+  const float culture_medium_thickness_source_plate_;
+
+  /**
+   * @brief culture_medium_thickness_master_plate_ the thickness of the used
+   * culture medium inside the master plate, for instance agars
+   */
+  const float culture_medium_thickness_master_plate_;
 };
-} // namespace c3picko
-#endif // PLATEPROFILE_H
+}  // namespace c3picko
+#endif  // PLATEPROFILE_H

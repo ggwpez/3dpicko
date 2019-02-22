@@ -8,7 +8,7 @@ namespace c3picko {
  * @brief Class for creating g-code command fields in RepRap style.
  */
 class GcodeInstruction::GcodeField::Command {
-public:
+ public:
   /**
    * Creates and returns the g-code command G1 used for moving the nozzle.
    */
@@ -33,6 +33,10 @@ public:
    * positioning of the nozzle to absolute.
    */
   static GcodeField G90() { return GcodeInstruction::GcodeField('G', 90); }
+  /**
+   * Creates and returns the g-code command G92 used for gauging
+   * the length of the extruded filament
+   */
   static GcodeField G92() { return GcodeInstruction::GcodeField('G', 92); }
   /**
    * Creates and returns the g-code command M82 used for setting the
@@ -50,7 +54,7 @@ public:
  * @brief Class for creating g-code parameter fields.
  */
 class GcodeInstruction::GcodeField::Parameter {
-public:
+ public:
   /**
    * @brief Creates and returns the Xnnn parameter used for telling
    * the nozzle on which x position it shall be moved to.
@@ -165,7 +169,8 @@ GcodeInstruction GcodeInstruction::MoveToXYZ(const float x_coordinate,
 GcodeInstruction GcodeInstruction::MoveToXY(const float x_coordinate,
                                             const float y_coordinate) {
   return GcodeInstruction({
-      GcodeField::Command::G1(), GcodeField::Parameter::X(x_coordinate),
+      GcodeField::Command::G1(),
+      GcodeField::Parameter::X(x_coordinate),
       GcodeField::Parameter::Y(y_coordinate),
   });
 }
@@ -175,15 +180,15 @@ GcodeInstruction GcodeInstruction::MoveToZ(const float z_coordinate) {
       {GcodeField::Command::G1(), GcodeField::Parameter::Z(z_coordinate)});
 }
 
-GcodeInstruction
-GcodeInstruction::ExtrudeFilament(const float e_filament_extrusion_length) {
+GcodeInstruction GcodeInstruction::ExtrudeFilament(
+    const float e_filament_extrusion_length) {
   return GcodeInstruction(
       {GcodeField::Command::G1(),
        GcodeField::Parameter::E(e_filament_extrusion_length)});
 }
 
-GcodeInstruction
-GcodeInstruction::SetMovementSpeed(const int f_nozzle_movement_speed) {
+GcodeInstruction GcodeInstruction::SetMovementSpeed(
+    const int f_nozzle_movement_speed) {
   return GcodeInstruction({GcodeField::Command::G1(),
                            GcodeField::Parameter::F(f_nozzle_movement_speed)});
 }
@@ -198,9 +203,10 @@ GcodeInstruction GcodeInstruction::AllowColdExtrusion() {
       {GcodeField::Command::M302(), GcodeField::Parameter::P(1)});
 }
 
-GcodeInstruction GcodeInstruction::ZeroE() {
-  return GcodeInstruction(
-      {GcodeField::Command::G92(), GcodeField::Parameter::E(3.2)});
+GcodeInstruction GcodeInstruction::GaugeFilamentExtrusionLength(
+    const float current_extrusion_length) {
+  return GcodeInstruction({GcodeField::Command::G92(),
+                           GcodeField::Parameter::E(current_extrusion_length)});
 }
 
 GcodeInstruction::GcodeInstruction(std::vector<GcodeField> fields)
@@ -208,8 +214,7 @@ GcodeInstruction::GcodeInstruction(std::vector<GcodeField> fields)
 
 std::string GcodeInstruction::ToString() const {
   std::stringstream ss;
-  for (const GcodeField &field : fields_)
-    ss << field.ToString() << " ";
+  for (const GcodeField &field : fields_) ss << field.ToString() << " ";
   return ss.str();
 }
-} // namespace c3picko
+}  // namespace c3picko
