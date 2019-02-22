@@ -536,7 +536,7 @@ function strategyTab(){
 	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
 	drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
 	plate_selection.addEventListener("change", function(){
-		const plate_id = plate_selection.options[plate_selection.selectedIndex].value;
+		let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
 		drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows);
 	});
 
@@ -544,8 +544,9 @@ function strategyTab(){
 }
 
 function overviewTab(){
-	tabEnter(5);
-	api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id})
+	let plate_selection = document.getElementById("select-plate-profile");
+	let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
+	api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id, plate_id: plate_id});
 	console.log(all_jobs);
 	console.log(current_job);
 	canvas_layer0 = document.getElementById('layer0');
@@ -561,11 +562,11 @@ function overviewTab(){
 	<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
 	<li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
 	<li>Description: ${current_job.description}</li>
-	<li>Pick strategy: ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
+	<li>Pick strategy: Starting at ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
 	</ul>
 	`;
-
 	document.getElementById('overview-content').insertAdjacentHTML('afterbegin', html);
+	tabEnter(5);
 }
 function executeTab(){
 	var form = document.getElementById('check-preconditions');
