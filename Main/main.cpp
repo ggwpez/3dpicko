@@ -70,7 +70,9 @@ static void msg_handler(QtMsgType type, const QMessageLogContext &context,
 };
 
 static int start(int argc, char **argv) {
+#ifdef Q_OS_LINUX
   qInstallMessageHandler(msg_handler);
+#endif
   // FIXME memory managment
   Setup();
   QCoreApplication app(argc, argv);

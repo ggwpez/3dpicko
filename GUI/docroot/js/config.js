@@ -147,6 +147,7 @@ function CreateFormGroupHtml({id, name, type, defaultValue, value = "", descript
 }
 
 function CreateNumberInputHtml(id, min, max, step = 1, value = "", placeholder = 0, required = true){
+  value = Math.round(value * 100) / 100;
   return `<input type="number" id="${id}" name="${id}" class="d-inline form-control-plaintext" ${required?`required="required"`:``} placeholder="${placeholder}" ${(min!="")?`min=${min}`:``} ${(max!="")?`max=${max}`:``} ${(step)?`step=${step}`:`1`} value="${value}">`;
 }
 

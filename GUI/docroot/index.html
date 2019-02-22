@@ -71,7 +71,7 @@
                     <h2>Choose Image</h2>
                     <form><input id="classicUpload" type="file" multiple style="display: none;"/></form>
                     <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
-                    <div id="chosen-image"></div>
+                    <div id="chosen-image" style="display: none"><div id="selectedimage-description"></div><button class="btn btn-primary next-step" onclick="cutTab()">Choose This Image &gt;</button></div>
                   </div>
                 </div>
                 <div class="row">
@@ -84,12 +84,9 @@
               </div>
               <div class="tab-pane fade col-md-8" id="cut">
                 <h2>Cut Image</h2>
-                <div class="crop_container">
-                  <div>
-                    <img id="cutImg" src="" alt="Picture">
-                  </div>
+                <div>
+                  <img id="cutImg" src="" alt="Picture">
                 </div>
-                <br>
                 <button class="btn btn-primary m-2 next-step" onclick="attributesTab()">Next Step</button>
               </div>
               <div class="tab-pane fade col-md-6" id="attributes">
@@ -142,7 +139,7 @@
               <h2>Choose Starting Well</h2>
               <canvas id="pickstrategy-canvas"></canvas>
               <br>
-              <button class="btn btn-primary m-2" onclick="overviewTab()">Overview ></button>
+              <button class="btn btn-primary m-2 next-step" onclick="overviewTab()">Overview ></button>
             </div>
             <div class="tab-pane fade col-md-8" id="overview">
               <h2>Overview</h2>

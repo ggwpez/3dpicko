@@ -8,9 +8,9 @@ var all_jobs = [];
 var all_profiles = {};
 var algorithms;
 var default_profiles = {
-  "printer-profile": "",
-  "socket-profile": "",
-  "plate-profile": ""
+	"printer-profile": "",
+	"socket-profile": "",
+	"plate-profile": ""
 };
 // TODO delete "new_job" if job saved or executed
 var unsaved_elements = {};
@@ -34,26 +34,26 @@ var unsaved_elements = {};
 
 			if (type == "error"){				// TODO unclean
 				ShowAlert(JSON.stringify(data), "danger");
-                $('#apply-detection-settings').show();
-                $('#loading-detection-settings').hide();
-            }
-            else if (type == "getimagelist")
-            {
-                console.log(data);
-                div_images = document.getElementById('all-images');
-                data.images.forEach(AddImageToList);
-                div_images.style.display = "block";
-            }
-            else if (type == "deleteimage")
-            {
-                if (!(data.id in images_list))
-                {
-                    console.warn("Server trying to delete non existing image: " + JSON.stringify(data));
-                    ShowAlert("Error: Non existing image.", "danger");
-                }
-                else
-                {
-                    console.log("Deleting image: " +data.id);
+				$('#apply-detection-settings').show();
+				$('#loading-detection-settings').hide();
+			}
+			else if (type == "getimagelist")
+			{
+				console.log(data);
+				div_images = document.getElementById('all-images');
+				data.images.forEach(AddImageToList);
+				div_images.style.display = "block";
+			}
+			else if (type == "deleteimage")
+			{
+				if (!(data.id in images_list))
+				{
+					console.warn("Server trying to delete non existing image: " + JSON.stringify(data));
+					ShowAlert("Error: Non existing image.", "danger");
+				}
+				else
+				{
+					console.log("Deleting image: " +data.id);
 					document.getElementById('img-' +data.id).style.display = "none";	// TODO remove deleted from selection
 					ShowAlert(images_list[data.id].original_name+" deleted.", "success");
 					if(chosen_image.id == data.id) SetChosen(false);
@@ -96,45 +96,45 @@ var unsaved_elements = {};
 			}
 			else if (type == "getprofilelist")
 			{
-                default_profiles["printer-profile"] = data.defaultPrinter;
-                default_profiles["socket-profile"] = data.defaultSocket;
-                default_profiles["plate-profile"] = data.defaultPlate;
-                data.profiles.forEach(AddProfileToList);
-                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
-            }
-            else if (type == "setdefaultsettingsprofile"){
-                SetDefaultProfile(data.id);
-            }
-            else if (type == "createsettingsprofile"){
-                AddProfileToList(data);
-                ShowAlert(data.profile_name+" added.", "success");
-            }
-            else if (type == "updatesettingsprofile"){
-                AddProfileToList(data);
-                ShowAlert(data.profile_name+" updated.", "success");
-            }
-            else if (type == "deletesettingsprofile"){
-                ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
-                DeleteProfile(data.id);
-            }
-            else if (type == "debug")
-            {
-                addDebugOutputLine(data.line);
+				default_profiles["printer-profile"] = data.defaultPrinter;
+				default_profiles["socket-profile"] = data.defaultSocket;
+				default_profiles["plate-profile"] = data.defaultPlate;
+				data.profiles.forEach(AddProfileToList);
+				console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
+			}
+			else if (type == "setdefaultsettingsprofile"){
+				SetDefaultProfile(data.id);
+			}
+			else if (type == "createsettingsprofile"){
+				AddProfileToList(data);
+				ShowAlert(data.profile_name+" added.", "success");
+			}
+			else if (type == "updatesettingsprofile"){
+				AddProfileToList(data);
+				ShowAlert(data.profile_name+" updated.", "success");
+			}
+			else if (type == "deletesettingsprofile"){
+				ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
+				DeleteProfile(data.id);
+			}
+			else if (type == "debug")
+			{
+				addDebugOutputLine(data.line);
 				// TODO...
 				if(data.line == "Ignoring doubled image") ShowAlert("Image already exists.", "danger");
 			}
 			else if (type == "getpositions")
 			{
-                drawPositions(data);
-                $('#apply-detection-settings').show();
-                $('#loading-detection-settings').hide();
-                ShowAlert("Detected "+data.coords.length+" Colonies");
-            }
-            else if (type == "getdetectionalgorithms"){
-                console.log("########## Algos", JSON.stringify(data));
-                GetDetectionAlgorithms(data);
-            }
-            else if (type == "crop-image"){
+				drawPositions(data);
+				$('#apply-detection-settings').show();
+				$('#loading-detection-settings').hide();
+				ShowAlert("Detected "+data.coords.length+" Colonies");
+			}
+			else if (type == "getdetectionalgorithms"){
+				console.log("########## Algos", JSON.stringify(data));
+				GetDetectionAlgorithms(data);
+			}
+			else if (type == "crop-image"){
 				// TODO
 			}
 			else
@@ -256,7 +256,7 @@ function GetDetectionAlgorithmSettings(id){
 		let form_group = CreateFormGroupHtml(settings, id);
 		detection_settings.insertAdjacentHTML("beforeend", form_group);
 	}
-    AddInputEvents("detection-settings-form");
+	AddInputEvents("detection-settings-form");
 }
 
 var UpdateDetectionSettings = function (e){
@@ -271,19 +271,19 @@ var UpdateDetectionSettings = function (e){
 	// 	}
 	// }
 	if (e){
-        e.preventDefault();
-        $('#apply-detection-settings').hide();
-        $('#loading-detection-settings').show();
-        const form_data = new FormData(this);
-        const algorithm_id = document.getElementById('select-algorithm').value;
-        const settings = algorithms[algorithm_id].settings;
-        let new_settings = {
-            job_id : current_job.id,
-            algorithm: algorithm_id,
-        };
-        new_settings.settings = ReadSettings(settings, form_data);
-        console.log("New Settings:", new_settings);
-        api('updatedetectionsettings', new_settings);
+		e.preventDefault();
+		$('#apply-detection-settings').hide();
+		$('#loading-detection-settings').show();
+		const form_data = new FormData(this);
+		const algorithm_id = document.getElementById('select-algorithm').value;
+		const settings = algorithms[algorithm_id].settings;
+		let new_settings = {
+			job_id : current_job.id,
+			algorithm: algorithm_id,
+		};
+		new_settings.settings = ReadSettings(settings, form_data);
+		console.log("New Settings:", new_settings);
+		api('updatedetectionsettings', new_settings);
         // ShowAlert("Updated Detection Settings");
     }
 }
@@ -346,25 +346,29 @@ function AddImageToList(image_object){
 }
 
 $(function(){
-    window.addEventListener("beforeunload", function (e) {
-        if(Object.keys(unsaved_elements).length>0){
-            let changes ="Unsaved Changes in:<br><ul class='mb-0'>";
-            for(let id in unsaved_elements){
-                changes += "<li>"+unsaved_elements[id]+'</li>';
-            }
-            changes += "</ul>";
-            ShowAlert(changes, "danger", 6000);
-            var confirmationMessage = "Unsaved Changes...";
-            (e || window.event).returnValue = confirmationMessage;
-            return confirmationMessage;
-        } else{
-            return false;
-        }
-    });
+	// TODO
+	$('.next-step').on('click', function(){
+		this.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
+	});
+	window.addEventListener("beforeunload", function (e) {
+		if(Object.keys(unsaved_elements).length>0){
+			let changes ="Unsaved Changes in:<br><ul class='mb-0'>";
+			for(let id in unsaved_elements){
+				changes += "<li>"+unsaved_elements[id]+'</li>';
+			}
+			changes += "</ul>";
+			ShowAlert(changes, "danger", 6000);
+			var confirmationMessage = "Unsaved Changes...";
+			(e || window.event).returnValue = confirmationMessage;
+			return confirmationMessage;
+		} else{
+			return false;
+		}
+	});
 
-    AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
+	AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
 
-    $('#delete-dialog').on('show.bs.modal', function (e) {
+	$('#delete-dialog').on('show.bs.modal', function (e) {
   	// use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
   	const type = $(e.relatedTarget).data('type');
   	const id = $(e.relatedTarget).data('id');
@@ -423,16 +427,17 @@ function SetChosen(image_id){
 	if(image_id){
 		chosen_image = images_list[image_id];
 		console.log("Selecting image ", image_id);
-		div_chosen.innerHTML = `
-		<ul><li>Filename: ${chosen_image.original_name}</li><li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>\
-		<button class="btn btn-primary next-step" onclick="cutTab()">Choose This Image &gt;</button>\
+		div_chosen.getElementById('selectedimage-description').innerHTML = `
+		<ul><li>Filename: ${chosen_image.original_name}</li>
+		<li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>		
 		`;
+		$(div_chosen).show();
 		class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
 		class_dropzone.removeClass('empty');
 	}
 	else{
 		chosen_image = false;
-		div_chosen.innerHTML = "";
+		$(div_chosen).hide();
 		class_dropzone.innerHTML = 'Drop Image';
 		class_dropzone.addClass('empty');
 	}
@@ -465,21 +470,19 @@ function tabEnter(tabId)
 
 var cropper;
 //Navigation
+$('#cut-tab').on('shown.bs.tab', function (e) {
+	cutImg = document.getElementById('cutImg');
+	cropper = new Cropper(cutImg, {
+		aspectRatio: 1.5/1,
+		moveable: false,
+		zoomable: false
+	});
+});
 function cutTab(){
 	if(chosen_image.path){
-		tabEnter(1);
-
-		cutImg = document.querySelector('#cutImg');
+		cutImg = document.getElementById('cutImg');
 		cutImg.src = chosen_image.path;
-
-		setTimeout(() => {
-			console.log("Image loaded ###########");
-			cropper = new Cropper(cutImg, {
-				aspectRatio: 1.5/1
-			});
-		}, 1000);
-		//setTimeout(function() {cropper.replace(chosen_image.path);}, 1000);
-		if(!("new_job" in unsaved_elements)) unsaved_elements['new_job'] = "New Job";
+		tabEnter(1);
 	}
 }
 
@@ -491,6 +494,7 @@ function attributesTab(){
 	var rect = cropper.getData();
 	api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
+
 function selectionTab(){
 	if(chosen_image.path){
 		tabEnter(3);
@@ -549,24 +553,27 @@ function overviewTab(){
 	api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id, plate_id: plate_id});
 	console.log(all_jobs);
 	console.log(current_job);
-	canvas_layer0 = document.getElementById('layer0');
-	canvas_layer1 = document.getElementById('layer1');
-	// TODO onclick resize
-	const html = `
-	<div style="position: relative;">
-	<img id="processed-layer0" src="${canvas_layer0.toDataURL()}" width="100%" style="z-index: 0;">
-	<img id="processed-layer1" src="${canvas_layer1.toDataURL()}" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
-	</div>
-	<ul class="mt-2">
-	<li>Job name: ${current_job.name}</li>
-	<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
-	<li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
-	<li>Description: ${current_job.description}</li>
-	<li>Pick strategy: Starting at ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
-	</ul>
-	`;
-	document.getElementById('overview-content').insertAdjacentHTML('afterbegin', html);
-	tabEnter(5);
+	// TODO
+	setTimeout(function(){
+		canvas_layer0 = document.getElementById('layer0');
+		canvas_layer1 = document.getElementById('layer1');
+		// TODO onclick resize
+		const html = `
+		<div style="position: relative;">
+		<img id="processed-layer0" src="${canvas_layer0.toDataURL()}" width="100%" style="z-index: 0;">
+		<img id="processed-layer1" src="${canvas_layer1.toDataURL()}" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
+		</div>
+		<ul class="mt-2">
+		<li>Job name: ${current_job.name}</li>
+		<li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
+		<li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
+		<li>Description: ${current_job.description}</li>
+		<li>Pick strategy: Starting at ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
+		</ul>
+		`;
+		document.getElementById('overview-content').insertAdjacentHTML('afterbegin', html);
+		tabEnter(5);
+	}, 10);
 }
 function executeTab(){
 	api('startjob', {id: current_job.id});
