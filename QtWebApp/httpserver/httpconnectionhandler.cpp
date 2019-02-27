@@ -64,9 +64,10 @@ void HttpConnectionHandler::run() {
   try {
     exec();
   } catch (...) {
-    qCritical("HttpConnectionHandler (%p): an uncatched exception occured in "
-              "the thread",
-              this);
+    qCritical(
+        "HttpConnectionHandler (%p): an uncatched exception occured in "
+        "the thread",
+        this);
   }
   socket->close();
   delete socket;
@@ -79,7 +80,7 @@ void HttpConnectionHandler::handleConnection(
   qInfo("HttpConnectionHandler (%p): handle new connection", this);
   busy = true;
   Q_ASSERT(socket->isOpen() ==
-           false); // if not, then the handler is already busy
+           false);  // if not, then the handler is already busy
 
   // UGLY workaround - we need to clear writebuffer before reusing this socket
   // https://bugreports.qt-project.org/browse/QTBUG-28914
@@ -119,8 +120,7 @@ void HttpConnectionHandler::readTimeout() {
   // socket->write("HTTP/1.1 408 request timeout\r\nConnection: close\r\n\r\n408
   // request timeout\r\n");
 
-  while (socket->bytesToWrite())
-    socket->waitForBytesWritten();
+  while (socket->bytesToWrite()) socket->waitForBytesWritten();
   socket->disconnectFromHost();
   delete currentRequest;
   currentRequest = 0;
@@ -160,10 +160,10 @@ void HttpConnectionHandler::read() {
 
     // If the request is aborted, return error message and close the connection
     if (currentRequest->getStatus() == HttpRequest::abort) {
-      socket->write("HTTP/1.1 413 entity too large\r\nConnection: "
-                    "close\r\n\r\n413 Entity too large\r\n");
-      while (socket->bytesToWrite())
-        socket->waitForBytesWritten();
+      socket->write(
+          "HTTP/1.1 413 entity too large\r\nConnection: "
+          "close\r\n\r\n413 Entity too large\r\n");
+      while (socket->bytesToWrite()) socket->waitForBytesWritten();
       socket->disconnectFromHost();
       delete currentRequest;
       currentRequest = 0;
@@ -200,9 +200,10 @@ void HttpConnectionHandler::read() {
       try {
         requestHandler->service(*currentRequest, response);
       } catch (...) {
-        qCritical("HttpConnectionHandler (%p): An uncatched exception occured "
-                  "in the request handler",
-                  this);
+        qCritical(
+            "HttpConnectionHandler (%p): An uncatched exception occured "
+            "in the request handler",
+            this);
       }
 
       // Finalize sending the response if not already done
@@ -242,8 +243,7 @@ void HttpConnectionHandler::read() {
       // Close the connection or prepare for the next request on the same
       // connection.
       if (closeConnection) {
-        while (socket->bytesToWrite())
-          socket->waitForBytesWritten();
+        while (socket->bytesToWrite()) socket->waitForBytesWritten();
         socket->disconnectFromHost();
       } else {
         // Start timer for next request

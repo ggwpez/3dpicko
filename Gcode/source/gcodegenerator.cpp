@@ -8,7 +8,8 @@ GcodeGenerator::GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
                                const PrinterProfile &printer_profile,
                                const PlateProfile &plate_profile)
     : plate_socket_profile_(plate_socket_profile),
-      printer_profile_(printer_profile), plate_profile_(plate_profile),
+      printer_profile_(printer_profile),
+      plate_profile_(plate_profile),
       gcode_lower_filament_onto_colony_(CreateGcodeLowerFilamentOntoColony()),
       gcode_lower_filament_onto_master_(CreateGcodeLowerFilamentOntoMaster()),
       gcode_align_tip_of_nozzle_with_top_of_well_(
@@ -102,8 +103,8 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
       plate_socket_profile_.depthOfCutoutSourcePlateLiesIn() +
       plate_profile_.cultureMediumThickness() +
       printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
-      1 // push a little into the culture medium
-      );
+      1  // push a little into the culture medium
+  );
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
@@ -112,8 +113,8 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
       plate_socket_profile_.depthOfCutoutMasterPlateLiesIn() +
       plate_profile_.cultureMediumThickness() +
       printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
-      1 // push a little into the culture medium
-      );
+      1  // push a little into the culture medium
+  );
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeAlignTipOfNozzleWithTopOfWell() {
@@ -173,7 +174,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeExtrudeFilamentToCutLength() {
   return GcodeInstruction::ExtrudeFilament(
       printer_profile_
           .distanceBetweenPushedTriggerAndGapBetweenScissorsBlade() +
-      2); // 2 mm of the filament's tip are cut
+      2);  // 2 mm of the filament's tip are cut
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeExtrusionLengthOnMove() {
@@ -199,14 +200,14 @@ std::vector<Point> GcodeGenerator::ComputeGlobalWellAndMasterCoordinates(
   global_well_coordinates.reserve(plate_profile_.numberOfWells());
 
   switch (plate_socket_profile_.orientationOfGoalPlate()) {
-  case kFirstRowFirstColumnAtCutoutOrigin:
-    ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
-        global_well_coordinates, origin_of_plate);
-    break;
-  case kLastRowFirstColumnAtCutoutOrigin:
-    ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
-        global_well_coordinates, origin_of_plate);
-    break;
+    case kFirstRowFirstColumnAtCutoutOrigin:
+      ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
+          global_well_coordinates, origin_of_plate);
+      break;
+    case kLastRowFirstColumnAtCutoutOrigin:
+      ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
+          global_well_coordinates, origin_of_plate);
+      break;
   }
 
   return global_well_coordinates;
@@ -248,6 +249,6 @@ void GcodeGenerator::ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
 
 int GcodeGenerator::ComputeStartingWell(int row, int column) const {
   return (column - 1) * plate_profile_.numberOfRows() + row -
-         1; // -1 to accomodate to vector iterating starting from 0
+         1;  // -1 to accomodate to vector iterating starting from 0
 }
-} // namespace c3picko
+}  // namespace c3picko

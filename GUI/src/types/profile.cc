@@ -1,9 +1,9 @@
 #include "include/types/profile.hpp"
+#include <QDebug>
 #include "include/marshalling.hpp"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
-#include <QDebug>
 
 namespace c3picko {
 Profile::Profile(QString type, QString name, ID id, QJsonObject const &settings)
@@ -45,7 +45,8 @@ c3picko::Profile::operator PlateSocketProfile *() const {
 
 c3picko::Profile::operator PrinterProfile *() const { return printer_.get(); }
 
-template <> QJsonObject Marshalling::toJson(const Profile &value) {
+template <>
+QJsonObject Marshalling::toJson(const Profile &value) {
   QJsonObject obj;
 
   // TODO also dumb
@@ -67,8 +68,9 @@ template <> QJsonObject Marshalling::toJson(const Profile &value) {
   return obj;
 }
 
-template <> Profile Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+Profile Marshalling::fromJson(const QJsonObject &obj) {
   return Profile(obj["type"].toString(), obj["profile_name"].toString(),
                  obj["id"].toString(), obj["settings"].toObject());
 }
-} // namespace c3picko
+}  // namespace c3picko

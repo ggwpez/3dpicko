@@ -2,6 +2,8 @@
 
 #include <QElapsedTimer>
 #include <QObject>
+#include "include/algo_setting.h"
+#include "include/algorithm_result.h"
 
 class QThreadPool;
 namespace c3picko {
@@ -17,16 +19,32 @@ class AlgorithmJob : public QObject {
   Q_OBJECT
   friend class AlgorithmManager;
 
-private:
-  AlgorithmJob(Algorithm *algo, QJsonObject settings, void *input,
+ public:
+  typedef QString ID;
+
+ private:
+  AlgorithmJob(ID id, Algorithm *algo, QJsonObject settings, void *input,
                AlgorithmResult *result, QThreadPool *pool, QObject *_parent);
 
-public:
+ public:
   ~AlgorithmJob();
 
+  void *input();
   AlgorithmResult *result() const;
 
-signals:
+  AlgoSetting const &settingById(AlgoSetting::ID id) const;
+  AlgoSetting const &settingByName(QString name) const;
+
+  void setSettingsValueByID(AlgoSetting::ID id, QJsonValue value);
+  void setSettingsValueByName(QString name, QJsonValue value);
+
+  QList<AlgoSetting> const &settings() const;
+  void setSettings(QJsonObject const &);
+
+  ID id() const;
+  AlgorithmResult::ID result_id() const;
+
+ signals:
   void OnAlgoSucceeded();
   void OnAlgoFailed();
 
@@ -35,7 +53,7 @@ signals:
 
   void OnFinished();
 
-public slots:
+ public slots:
   /**
    * @brief Starts the job
    * @param Indicates whether the job should be executed in another thread or
@@ -45,9 +63,18 @@ public slots:
    */
   void start(bool threaded, bool delete_when_done);
 
-private:
+ private:
+  ID id_;
   Algorithm *algo_ = nullptr;
   QThreadPool *pool_;
+  QList<AlgoSetting> settings_;
+  void *input_;
+  /**
+   * @brief This pointer is only valid during the call of start(...)
+   * It will not be de/serialised.
+   */
   AlgorithmResult *result_;
+  AlgorithmResult::ID result_id_;
 };
-}
+MAKE_MARSHALLABLE(AlgorithmJob);
+}  // namespace c3picko

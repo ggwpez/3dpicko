@@ -13,7 +13,7 @@ namespace c3picko {
  *
  */
 class PrinterProfile {
-public:
+ public:
   explicit PrinterProfile(
       int movement_speed, const Point &cut_filament_position_above_trigger,
       float z_coordinate_pushing_the_trigger,
@@ -33,7 +33,7 @@ public:
   float filamentExtrusionLengthOnMoveOffset() const;
   float filamentExtrusionLengthDefault() const;
 
-private:
+ private:
   /**
    * @brief movement_speed_ the speed the nozzle is moved with,
    * in mm/min
@@ -107,5 +107,5 @@ private:
   const float
       safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 };
-} // namespace c3picko
-#endif // PRINTERPROFILE_H
+}  // namespace c3picko
+#endif  // PRINTERPROFILE_H

@@ -13,7 +13,7 @@ class DeleteFile : public Command {
   DeleteFile() = delete;
   using Command::Command;
 
-public:
+ public:
   /**
    * @brief Delete a file at @p path on @p location
    *
@@ -24,8 +24,8 @@ public:
    */
   static DeleteFile *Delete(data::Location location, QString path);
 };
-} // namespace commands
-} // namespace pi
-} // namespace c3picko
+}  // namespace commands
+}  // namespace pi
+}  // namespace c3picko
 
-#endif // DELETE_FILE_H
+#endif  // DELETE_FILE_H

@@ -1,15 +1,15 @@
 #pragma once
 
+#include <QList>
+#include <QPointer>
+#include <QSignalMapper>
+#include <QString>
 #include "database.hpp"
 #include "httprequesthandler.h"
 #include "include/api_input.h"
 #include "include/api_output.h"
 #include "include/global.h"
 #include "include/types/job.hpp"
-#include <QList>
-#include <QPointer>
-#include <QSignalMapper>
-#include <QString>
 
 class QThreadPool;
 class ColonyDetector;
@@ -23,13 +23,13 @@ class APIController : public QObject {
   friend class APIInput;
   friend class APIOutput;
 
-public:
+ public:
   APIController(AlgorithmManager *detector, Database *db, QObject *parent);
 
   // Forwarded to APIInput
   void request(QJsonObject request, QString raw_request, QObject *client);
 
-signals:
+ signals:
   /**
    * @brief Request to send data to client
    */
@@ -47,20 +47,29 @@ signals:
    */
   void toPrinter(pi::Command *command);
 
-protected:
+ protected:
   Database &db() const;
   QThreadPool *pool() const;
 
-public slots:
+ public slots:
   void DeleteImage(Image::ID, QObject *client);
   void DeleteJob(Job::ID id, QObject *client);
   void UploadImage(Image &, QObject *client);
   void cropImage(Image::ID id, int x, int y, int w, int h,
-                 QObject *client); // TODO make rect from (x,y,w,h)
+                 QObject *client);  // TODO make rect from (x,y,w,h)
   void createSettingsProfile(Profile &prof_wo_id, QObject *client);
   void updateSettingsProfile(Profile &profile, QObject *client);
   void deleteSettingsProfile(Profile::ID id, QObject *client);
   void setDefaultSettingsProfile(Profile::ID id, QObject *client);
+  void setStartingWell(Job::ID id, Profile::ID plate_id, int row, int col,
+                       QObject *client);
+
+  /**
+   * @brief createJob
+   * @param job_wo_id Job without a valid id. The id will be set in this
+   * function.
+   * @param client
+   */
   void createJob(Job &job_wo_id, QObject *client);
 
   /**
@@ -77,10 +86,10 @@ public slots:
   void shutdown(QObject *client);
   void restart(QObject *client);
 
-private slots:
+ private slots:
   void defaultSignalHandler();
 
-signals:
+ signals:
   void OnUnknownRequest(QString request, QObject *client);
 
   void OnImageListRequested(QObject *client);
@@ -110,6 +119,10 @@ signals:
   void OnDefaultSettingsProfileSet(Profile::ID profile, QObject *client);
   void OnDefaultSettingsProfileSetError(QString error, QObject *client);
 
+  void OnSetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
+                         QObject *client);
+  void OnSetStartingWellError(QString error, QObject *client);
+
   void OnColonyDetectionStarted(Job::ID, QObject *client);
   /**
    * @brief OnColonyDetected
@@ -120,9 +133,9 @@ signals:
   void OnColonyDetected(std::vector<Colony> *colonies, QObject *client);
   void OnColonyDetectionError(QString error, QObject *client);
 
-private:
+ private:
   QJsonObject createImageList() const;
-  QJsonObject createImageList(Image); // TODO const
+  QJsonObject createImageList(Image);  // TODO const
   QJsonObject createJobList();
   QJsonObject createJobList(Job);
   QJsonObject createDeleteImage(Image);
@@ -133,7 +146,7 @@ private:
   AlgorithmJob *detectColonies(Job::ID job_id, QString algo_id,
                                QJsonObject settings, QObject *client);
 
-protected:
+ protected:
   AlgorithmManager *detector_;
   Database *db_;
 
@@ -141,4 +154,4 @@ protected:
   APIInput *input_;
   APIOutput *output_;
 };
-} // namespace c3picko
+}  // namespace c3picko

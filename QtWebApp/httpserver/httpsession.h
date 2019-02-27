@@ -6,10 +6,10 @@
 #ifndef HTTPSESSION_H
 #define HTTPSESSION_H
 
-#include "httpglobal.h"
 #include <QByteArray>
 #include <QReadWriteLock>
 #include <QVariant>
+#include "httpglobal.h"
 
 namespace stefanfrings {
 
@@ -22,8 +22,7 @@ namespace stefanfrings {
 */
 
 class DECLSPEC HttpSession {
-
-public:
+ public:
   /**
     Constructor.
     @param canStore The session can store data, if this parameter is true.
@@ -90,9 +89,8 @@ public:
   */
   void setLastAccess();
 
-private:
+ private:
   struct HttpSessionData {
-
     /** Unique ID */
     QByteArray id;
 
@@ -113,6 +111,6 @@ private:
   HttpSessionData *dataPtr;
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // HTTPSESSION_H
+#endif  // HTTPSESSION_H

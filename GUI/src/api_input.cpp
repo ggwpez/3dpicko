@@ -25,6 +25,13 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     Profile::ID id = req_data["id"].toString();
 
     api->setDefaultSettingsProfile(id, client);
+  } else if (path == "setstartingwell") {
+    Job::ID job_id = req_data["job_id"].toString();
+    Profile::ID plate_id = req_data["plate_id"].toString();
+    int row = req_data["row"].toInt();
+    int col = req_data["column"].toInt();
+
+    api->setStartingWell(job_id, plate_id, row, col, client);
   } else if (path == "deleteimage") {
     Image::ID id = req_data["id"].toString();
 
@@ -32,10 +39,14 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
   } else if (path == "deletejob") {
     QString id = req_data["id"].toString();
     api->DeleteJob(id, client);
+  } else if (path == "startjob") {
+    Job::ID job = req_data["id"].toString();
+
+    api->startJob(job, client);
   } else if (path == "uploadimage") {
     // Get image data
     QByteArray img_data(QByteArray::fromBase64(
-        req_data["file"].toString().toUtf8())); // TODO ugly code
+        req_data["file"].toString().toUtf8()));  // TODO ugly code
     QString img_name = req_data["original_filename"].toString();
     Image image =
         Image(img_data, img_name, "descrtiption", QDateTime::currentDateTime());
@@ -77,8 +88,6 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
 
     emit api->OnColonyDetectionStarted(job_id, client);
     api->updateDetectionSettings(job_id, algo_id, settings, client);
-  } else if (path == "startjob") {
-    api->startJob("", client);
   } else if (path == "shutdown") {
     api->shutdown(client);
   } else if (path == "restart") {
@@ -91,4 +100,4 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     // response = {{"error", "unknown request"}};
   }
 }
-} // namespace c3picko
+}  // namespace c3picko

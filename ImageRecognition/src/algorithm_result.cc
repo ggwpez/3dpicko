@@ -1,12 +1,11 @@
 #include "include/algorithm_result.h"
-#include "include/colony.hpp"
-#include "include/colony.hpp"
 #include <QJsonArray>
 #include <opencv2/core/mat.hpp>
+#include "include/colony.hpp"
 
 namespace c3picko {
 AlgorithmResult::AlgorithmResult(ID id)
-    : id_(id), stages_succeeded_(false), cleanup_succseeded_(false) {}
+    : id_(id), stages_succeeded_(false), cleanup_succeeded_(false) {}
 
 AlgorithmResult::~AlgorithmResult() { cleanup(); }
 
@@ -38,6 +37,7 @@ void AlgorithmResult::cleanup() {
   // Dont delete them right now, otherwise we cant user them
   // colonies_.~vector();
   qDeleteAll(stack_);
+  stack_.clear();
 }
 
 QString AlgorithmResult::stageError() const { return stage_error_; }
@@ -50,18 +50,18 @@ quint64 AlgorithmResult::tookNs() const { return took_ns_; }
 
 int AlgorithmResult::lastStage() const { return last_stage_; }
 
-bool AlgorithmResult::cleanupSuccseeded() const { return cleanup_succseeded_; }
+bool AlgorithmResult::cleanupSucceeded() const { return cleanup_succeeded_; }
 
 bool AlgorithmResult::stagesSucceeded() const { return stages_succeeded_; }
 
-template <> QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
-  throw std::runtime_error("Not tested");
+template <>
+QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
   obj["took_ns"] = qint64(value.tookNs());
   obj["stages_succeeded"] = value.stagesSucceeded();
-  obj["cleanup_succseeded"] = value.cleanupSuccseeded();
+  obj["cleanup_succeeded"] = value.cleanupSucceeded();
   obj["last_stage"] = value.lastStage();
   obj["stage_error"] = value.stageError();
   obj["cleanup_error"] = value.cleanupError();
@@ -74,7 +74,8 @@ template <> QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
   return obj;
 }
 
-template <> AlgorithmResult Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+AlgorithmResult Marshalling::fromJson(const QJsonObject &obj) {
   throw std::runtime_error("Not implemented");
 }
-}
+}  // namespace c3picko

@@ -2,7 +2,8 @@
 
 namespace c3picko {
 
-template <> QJsonObject Marshalling::toJson(const Colony::Type &value) {
+template <>
+QJsonObject Marshalling::toJson(const Colony::Type &value) {
   QJsonObject obj;
 
   obj["value"] = static_cast<int>(value);
@@ -10,7 +11,8 @@ template <> QJsonObject Marshalling::toJson(const Colony::Type &value) {
   return obj;
 }
 
-template <> Colony::Type Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+Colony::Type Marshalling::fromJson(const QJsonObject &obj) {
   return static_cast<Colony::Type>(obj["value"].toInt());
 }
-} // namespace c3picko
+}  // namespace c3picko

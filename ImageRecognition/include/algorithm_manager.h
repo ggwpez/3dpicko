@@ -1,26 +1,26 @@
 #pragma once
 
-#include "include/algorithm.h"
-#include "include/algorithm_result.h"
 #include <QObject>
 #include <opencv2/core.hpp>
+#include "include/algorithm.h"
+#include "include/algorithm_job.h"
 
 class QThreadPool;
 namespace c3picko {
-class AlgorithmJob;
 class AlgorithmManager : public QObject {
   Q_OBJECT
-public:
+ public:
   AlgorithmManager(QThreadPool *pool, QList<Algorithm *> algos,
                    QObject *_parent = nullptr);
 
-public:
+ public:
   AlgorithmJob *createJob(cv::Mat source, Algorithm::ID id,
-                          AlgorithmResult::ID res_id, QJsonObject settings);
+                          AlgorithmJob::ID job_id, AlgorithmResult::ID res_id,
+                          QJsonObject settings);
   QList<Algorithm *> algos() const;
 
-protected:
+ protected:
   QThreadPool *pool_;
   QList<Algorithm *> algos_;
 };
-} // namespace c3picko
+}  // namespace c3picko

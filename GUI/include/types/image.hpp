@@ -1,14 +1,14 @@
 #pragma once
 
-#include "include/global.h"
-#include "include/marshalling.hpp"
 #include <QDateTime>
 #include <QImage>
 #include <opencv2/opencv.hpp>
+#include "include/global.h"
+#include "include/marshalling.hpp"
 
 namespace c3picko {
 class Image {
-public:
+ public:
   typedef QString ID;
   Image() = default;
   Image(ID id, QString original_name, QString description, QString path,
@@ -59,7 +59,7 @@ public:
   bool readData(QByteArray &output) const;
   static bool decodeCvMat(QByteArray data, cv::Mat &output);
 
-private:
+ private:
   QString original_name_;
   QString description_;
   // TODO we can add meta data here
@@ -75,7 +75,7 @@ private:
   int width_ = 0, height_ = 0;
   ID id_;
 
-public:
+ public:
   QString path() const;
   ID id() const;
   QString originalName() const;
@@ -85,4 +85,4 @@ public:
   QDateTime uploaded() const;
 };
 MAKE_MARSHALLABLE(Image);
-} // namespace c3picko
+}  // namespace c3picko

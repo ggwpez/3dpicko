@@ -1,8 +1,8 @@
 #pragma once
 
-#include "include/colony.hpp"
 #include <QString>
 #include <vector>
+#include "include/colony.hpp"
 
 namespace cv {
 class Mat;
@@ -10,10 +10,10 @@ class Mat;
 namespace c3picko {
 class Colony;
 /**
- * @brief Represents a failed or succeeded job.
+ * @brief Represents a failed or succeeded AlgorithmJob.
  */
 class AlgorithmResult {
-public:
+ public:
   typedef QString ID;
 
   AlgorithmResult(ID id);
@@ -24,7 +24,7 @@ public:
 
   cv::Mat &oldMat();
 
-public:
+ public:
   ID id_;
   /**
    * @brief Explicit cleanup for debugging
@@ -35,7 +35,7 @@ public:
    * @brief The job succeeded
    */
   bool stages_succeeded_;
-  bool cleanup_succseeded_;
+  bool cleanup_succeeded_;
 
   /**
    * @brief Last stage that the job was in.
@@ -49,20 +49,20 @@ public:
   quint64 took_ns_;
 
   struct {
-  } plate_; // TODO
+  } plate_;  // TODO
   std::vector<Colony> colonies_;
 
   ID id() const;
   bool stagesSucceeded() const;
-  bool cleanupSuccseeded() const;
+  bool cleanupSucceeded() const;
   int lastStage() const;
   quint64 tookNs() const;
   std::vector<Colony> colonies() const;
   QString cleanupError() const;
   QString stageError() const;
 
-private:
+ private:
   std::list<cv::Mat *> stack_;
 };
 MAKE_MARSHALLABLE(AlgorithmResult);
-}
+}  // namespace c3picko

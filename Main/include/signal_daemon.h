@@ -1,8 +1,8 @@
 #pragma once
 
+#include <signal.h>
 #include <QObject>
 #include <QSet>
-#include <signal.h>
 class QSocketNotifier;
 
 namespace c3picko {
@@ -12,7 +12,7 @@ namespace c3picko {
 class SignalDaemon : public QObject {
   Q_OBJECT
 
-public:
+ public:
   SignalDaemon(QObject *_parent = nullptr);
 
   // Unix signal handler
@@ -21,16 +21,16 @@ public:
 
   static void signalProxy(int signal);
 
-private slots:
+ private slots:
   void socketNotify(int socket_fd);
 
-signals:
+ signals:
   void OnSignal(int signal);
 
-private:
+ private:
   static int socketpair_[2];
 
   QSocketNotifier *notifier_;
   QSet<int> registered_;
 };
-}
+}  // namespace c3picko

@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
+#include "include/marshalling.hpp"
 
 class QSslConfiguration;
 namespace c3picko {
@@ -27,9 +28,9 @@ inline QString UploadFolderName() { return "uploads"; }
 inline QString UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
 inline void Setup() {
-  if (!QDir(UploadFolder()).exists())
-    QDir().mkdir(UploadFolder());
+  if (!QDir(UploadFolder()).exists()) QDir().mkdir(UploadFolder());
 }
 
 inline char const *defaultImageExtension() { return "jpg"; }
-} // namespace c3picko
+MAKE_MARSHALLABLE(QDateTime);
+}  // namespace c3picko

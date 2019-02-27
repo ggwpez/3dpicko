@@ -1,8 +1,8 @@
 #ifndef PROFILE_HPP
 #define PROFILE_HPP
 
-#include "include/marshalling.hpp"
 #include <memory>
+#include "include/marshalling.hpp"
 
 namespace c3picko {
 class PrinterProfile;
@@ -10,7 +10,7 @@ class PlateSocketProfile;
 class PlateProfile;
 
 class Profile {
-public:
+ public:
   typedef QString ID;
   Profile(QString type, QString name, ID id, QJsonObject const &settings);
 
@@ -29,7 +29,7 @@ public:
   std::shared_ptr<PlateSocketProfile> socket() const;
   std::shared_ptr<PrinterProfile> printer() const;
 
-private:
+ private:
   QString type_;
   QString name_;
   QString id_;
@@ -38,6 +38,6 @@ private:
   std::shared_ptr<PrinterProfile> printer_;
 };
 MAKE_MARSHALLABLE(Profile);
-} // namespace c3picko
+}  // namespace c3picko
 
-#endif // PROFILE_HPP
+#endif  // PROFILE_HPP

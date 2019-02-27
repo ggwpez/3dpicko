@@ -6,14 +6,20 @@
 namespace c3picko {
 
 class Colony {
-public:
+ public:
   enum class Type;
   typedef qint32 ID;
 
   Colony(double x, double y, double area, double circumference,
          double major_length, double brightness, ID id, Type type);
 
+  /**
+   * @brief x position relative to image [0,1]
+   */
   double x() const;
+  /**
+   * @brief y position relative to image [0,1]
+   */
   double y() const;
   double area() const;
   double circumference() const;
@@ -24,7 +30,7 @@ public:
   Type type() const;
   void setType(const Type &type);
 
-private:
+ private:
   /**
    * @brief Center X position relative to the image size. Value in interval
    * [0,1]
@@ -65,4 +71,4 @@ private:
 };
 
 MAKE_MARSHALLABLE(Colony);
-} // namespace c3picko
+}  // namespace c3picko

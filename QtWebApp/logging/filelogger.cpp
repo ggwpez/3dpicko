@@ -4,6 +4,7 @@
 */
 
 #include "filelogger.h"
+#include <stdio.h>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -12,7 +13,6 @@
 #include <QTime>
 #include <QTimerEvent>
 #include <QtGlobal>
-#include <stdio.h>
 
 using namespace stefanfrings;
 
@@ -74,7 +74,6 @@ FileLogger::~FileLogger() { close(); }
 void FileLogger::write(const LogMessage *logMessage) {
   // Try to write to the file
   if (file) {
-
     // Write the message
     file->write(qPrintable(logMessage->toString(msgFormat, timestampFormat)));
 

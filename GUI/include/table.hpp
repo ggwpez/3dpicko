@@ -1,8 +1,5 @@
 #pragma once
 
-#include "include/json_constructable.hpp"
-#include "include/json_convertable.h"
-#include "include/marshalling.hpp"
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QMap>
@@ -10,6 +7,9 @@
 #include <map>
 #include <type_traits>
 #include <utility>
+#include "include/json_constructable.hpp"
+#include "include/json_convertable.h"
+#include "include/marshalling.hpp"
 
 namespace c3picko {
 /**
@@ -17,12 +17,12 @@ namespace c3picko {
  *
  * TODO addAsJson and getAsJson are probably buggy with Value=QJsonObject
  */
-template <typename Value> class Table : public JsonConvertable {
-
+template <typename Value>
+class Table : public JsonConvertable {
   // static_assert(std::is_base_of<JsonConstructable, Value>(),
   //            "Value type must implement interface JsonConvertable");
 
-public:
+ public:
   typedef QString Key;
   typedef std::map<Key, Value> MapType;
 
@@ -75,7 +75,7 @@ public:
   inline typename MapType::iterator begin() { return entries_.begin(); }
   inline typename MapType::iterator end() { return entries_.end(); }
 
-public:
+ public:
   inline void read(QJsonObject const &obj) override {
     for (auto it = obj.begin(); it != obj.end(); ++it)
       addAsJson(it.key(), it.value().toObject());
@@ -86,7 +86,7 @@ public:
       obj[it->first] = Marshalling::toJson(it->second);
   }
 
-private:
+ private:
   MapType entries_;
 };
-} // namespace c3picko
+}  // namespace c3picko

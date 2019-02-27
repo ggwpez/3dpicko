@@ -4,34 +4,39 @@
 
 namespace c3picko {
 class Marshalling {
-public:
-  template <typename T> static QJsonObject toJson(T const &);
-
-  template <typename T> static void toJson(T const &, QJsonObject &output);
-
-  template <typename T> static T fromJson(QJsonObject const &);
-
-  template <typename T> static void fromJson(QJsonObject const &, T &output);
+ public:
+  template <typename T>
+  static QJsonObject toJson(T const &);
+  template <typename T>
+  static void toJson(T const &, QJsonObject &output);
+  template <typename T>
+  static T fromJson(QJsonObject const &);
+  template <typename T>
+  static void fromJson(QJsonObject const &, T &output);
 };
 
-#define MAKE_SERIALIZABLE(T)                                                   \
-                                                                               \
-  template <> QJsonObject Marshalling::toJson(T const &);                      \
-  template <> void Marshalling::toJson(T const &, QJsonObject &);
+#define MAKE_SERIALIZABLE(T)                  \
+                                              \
+  template <>                                 \
+  QJsonObject Marshalling::toJson(T const &); \
+  template <>                                 \
+  void Marshalling::toJson(T const &, QJsonObject &);
 
-#define MAKE_DESEZIALIZABLE(T)                                                 \
-  template <> T Marshalling::fromJson(QJsonObject const &);                    \
-  template <> void Marshalling::fromJson(QJsonObject const &, T &output);
+#define MAKE_DESEZIALIZABLE(T)                  \
+  template <>                                   \
+  T Marshalling::fromJson(QJsonObject const &); \
+  template <>                                   \
+  void Marshalling::fromJson(QJsonObject const &, T &output);
 
-#define MAKE_MARSHALLABLE(T)                                                   \
-  MAKE_SERIALIZABLE(T)                                                         \
+#define MAKE_MARSHALLABLE(T) \
+  MAKE_SERIALIZABLE(T)       \
   MAKE_DESEZIALIZABLE(T)
 
-#define MAKE_MARSHALLABLE_CLASS(T)                                             \
-  class T;                                                                     \
+#define MAKE_MARSHALLABLE_CLASS(T) \
+  class T;                         \
   MAKE_MARSHALLABLE(T)
-#define MAKE_MARSHALLABLE_ENUM_CLASS(T)                                        \
-  enum class T;                                                                \
+#define MAKE_MARSHALLABLE_ENUM_CLASS(T) \
+  enum class T;                         \
   MAKE_MARSHALLABLE(T)
 
 // Here we instantiate the template functions, so the compiler knows they must
@@ -40,4 +45,4 @@ MAKE_MARSHALLABLE_CLASS(Point);
 MAKE_MARSHALLABLE_CLASS(PrinterProfile);
 MAKE_MARSHALLABLE_CLASS(PlateSocketProfile);
 MAKE_MARSHALLABLE_CLASS(PlateProfile);
-} // namespace c3picko
+}  // namespace c3picko

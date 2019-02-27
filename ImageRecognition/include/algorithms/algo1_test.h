@@ -1,25 +1,28 @@
 #pragma once
 
-#include "include/colony.hpp"
 #include <opencv2/core.hpp>
+#include "include/colony.hpp"
 
 #include "include/algorithm.h"
 
 namespace c3picko {
 class Algo1Test : public Algorithm {
   Q_OBJECT
-public:
+ public:
   Algo1Test();
   virtual ~Algo1Test() override;
 
-  static void cvt(Algorithm *base, AlgorithmResult *result);
-  static void threshold(Algorithm *base, AlgorithmResult *result);
-  static void erodeAndDilate(Algorithm *base, AlgorithmResult *result);
-  static void plateDetection(Algorithm *base, AlgorithmResult *result);
-  static void label(Algorithm *base, AlgorithmResult *result);
-  static void relativeFiltering(Algorithm *base, AlgorithmResult *result);
+  static void cvt(AlgorithmJob *base, AlgorithmResult *result);
+  static void threshold(AlgorithmJob *base, AlgorithmResult *result);
+  static void erodeAndDilate(AlgorithmJob *base, AlgorithmResult *result);
+  static void plateDetection(AlgorithmJob *base, AlgorithmResult *result);
+  static void label(AlgorithmJob *base, AlgorithmResult *result);
+  static void relativeFiltering(AlgorithmJob *base, AlgorithmResult *result);
 
-  static void cleanup(Algorithm *base);
+  /**
+   * @brief Outdated
+   */
+  static void cleanup();
 
   virtual inline Algorithm *cloneEmpty() const override {
     return new Algo1Test();
@@ -29,6 +32,6 @@ public:
   void drawText(cv::Mat &img, cv::Mat &output,
                 std::vector<cv::Vec3f> &colonies);
 
-private:
+ private:
 };
-}
+}  // namespace c3picko

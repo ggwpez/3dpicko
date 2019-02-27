@@ -1,7 +1,7 @@
 #include "include/api_output.h"
+#include <QJsonArray>
 #include "include/api_controller.h"
 #include "include/colony.hpp"
-#include <QJsonArray>
 
 #include <QJsonDocument>
 
@@ -34,7 +34,7 @@ void APIOutput::JobCreated(Job job, QObject *client) {
   QJsonObject json(Marshalling::toJson(job));
 
   emit op->toClient(client, "createjob", json);
-  emit op->toAllExClient(client, "getjoblist", json); // TODO lazy
+  emit op->toAllExClient(client, "getjoblist", json);  // TODO lazy
 }
 
 void APIOutput::JobCreateError(QString id, QObject *client) {
@@ -108,6 +108,17 @@ void APIOutput::DefaultSettingsProfileSetError(QString error, QObject *client) {
         "Could not set profile as default: " + error, client);
 }
 
+void APIOutput::SetStartingWell(Job::ID job, Profile::ID plate, int row,
+                                int col, QObject *client) {
+  emit op->toAll(
+      "setstartingwell",
+      {{"job_id", job}, {"plate_id", plate}, {"row", row}, {"col", col}});
+}
+
+void APIOutput::SetStartingWellError(QString error, QObject *client) {
+  Error("setstartingwell", error, client);
+}
+
 void APIOutput::ColonyDetectionStarted(
     Job::ID,
     QObject *client) { /* TODO inform client, maybe add a loading animtion */
@@ -126,10 +137,10 @@ void APIOutput::ColonyDetected(std::vector<Colony> *colonies, QObject *client) {
 }
 
 void APIOutput::ColonyDetectionError(QString error, QObject *client) {
-  Error("getpositions", "Could not detect colonies", client);
+  Error("getpositions", error, client);
 }
 
 void APIOutput::Error(QString where, QString what, QObject *client) {
   emit op->toClient(client, "error", {{where, what}});
 }
-} // namespace c3picko
+}  // namespace c3picko

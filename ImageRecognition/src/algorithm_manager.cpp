@@ -1,7 +1,7 @@
 #include "include/algorithm_manager.h"
+#include <QThreadPool>
 #include "include/algorithm_job.h"
 #include "include/algorithm_result.h"
-#include <QThreadPool>
 
 using namespace c3picko;
 
@@ -9,11 +9,11 @@ namespace c3picko {
 AlgorithmManager::AlgorithmManager(QThreadPool *pool, QList<Algorithm *> algos,
                                    QObject *_parent)
     : QObject(_parent), pool_(pool), algos_(algos) {
-  for (Algorithm *algo : algos_)
-    algo->setParent(this);
+  for (Algorithm *algo : algos_) algo->setParent(this);
 }
 
 AlgorithmJob *AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
+                                          AlgorithmJob::ID job_id,
                                           AlgorithmResult::ID res_id,
                                           QJsonObject settings) {
   for (Algorithm *algo : algos_) {
@@ -22,10 +22,10 @@ AlgorithmJob *AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
       Algorithm *new_algo = algo->cloneEmpty();
       AlgorithmResult *result = new AlgorithmResult(res_id);
 
-      AlgorithmJob *job =
-          new AlgorithmJob(new_algo, settings, input, result, pool_, nullptr);
+      AlgorithmJob *job = new AlgorithmJob(job_id, new_algo, settings, input,
+                                           result, pool_, nullptr);
       connect(job, &AlgorithmJob::OnFinished, job,
-              [input, job]() { // TODO do we need a context object here?
+              [input, job]() {  // TODO do we need a context object here?
                 delete input;
                 job->deleteLater();
               });
@@ -39,14 +39,4 @@ AlgorithmJob *AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
 
 QList<Algorithm *> AlgorithmManager::algos() const { return algos_; }
 
-void AlgorithmJob::start(bool threaded, bool delete_when_done) {
-  if (delete_when_done)
-    connect(this, SIGNAL(OnFinished()), this, SLOT(deleteLater()));
-
-  if (threaded && algo_->isThreadable())
-    pool_->start(algo_);
-  else
-    algo_->run();
-}
-
-} // namespace c3picko
+}  // namespace c3picko

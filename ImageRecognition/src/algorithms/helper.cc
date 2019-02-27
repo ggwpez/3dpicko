@@ -7,7 +7,7 @@ namespace c3picko {
 namespace math {
 bool LineLineIntersect(double x1, double y1, double x2, double y2, double x3,
                        double y3, double x4, double y4, double &ixOut,
-                       double &iyOut) // Output
+                       double &iyOut)  // Output
 {
   // http://mathworld.wolfram.com/Line-LineIntersection.html
 
@@ -21,7 +21,7 @@ bool LineLineIntersect(double x1, double y1, double x2, double y2, double x3,
   double xnom = det(detL1, x1mx2, detL2, x3mx4);
   double ynom = det(detL1, y1my2, detL2, y3my4);
   double denom = det(x1mx2, y1my2, x3mx4, y3my4);
-  if (denom == 0.0) // Lines don't seem to cross
+  if (denom == 0.0)  // Lines don't seem to cross
   {
     return false;
   }
@@ -29,10 +29,10 @@ bool LineLineIntersect(double x1, double y1, double x2, double y2, double x3,
   ixOut = xnom / denom;
   iyOut = ynom / denom;
   if (!std::isfinite(ixOut) ||
-      !std::isfinite(iyOut)) // Probably a numerical issue
+      !std::isfinite(iyOut))  // Probably a numerical issue
     return false;
 
-  return true; // All OK
+  return true;  // All OK
 }
 
 double distance(double x1, double y1, double x2, double y2) {
@@ -54,5 +54,5 @@ double brightness(std::vector<cv::Point> const &contour, cv::Mat const &mat) {
 
   return (sum / 255.d) / double(contour.size());
 }
-}
-}
+}  // namespace math
+}  // namespace c3picko

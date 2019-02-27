@@ -14,20 +14,20 @@ UploadFile *UploadFile::CreateFile(QByteArray content, data::Location location,
   QHttpMultiPart *query =
       BuildFileUploadPacket(content, file_name, select, print);
 
-  return new UploadFile("files/" + data::ToString(location), query, {201},
-                        Command::HTTPType::POST,
-                        "multipart/form-data; boundary=" +
-                            QString(query->boundary()));
+  return new UploadFile(
+      "files/" + data::ToString(location), query, {201},
+      Command::HTTPType::POST,
+      "multipart/form-data; boundary=" + QString(query->boundary()));
 }
 
 UploadFile *UploadFile::CreateFolder(QString folder_name, QString path,
                                      data::Location location) {
   QHttpMultiPart *query = BuildFolderCreatePacket(folder_name, path);
 
-  return new UploadFile("files/" + data::ToString(location), query, {201},
-                        Command::HTTPType::POST,
-                        "multipart/form-data; boundary=" +
-                            QString(query->boundary()));
+  return new UploadFile(
+      "files/" + data::ToString(location), query, {201},
+      Command::HTTPType::POST,
+      "multipart/form-data; boundary=" + QString(query->boundary()));
 }
 
 QHttpMultiPart *UploadFile::BuildFileUploadPacket(QByteArray data,
@@ -37,9 +37,9 @@ QHttpMultiPart *UploadFile::BuildFileUploadPacket(QByteArray data,
   QHttpPart file_part, select_part, print_part;
 
   {
-    file_part.setHeader(QNetworkRequest::ContentDispositionHeader,
-                        "form-data; name=\"file\"; filename=\"" + file_name +
-                            '"');
+    file_part.setHeader(
+        QNetworkRequest::ContentDispositionHeader,
+        "form-data; name=\"file\"; filename=\"" + file_name + '"');
     file_part.setHeader(QNetworkRequest::ContentTypeHeader,
                         "application/octet-stream");
     file_part.setBody(data);
@@ -86,6 +86,6 @@ QHttpMultiPart *UploadFile::BuildFolderCreatePacket(QString folder_name,
 void UploadFile::OnReplyFinished(QNetworkReply *reply) {
   CheckStatusCodeAndResponse<Response>(reply);
 }
-} // namespace commands
-} // namespace pi
-} // namespace c3picko
+}  // namespace commands
+}  // namespace pi
+}  // namespace c3picko

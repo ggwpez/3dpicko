@@ -18,6 +18,6 @@ GetAllFiles *GetAllFiles::AllFilesRecursive() {
 void GetAllFiles::OnReplyFinished(QNetworkReply *reply) {
   CheckStatusCodeAndResponse<Response>(reply);
 }
-} // namespace commands
-} // namespace pi
-} // namespace c3picko
+}  // namespace commands
+}  // namespace pi
+}  // namespace c3picko

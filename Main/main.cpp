@@ -130,13 +130,12 @@ static int start(int argc, char **argv) {
                    &WsServer::ToAllExClient);
 
   QObject::connect(&app, &QCoreApplication::aboutToQuit, [] {
-    qInstallMessageHandler(nullptr); // reset message handlers
+    qInstallMessageHandler(nullptr);  // reset message handlers
     ws_ptr =
-        nullptr; // also dont redirect the console output to WsServer anymore
+        nullptr;  // also dont redirect the console output to WsServer anymore
   });
 
-  if (!ws_server->StartListen())
-    return 1;
+  if (!ws_server->StartListen()) return 1;
 
   return app.exec();
 }

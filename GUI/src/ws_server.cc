@@ -1,23 +1,23 @@
 #include "include/ws_server.hpp"
-#include "include/api_controller.h"
-#include "include/global.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QWebSocketServer>
 #include <QtWebSockets>
+#include "include/api_controller.h"
+#include "include/global.h"
 
 namespace c3picko {
 
 WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
                    QObject *_parent)
-    : QObject(_parent), settings_(settings),
+    : QObject(_parent),
+      settings_(settings),
       server_(new QWebSocketServer(QStringLiteral("Echo Server"),
                                    (ssl ? QWebSocketServer::SecureMode
                                         : QWebSocketServer::NonSecureMode),
                                    this)) {
-  if (ssl)
-    server_->setSslConfiguration(*ssl);
+  if (ssl) server_->setSslConfiguration(*ssl);
 
   host_ = settings->value("host", defaultHost()).toString();
   int port = settings->value("port", defaultPort()).toInt();
@@ -31,8 +31,7 @@ WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
 
 void WsServer::NewConnection() {
   QWebSocket *pSocket = server_->nextPendingConnection();
-  if (!pSocket)
-    return;
+  if (!pSocket) return;
 
   connect(pSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
           SLOT(clientError(QAbstractSocket::SocketError)));
@@ -55,13 +54,13 @@ void WsServer::NewTextData(QString data) {
 
     emit OnRequest(req, data, client);
   } else
-    qFatal(
-        "%s",
-        "qobject_cast<QWebSocket*>(sender()) was null"); // if this fails, check
-                                                         // that this function
-                                                         // was never manually
-                                                         // called but only as
-                                                         // slot
+    qFatal("%s",
+           "qobject_cast<QWebSocket*>(sender()) was null");  // if this fails,
+                                                             // check that this
+                                                             // function was
+                                                             // never manually
+                                                             // called but only
+                                                             // as slot
 }
 
 void WsServer::NewBinaryData(QByteArray) {
@@ -108,8 +107,7 @@ bool WsServer::StartListen() {
 }
 
 void WsServer::NewDebugLine(QString line) {
-  for (auto client : clients_)
-    SendToClient(client, "debug", {{"line", line}});
+  for (auto client : clients_) SendToClient(client, "debug", {{"line", line}});
 }
 
 void WsServer::acceptError(QAbstractSocket::SocketError ec) {
@@ -134,15 +132,13 @@ void WsServer::ToClient(QObject *client, QString type, QJsonObject data) {
 }
 
 void WsServer::ToAll(QString type, QJsonObject data) {
-  for (auto client : clients_)
-    SendToClient(client, type, data);
+  for (auto client : clients_) SendToClient(client, type, data);
 }
 
 void WsServer::ToAllExClient(QObject *excluded, QString type,
                              QJsonObject data) {
   for (auto client : clients_) {
-    if (client != excluded)
-      SendToClient(client, type, data);
+    if (client != excluded) SendToClient(client, type, data);
   }
 }
 
@@ -165,4 +161,4 @@ WsServer::~WsServer() {
   server_->deleteLater();
   qDeleteAll(clients_);
 }
-} // namespace c3picko
+}  // namespace c3picko

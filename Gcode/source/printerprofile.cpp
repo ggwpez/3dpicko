@@ -69,4 +69,4 @@ float PrinterProfile::filamentExtrusionLengthDefault() const {
   return filament_extrusion_length_default_;
 }
 
-} // namespace c3picko
+}  // namespace c3picko
