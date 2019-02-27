@@ -1,4 +1,4 @@
-/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colony_coords, drawWells, collided_row, collided_column, FormGroup */
+/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colony_coords, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting */
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
@@ -96,11 +96,18 @@ var unsaved_elements = {};
                 data.jobs.forEach(AddJobToList);
                 console.log("Jobs:\n" +data +"\ncount: " +data.jobs.length);
             }
+            else if (type == "getgeneralsettings"){
+                // TODO
+                data.settings.forEach(AddGeneralSetting);
+            }
             else if (type == "getprofilelist")
             {
                 default_profiles["printer-profile"] = data.defaultPrinter;
                 default_profiles["socket-profile"] = data.defaultSocket;
                 default_profiles["plate-profile"] = data.defaultPlate;
+                // profile_templates["printer-profile"] = data["printer-template"];
+                // profile_templates["socket-profile"] = data["socket-template"];
+                // profile_templates["plate-profile"] = data["plate-template"];
                 data.profiles.forEach(AddProfileToList);
                 console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
             }
@@ -156,11 +163,11 @@ var unsaved_elements = {};
 function GetDetectionAlgorithms(detection_algorithms){
     algorithms = detection_algorithms;
     // TODO Remove (only for debugging)
-    /*algorithms["321"] = {
+    algorithms["321"] = {
         name: "Fluro",
         description: "Good for detecting fluorescent colonies",
         settings:[{
-            id: "1234",
+            id: "slider_1",
             name: "Threshold 1",
             type: "rangeslider",
             min: 0,
@@ -170,20 +177,53 @@ function GetDetectionAlgorithms(detection_algorithms){
             description: ""
         },
         {
-            id: "123",
+            id: "checkbox_1",
             name: "Erode & Dilate",
             type: "checkbox",
             defaultValue: true,
-            description: ""
-        },
-        {
-            id: "12sad3",
-            name: "Erode & Dilate 2",
+            description: "",
+            conditional_settings:[{
+                id: "checkbox_1_1",
+                name: "Erode & Dilate 2",
+                type: "checkbox",
+                defaultValue: false,
+                description: "Only visible if Erode & Dilate is true"
+            },
+            {
+                id: "slider_1_1",
+                name: "Erode & Dilate 3",
+                type: "rangeslider",
+                min: 0,
+                max: 1000,
+                step: 0.1,
+                defaultValue: {min: 1, max: 300},
+                description: "Only visible if E&D is true"
+            },
+            {
+            id: "checkbox_1_2",
+            name: "Erode & Dilate",
             type: "checkbox",
             defaultValue: false,
-            description: "do not touch me!"
-        }
-        ]
+            description: "",
+            conditional_settings:[{
+                id: "checkbox_1_2_1",
+                name: "Erode & Dilate 2",
+                type: "checkbox",
+                defaultValue: false,
+                description: "Only visible if Erode & Dilate is true"
+            },
+            {
+                id: "slider_1_2_1",
+                name: "Erode & Dilate 3",
+                type: "rangeslider",
+                min: 0,
+                max: 1000,
+                step: 0.1,
+                defaultValue: {min: 1, max: 300},
+                description: "Only visible if E&D is true"
+            }]
+        }]
+        }]
     };
     algorithms["423"] = {
         name: "Fluro 2",
@@ -224,7 +264,7 @@ function GetDetectionAlgorithms(detection_algorithms){
             description: ""
         }
         ]
-    };*/
+    };
 
     const algorithm_selection = document.getElementById("select-algorithm");
     while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
@@ -331,7 +371,7 @@ function AddImageToList(image_object){
         <h5 class="card-title mr-2 p-1">${image_object.original_name}</h5>
         <div class="spinner-border m-5" id="loading-${image_object.id}"></div>
         <img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
-        <p class="card-text">Date: ${DateToString(image_object.uploaded)}</li></p>
+        <p class="card-text">Date: ${image_object.uploaded.formatted}</li></p>
         </div>
         </div>`;
 
@@ -422,7 +462,7 @@ function SetChosen(image_id){
         console.log("Selecting image ", image_id);
         div_chosen.getElementById('selectedimage-description').innerHTML = `
         <ul><li>Filename: ${chosen_image.original_name}</li>
-        <li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>
+        <li>Upload Date: ${chosen_image.uploaded.formatted}</li></ul>
         `;
         $(div_chosen).show();
         class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;

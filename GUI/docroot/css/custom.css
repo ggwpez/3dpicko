@@ -15,7 +15,7 @@ label{
 	position: absolute;
 	display: block;
 	font-size: xx-large;
-	top: 5px; 
+	top: 5px;
 	right: 10px;
 }
 #steps{
@@ -24,10 +24,10 @@ label{
 .nav-pills .nav-link{
 	color: #888888;
 	font-weight: bold;
-} 
+}
 .nav-pills .nav-link:hover{
 	color: #888888;
-} 
+}
 .nav-pills .nav-link.active{
 	color: white;
 	/*background-color: #212529;*/
@@ -133,10 +133,10 @@ img {
 input[type=number]{
 	-moz-appearance:textfield;
 }
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-	-webkit-appearance: none; 
-	margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }
 #group h2{
 	text-align: center;

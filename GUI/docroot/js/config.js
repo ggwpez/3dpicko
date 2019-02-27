@@ -62,7 +62,7 @@ function AddProfileToList(profile){
     let html = `
     <div class="card" id="card-${profile.id}">
     <div class="card-header" data-toggle="collapse" data-target="#collapse-${profile.id}">
-    <span id="default-label-{profile.id}" class="badge badge-primary" ${(default_profiles[profile.type]==profile.id)?``:`style="display: none;"`}>Default</span>
+    <span id="default-label-${profile.id}" class="badge badge-primary" ${(default_profiles[profile.type]==profile.id)?``:`style="display: none;"`}>Default</span>
     <h4 class="btn btn-link">
     ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${profile.id}">&times;</button>`}
     ${profile.profile_name}
@@ -98,6 +98,31 @@ function AddProfileToList(profile){
         }
         else document.getElementById("select-"+profile.type).add(new Option(profile.profile_name, profile.id));
     }
+}
+
+function AddGeneralSetting(template){
+    let html = `
+    <div class="card" id="card-${template.id}">
+    <div class="card-header" data-toggle="collapse" data-target="#collapse-${template.id}">
+    <h4 class="btn btn-link">
+    ${template.name}
+    </h4>
+    </div>
+    <div id="collapse-${template.id}" class="collapse" data-parent="#group">
+    <div class="card-body">
+    <form id="form-${template.id}" name="form-${template.id}" data-description="${template.name}">
+    `;
+    let form;
+    if(Array.isArray(template.settings)){
+        form = new FormGroup(template, 'form-'+template.id);
+    }
+    html += form.getHtml();
+
+    html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button>`;
+    html += `</form></div></div></div>`;
+    document.getElementById('general-settings').insertAdjacentHTML('beforeend',html);
+    form.AddInputEvents();
+    // TODO FormGroup.AddFormEvents('form-'+template.id, /*TODO*/, unsaved_elements);
 }
 
 function SetDefaultProfile(id){
