@@ -74,7 +74,7 @@ void APIController::DeleteImage(Image::ID id, QObject* client) {
   }
   // Is the image	used by a job?
   for (auto const& job : db_->jobs()) {
-    if (job.second.imgID() == id) {
+    if (job.imgID() == id) {
       emit OnImageDeleteError(id, client);
       return;
     }
@@ -381,8 +381,18 @@ void APIController::restart(QObject*) {
 
 QJsonObject APIController::createImageList() const {
   QJsonArray json_images;
-  for (auto image : db_->images())
-    json_images.push_back(Marshalling::toJson(image.second));
+
+  // Get all image ids
+  auto ids = db_->images().entries().keys();
+
+  // Order ids by their matching images upload date
+  std::sort(ids.begin(), ids.end(), [this](Image::ID a, Image::ID b) {
+    return this->db_->images().entries()[a].uploaded() <
+           this->db_->images().entries()[b].uploaded();
+  });
+
+  for (auto id : ids)
+    json_images.push_back(Marshalling::toJson(db_->images().get(id)));
 
   return {{"images", json_images}};
 }
@@ -398,8 +408,8 @@ QJsonObject APIController::createImageList(Image img) {
 QJsonObject APIController::createJobList() {
   QJsonArray json_jobs;
 
-  for (auto job : db_->jobs())
-    json_jobs.append(Marshalling::toJson(job.second));
+  for (auto const& job : db_->jobs())
+    json_jobs.append(Marshalling::toJson(job));
 
   return {{"jobs", json_jobs}};
 }
@@ -416,8 +426,8 @@ QJsonObject APIController::createProfileList() {
   QJsonObject json;
   QJsonArray json_profiles;
 
-  for (auto profile : db_->profiles())
-    json_profiles.append(Marshalling::toJson(profile.second));
+  for (auto const& profile : db_->profiles())
+    json_profiles.append(Marshalling::toJson(profile));
 
   json["defaultPrinter"] = db_->defaultPrinter();
   json["defaultSocket"] = db_->defaultSocket();
