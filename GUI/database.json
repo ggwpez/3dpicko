@@ -7,155 +7,22 @@
     "deleted_jobs": {
     },
     "detection_results": {
-        "6": {
-            "cleanup_error": "",
-            "cleanup_succeeded": true,
-            "id": "6",
-            "last_stage": 5,
-            "stage_error": "",
-            "stages_succeeded": true,
-            "took_ns": -7702451652645990000
-        }
     },
     "images": {
-        "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771": {
+        "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53": {
             "description": "descrtiption",
-            "height": 2752,
-            "id": "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771",
-            "original_name": "12.jpg",
-            "path": "/uploads/RmhyfqrR",
+            "height": 1080,
+            "id": "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53",
+            "original_name": "test.png",
+            "path": "/uploads/mAIVYHGj",
             "uploaded": {
-                "ms": 0
+                "ms": 1551290638571
             },
-            "width": 4896
-        },
-        "8714ccc8a578af7364badb89df4686cfd2f55ab5baa7d6d8dd4100b87ff0df6a": {
-            "description": "Cropped version of '13.jpg'",
-            "height": 1361,
-            "id": "8714ccc8a578af7364badb89df4686cfd2f55ab5baa7d6d8dd4100b87ff0df6a",
-            "original_name": "13.jpg_1",
-            "path": "/uploads/vojkHAqc",
-            "uploaded": {
-                "ms": 1551287965321
-            },
-            "width": 2041
-        },
-        "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058": {
-            "description": "descrtiption",
-            "height": 3856,
-            "id": "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058",
-            "original_name": "13.jpg",
-            "path": "/uploads/BvjNxRsw",
-            "uploaded": {
-                "ms": 0
-            },
-            "width": 2552
-        },
-        "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302": {
-            "description": "Cropped version of '12.jpg'",
-            "height": 2201,
-            "id": "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302",
-            "original_name": "12.jpg_1",
-            "path": "/uploads/pBSsilHA",
-            "uploaded": {
-                "ms": 0
-            },
-            "width": 3302
+            "width": 1920
         }
     },
     "job_id": 209,
     "jobs": {
-        "203": {
-            "description": "",
-            "detections": [
-            ],
-            "id": "203",
-            "img_id": "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771",
-            "job_created": 1550701507909,
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "204": {
-            "description": "",
-            "detections": [
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5"
-            ],
-            "id": "204",
-            "img_id": "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058",
-            "job_created": 1550944930150,
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "205": {
-            "description": "",
-            "detections": [
-            ],
-            "id": "205",
-            "img_id": "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058",
-            "job_created": 1551287777378,
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "206": {
-            "description": "",
-            "detections": [
-            ],
-            "id": "206",
-            "img_id": "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058",
-            "job_created": 1551287847996,
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "207": {
-            "description": "",
-            "detections": [
-            ],
-            "id": "207",
-            "img_id": "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058",
-            "job_created": 1551287907674,
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "208": {
-            "description": "",
-            "detections": [
-                "6"
-            ],
-            "id": "208",
-            "img_id": "992a5dc7c26b4a5eade64235463afdc85ec7328d1626a76e104d587a10fdd058",
-            "job_created": 1551287965943,
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        }
     },
     "profile_id": 306,
     "profiles": {

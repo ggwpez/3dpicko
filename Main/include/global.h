@@ -11,7 +11,7 @@
 class QSslConfiguration;
 namespace c3picko {
 
-QSslConfiguration *LoadSslConfig(QSettings *settings);
+QSslConfiguration* LoadSslConfig(QSettings* settings);
 
 inline QDateTime parseDateTime(QJsonValue obj) {
   return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
@@ -31,6 +31,12 @@ inline void Setup() {
   if (!QDir(UploadFolder()).exists()) QDir().mkdir(UploadFolder());
 }
 
-inline char const *defaultImageExtension() { return "jpg"; }
+/**
+ * @brief String format for formatting QDateTime.
+ * See https://doc.qt.io/qt-5/qdatetime.html#toString
+ */
+inline QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
+
+inline char const* defaultImageExtension() { return "jpg"; }
 MAKE_MARSHALLABLE(QDateTime);
 }  // namespace c3picko
