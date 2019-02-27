@@ -173,8 +173,6 @@
               <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->
               <h1>Picking...</h1>
               <div class="spinner-border"></div>
-              <br>
-              <button class="btn btn-primary m-2" onclick="">Export pdf</button>
             </div>
           </div>
         </div>
@@ -194,11 +192,15 @@
   <div class="tab-pane fade" id="nav-historic-jobs" role="tabpanel" aria-labelledby="nav-historic-jobs-tab">
     <div class="container">
       <h1>Job History</h1>
-    </div> 
+    </div>
   </div>
   <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row mb-2" id="group">
+        <div class="col">
+          <h2>General Settings</h2>
+          <div class="accordion" id="general-settings"></div>
+        </div>
         <div class="col">
           <h2>Printer Profiles</h2>
           <div class="accordion" id="printer-profiles"></div>
@@ -262,6 +264,7 @@
 <script src="js/bootstrap.bundle.js"></script>
 <script type="text/javascript" src="js/api.js"></script>
 <script type="text/javascript" src="js/dropzone.js"></script>
+<script type="text/javascript" src="js/formgroup.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="js/colonydetection.js"></script>
 <script type="text/javascript" src="js/config.js"></script>
