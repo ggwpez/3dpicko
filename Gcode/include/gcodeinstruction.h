@@ -117,13 +117,21 @@ class GcodeInstruction {
   static GcodeInstruction AllowColdExtrusion();
 
   /**
+   * @brief Creates a gcode instruction for gauging
+   * the length of the extruded filament, for instance
+   * setting the current extrusion length to zero
+   * @param current_extrusion_length the current length of the extruded filament
+   * @return a gcode instruction of the form "G92 E0"
+   */
+  static GcodeInstruction GaugeFilamentExtrusionLength(
+      const float current_extrusion_length);
+
+  /**
    * Returns a string representation of
    * this single gcode command, such as
    * "G1 X35 Y120 Z320".
    */
   std::string ToString() const;
-
-  static GcodeInstruction ZeroE();
 
  private:
   /**

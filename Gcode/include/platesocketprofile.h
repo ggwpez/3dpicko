@@ -12,11 +12,11 @@ namespace c3picko {
 enum GoalPlateOrientation {
   /** well A1 is at the origin of the cutout */
   kFirstRowFirstColumnAtCutoutOrigin,
-  /** well m1 is at the origin of the cutout,
-                                  where m stands for the last row */
-  // kFirstRowLastColumnAtCutoutOrigin, // makes no sense
   /** well An is at the origin of the cutout,
                                   where n stands for the last column */
+  // kFirstRowLastColumnAtCutoutOrigin, // makes no sense
+  /** well m1 is at the origin of the cutout,
+                                  where m stands for the last row */
   kLastRowFirstColumnAtCutoutOrigin,
   /** well mn is at the origin of the cutout,
                                   where m stands for the last row and

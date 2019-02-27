@@ -16,13 +16,27 @@ GcodeGenerator::GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
           CreateGcodeAlignTipOfNozzleWithTopOfWell()),
       gcode_extrude_filament_until_bottom_of_well_(
           CreateGcodeExtrudeFilamentUntilBottomOfWell()),
-      gcode_raise_filament_above_plate_(CreateGcodeRaiseFilamentAbovePlate()),
+      gcode_raise_filament_above_source_plate_(
+          CreateGcodeRaiseFilamentAboveSourcePlate()),
+      gcode_raise_filament_above_master_plate_(
+          CreateGcodeRaiseFilamentAboveMasterPlate()),
+      gcode_raise_filament_above_goal_plate_(
+          CreateGcodeRaiseFilamentAboveGoalPlate()),
       gcode_move_to_cut_filament_position_above_trigger_(
           CreateGcodeMoveToCutFilemantPositionAboveTrigger()),
       gcode_extrude_filament_to_cut_length_(
           CreateGcodeExtrudeFilamentToCutLength()),
       gcode_push_trigger_(CreateGcodePushTheTrigger()),
-      gcode_extrusion_length_on_move_(CreateGcodeExtrusionLengthOnMove()),
+      gcode_extrusion_length_on_move_cut_to_pick_(
+          CreateGcodeExtrusionLengthOnMoveCutToPick()),
+      gcode_extrusion_length_on_move_pick_to_master_(
+          CreateGcodeExtrusionLengthOnMovePickToMaster()),
+      gcode_extrusion_length_on_move_master_to_goal_(
+          CreateGcodeExtrusionLengthOnMoveMasterToGoal()),
+      gcode_extrusion_length_on_move_goal_to_cut_(
+          CreateGcodeExtrusionLengthOnMoveGoalToCut()),
+      gcode_gauge_filament_extrusion_length_(
+          CreateGcodeGaugeFilamentExtrusionLength()),
       global_well_xy_coordinates_(ComputeGlobalWellCoordinates()),
       global_master_xy_coordinates_(ComputeGlobalMasterCoordinates()) {}
 
@@ -33,7 +47,12 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
   int starting_well = ComputeStartingWell(row, column);
   std::vector<GcodeInstruction> gcodes = Init();
   gcodes.reserve(local_colony_coordinates.size());
-  gcodes.push_back(gcode_raise_filament_above_plate_);
+  //  gcodes.push_back(gcode_raise_filament_above_source_plate_);
+  gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+  gcodes.push_back(gcode_extrude_filament_to_cut_length_);
+  gcodes.push_back(gcode_push_trigger_);
+  gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+  gcodes.push_back(gcode_gauge_filament_extrusion_length_);
 
   for (size_t i = 0; i < local_colony_coordinates.size(); ++i) {
     const GlobalColonyCoordinates global_colony_coordinate =
@@ -43,30 +62,34 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
     const GlobalMasterCoordinates &global_master_coordinate =
         global_master_xy_coordinates_.at(starting_well + i);
 
+    gcodes.push_back(gcode_extrusion_length_on_move_cut_to_pick_);
     gcodes.push_back(
         GcodeInstruction::MoveToXY(global_colony_coordinate.xCoordinate(),
                                    global_colony_coordinate.yCoordinate()));
-    gcodes.push_back(gcode_extrusion_length_on_move_);
     gcodes.push_back(gcode_lower_filament_onto_colony_);
-    gcodes.push_back(gcode_raise_filament_above_plate_);
+    gcodes.push_back(gcode_raise_filament_above_source_plate_);
+
+    gcodes.push_back(gcode_extrusion_length_on_move_pick_to_master_);
     gcodes.push_back(
         GcodeInstruction::MoveToXY(global_master_coordinate.xCoordinate(),
                                    global_master_coordinate.yCoordinate()));
     gcodes.push_back(gcode_lower_filament_onto_master_);
-    gcodes.push_back(gcode_raise_filament_above_plate_);
+    gcodes.push_back(gcode_raise_filament_above_master_plate_);
+
+    gcodes.push_back(gcode_extrusion_length_on_move_master_to_goal_);
     gcodes.push_back(
         GcodeInstruction::MoveToXY(global_well_coordinate.xCoordinate(),
                                    global_well_coordinate.yCoordinate()));
     gcodes.push_back(gcode_align_tip_of_nozzle_with_top_of_well_);
     gcodes.push_back(gcode_extrude_filament_until_bottom_of_well_);
-    gcodes.push_back(gcode_extrusion_length_on_move_);
-    gcodes.push_back(gcode_raise_filament_above_plate_);
+    gcodes.push_back(gcode_extrusion_length_on_move_goal_to_cut_);
+    gcodes.push_back(gcode_raise_filament_above_goal_plate_);
+
     gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
     gcodes.push_back(gcode_extrude_filament_to_cut_length_);
     gcodes.push_back(gcode_push_trigger_);
     gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-    gcodes.push_back(GcodeInstruction::ZeroE());
-    gcodes.push_back(gcode_extrusion_length_on_move_);
+    gcodes.push_back(gcode_gauge_filament_extrusion_length_);
   }
 
   return gcodes;
@@ -74,7 +97,7 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 
 std::vector<GcodeInstruction> GcodeGenerator::Init() {
   std::vector<GcodeInstruction> gcode_init;
-  gcode_init.reserve(4);
+  gcode_init.reserve(6);
   gcode_init.push_back(GcodeInstruction::SetUnit());
   gcode_init.push_back(GcodeInstruction::AbsolutePositioning());
   gcode_init.push_back(GcodeInstruction::ExtrusionModeAbsolute());
@@ -101,8 +124,8 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
   return GcodeInstruction::MoveToZ(
       plate_socket_profile_.originOffsetZ() -
       plate_socket_profile_.depthOfCutoutSourcePlateLiesIn() +
-      plate_profile_.cultureMediumThickness() +
-      printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
+      plate_profile_.cultureMediumThicknessSourcePlate() +
+      printer_profile_.filamentExtrusionLengthOnPick() -
       1  // push a little into the culture medium
   );
 }
@@ -111,8 +134,8 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
   return GcodeInstruction::MoveToZ(
       plate_socket_profile_.originOffsetZ() -
       plate_socket_profile_.depthOfCutoutMasterPlateLiesIn() +
-      plate_profile_.cultureMediumThickness() +
-      printer_profile_.filamentExtrusionLengthOnPickAndPutOntoMasterPlate() -
+      plate_profile_.cultureMediumThicknessMasterPlate() +
+      printer_profile_.filamentExtrusionLengthOnPutOntoMaster() -
       1  // push a little into the culture medium
   );
 }
@@ -128,7 +151,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeExtrudeFilamentUntilBottomOfWell() {
   return GcodeInstruction::ExtrudeFilament(plate_profile_.wellDepth());
 }
 
-GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAbovePlate() {
+float GcodeGenerator::ComputeZCoordinateTipOfNozzleAlignedHighest() const {
   float z_coordinate_tip_of_nozzle_aligned_with_top_surface_of_source_plate =
       plate_socket_profile_.originOffsetZ() -
       plate_socket_profile_.depthOfCutoutSourcePlateLiesIn() +
@@ -150,9 +173,29 @@ GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAbovePlate() {
           z_coordinate_tip_of_nozzle_aligned_with_top_surface_of_master_plate),
       z_coordinate_tip_of_nozzle_aligned_with_top_surface_of_goal_plate);
 
+  return z_coordinate_tip_of_nozzle_aligned_highest;
+}
+
+GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAboveSourcePlate() {
   return GcodeInstruction::MoveToZ(
-      z_coordinate_tip_of_nozzle_aligned_highest +
-      printer_profile_.filamentExtrusionLengthOnMove() +
+      ComputeZCoordinateTipOfNozzleAlignedHighest() +
+      printer_profile_.filamentExtrusionLengthOnMovePickToMaster() +
+      printer_profile_
+          .safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove());
+}
+
+GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAboveMasterPlate() {
+  return GcodeInstruction::MoveToZ(
+      ComputeZCoordinateTipOfNozzleAlignedHighest() +
+      printer_profile_.filamentExtrusionLengthOnMoveMasterToGoal() +
+      printer_profile_
+          .safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove());
+}
+
+GcodeInstruction GcodeGenerator::CreateGcodeRaiseFilamentAboveGoalPlate() {
+  return GcodeInstruction::MoveToZ(
+      ComputeZCoordinateTipOfNozzleAlignedHighest() +
+      printer_profile_.filamentExtrusionLengthOnMoveGoalToCut() +
       printer_profile_
           .safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove());
 }
@@ -172,14 +215,36 @@ GcodeInstruction GcodeGenerator::CreateGcodePushTheTrigger() {
 
 GcodeInstruction GcodeGenerator::CreateGcodeExtrudeFilamentToCutLength() {
   return GcodeInstruction::ExtrudeFilament(
+      printer_profile_.filamentExtrusionLengthAfterCut() +
       printer_profile_
-          .distanceBetweenPushedTriggerAndGapBetweenScissorsBlade() +
-      2);  // 2 mm of the filament's tip are cut
+          .lengthOfRemovedFilament());  // length of filament's tip are cut
 }
 
-GcodeInstruction GcodeGenerator::CreateGcodeExtrusionLengthOnMove() {
+GcodeInstruction GcodeGenerator::CreateGcodeExtrusionLengthOnMoveCutToPick() {
   return GcodeInstruction::ExtrudeFilament(
-      printer_profile_.filamentExtrusionLengthOnMove());
+      printer_profile_.filamentExtrusionLengthOnMoveCutToPick());
+}
+
+GcodeInstruction
+GcodeGenerator::CreateGcodeExtrusionLengthOnMovePickToMaster() {
+  return GcodeInstruction::ExtrudeFilament(
+      printer_profile_.filamentExtrusionLengthOnMovePickToMaster());
+}
+
+GcodeInstruction
+GcodeGenerator::CreateGcodeExtrusionLengthOnMoveMasterToGoal() {
+  return GcodeInstruction::ExtrudeFilament(
+      printer_profile_.filamentExtrusionLengthOnMoveMasterToGoal());
+}
+
+GcodeInstruction GcodeGenerator::CreateGcodeExtrusionLengthOnMoveGoalToCut() {
+  return GcodeInstruction::ExtrudeFilament(
+      printer_profile_.filamentExtrusionLengthOnMoveGoalToCut());
+}
+
+GcodeInstruction GcodeGenerator::CreateGcodeGaugeFilamentExtrusionLength() {
+  return GcodeInstruction::GaugeFilamentExtrusionLength(
+      printer_profile_.filamentExtrusionLengthAfterCut());
 }
 
 std::vector<GlobalWellCoordinates>

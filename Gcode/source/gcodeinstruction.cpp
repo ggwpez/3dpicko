@@ -33,6 +33,10 @@ class GcodeInstruction::GcodeField::Command {
    * positioning of the nozzle to absolute.
    */
   static GcodeField G90() { return GcodeInstruction::GcodeField('G', 90); }
+  /**
+   * Creates and returns the g-code command G92 used for gauging
+   * the length of the extruded filament
+   */
   static GcodeField G92() { return GcodeInstruction::GcodeField('G', 92); }
   /**
    * Creates and returns the g-code command M82 used for setting the
@@ -199,9 +203,10 @@ GcodeInstruction GcodeInstruction::AllowColdExtrusion() {
       {GcodeField::Command::M302(), GcodeField::Parameter::P(1)});
 }
 
-GcodeInstruction GcodeInstruction::ZeroE() {
-  return GcodeInstruction(
-      {GcodeField::Command::G92(), GcodeField::Parameter::E(3.2)});
+GcodeInstruction GcodeInstruction::GaugeFilamentExtrusionLength(
+    const float current_extrusion_length) {
+  return GcodeInstruction({GcodeField::Command::G92(),
+                           GcodeField::Parameter::E(current_extrusion_length)});
 }
 
 GcodeInstruction::GcodeInstruction(std::vector<GcodeField> fields)

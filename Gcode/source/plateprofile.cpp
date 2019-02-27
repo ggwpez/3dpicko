@@ -6,7 +6,8 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
                            float well_spacing_center_to_center,
                            float height_source_plate, float height_master_plate,
                            float height_goal_plate, float well_depth,
-                           float culture_medium_thickness)
+                           float culture_medium_thickness_source_plate,
+                           float culture_medium_thickness_master_plate)
     : number_of_rows_(number_of_rows),
       number_of_columns_(number_of_columns),
       number_of_wells_(number_of_columns * number_of_rows),
@@ -17,7 +18,10 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
       height_master_plate_(height_master_plate),
       height_goal_plate_(height_goal_plate),
       well_depth_(well_depth),
-      culture_medium_thickness_(culture_medium_thickness) {}
+      culture_medium_thickness_source_plate_(
+          culture_medium_thickness_source_plate),
+      culture_medium_thickness_master_plate_(
+          culture_medium_thickness_master_plate) {}
 
 int PlateProfile::numberOfRows() const { return number_of_rows_; }
 
@@ -41,7 +45,11 @@ float PlateProfile::heightGoalPlate() const { return height_goal_plate_; }
 
 float PlateProfile::wellDepth() const { return well_depth_; }
 
-float PlateProfile::cultureMediumThickness() const {
-  return culture_medium_thickness_;
+float PlateProfile::cultureMediumThicknessSourcePlate() const {
+  return culture_medium_thickness_source_plate_;
+}
+
+float PlateProfile::cultureMediumThicknessMasterPlate() const {
+  return culture_medium_thickness_master_plate_;
 }
 }  // namespace c3picko

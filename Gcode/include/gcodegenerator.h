@@ -62,11 +62,23 @@ class GcodeGenerator {
   GcodeInstruction CreateGcodeLowerFilamentOntoMaster();
   GcodeInstruction CreateGcodeAlignTipOfNozzleWithTopOfWell();
   GcodeInstruction CreateGcodeExtrudeFilamentUntilBottomOfWell();
-  GcodeInstruction CreateGcodeRaiseFilamentAbovePlate();
+  GcodeInstruction CreateGcodeRaiseFilamentAboveSourcePlate();
+  GcodeInstruction CreateGcodeRaiseFilamentAboveMasterPlate();
+  GcodeInstruction CreateGcodeRaiseFilamentAboveGoalPlate();
+  /**
+   * used for computing the gcode for
+   * raising filaments above plate
+   */
+  float ComputeZCoordinateTipOfNozzleAlignedHighest() const;
   GcodeInstruction CreateGcodeMoveToCutFilemantPositionAboveTrigger();
   GcodeInstruction CreateGcodePushTheTrigger();
   GcodeInstruction CreateGcodeExtrudeFilamentToCutLength();
-  GcodeInstruction CreateGcodeExtrusionLengthOnMove();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMoveCutToPick();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMovePickToMaster();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMoveMasterToGoal();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMoveGoalToCut();
+
+  GcodeInstruction CreateGcodeGaugeFilamentExtrusionLength();
 
   /**
    * @brief See ComputeGlobalWellAndMasterCoordinates().
@@ -159,11 +171,25 @@ class GcodeGenerator {
   GcodeInstruction gcode_extrude_filament_until_bottom_of_well_;
 
   /**
-   * @brief gcode_raise_filament_above_plate_ the gcode instruction for raising
-   * the nozzle above all plates so that the extruded filament is not touching
-   * anything while moving on the xy axes.
+   * @brief gcode_raise_filament_above_source_plate_ the gcode instruction for
+   * raising the nozzle above source plate so that the extruded filament is not
+   * touching the borders of the source plate while moving on the xy axes.
    */
-  GcodeInstruction gcode_raise_filament_above_plate_;
+  GcodeInstruction gcode_raise_filament_above_source_plate_;
+
+  /**
+   * @brief gcode_raise_filament_above_master_plate_ the gcode instruction for
+   * raising the nozzle above source plate so that the extruded filament is not
+   * touching the borders of the master plate while moving on the xy axes.
+   */
+  GcodeInstruction gcode_raise_filament_above_master_plate_;
+
+  /**
+   * @brief gcode_raise_filament_above_goal_plate_ the gcode instruction for
+   * raising the nozzle above source plate so that the extruded filament is not
+   * touching the borders of the goal plate while moving on the xy axes.
+   */
+  GcodeInstruction gcode_raise_filament_above_goal_plate_;
 
   /**
    * @brief gcode_move_to_cut_filament_position_above_trigger_ the gcode
@@ -187,10 +213,38 @@ class GcodeGenerator {
   GcodeInstruction gcode_push_trigger_;
 
   /**
-   * @brief gcode_extrusion_length_on_move_ the gcode instruction for
-   * extruding the filament up to the length it shall have on the move.
+   * @brief gcode_extrusion_length_on_move_cut_to_pick_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * the cut position to the source plate.
    */
-  GcodeInstruction gcode_extrusion_length_on_move_;
+  GcodeInstruction gcode_extrusion_length_on_move_cut_to_pick_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_pick_to_master_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * source to master plate.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_pick_to_master_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_master_to_goal_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * the master to goal plate.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_master_to_goal_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_goal_to_cut_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * the goal plate to cut position.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_goal_to_cut_;
+
+  /**
+   * @brief gcode_gauge_filament_extrusion_length_ the gcode instruction
+   * for gauging the length of the extruded filament
+   */
+  GcodeInstruction gcode_gauge_filament_extrusion_length_;
 
   /**
    * @brief global_well_xy_coordinates_ the xy coordinates
