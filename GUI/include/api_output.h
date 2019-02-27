@@ -1,15 +1,15 @@
 #pragma once
 
+#include <QString>
 #include "database.hpp"
 #include "include/global.h"
 #include "include/types/job.hpp"
-#include <QString>
 
 #include <QObject>
 
 namespace c3picko {
 class Colony;
-class AlgorithmPipeline;
+class AlgorithmManager;
 class APIInput;
 class APIController;
 class APIOutput : public QObject {
@@ -18,10 +18,10 @@ class APIOutput : public QObject {
   friend class APIInput;
   friend class APIController;
 
-public:
+ public:
   APIOutput(APIController *parent);
 
-protected slots:
+ protected slots:
   void UnknownRequest(QString request, QObject *client);
   void ImageListRequested(QObject *client);
   void JobListRequested(QObject *client);
@@ -45,6 +45,11 @@ protected slots:
   void ProfileUpdateError(Profile::ID, QObject *client);
   void ProfileDeleted(Profile::ID profile, QObject *client);
   void ProfileDeleteError(Profile::ID profile, QObject *client);
+  void DefaultSettingsProfileSet(Profile::ID profile, QObject *client);
+  void DefaultSettingsProfileSetError(QString error, QObject *client);
+  void SetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
+                       QObject *client);
+  void SetStartingWellError(QString error, QObject *client);
 
   void ColonyDetectionStarted(Job::ID, QObject *client);
   /**
@@ -58,8 +63,8 @@ protected slots:
 
   void Error(QString where, QString what, QObject *client);
 
-private:
+ private:
   // TODO change name
   APIController *op;
 };
-} // namespace c3picko
+}  // namespace c3picko

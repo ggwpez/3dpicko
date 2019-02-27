@@ -1,7 +1,7 @@
 #include "include/algo_setting.h"
 
 namespace c3picko {
-static QVariant empty_qv = QVariant();
+static QVariant empty_qv = QJsonValue();
 
 AlgoSetting AlgoSetting::make_checkbox(ID id, QString name, QString description,
                                        bool default_value) {
@@ -10,10 +10,17 @@ AlgoSetting AlgoSetting::make_checkbox(ID id, QString name, QString description,
 }
 
 AlgoSetting AlgoSetting::make_dropdown(AlgoSetting::ID id, QString name,
-                                       QString description, QStringList values,
-                                       int default_value_index) {
+                                       QString description, QVariantMap options,
+                                       QString default_option_index) {
   return AlgoSetting(id, name, "dropdown", description, empty_qv, empty_qv,
-                     empty_qv, values, default_value_index);
+                     empty_qv, options, default_option_index);
+}
+
+AlgoSetting AlgoSetting::make_rangeslider_double(
+    AlgoSetting::ID id, QString name, QString description, double min,
+    double max, double step, math::Range<double> default_value) {
+  return AlgoSetting(id, name, "rangeslider", description, min, max, step, {},
+                     QVariant::fromValue(default_value));
 }
 
 AlgoSetting AlgoSetting::make_slider_int(ID id, QString name,
@@ -33,11 +40,18 @@ AlgoSetting AlgoSetting::make_slider_double(ID id, QString name,
 
 AlgoSetting::AlgoSetting(AlgoSetting::ID id, QString name, QString type,
                          QString description, QVariant min, QVariant max,
-                         QVariant step, QStringList enum_values,
+                         QVariant step, QVariantMap options,
                          QVariant default_value, QVariant value)
-    : id_(id), name_(name), type_(type), description_(description), min_(min),
-      max_(max), step_(step), enum_values_(enum_values),
-      default_value_(default_value), value_(value) {
+    : id_(id),
+      name_(name),
+      type_(type),
+      description_(description),
+      min_(min),
+      max_(max),
+      step_(step),
+      options_(options),
+      default_value_(default_value),
+      value_(value) {
   if (type == "slider") {
     if (!min_.isValid() || !max_.isValid() || !default_value_.isValid())
       throw std::runtime_error(
@@ -74,15 +88,18 @@ QVariant AlgoSetting::valueVariant() const { return value_; }
 
 QVariant AlgoSetting::defaultValueVariant() const { return default_value_; }
 
-QStringList const &AlgoSetting::enum_values() const { return enum_values_; }
+QVariantMap const& AlgoSetting::options() const { return options_; }
 
-template <> QJsonObject Marshalling::toJson(const AlgoSetting &value) {
+template <>
+QJsonObject Marshalling::toJson(const AlgoSetting& value) {
   QJsonObject obj;
+  QString link = "/wiki/index.html#" + value.name().toLower().replace(' ', '-');
 
   obj["id"] = value.id();
   obj["type"] = value.type();
   obj["name"] = value.name();
-  obj["description"] = value.description();
+  obj["description"] =
+      "<a href=\"" + link + "\" target=\"_blank\">Wiki link</a>";
 
   if (value.type() == "slider") {
     obj["defaultValue"] = QJsonValue::fromVariant(value.defaultValueVariant());
@@ -95,20 +112,29 @@ template <> QJsonObject Marshalling::toJson(const AlgoSetting &value) {
     obj["valueType"] = value.defaultValueVariant().typeName();
   } else if (value.type() == "dropdown") {
     obj["defaultValue"] = value.defaultValueVariant().toString();
-    auto const &enum_values = value.enum_values();
-    QJsonObject json_values;
+    obj["options"] = QJsonObject::fromVariantMap(value.options());
+  } else if (value.type() == "rangeslider") {
+    math::Range<double> def = value.defaultValue<math::Range<double>>();
 
-    for (int i = 0; i < enum_values.size(); ++i)
-      json_values[QString::number(i)] = enum_values[i];
+    // TODO is this legit?
+    if (!def.lower_closed_) def.lower_ += value.step<double>();
+    if (!def.upper_closed_) def.upper_ -= value.step<double>();
 
-    obj["possible_values"] = json_values;
+    obj["defaultValue"] = QJsonObject{{"min", def.lower_}, {"max", def.upper_}};
+    obj["min"] = QJsonValue::fromVariant(value.minVariant());
+    obj["max"] = QJsonValue::fromVariant(value.maxVariant());
+    obj["valueType"] = value.defaultValueVariant().typeName();
+    obj["step"] = QJsonValue::fromVariant(value.stepVariant());
   } else
     Q_UNREACHABLE();
 
   return obj;
 }
 
-template <> AlgoSetting Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
+  throw std::runtime_error(
+      "Marshalling::fromJson<AlgoSetting> not tested");  // TODO
   AlgoSetting::ID id = obj["id"].toString();
   QString type = obj["type"].toString().toLower();
   QString name = obj["name"].toString();
@@ -135,24 +161,16 @@ template <> AlgoSetting Marshalling::fromJson(const QJsonObject &obj) {
     return AlgoSetting(id, name, "checkbox", description, empty_qv, empty_qv,
                        empty_qv, {}, default_value);
   } else if (type == "dropdown") {
-    QJsonObject values = obj["possible_values"].toObject();
-    QStringList enum_values;
-    for (auto key : values.keys()) {
-      QString value = values[key].toString();
-
-      if (value.isEmpty())
-        qWarning() << "Ignoring empty enum value in fromJson<dropdown>";
-      else
-        enum_values << value;
-    }
+    QVariantMap options = obj["options"].toObject().toVariantMap();
 
     if (!default_value.canConvert<int>())
       throw std::runtime_error(
           "Could not convert default value for dropdown to int");
 
     return AlgoSetting(id, name, "dropdown", description, empty_qv, empty_qv,
-                       empty_qv, enum_values, default_value);
+                       empty_qv, options, default_value);
+  } else if (type == "rangeslider") {
   } else
     throw std::runtime_error("Parsing exception");
 }
-}
+}  // namespace c3picko

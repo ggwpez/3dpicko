@@ -6,12 +6,12 @@
 #ifndef STATICFILECONTROLLER_H
 #define STATICFILECONTROLLER_H
 
+#include <QCache>
+#include <QMutex>
 #include "httpglobal.h"
 #include "httprequest.h"
 #include "httprequesthandler.h"
 #include "httpresponse.h"
-#include <QCache>
-#include <QMutex>
 
 namespace stefanfrings {
 
@@ -41,14 +41,14 @@ namespace stefanfrings {
 class DECLSPEC StaticFileController : public HttpRequestHandler {
   Q_OBJECT
   Q_DISABLE_COPY(StaticFileController)
-public:
+ public:
   /** Constructor */
   StaticFileController(QSettings *settings, QObject *parent = NULL);
 
   /** Generates the response */
   void service(HttpRequest &request, HttpResponse &response);
 
-private:
+ private:
   /** Encoding of text files */
   QString encoding;
 
@@ -81,6 +81,6 @@ private:
   void setContentType(QString file, HttpResponse &response) const;
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // STATICFILECONTROLLER_H
+#endif  // STATICFILECONTROLLER_H

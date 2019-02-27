@@ -40,25 +40,25 @@ QString LogMessage::toString(const QString &msgFormat,
   decorated.replace("{typeNr}", typeNr);
 
   switch (type) {
-  case QtDebugMsg:
-    decorated.replace("{type}", "DEBUG   ");
-    break;
-  case QtWarningMsg:
-    decorated.replace("{type}", "WARNING ");
-    break;
-  case QtCriticalMsg:
-    decorated.replace("{type}", "CRITICAL");
-    break;
-  case QtFatalMsg:
-    decorated.replace("{type}", "FATAL   ");
-    break;
+    case QtDebugMsg:
+      decorated.replace("{type}", "DEBUG   ");
+      break;
+    case QtWarningMsg:
+      decorated.replace("{type}", "WARNING ");
+      break;
+    case QtCriticalMsg:
+      decorated.replace("{type}", "CRITICAL");
+      break;
+    case QtFatalMsg:
+      decorated.replace("{type}", "FATAL   ");
+      break;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
-  case QtInfoMsg:
-    decorated.replace("{type}", "INFO    ");
-    break;
+    case QtInfoMsg:
+      decorated.replace("{type}", "INFO    ");
+      break;
 #endif
-  default:
-    decorated.replace("{type}", typeNr);
+    default:
+      decorated.replace("{type}", typeNr);
   }
 
   decorated.replace("{file}", file);

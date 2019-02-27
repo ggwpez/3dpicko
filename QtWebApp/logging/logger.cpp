@@ -4,12 +4,12 @@
 */
 
 #include "logger.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <QDateTime>
 #include <QMutex>
 #include <QObject>
 #include <QThread>
-#include <stdio.h>
-#include <stdlib.h>
 
 using namespace stefanfrings;
 
@@ -20,8 +20,10 @@ QThreadStorage<QHash<QString, QString> *> Logger::logVars;
 QMutex Logger::mutex;
 
 Logger::Logger(QObject *parent)
-    : QObject(parent), msgFormat("{timestamp} {type} {msg}"),
-      timestampFormat("dd.MM.yyyy hh:mm:ss.zzz"), minLevel(QtDebugMsg),
+    : QObject(parent),
+      msgFormat("{timestamp} {type} {msg}"),
+      timestampFormat("dd.MM.yyyy hh:mm:ss.zzz"),
+      minLevel(QtDebugMsg),
       bufferSize(0) {}
 
 Logger::Logger(const QString msgFormat, const QString timestampFormat,
@@ -65,7 +67,7 @@ void Logger::msgHandler(const QtMsgType type, const QString &message,
 void Logger::msgHandler5(const QtMsgType type,
                          const QMessageLogContext &context,
                          const QString &message) {
-  (void)(context); // suppress "unused parameter" warning
+  (void)(context);  // suppress "unused parameter" warning
   msgHandler(type, message, context.file, context.function, context.line);
 }
 #else

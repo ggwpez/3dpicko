@@ -4,32 +4,43 @@
 #include <QNetworkAccessManager>
 #include <QObject>
 
-#include "apikey.h"
-#include "command.h"
+#include "include/octoconfig.h"
 
 namespace c3picko {
 namespace pi {
+class Command;
 /**
  * @brief API for OctoPrint printer
  */
 class OctoPrint : public QObject {
   Q_OBJECT
 
-public:
-  OctoPrint(QString ip, ApiKey key, QObject *_parent = nullptr);
+ public:
+  OctoPrint(const OctoConfig &config, QObject *_parent = nullptr);
 
-public slots:
+ signals:
+  void OnResolved();
+
+ public slots:
   void SendCommand(Command *cmd);
 
-signals:
+ private slots:
+  void SendCommandTo(Command *cmd, QUrl to);
+  void Resolve();
 
-private:
-  QString ip_;
-  ApiKey apikey_;
+ private:
+  OctoConfig config_;
   QNetworkAccessManager *network_;
+  enum class ResolveStatus {
+    UNRESOLVED,
+    RESOLVING,
+    RESOLVED,
+    ERROR
+  } resolve_status_;
+  QUrl resolved_address_;
 };
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko
 
 // TODO QNetworkAccessManager::networkAccessibleChanged()
-#endif // OCTOPRINT_H_
+#endif  // OCTOPRINT_H_

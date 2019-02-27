@@ -1,31 +1,24 @@
-#include "httplistener.h"
-#include "include/algo1_test.h"
-#include "include/algorithm_pipeline.h"
+#include "include/algorithm_manager.h"
+#include "include/algorithms/algo1_test.h"
 #include "include/api_controller.h"
-#include "include/command.h"
-#include "include/commands/arbitrary_command.h"
-#include "include/global.h"
-#include "include/octoprint.h"
+#include "include/database.hpp"
 #include "include/requestmapper.h"
 #include "include/signal_daemon.h"
 #include "include/ws_server.hpp"
+
+#include "httplistener.h"
+#include "staticfilecontroller.h"
+
 #include <QCoreApplication>
-#include <QDir>
 #include <QFile>
-#include <QMetaObject>
-#include <QObject>
-#include <QSettings>
-#include <QSslKey>
-#include <QString>
 #include <QThreadPool>
-#include <QtGlobal>
-#include <csignal>
-#include <signal.h>
+
+#ifdef Q_OS_UNIX
+#include "include/signal_daemon.h"
+#endif
 
 using namespace stefanfrings;
 using namespace c3picko;
-using namespace c3picko::pi;
-using namespace c3picko::pi::commands;
 
 /**
  * Search the configuration file.
@@ -49,6 +42,7 @@ static QString searchConfigFile() {
 }
 
 static void setupSignals(QCoreApplication *app) {
+#ifdef Q_OS_UNIX
   SignalDaemon *sigwatch = new SignalDaemon(app);
   sigwatch->registerSignals({SIGABRT, SIGALRM, SIGFPE, SIGHUP, SIGILL, SIGINT,
                              SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM, SIGUSR1,
@@ -58,6 +52,9 @@ static void setupSignals(QCoreApplication *app) {
     qWarning("Shutdown by signal: %s", ::strsignal(signum));
     app->quit();
   });
+#else
+  qDebug() << "UNIX Signal Setup skipped";
+#endif
 }
 
 static WsServer *ws_ptr = nullptr;
@@ -73,14 +70,16 @@ static void msg_handler(QtMsgType type, const QMessageLogContext &context,
 };
 
 static int start(int argc, char **argv) {
+#ifdef Q_OS_LINUX
   qInstallMessageHandler(msg_handler);
+#endif
   // FIXME memory managment
   Setup();
   QCoreApplication app(argc, argv);
   setupSignals(&app);
   QString configFileName = searchConfigFile();
 
-  AlgorithmPipeline *detector = new AlgorithmPipeline(
+  AlgorithmManager *detector = new AlgorithmManager(
       QThreadPool::globalInstance(), {new Algo1Test()}, &app);
 
   Database *db = new Database("database.json", &app);
@@ -131,13 +130,12 @@ static int start(int argc, char **argv) {
                    &WsServer::ToAllExClient);
 
   QObject::connect(&app, &QCoreApplication::aboutToQuit, [] {
-    qInstallMessageHandler(nullptr); // reset message handlers
+    qInstallMessageHandler(nullptr);  // reset message handlers
     ws_ptr =
-        nullptr; // also dont redirect the console output to WsServer anymore
+        nullptr;  // also dont redirect the console output to WsServer anymore
   });
 
-  if (!ws_server->StartListen())
-    app.exit(1);
+  if (!ws_server->StartListen()) return 1;
 
   return app.exec();
 }

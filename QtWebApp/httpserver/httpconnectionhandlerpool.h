@@ -1,12 +1,12 @@
 #ifndef HTTPCONNECTIONHANDLERPOOL_H
 #define HTTPCONNECTIONHANDLERPOOL_H
 
-#include "httpconnectionhandler.h"
-#include "httpglobal.h"
 #include <QList>
 #include <QMutex>
 #include <QObject>
 #include <QTimer>
+#include "httpconnectionhandler.h"
+#include "httpglobal.h"
 
 namespace stefanfrings {
 
@@ -50,7 +50,7 @@ namespace stefanfrings {
 class DECLSPEC HttpConnectionHandlerPool : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(HttpConnectionHandlerPool)
-public:
+ public:
   /**
     Constructor.
     @param settings Configuration settings for the HTTP server. Must not be 0.
@@ -67,7 +67,7 @@ public:
   /** Get a free connection handler, or 0 if not available. */
   HttpConnectionHandler *getConnectionHandler();
 
-private:
+ private:
   /** Settings for this pool */
   QSettings *settings;
 
@@ -86,12 +86,12 @@ private:
   /** The SSL configuration (certificate, key and other settings) */
   QSslConfiguration *ssl_;
 
-private slots:
+ private slots:
 
   /** Received from the clean-up timer.  */
   void cleanup();
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // HTTPCONNECTIONHANDLERPOOL_H
+#endif  // HTTPCONNECTIONHANDLERPOOL_H

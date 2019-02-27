@@ -12,8 +12,8 @@ namespace data {
 enum class FileType : char { NONE, MODEL, MACHINECODE, FOLDER };
 
 FileType FileTypeFromString(QString const &str);
-} // namespace data
-} // namespace pi
-} // namespace c3picko
+}  // namespace data
+}  // namespace pi
+}  // namespace c3picko
 
-#endif // FILE_TYPE_H
+#endif  // FILE_TYPE_H

@@ -6,14 +6,14 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "logglobal.h"
-#include "logmessage.h"
 #include <QHash>
 #include <QMutex>
 #include <QObject>
 #include <QStringList>
 #include <QThreadStorage>
 #include <QtGlobal>
+#include "logglobal.h"
+#include "logmessage.h"
 
 namespace stefanfrings {
 
@@ -50,7 +50,7 @@ namespace stefanfrings {
 class DECLSPEC Logger : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(Logger)
-public:
+ public:
   /**
     Constructor.
     Uses the same defaults as the other constructor.
@@ -117,7 +117,7 @@ public:
   */
   virtual void clear(const bool buffer = true, const bool variables = true);
 
-protected:
+ protected:
   /** Format string for message decoration */
   QString msgFormat;
 
@@ -139,7 +139,7 @@ protected:
   */
   virtual void write(const LogMessage *logMessage);
 
-private:
+ private:
   /** Pointer to the default logger, used by msgHandler() */
   static Logger *defaultLogger;
 
@@ -195,6 +195,6 @@ private:
   QThreadStorage<QList<LogMessage *> *> buffers;
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // LOGGER_H
+#endif  // LOGGER_H

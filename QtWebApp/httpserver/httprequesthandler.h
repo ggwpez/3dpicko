@@ -26,7 +26,7 @@ namespace stefanfrings {
 class DECLSPEC HttpRequestHandler : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(HttpRequestHandler)
-public:
+ public:
   /**
    * Constructor.
    * @param parent Parent object.
@@ -45,6 +45,6 @@ public:
   virtual void service(HttpRequest &request, HttpResponse &response);
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // HTTPREQUESTHANDLER_H
+#endif  // HTTPREQUESTHANDLER_H

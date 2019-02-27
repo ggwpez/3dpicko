@@ -25,8 +25,8 @@ struct UploadResponse : public Response {
   /// Is it a folder? Otherwise its a file
   bool is_folder;
 };
-} // namespace responses
-} // namespace pi
-} // namespace c3picko
+}  // namespace responses
+}  // namespace pi
+}  // namespace c3picko
 
-#endif // RETRIVE_RESPONSE_H_
+#endif  // RETRIVE_RESPONSE_H_

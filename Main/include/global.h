@@ -6,11 +6,12 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
+#include "include/marshalling.hpp"
 
 class QSslConfiguration;
 namespace c3picko {
 
-QSslConfiguration *LoadSslConfig(QSettings *settings);
+QSslConfiguration* LoadSslConfig(QSettings* settings);
 
 inline QDateTime parseDateTime(QJsonValue obj) {
   return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
@@ -27,9 +28,15 @@ inline QString UploadFolderName() { return "uploads"; }
 inline QString UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
 inline void Setup() {
-  if (!QDir(UploadFolder()).exists())
-    QDir().mkdir(UploadFolder());
+  if (!QDir(UploadFolder()).exists()) QDir().mkdir(UploadFolder());
 }
 
-inline char const *defaultImageExtension() { return "jpg"; }
-} // namespace c3picko
+/**
+ * @brief String format for formatting QDateTime.
+ * See https://doc.qt.io/qt-5/qdatetime.html#toString
+ */
+inline QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
+
+inline char const* defaultImageExtension() { return "jpg"; }
+MAKE_MARSHALLABLE(QDateTime);
+}  // namespace c3picko

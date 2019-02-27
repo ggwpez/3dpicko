@@ -19,6 +19,6 @@ JobGeneralInfo::JobGeneralInfo(QJsonObject const &obj) {
     filament.volume = fil["volume"].toDouble();
   }
 }
-} // namespace data
-} // namespace pi
-} // namespace c3picko
+}  // namespace data
+}  // namespace pi
+}  // namespace c3picko

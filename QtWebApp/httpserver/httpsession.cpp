@@ -93,7 +93,7 @@ QByteArray HttpSession::getId() const {
 
 bool HttpSession::isNull() const { return dataPtr == 0; }
 
-void HttpSession::set(const QByteArray &key, const QVariant &value) {
+void HttpSession::set(const QByteArray &key, const QJsonValue &value) {
   if (dataPtr) {
     dataPtr->lock.lockForWrite();
     dataPtr->values.insert(key, value);

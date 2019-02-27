@@ -2,7 +2,8 @@
 #include "include/colony_type.h"
 
 namespace c3picko {
-template <> QJsonObject Marshalling::toJson(const Colony &value) {
+template <>
+QJsonObject Marshalling::toJson(const Colony &value) {
   QJsonObject obj;
 
   obj["x"] = value.x();
@@ -17,7 +18,8 @@ template <> QJsonObject Marshalling::toJson(const Colony &value) {
   return obj;
 }
 
-template <> Colony Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+Colony Marshalling::fromJson(const QJsonObject &obj) {
   return Colony(obj["x"].toDouble(), obj["y"].toDouble(),
                 obj["area"].toDouble(), obj["circumference"].toDouble(),
                 obj["major_length"].toDouble(), obj["brightness"].toDouble(),
@@ -27,8 +29,13 @@ template <> Colony Marshalling::fromJson(const QJsonObject &obj) {
 
 Colony::Colony(double x, double y, double area, double circumference,
                double major_length, double brightness, Colony::ID id, Type type)
-    : x_(x), y_(y), area_(area), circumference_(circumference),
-      major_length_(major_length), brightness_(brightness), id_(id),
+    : x_(x),
+      y_(y),
+      area_(area),
+      circumference_(circumference),
+      major_length_(major_length),
+      brightness_(brightness),
+      id_(id),
       type_(type) {}
 
 double Colony::x() const { return x_; }
@@ -49,4 +56,4 @@ void Colony::setType(const Colony::Type &type) { type_ = type; }
 
 double Colony::brightness() const { return brightness_; }
 
-} // namespace c3picko
+}  // namespace c3picko

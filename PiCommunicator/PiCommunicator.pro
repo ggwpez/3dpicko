@@ -26,7 +26,9 @@ SOURCES += \
 	src/responses/job_info.cc \
 	src/response.cc \
 	src/commands/file_operation.cc \
-	src/commands/job_operation.cc
+	src/commands/job_operation.cc \
+    src/apikey.cc \
+    src/octoconfig.cc
 
 HEADERS += \
 	include/pi_communicator.h \
@@ -56,4 +58,5 @@ HEADERS += \
 	include/datamodel/progress_info.h \
 	include/datamodel/job_general_info.h \
 	include/commands/file_operation.h \
-	include/commands/job_operation.h
+	include/commands/job_operation.h \
+    include/octoconfig.h

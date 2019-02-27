@@ -4,8 +4,8 @@
 #include <QSslKey>
 #include <QSslSocket>
 #endif
-#include "httpconnectionhandlerpool.h"
 #include <QDir>
+#include "httpconnectionhandlerpool.h"
 
 using namespace stefanfrings;
 
@@ -59,10 +59,11 @@ void HttpConnectionHandlerPool::cleanup() {
       if (++idleCounter > maxIdleHandlers) {
         delete handler;
         pool.removeOne(handler);
-        qInfo("HttpConnectionHandlerPool: Removed connection handler (%p), "
-              "pool size is now %i",
-              handler, pool.size());
-        break; // remove only one handler in each interval
+        qInfo(
+            "HttpConnectionHandlerPool: Removed connection handler (%p), "
+            "pool size is now %i",
+            handler, pool.size());
+        break;  // remove only one handler in each interval
       }
     }
   }

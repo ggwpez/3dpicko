@@ -4,7 +4,7 @@
 #include <QtDebug>
 
 namespace c3picko {
-QSslConfiguration *LoadSslConfig(QSettings *settings) {
+QSslConfiguration* LoadSslConfig(QSettings* settings) {
   QSslConfiguration ssl;
 
   QString cert(settings->value("certificate").toString());
@@ -28,8 +28,23 @@ QSslConfiguration *LoadSslConfig(QSettings *settings) {
   ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
   ssl.setLocalCertificate(certificate);
   ssl.setPrivateKey(sslKey);
-  ssl.setProtocol(QSsl::SecureProtocols); // TODO
+  ssl.setProtocol(QSsl::SecureProtocols);  // TODO
 
   return new QSslConfiguration(ssl);
 }
-} // namespace c3picko
+
+template <>
+QJsonObject Marshalling::toJson(const QDateTime& value) {
+  QJsonObject obj;
+
+  obj["ms"] = value.toMSecsSinceEpoch();
+  obj["formatted"] = value.toString(dateTimeFormat());
+
+  return obj;
+}
+
+template <>
+QDateTime Marshalling::fromJson(const QJsonObject& obj) {
+  return QDateTime::fromMSecsSinceEpoch(obj["ms"].toVariant().toLongLong());
+}
+}  // namespace c3picko

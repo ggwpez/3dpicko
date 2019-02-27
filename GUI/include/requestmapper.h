@@ -11,13 +11,13 @@ namespace c3picko {
 
 class RequestMapper : public HttpRequestHandler {
   Q_OBJECT
-public:
+ public:
   RequestMapper(StaticFileController *file_controller,
                 QObject *parent = nullptr);
   void service(HttpRequest &request, HttpResponse &response);
 
-private:
+ private:
   StaticFileController *staticFileController;
 };
-} // namespace c3picko
-#endif // REQUESTMAPPER_H
+}  // namespace c3picko
+#endif  // REQUESTMAPPER_H

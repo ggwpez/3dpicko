@@ -18,7 +18,7 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply *reply) {
 
   QJsonParseError error;
   QJsonDocument doc =
-      QJsonDocument::fromJson(data, &error); // FIXME check error
+      QJsonDocument::fromJson(data, &error);  // FIXME check error
 
   if (error.error != QJsonParseError::NoError) {
     emit OnNetworkErr("Json parsing failed: " + error.errorString());
@@ -29,6 +29,6 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply *reply) {
 
   CheckStatusCode(reply, response);
 }
-} // namespace pi
-} // namespace c3picko
-#endif // COMMAND_INC_H_
+}  // namespace pi
+}  // namespace c3picko
+#endif  // COMMAND_INC_H_

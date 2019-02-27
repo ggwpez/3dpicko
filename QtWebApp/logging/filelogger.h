@@ -6,13 +6,13 @@
 #ifndef FILELOGGER_H
 #define FILELOGGER_H
 
-#include "logger.h"
-#include "logglobal.h"
 #include <QBasicTimer>
 #include <QFile>
 #include <QMutex>
 #include <QSettings>
 #include <QtGlobal>
+#include "logger.h"
+#include "logglobal.h"
 
 namespace stefanfrings {
 
@@ -54,7 +54,7 @@ namespace stefanfrings {
 class DECLSPEC FileLogger : public Logger {
   Q_OBJECT
   Q_DISABLE_COPY(FileLogger)
-public:
+ public:
   /**
     Constructor.
     @param settings Configuration settings, usually stored in an INI file. Must
@@ -77,7 +77,7 @@ public:
   /** Write a message to the log file */
   virtual void write(const LogMessage *logMessage);
 
-protected:
+ protected:
   /**
     Handler for timer events.
     Refreshes config settings or synchronizes I/O buffer, depending on the
@@ -86,7 +86,7 @@ protected:
   */
   void timerEvent(QTimerEvent *event);
 
-private:
+ private:
   /** Configured name of the log file */
   QString fileName;
 
@@ -124,6 +124,6 @@ private:
   void refreshSettings();
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // FILELOGGER_H
+#endif  // FILELOGGER_H

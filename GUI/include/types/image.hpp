@@ -1,16 +1,18 @@
 #pragma once
 
-#include "include/json_constructable.hpp"
 #include <QDateTime>
 #include <QImage>
 #include <opencv2/opencv.hpp>
+#include "include/global.h"
+#include "include/marshalling.hpp"
 
 namespace c3picko {
-class Image : public JsonConstructable {
-public:
+class Image {
+ public:
   typedef QString ID;
-  Image();
-  Image(QJsonObject const &);
+  Image() = default;
+  Image(ID id, QString original_name, QString description, QString path,
+        QDateTime uploaded, int width, int hwight);
   Image(QByteArray data, QString original_name, QString description,
         QDateTime uploaded);
   Image(cv::Mat image, QString original_name, QString description,
@@ -57,7 +59,7 @@ public:
   bool readData(QByteArray &output) const;
   static bool decodeCvMat(QByteArray data, cv::Mat &output);
 
-private:
+ private:
   QString original_name_;
   QString description_;
   // TODO we can add meta data here
@@ -73,13 +75,14 @@ private:
   int width_ = 0, height_ = 0;
   ID id_;
 
-public:
+ public:
   QString path() const;
   ID id() const;
   QString originalName() const;
   int width() const;
   int height() const;
-
-  void write(QJsonObject &) const override;
+  QString description() const;
+  QDateTime uploaded() const;
 };
-} // namespace c3picko
+MAKE_MARSHALLABLE(Image);
+}  // namespace c3picko

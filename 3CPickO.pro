@@ -1,11 +1,12 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-	PiCommunicator \
 	Main \
+	PiCommunicator \
 	Gcode \
 	GUI \
 	ImageRecognition \
 	TestGcode
 
 Main.depends = PiCommunicator GUI Gcode ImageRecognition
+TestGcode.depends = Gcode
