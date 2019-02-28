@@ -83,8 +83,6 @@ static int start(int argc, char** argv)
 	setupSignals(&app);
 	QString configFileName = searchConfigFile();
 
-	qDebug() << "Version" << GIT_CURRENT_SHA1;
-
 	AlgorithmManager* detector = new AlgorithmManager(QThreadPool::globalInstance(), {new Algo1Test()}, &app);
 
 	Database*	  db  = new Database("database.json", &app);

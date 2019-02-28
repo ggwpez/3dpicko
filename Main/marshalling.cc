@@ -39,21 +39,19 @@ QJsonObject Marshalling::toJson(const PrinterProfile& value) {
 template <>
 PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
   return PrinterProfile(
-      obj["int movement_speed"].toInt(),
+      obj["movement_speed"].toInt(),
       Marshalling::fromJson<Point>(
-          obj["const Point &cut_filament_position_above_trigger"].toObject()),
-      obj["float z_coordinate_pushing_the_trigger"].toDouble(),
-      obj["float filament_extrusion_length_on_move_cut_to_pick"].toDouble(),
-      obj["float filament_extrusion_length_on_move_pick_to_master"].toDouble(),
-      obj["float filament_extrusion_length_on_move_master_to_goal"].toDouble(),
-      obj["float filament_extrusion_length_on_move_goal_to_cut"].toDouble(),
-      obj["float filament_extrusion_length_on_pick"].toDouble(),
-      obj["float filament_extrusion_length_on_put_onto_master"].toDouble(),
-      obj["float filament_extrusion_length_after_cut"].toDouble(),
-      obj["float length_of_removed_filament"].toDouble(),
-      obj["float "
-          "safety_distance_between_top_surface_of_all_plates_and_nozzle_on_"
-          "move"]
+          obj["cut_filament_position_above_trigger"].toObject()),
+      obj["z_coordinate_pushing_the_trigger"].toDouble(),
+      obj["filament_extrusion_length_on_move_cut_to_pick"].toDouble(),
+      obj["filament_extrusion_length_on_move_pick_to_master"].toDouble(),
+      obj["filament_extrusion_length_on_move_master_to_goal"].toDouble(),
+      obj["filament_extrusion_length_on_move_goal_to_cut"].toDouble(),
+      obj["filament_extrusion_length_on_pick"].toDouble(),
+      obj["filament_extrusion_length_on_put_onto_master"].toDouble(),
+      obj["filament_extrusion_length_after_cut"].toDouble(),
+      obj["length_of_removed_filament"].toDouble(),
+      obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move"]
           .toDouble());
 }
 

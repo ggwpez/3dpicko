@@ -206,6 +206,8 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 
 void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
                                     int col, QObject* client) {
+
+    plate_id = "304";
   if (!db_->jobs().exists(id)) {
     emit OnSetStartingWellError("Job " + id + " not found", client);
   } else if (!db_->profiles().exists(plate_id)) {
@@ -240,15 +242,15 @@ void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
 
-  if (!db_->profiles().exists(job.printer()))
-    emit OnJobCreateError("Printer profile " + id + " unknown", client);
-  else if (!db_->profiles().exists(job.socket()))
-    emit OnJobCreateError("Socket profile " + id + " unknown", client);
-  else {
+  //if (!db_->profiles().exists(job.printer()))
+    //emit OnJobCreateError("Printer profile " + id + " unknown", client);
+  //else if (!db_->profiles().exists(job.socket()))
+    //emit OnJobCreateError("Socket profile " + id + " unknown", client);
+  //else {
     job.setId(id);
     db_->jobs().add(id, job);
     emit OnJobCreated(job, client);
-  }
+  //}
 }
 
 void APIController::getPositions(Image::ID id, QObject* client) {
@@ -336,10 +338,10 @@ void APIController::startJob(Job::ID id, QObject* client) {
 
   // FIXME check
   PrinterProfile* printerp =
-      (PrinterProfile*)(db_->profiles().get(job.printer()));
+      (PrinterProfile*)(db_->profiles().get("302"));
   PlateSocketProfile* socket =
-      (PlateSocketProfile*)(db_->profiles().get(job.socket()));
-  PlateProfile* plate = (PlateProfile*)(db_->profiles().get(job.plate()));
+      (PlateSocketProfile*)(db_->profiles().get("303"));
+  PlateProfile* plate = (PlateProfile*)(db_->profiles().get("304"));
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 
@@ -347,7 +349,7 @@ void APIController::startJob(Job::ID id, QObject* client) {
       detection.colonies();  // FIXME convert to local coordinates
   std::vector<LocalColonyCoordinates> coords;
   for (int i = 0; i < colonies.size(); ++i)
-    coords.push_back(Point(colonies[i].x() * 127, colonies[i].y() * 85));
+    coords.push_back(Point(colonies[i].x() * 127, (1.0d -colonies[i].y()) * 85));
 
   auto code = gen.CreateGcodeForTheEntirePickingProcess(
       job.startingRow(), job.startingCol(), coords);
