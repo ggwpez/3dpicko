@@ -71,7 +71,7 @@ float PrinterProfile::filamentExtrusionLengthOnPutOntoMaster() const {
   return filament_extrusion_length_on_put_onto_master_;
 }
 
-float PrinterProfile::filamentExtrusionLengthAfterCut() {
+float PrinterProfile::filamentExtrusionLengthAfterCut() const {
   return filament_extrusion_length_after_cut_;
 }
 
