@@ -7,8 +7,29 @@
     "deleted_jobs": {
     },
     "detection_results": {
+        "10": {
+            "cleanup_error": "",
+            "cleanup_succeeded": true,
+            "id": "10",
+            "last_stage": 5,
+            "stage_error": "",
+            "stages_succeeded": true,
+            "took_ns": 48
+        }
     },
     "images": {
+        "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd": {
+            "description": "Cropped version of 'cropped.JPG'",
+            "height": 2070,
+            "id": "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd",
+            "original_name": "cropped.JPG_1",
+            "path": "/uploads/FKAaLrtE",
+            "uploaded": {
+                "formatted": "28.02.19 21:29",
+                "ms": 1551385748385
+            },
+            "width": 3105
+        },
         "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53": {
             "description": "descrtiption",
             "height": 1080,
@@ -16,13 +37,144 @@
             "original_name": "test.png",
             "path": "/uploads/mAIVYHGj",
             "uploaded": {
+                "formatted": "27.02.19 19:03",
                 "ms": 1551290638571
             },
             "width": 1920
+        },
+        "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51": {
+            "description": "descrtiption",
+            "height": 2588,
+            "id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "original_name": "cropped.JPG",
+            "path": "/uploads/HHtOblIG",
+            "uploaded": {
+                "formatted": "28.02.19 18:22",
+                "ms": 1551374536136
+            },
+            "width": 3992
+        },
+        "f18e73346cdf13d8c0b30493d60e60d79dc039d7227c7e86b84b42a62767d1f4": {
+            "description": "Cropped version of 'cropped.JPG'",
+            "height": 2070,
+            "id": "f18e73346cdf13d8c0b30493d60e60d79dc039d7227c7e86b84b42a62767d1f4",
+            "original_name": "cropped.JPG_1",
+            "path": "/uploads/DpIVsAiJ",
+            "uploaded": {
+                "formatted": "28.02.19 21:44",
+                "ms": 1551386683175
+            },
+            "width": 3105
         }
     },
-    "job_id": 209,
+    "job_id": 215,
     "jobs": {
+        "209": {
+            "created": {
+                "formatted": "01.01.70 01:00",
+                "ms": 0
+            },
+            "description": "",
+            "detections": [
+                "7"
+            ],
+            "id": "209",
+            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 0,
+            "starting_row": 0,
+            "step": 0
+        },
+        "210": {
+            "created": {
+                "formatted": "28.02.19 20:40",
+                "ms": 1551382843231
+            },
+            "description": "",
+            "detections": [
+                "8"
+            ],
+            "id": "210",
+            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 0,
+            "starting_row": 0,
+            "step": 0
+        },
+        "211": {
+            "created": {
+                "formatted": "28.02.19 21:12",
+                "ms": 1551384739704
+            },
+            "description": "",
+            "detections": [
+                "9"
+            ],
+            "id": "211",
+            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 0,
+            "starting_row": 0,
+            "step": 0
+        },
+        "212": {
+            "created": {
+                "formatted": "28.02.19 21:16",
+                "ms": 1551384974876
+            },
+            "description": "",
+            "detections": [
+            ],
+            "id": "212",
+            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 0,
+            "starting_row": 0,
+            "step": 0
+        },
+        "213": {
+            "created": {
+                "formatted": "28.02.19 21:29",
+                "ms": 1551385754409
+            },
+            "description": "",
+            "detections": [
+                "10"
+            ],
+            "id": "213",
+            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 0,
+            "starting_row": 0,
+            "step": 0
+        },
+        "214": {
+            "created": {
+                "formatted": "28.02.19 21:44",
+                "ms": 1551386684407
+            },
+            "description": "",
+            "detections": [
+            ],
+            "id": "214",
+            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 0,
+            "starting_row": 0,
+            "step": 0
+        }
     },
     "profile_id": 306,
     "profiles": {
@@ -31,24 +183,21 @@
             "profile_name": "labor",
             "settings": {
                 "cut_filament_position_above_trigger": {
-                    "x": 203.5,
-                    "y": 87,
+                    "x": 191,
+                    "y": 88.5,
                     "z": 17
                 },
-                "distance_between_pushed_trigger_and_gap_between_scissors_blade": 6,
-                "filament_extrusion_length_on_move_offset": 0,
-                "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": 0,
+                "filament_extrusion_length_after_cut": 3.200000047683716,
                 "filament_extrusion_length_on_move_cut_to_pick": 3,
-                "filament_extrusion_length_on_move_pick_to_master": 3,
-                "filament_extrusion_length_on_move_master_to_goal": 3,
                 "filament_extrusion_length_on_move_goal_to_cut": 3,
+                "filament_extrusion_length_on_move_master_to_goal": 3,
+                "filament_extrusion_length_on_move_pick_to_master": 3,
                 "filament_extrusion_length_on_pick": 3,
                 "filament_extrusion_length_on_put_onto_master": 3,
-                "filament_extrusion_length_after_cut": 3.2,
-                "length_of_removed_filament": 4.8,
-                "safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move": 3,
+                "length_of_removed_filament": 4.800000190734863,
                 "movement_speed": 10800,
-                "z_coordinate_pushing_the_trigger": 11
+                "safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move": 3,
+                "z_coordinate_pushing_the_trigger": 10
             },
             "type": "printer-profile"
         },
@@ -60,25 +209,25 @@
                 "depth_of_cutout_the_master_plate_lies_in": 7.5,
                 "depth_of_cutout_the_source_plate_lies_in": 7.5,
                 "global_origin_of_goal_plate": {
-                    "x": 139.10000610351562,
-                    "y": 97.5,
+                    "x": 121.10000610351562,
+                    "y": 91.5,
                     "z": 0
                 },
                 "global_origin_of_master_plate": {
-                    "x": 26.600000381469727,
-                    "y": 97.5,
+                    "x": 14.5,
+                    "y": 91.5,
                     "z": 0
                 },
                 "global_origin_of_source_plate": {
-                    "x": 19.5,
-                    "y": 4.599999904632568,
+                    "x": 14.5,
+                    "y": 2.5999999046325684,
                     "z": 0
                 },
                 "orientation_of_goal_plate": "kFirstRowFirstColumnAtCutoutOrigin",
                 "socket_origin_offset": {
-                    "x": -1,
-                    "y": 5.5,
-                    "z": 3.799999952316284
+                    "x": 11,
+                    "y": 8,
+                    "z": 1.5
                 }
             },
             "type": "socket-profile"
@@ -89,8 +238,8 @@
             "settings": {
                 "a1_column_offset": 14.300000190734863,
                 "a1_row_offset": 11.199999809265137,
-                "culture_medium_thickness_source_plate": 6.5,
-                "culture_medium_thickness_master_plate": 6.5,
+                "culture_medium_thickness_master_plate": 8,
+                "culture_medium_thickness_source_plate": 8,
                 "height_goal_plate": 15.5,
                 "height_master_plate": 14.5,
                 "height_source_plate": 14.5,
@@ -107,7 +256,8 @@
             "settings": {
                 "a1_column_offset": 12.100000381469727,
                 "a1_row_offset": 9,
-                "culture_medium_thickness": 6,
+                "culture_medium_thickness_master_plate": 0,
+                "culture_medium_thickness_source_plate": 0,
                 "height_goal_plate": 10,
                 "height_master_plate": 14.5,
                 "height_source_plate": 14.5,
@@ -119,6 +269,6 @@
             "type": "plate-profile"
         }
     },
-    "result_id": 7,
-    "result_job_id": 1
+    "result_id": 11,
+    "result_job_id": 5
 }

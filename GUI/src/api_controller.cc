@@ -207,7 +207,6 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
                                     int col, QObject* client) {
 
-    plate_id = "304";
   if (!db_->jobs().exists(id)) {
     emit OnSetStartingWellError("Job " + id + " not found", client);
   } else if (!db_->profiles().exists(plate_id)) {
@@ -338,10 +337,10 @@ void APIController::startJob(Job::ID id, QObject* client) {
 
   // FIXME check
   PrinterProfile* printerp =
-      (PrinterProfile*)(db_->profiles().get("302"));
+      (PrinterProfile*)(db_->profiles().get(job.printer()));
   PlateSocketProfile* socket =
-      (PlateSocketProfile*)(db_->profiles().get("303"));
-  PlateProfile* plate = (PlateProfile*)(db_->profiles().get("304"));
+      (PlateSocketProfile*)(db_->profiles().get(job.socket()));
+  PlateProfile* plate = (PlateProfile*)(db_->profiles().get(job.plate()));
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 

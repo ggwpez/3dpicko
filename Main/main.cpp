@@ -64,13 +64,14 @@ static WsServer* ws_ptr = nullptr;
 static void		 msg_handler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
 	QString formated = qFormatLogMessage(type, context, msg);
+    QString now = QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
+    formated = "[ " +now +" ] " +formated;
 
 	if (ws_ptr)
 		QMetaObject::invokeMethod(ws_ptr, "NewDebugLine", Q_ARG(QString, formated));
-	QString now = QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
 
-	fprintf(stderr, "[ %s ]  %s\n", qPrintable(now), qPrintable(formated));
-};
+    fprintf(stderr, "%s\n", qPrintable(formated));
+}
 
 static int start(int argc, char** argv)
 {

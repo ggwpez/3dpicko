@@ -29,7 +29,7 @@ Algo1Test::Algo1Test()
            AlgoSetting::make_rangeslider_double("circularity", "Circularity",
                                                 "", 0, 1, .001, {.6, 1}),
            AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
-                                                1, {10, 1000}),
+                                                1, {120, 1000}),
            AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
                                       "Select an attribute to filter",
                                       {{"n", "None"},
