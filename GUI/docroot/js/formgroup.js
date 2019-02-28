@@ -120,10 +120,10 @@ class FormGroup{
             html += `${this.CreateNumberInputHtml(id, min, max, step, value)} ${unit}.`;
         }
         else if (type == "vector3"){
-            html += `(${this.CreateNumberInputHtml(id, min, max, step, value.x)},${this.CreateNumberInputHtml(id, min, max, step, value.y)},${this.CreateNumberInputHtml(id, min, max, step, value.z)}) ${unit}.`;
+            html += `(${this.CreateNumberInputHtml(id, min.x, max.x, step, value.x)},${this.CreateNumberInputHtml(id, min.y, max.y, step, value.y)},${this.CreateNumberInputHtml(id, min.z, max.z, step, value.z)}) ${unit}.`;
         }
         else if (type == "vector2"){
-            html += `(${this.CreateNumberInputHtml(id, min, max, step, value.x)},${this.CreateNumberInputHtml(id, min, max, step, value.y)}) ${unit}.`;
+            html += `(${this.CreateNumberInputHtml(id, min.x, max.x, step, value.x)},${this.CreateNumberInputHtml(id, min.y, max.y, step, value.y)}) ${unit}.`;
         }
         else if (type == "slider"){
             value = Math.round(value * (1/step)) / (1/step);

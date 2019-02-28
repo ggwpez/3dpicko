@@ -105,9 +105,9 @@ var unsaved_elements = {};
                 default_profiles["printer-profile"] = data.defaultPrinter;
                 default_profiles["socket-profile"] = data.defaultSocket;
                 default_profiles["plate-profile"] = data.defaultPlate;
-                // profile_templates["printer-profile"] = data["printer-template"];
-                // profile_templates["socket-profile"] = data["socket-template"];
-                // profile_templates["plate-profile"] = data["plate-template"];
+                profile_templates["printer-profile"] = data["printerTemplate"];
+                profile_templates["socket-profile"] = data["socketTemplate"];
+                profile_templates["plate-profile"] = data["plateTemplate"];
                 data.profiles.forEach(AddProfileToList);
                 console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
             }
@@ -518,8 +518,10 @@ $('#cut-tab').on('shown.bs.tab', function () {
 function cutTab(){
     if(chosen_image.path){
         const cutImg = document.getElementById('cutImg');
+        cutImg.onload = function(){ 
+            tabEnter(1);
+        }
         cutImg.src = chosen_image.path;
-        tabEnter(1);
     }
 }
 

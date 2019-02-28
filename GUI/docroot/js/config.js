@@ -73,6 +73,10 @@ function AddProfileToList(profile){
     <form id="form-${profile.id}" name="form-${profile.id}" data-description="${profile.profile_name}">
     <input type="hidden" id="id" name="id" value="${profile.id}">
     <input type="hidden" id="type" name="type" value="${profile.type}">
+    <div class="form-group">
+    <label for="profile_name">Profile Identifier:</label>
+    <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
+    </div>
     `;
     let profile_form;
     if(Array.isArray(profile.settings)){
