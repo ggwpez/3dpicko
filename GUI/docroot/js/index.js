@@ -13,6 +13,7 @@ var default_profiles = {
     "socket-profile": "",
     "plate-profile": ""
 };
+var profile_templates ={};
 // TODO delete "new_job" if job saved or executed
 var unsaved_elements = {};
 
@@ -38,6 +39,7 @@ var unsaved_elements = {};
                 clearTimeout(loading_timeout_id);
                 $('#apply-detection-settings').show();
                 $('#loading-detection-settings').hide();
+                $('#strategy-tab-button').prop("disabled", true);
             }
             else if (type == "getimagelist")
             {
@@ -105,9 +107,20 @@ var unsaved_elements = {};
                 default_profiles["printer-profile"] = data.defaultPrinter;
                 default_profiles["socket-profile"] = data.defaultSocket;
                 default_profiles["plate-profile"] = data.defaultPlate;
-                profile_templates["printer-profile"] = data["printerTemplate"];
-                profile_templates["socket-profile"] = data["socketTemplate"];
-                profile_templates["plate-profile"] = data["plateTemplate"];
+                profile_templates["printer-profile"] = Object.assign(data["printerTemplate"],{type: "printer-profile"});
+                profile_templates["socket-profile"] = Object.assign(data["socketTemplate"],{type: "socket-profile"});
+                profile_templates["plate-profile"] = Object.assign(data["plateTemplate"],{type: "plate-profile"});
+                // empty "new-profiles"
+                AddProfileToList(new_printer_profile);
+                AddProfileToList(new_socket_profile);
+                AddProfileToList(new_plate_profile);
+                // debugging profiles
+                // AddProfileToList(example_printer);
+                // AddProfileToList(makergear);
+                // AddProfileToList(creality);
+                // AddProfileToList(prototyp1);
+                // AddProfileToList(default_plate);
+                // AddProfileToList(large_plate);
                 data.profiles.forEach(AddProfileToList);
                 console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
             }
@@ -139,13 +152,15 @@ var unsaved_elements = {};
                 $('#apply-detection-settings').show();
                 $('#loading-detection-settings').hide();
                 ShowAlert("Detected "+data.coords.length+" Colonies");
+                $('#strategy-tab-button').prop("disabled", data.coords.length <= 0);
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
                 GetDetectionAlgorithms(data);
             }
             else if (type == "crop-image"){
-                // TODO
+                AddImageToList(data);
+                chosen_image = data;
             }
             else
             {
@@ -163,7 +178,7 @@ var unsaved_elements = {};
 function GetDetectionAlgorithms(detection_algorithms){
     algorithms = detection_algorithms;
     // TODO Remove (only for debugging)
-    algorithms["321"] = {
+    /*algorithms["321"] = {
         name: "Fluro",
         description: "Good for detecting fluorescent colonies",
         settings:[{
@@ -200,29 +215,29 @@ function GetDetectionAlgorithms(detection_algorithms){
                 description: "Only visible if E&D is true"
             },
             {
-            id: "checkbox_1_2",
-            name: "Erode & Dilate",
-            type: "checkbox",
-            defaultValue: false,
-            description: "",
-            conditional_settings:[{
-                id: "checkbox_1_2_1",
-                name: "Erode & Dilate 2",
+                id: "checkbox_1_2",
+                name: "Erode & Dilate",
                 type: "checkbox",
                 defaultValue: false,
-                description: "Only visible if Erode & Dilate is true"
-            },
-            {
-                id: "slider_1_2_1",
-                name: "Erode & Dilate 3",
-                type: "rangeslider",
-                min: 0,
-                max: 1000,
-                step: 0.1,
-                defaultValue: {min: 1, max: 300},
-                description: "Only visible if E&D is true"
+                description: "",
+                conditional_settings:[{
+                    id: "checkbox_1_2_1",
+                    name: "Erode & Dilate 2",
+                    type: "checkbox",
+                    defaultValue: false,
+                    description: "Only visible if Erode & Dilate is true"
+                },
+                {
+                    id: "slider_1_2_1",
+                    name: "Erode & Dilate 3",
+                    type: "rangeslider",
+                    min: 0,
+                    max: 1000,
+                    step: 0.1,
+                    defaultValue: {min: 1, max: 300},
+                    description: "Only visible if E&D is true"
+                }]
             }]
-        }]
         }]
     };
     algorithms["423"] = {
@@ -264,7 +279,7 @@ function GetDetectionAlgorithms(detection_algorithms){
             description: ""
         }
         ]
-    };
+    };*/
 
     const algorithm_selection = document.getElementById("select-algorithm");
     while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
@@ -330,7 +345,7 @@ function AddJobToList(job)
     if (!(job.id in all_jobs))
     {
         console.log("Adding job: " +JSON.stringify(job));
-
+        // ${job.created.formatted}
         var name = (job.step == 7) ? "Job" : "Entwurf";
         var html = `<div class="card m-1 job-card" id="job-${job.id}" >
         <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="job" data-id="${job.id}">&times;</button>
@@ -339,7 +354,7 @@ function AddJobToList(job)
         <img class="card-img" src="${images_list[job.img_id].path}" alt="${images_list[job.img_id].original_name}">
         <p class="card-text"><ul>
         <li>ID: ${job.id}</li>
-        <li>Created: ${DateToString(job.job_created)}</li>
+        <li>Created: </li>
         <li>Step: ${job.step}</li>
         ${job.description}
         </p>
@@ -505,7 +520,7 @@ var cropper;
 //Navigation
 $('#steps').on('shown.bs.tab', function () {
     // TODO disable/enable button, only execute if disabled
-    $('.next-step').html('Next Step &gt;');
+    $('.next-step').html('Continue');
 })
 $('#cut-tab').on('shown.bs.tab', function () {
     let cutImg = document.getElementById('cutImg');
@@ -615,9 +630,15 @@ function overviewTab(){
 }
 
 function executeTab(){
-    api('startjob', {id: current_job.id});
     var form = document.getElementById('check-preconditions');
-    if (form.checkValidity() === true) tabEnter(6);
+    if (form.checkValidity() === true){
+        //tabEnter(6);
+        $('#check-preconditions-header').hide();
+        $('#check-preconditions').hide();
+        $('#execute-button').hide();
+        $('#pickjob-running').show();
+        api('startjob', {id: current_job.id});
+    } 
     form.classList.add('was-validated');
 }
 

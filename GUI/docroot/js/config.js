@@ -22,7 +22,7 @@ var UpdateSettingsProfile = function (e){
             profile_name: form_data.get('profile_name'),
         };
         json_object.settings = FormGroup.ReadForm(profile_templates[type], form_data);
-        // console.log({json_object});
+        console.log({json_object});
         if (id == "new-printer-profile" || id == "new-socket-profile" || id == "new-plate-profile"){
             $('#form-new-'+type)[0].reset();
             api("createsettingsprofile", json_object);
@@ -34,16 +34,16 @@ var UpdateSettingsProfile = function (e){
 
 $(function LoadProfiles(){
     // empty "new-profiles"
-    AddProfileToList(profile_templates['printer-profile']);
-    AddProfileToList(profile_templates['socket-profile']);
-    AddProfileToList(profile_templates['plate-profile']);
+    // AddProfileToList(profile_templates['printer-profile']);
+    // AddProfileToList(profile_templates['socket-profile']);
+    // AddProfileToList(profile_templates['plate-profile']);
     // debugging profiles
-    AddProfileToList(example_printer);
-    AddProfileToList(makergear);
-    AddProfileToList(creality);
-    AddProfileToList(prototyp1);
-    AddProfileToList(default_plate);
-    AddProfileToList(large_plate);
+    // AddProfileToList(example_printer);
+    // AddProfileToList(makergear);
+    // AddProfileToList(creality);
+    // AddProfileToList(prototyp1);
+    // AddProfileToList(default_plate);
+    // AddProfileToList(large_plate);
 });
 
 function AddProfileToList(profile){
@@ -162,7 +162,8 @@ function DeleteProfile(id){
     }
 }
 
-let profile_templates = {
+/*
+ = {
     "printer-profile": {
         id : "new-printer-profile",
         type : "printer-profile",
@@ -438,6 +439,7 @@ let profile_templates = {
         }]
     }
 };
+*/
 
 /*
 Local Profiles for debugging
@@ -601,5 +603,50 @@ let creality = {
         "movement_speed" : 6,
         "filament_extrusion_length_on_move_offset": 7,
         "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : 8
+    }
+};
+let new_printer_profile = {
+    "id" : "new-printer-profile",
+    "type" : "printer-profile",
+    "profile_name" : "Create New Printer Profile &gt;",
+    settings:{
+        "cut_filament_position_above_trigger" : "",
+        "z_coordinate_pushing_the_trigger" : "",
+        "distance_between_pushed_trigger_and_gap_between_scissors_blade" : "",
+        "movement_speed" : "",
+        "filament_extrusion_length_on_move_offset": "",
+        "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : ""
+    }
+};
+let new_plate_profile = {
+    "id" : "new-plate-profile",
+    "type" : "plate-profile",
+    "profile_name" : "Create New Plate Profile &gt;",
+    settings:{
+        "number_of_rows" : "",
+        "number_of_columns" : "",
+        "a1_row_offset" : "",
+        "a1_column_offset" : "",
+        "well_spacing_center_to_center" : "",
+        "height_source_plate" : "",
+        "height_master_plate" : "",
+        "height_goal_plate" : "",
+        "well_depth" : "",
+        "culture_medium_thickness" : ""
+    }
+};
+let new_socket_profile = {
+    "id" : "new-socket-profile",
+    "type" : "socket-profile",
+    "profile_name" : "Create New Socket Profile &gt;",
+    settings: {
+        "socket_origin_offset" : "",
+        "global_origin_of_source_plate" : "",
+        "depth_of_cutout_the_source_plate_lies_in" : "",
+        "global_origin_of_master_plate" : "",
+        "depth_of_cutout_the_master_plate_lies_in" : "",
+        "global_origin_of_goal_plate" : "",
+        "depth_of_cutout_the_goal_plate_lies_in" : "",
+        "orientation_of_goal_plate" : "kFirstRowFirstColumnAtCutoutOrigin"
     }
 };
