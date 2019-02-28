@@ -38,7 +38,7 @@ class PrinterProfile {
   float filamentExtrusionLengthOnMoveGoalToCut() const;
   float filamentExtrusionLengthOnPick() const;
   float filamentExtrusionLengthOnPutOntoMaster() const;
-  float filamentExtrusionLengthAfterCut();
+  float filamentExtrusionLengthAfterCut() const;
   float safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const;
 
  private:
