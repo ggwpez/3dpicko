@@ -23,8 +23,6 @@ void APIOutput::JobListRequested(QObject* client) {
 
 void APIOutput::ProfileListRequested(QObject* client) {
   emit op->toClient(client, "getprofilelist", op->createProfileList());
-
-  qDebug().noquote() << QJsonDocument(op->createProfileList()).toJson();
 }
 
 void APIOutput::AlgorithmListRequested(QObject* client) {
