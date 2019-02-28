@@ -3,10 +3,10 @@
 
 namespace c3picko {
 
-APIInput::APIInput(APIController *parent) : QObject(parent), api(parent) {}
+APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
 
-void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
-                              QObject *client) {
+void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
+                              QObject* client) {
   QString path = request["request"].toString().toLower();
   QJsonObject req_data = request["data"].toObject();
 
@@ -23,7 +23,6 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     emit api->OnAlgorithmListRequested(client);
   } else if (path == "setdefaultsettingsprofile") {
     Profile::ID id = req_data["id"].toString();
-
     api->setDefaultSettingsProfile(id, client);
   } else if (path == "setstartingwell") {
     Job::ID job_id = req_data["job_id"].toString();

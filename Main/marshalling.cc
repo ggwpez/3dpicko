@@ -1,11 +1,13 @@
 #include "include/marshalling.hpp"
+#include <QJsonArray>
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
+#include "include/types/profile.hpp"
 
 namespace c3picko {
 template <>
-QJsonObject Marshalling::toJson(const PrinterProfile &value) {
+QJsonObject Marshalling::toJson(const PrinterProfile& value) {
   QJsonObject obj;
 
   obj["movement_speed"] = (value.movementSpeed());
@@ -13,40 +15,51 @@ QJsonObject Marshalling::toJson(const PrinterProfile &value) {
       Marshalling::toJson(value.cutFilamentPosition());
   obj["z_coordinate_pushing_the_trigger"] =
       (value.zCoordinatePushingTheTrigger());
-  obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"] =
-      (value.distanceBetweenPushedTriggerAndGapBetweenScissorsBlade());
-  obj["filament_extrusion_length_on_move_offset"] =
-      (value.filamentExtrusionLengthOnMoveOffset());
-  obj["filament_extrusion_length_on_pick_and_put_onto_master_plate_offset"] =
-      (value.filamentExtrusionLengthOnPickAndPutOntoMasterPlateOffset());
+  obj["filament_extrusion_length_on_move_cut_to_pick"] =
+      value.filamentExtrusionLengthOnMoveCutToPick();
+  obj["filament_extrusion_length_on_move_pick_to_master"] =
+      value.filamentExtrusionLengthOnMovePickToMaster();
+  obj["filament_extrusion_length_on_move_master_to_goal"] =
+      value.filamentExtrusionLengthOnMoveMasterToGoal();
+  obj["filament_extrusion_length_on_move_goal_to_cut"] =
+      value.filamentExtrusionLengthOnMoveGoalToCut();
+  obj["filament_extrusion_length_on_pick"] =
+      value.filamentExtrusionLengthOnPick();
+  obj["filament_extrusion_length_on_put_onto_master"] =
+      value.filamentExtrusionLengthOnPutOntoMaster();
+  obj["filament_extrusion_length_after_cut"] =
+      value.filamentExtrusionLengthAfterCut();
+  obj["length_of_removed_filament"] = value.lengthOfRemovedFilament();
+  obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move"] =
+      value.safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove();
 
   return obj;
 }
 
 template <>
-PrinterProfile Marshalling::fromJson(const QJsonObject &obj) {
+PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
   return PrinterProfile(
-      obj["movement_speed"].toInt(),
+      obj["int movement_speed"].toInt(),
       Marshalling::fromJson<Point>(
-          obj["cut_filament_position_above_trigger"].toObject()),
-      obj["z_coordinate_pushing_the_trigger"].toDouble(),
-      obj["distance_between_pushed_trigger_and_gap_between_scissors_blade"]
-          .toDouble(),
-      obj["filament_extrusion_length_on_move_offset"].toDouble(),
-      obj["filament_extrusion_length_on_pick_and_put_onto_master_plate_offset"]
+          obj["const Point &cut_filament_position_above_trigger"].toObject()),
+      obj["float z_coordinate_pushing_the_trigger"].toDouble(),
+      obj["float filament_extrusion_length_on_move_cut_to_pick"].toDouble(),
+      obj["float filament_extrusion_length_on_move_pick_to_master"].toDouble(),
+      obj["float filament_extrusion_length_on_move_master_to_goal"].toDouble(),
+      obj["float filament_extrusion_length_on_move_goal_to_cut"].toDouble(),
+      obj["float filament_extrusion_length_on_pick"].toDouble(),
+      obj["float filament_extrusion_length_on_put_onto_master"].toDouble(),
+      obj["float filament_extrusion_length_after_cut"].toDouble(),
+      obj["float length_of_removed_filament"].toDouble(),
+      obj["float "
+          "safety_distance_between_top_surface_of_all_plates_and_nozzle_on_"
+          "move"]
           .toDouble());
 }
 
 template <>
-QJsonObject Marshalling::toJson(const PlateSocketProfile &value) {
+QJsonObject Marshalling::toJson(const PlateSocketProfile& value) {
   QJsonObject obj;
-
-  obj["depth_of_cutout_the_goal_plate_lies_in"] =
-      (value.depthOfCutoutGoalPlateLiesIn());
-  obj["depth_of_cutout_the_master_plate_lies_in"] =
-      (value.depthOfCutoutMasterPlateLiesIn());
-  obj["depth_of_cutout_the_source_plate_lies_in"] =
-      (value.depthOfCutoutSourcePlateLiesIn());
 
   obj["global_origin_of_source_plate"] =
       Marshalling::toJson(value.originOfSourcePlate());
@@ -59,6 +72,12 @@ QJsonObject Marshalling::toJson(const PlateSocketProfile &value) {
       (value.orientationOfGoalPlate() == kFirstRowFirstColumnAtCutoutOrigin
            ? "kFirstRowFirstColumnAtCutoutOrigin"
            : "kLastRowFirstColumnAtCutoutOrigin");
+  obj["depth_of_cutout_the_goal_plate_lies_in"] =
+      (value.depthOfCutoutGoalPlateLiesIn());
+  obj["depth_of_cutout_the_master_plate_lies_in"] =
+      (value.depthOfCutoutMasterPlateLiesIn());
+  obj["depth_of_cutout_the_source_plate_lies_in"] =
+      (value.depthOfCutoutSourcePlateLiesIn());
 
   obj["socket_origin_offset"] =
       Marshalling::toJson(Point(value.originOffsetX(), value.originOffsetY(),
@@ -68,7 +87,7 @@ QJsonObject Marshalling::toJson(const PlateSocketProfile &value) {
 }
 
 template <>
-PlateSocketProfile Marshalling::fromJson(const QJsonObject &obj) {
+PlateSocketProfile Marshalling::fromJson(const QJsonObject& obj) {
   Point socket_origin_offset(
       Marshalling::fromJson<Point>(obj["socket_origin_offset"].toObject()));
 
@@ -91,25 +110,28 @@ PlateSocketProfile Marshalling::fromJson(const QJsonObject &obj) {
 }
 
 template <>
-QJsonObject Marshalling::toJson(const PlateProfile &value) {
+QJsonObject Marshalling::toJson(const PlateProfile& value) {
   QJsonObject obj;
 
-  obj["a1_column_offset"] = (value.a1ColumnOffset());
-  obj["a1_row_offset"] = (value.a1RowOffset());
-  obj["culture_medium_thickness"] = (value.cultureMediumThickness());
-  obj["height_goal_plate"] = (value.heightGoalPlate());
-  obj["height_master_plate"] = (value.heightMasterPlate());
-  obj["height_source_plate"] = (value.heightSourcePlate());
-  obj["number_of_columns"] = (value.numberOfColumns());
-  obj["number_of_rows"] = (value.numberOfRows());
-  obj["well_depth"] = (value.wellDepth());
-  obj["well_spacing_center_to_center"] = (value.wellSpacingCenterToCenter());
+  obj["number_of_rows"] = value.numberOfRows();
+  obj["number_of_columns"] = value.numberOfColumns();
+  obj["a1_row_offset"] = value.a1RowOffset();
+  obj["a1_column_offset"] = value.a1ColumnOffset();
+  obj["well_spacing_center_to_center"] = value.wellSpacingCenterToCenter();
+  obj["height_source_plate"] = value.heightSourcePlate();
+  obj["height_master_plate"] = value.heightMasterPlate();
+  obj["height_goal_plate"] = value.heightGoalPlate();
+  obj["well_depth"] = value.wellDepth();
+  obj["culture_medium_thickness_source_plate"] =
+      value.cultureMediumThicknessSourcePlate();
+  obj["culture_medium_thickness_master_plate"] =
+      value.cultureMediumThicknessMasterPlate();
 
   return obj;
 }
 
 template <>
-PlateProfile Marshalling::fromJson(const QJsonObject &obj) {
+PlateProfile Marshalling::fromJson(const QJsonObject& obj) {
   return PlateProfile(
       obj["number_of_rows"].toInt(), obj["number_of_columns"].toInt(),
       obj["a1_row_offset"].toDouble(), obj["a1_column_offset"].toDouble(),
@@ -117,11 +139,12 @@ PlateProfile Marshalling::fromJson(const QJsonObject &obj) {
       obj["height_source_plate"].toDouble(),
       obj["height_master_plate"].toDouble(),
       obj["height_goal_plate"].toDouble(), obj["well_depth"].toDouble(),
-      obj["culture_medium_thickness"].toDouble());
+      obj["culture_medium_thickness_source_plate"].toDouble(),
+      obj["culture_medium_thickness_master_plate"].toDouble());
 }
 
 template <>
-QJsonObject Marshalling::toJson(const Point &value) {
+QJsonObject Marshalling::toJson(const Point& value) {
   QJsonObject obj;
 
   obj["x"] = value.xCoordinate();
@@ -132,7 +155,22 @@ QJsonObject Marshalling::toJson(const Point &value) {
 }
 
 template <>
-Point Marshalling::fromJson(const QJsonObject &obj) {
+QDateTime Marshalling::fromJson(const QJsonObject& obj) {
+  return QDateTime::fromMSecsSinceEpoch(obj["ms"].toVariant().toLongLong());
+}
+
+template <>
+Point Marshalling::fromJson(const QJsonObject& obj) {
   return Point(obj["x"].toDouble(), obj["y"].toDouble(), obj["z"].toDouble());
+}
+
+template <>
+QJsonObject Marshalling::toJson(const QDateTime& value) {
+  QJsonObject obj;
+
+  obj["ms"] = value.toMSecsSinceEpoch();
+  obj["formatted"] = value.toString(dateTimeFormat());
+
+  return obj;
 }
 }  // namespace c3picko

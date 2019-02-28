@@ -1,32 +1,33 @@
 #pragma once
 
 #include <QJsonObject>
+#include "include/global.h"
 
 namespace c3picko {
 class Marshalling {
  public:
   template <typename T>
-  static QJsonObject toJson(T const &);
+  static QJsonObject toJson(T const&);
   template <typename T>
-  static void toJson(T const &, QJsonObject &output);
+  static void toJson(T const&, QJsonObject& output);
   template <typename T>
-  static T fromJson(QJsonObject const &);
+  static T fromJson(QJsonObject const&);
   template <typename T>
-  static void fromJson(QJsonObject const &, T &output);
+  static void fromJson(QJsonObject const&, T& output);
 };
 
-#define MAKE_SERIALIZABLE(T)                  \
-                                              \
-  template <>                                 \
-  QJsonObject Marshalling::toJson(T const &); \
-  template <>                                 \
-  void Marshalling::toJson(T const &, QJsonObject &);
+#define MAKE_SERIALIZABLE(T)                 \
+                                             \
+  template <>                                \
+  QJsonObject Marshalling::toJson(T const&); \
+  template <>                                \
+  void Marshalling::toJson(T const&, QJsonObject&);
 
-#define MAKE_DESEZIALIZABLE(T)                  \
-  template <>                                   \
-  T Marshalling::fromJson(QJsonObject const &); \
-  template <>                                   \
-  void Marshalling::fromJson(QJsonObject const &, T &output);
+#define MAKE_DESEZIALIZABLE(T)                 \
+  template <>                                  \
+  T Marshalling::fromJson(QJsonObject const&); \
+  template <>                                  \
+  void Marshalling::fromJson(QJsonObject const&, T& output);
 
 #define MAKE_MARSHALLABLE(T) \
   MAKE_SERIALIZABLE(T)       \
@@ -41,6 +42,8 @@ class Marshalling {
 
 // Here we instantiate the template functions, so the compiler knows they must
 // exist somewhere. The classes themself are unaltered by this.
+MAKE_MARSHALLABLE(QDateTime);
+
 MAKE_MARSHALLABLE_CLASS(Point);
 MAKE_MARSHALLABLE_CLASS(PrinterProfile);
 MAKE_MARSHALLABLE_CLASS(PlateSocketProfile);

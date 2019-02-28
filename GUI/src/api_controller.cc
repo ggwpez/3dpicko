@@ -435,6 +435,11 @@ QJsonObject APIController::createProfileList() {
 
   json["profiles"] = json_profiles;
 
+  json["printerTemplate"] = Profile::printerTemplate();
+  json["socketTemplate"] = Profile::socketTemplate();
+  json["plateTemplate"] = Profile::plateTemplate();
+  // json["octoprintTemplate"] = ;
+
   return json;
 }
 

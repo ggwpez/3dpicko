@@ -19,52 +19,52 @@ class APIOutput : public QObject {
   friend class APIController;
 
  public:
-  APIOutput(APIController *parent);
+  APIOutput(APIController* parent);
 
  protected slots:
-  void UnknownRequest(QString request, QObject *client);
-  void ImageListRequested(QObject *client);
-  void JobListRequested(QObject *client);
-  void ProfileListRequested(QObject *client);
-  void AlgorithmListRequested(QObject *client);
+  void UnknownRequest(QString request, QObject* client);
+  void ImageListRequested(QObject* client);
+  void JobListRequested(QObject* client);
+  void ProfileListRequested(QObject* client);
+  void AlgorithmListRequested(QObject* client);
 
-  void JobCreated(Job, QObject *client);
-  void JobCreateError(QString, QObject *);
-  void JobDeleted(Job, QObject *client);
-  void JobDeleteError(QString path, QObject *client);
+  void JobCreated(Job, QObject* client);
+  void JobCreateError(QString, QObject*);
+  void JobDeleted(Job, QObject* client);
+  void JobDeleteError(QString path, QObject* client);
 
-  void ImageCreated(Image, QObject *client);
-  void ImageCreateError(QString path, QObject *client);
-  void ImageDeleted(Image, QObject *client);
-  void ImageDeleteError(QString path, QObject *client);
-  void ImageCropped(Image, QObject *client);
-  void ImageCropError(QString id, QObject *client);
+  void ImageCreated(Image, QObject* client);
+  void ImageCreateError(QString path, QObject* client);
+  void ImageDeleted(Image, QObject* client);
+  void ImageDeleteError(QString path, QObject* client);
+  void ImageCropped(Image, QObject* client);
+  void ImageCropError(QString id, QObject* client);
 
-  void ProfileCreated(Profile profile, QObject *client);
-  void ProfileUpdated(Profile, QObject *client);
-  void ProfileUpdateError(Profile::ID, QObject *client);
-  void ProfileDeleted(Profile::ID profile, QObject *client);
-  void ProfileDeleteError(Profile::ID profile, QObject *client);
-  void DefaultSettingsProfileSet(Profile::ID profile, QObject *client);
-  void DefaultSettingsProfileSetError(QString error, QObject *client);
+  void ProfileCreated(Profile profile, QObject* client);
+  void ProfileUpdated(Profile, QObject* client);
+  void ProfileUpdateError(Profile::ID, QObject* client);
+  void ProfileDeleted(Profile::ID profile, QObject* client);
+  void ProfileDeleteError(Profile::ID profile, QObject* client);
+  void DefaultSettingsProfileSet(Profile::ID profile, QObject* client);
+  void DefaultSettingsProfileSetError(QString error, QObject* client);
   void SetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
-                       QObject *client);
-  void SetStartingWellError(QString error, QObject *client);
+                       QObject* client);
+  void SetStartingWellError(QString error, QObject* client);
 
-  void ColonyDetectionStarted(Job::ID, QObject *client);
+  void ColonyDetectionStarted(Job::ID, QObject* client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */
-  void ColonyDetected(std::vector<Colony> *detector, QObject *client);
+  void ColonyDetected(std::vector<Colony>* detector, QObject* client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */
-  void ColonyDetectionError(QString error, QObject *client);
+  void ColonyDetectionError(QString error, QObject* client);
 
-  void Error(QString where, QString what, QObject *client);
+  void Error(QString where, QString what, QObject* client);
 
  private:
   // TODO change name
-  APIController *op;
+  APIController* op;
 };
 }  // namespace c3picko

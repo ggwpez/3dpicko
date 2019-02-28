@@ -6,7 +6,6 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
-#include "include/marshalling.hpp"
 
 class QSslConfiguration;
 namespace c3picko {
@@ -38,5 +37,4 @@ inline void Setup() {
 inline QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
 
 inline char const* defaultImageExtension() { return "jpg"; }
-MAKE_MARSHALLABLE(QDateTime);
 }  // namespace c3picko
