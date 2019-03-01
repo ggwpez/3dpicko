@@ -71,8 +71,8 @@ function selectionTabEnter()
         if ($(window).width() < img.width)
         {
             width = $(window).width() *.75;
-            height = 0.75 *img.height /($(window).width() /$(window).height());
             down_scale = width /img.width;
+            height = down_scale *img.height;
         }
         else
         {
