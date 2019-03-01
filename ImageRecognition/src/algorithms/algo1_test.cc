@@ -313,8 +313,6 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
       }
     }
   }
-
-  qDebug() << "Detected" << colonies.size() << "colonies";
 }
 
 void Algo1Test::relativeFiltering(AlgorithmJob* base, AlgorithmResult* result) {
@@ -364,16 +362,16 @@ void Algo1Test::cleanup() {
   /*int i = 0;
   for (void* stage : base->stack())
   {
-                                                                  std::string
+                                                                                                                                  std::string
   name = "stage" + std::to_string(i++);
 
-                                                                  cv::namedWindow(name,
+                                                                                                                                  cv::namedWindow(name,
   cv::WINDOW_NORMAL); cv::resizeWindow(name, 1920, 1080); cv::imshow(name,
   *reinterpret_cast<cv::Mat*>(stage));
   }
 
   while (cv::waitKey(0) != 'q')
-                                                                  ;
+                                                                                                                                  ;
   cv::destroyAllWindows();*/
 }
 }  // namespace c3picko

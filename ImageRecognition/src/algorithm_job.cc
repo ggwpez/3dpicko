@@ -48,6 +48,12 @@ void AlgorithmJob::start(bool threaded, bool delete_when_done) {
     algo_->run();
 }
 
+void AlgorithmJob::timeStart() { timer_.start(); }
+
+void AlgorithmJob::timeStop() { took_ms_ = timer_.elapsed(); }
+
+qint64 AlgorithmJob::took_ms() const { return took_ms_; }
+
 AlgorithmResult::ID AlgorithmJob::result_id() const { return result_id_; }
 
 AlgorithmJob::ID AlgorithmJob::id() const { return id_; }

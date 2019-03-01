@@ -96,8 +96,8 @@ Job Marshalling::fromJson(const QJsonObject &obj) {
 
   return Job(obj["id"].toString(), obj["img_id"].toString(),
              obj["name"].toString(), obj["description"].toString(),
-             Marshalling::fromJson<QDateTime>(obj["created"].toObject()), detections,
-             obj["printer"].toString(), obj["socket"].toString(),
+             Marshalling::fromJson<QDateTime>(obj["created"].toObject()),
+             detections, obj["printer"].toString(), obj["socket"].toString(),
              obj["starting_row"].toInt(), obj["starting_col"].toInt(),
              obj["step"].toInt());
 }

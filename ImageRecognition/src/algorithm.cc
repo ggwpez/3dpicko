@@ -28,6 +28,7 @@ void Algorithm::run() {
       << ",job=" << this->parent() << ",thread=" << QThread::currentThreadId()
       << ")";
 
+  job->timeStart();
   for (int i = 0; i < steps_.size(); ++i) {
     result->last_stage_ = i;
     // Lets format an error string, in case it crashes
@@ -61,6 +62,7 @@ void Algorithm::run() {
               qPrintable(error_postfix), "unknown");
     result->cleanup_succeeded_ = false;
   }
+  job->timeStop();
 
   if (result->stages_succeeded_)
     emit job->OnAlgoSucceeded();

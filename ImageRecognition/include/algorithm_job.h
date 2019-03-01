@@ -44,6 +44,8 @@ class AlgorithmJob : public QObject {
   ID id() const;
   AlgorithmResult::ID result_id() const;
 
+  qint64 took_ms() const;
+
  signals:
   void OnAlgoSucceeded();
   void OnAlgoFailed();
@@ -63,6 +65,9 @@ class AlgorithmJob : public QObject {
    */
   void start(bool threaded, bool delete_when_done);
 
+  void timeStart();
+  void timeStop();
+
  private:
   ID id_;
   Algorithm* algo_ = nullptr;
@@ -75,6 +80,8 @@ class AlgorithmJob : public QObject {
    */
   AlgorithmResult* result_;
   AlgorithmResult::ID result_id_;
+  qint64 took_ms_;
+  QElapsedTimer timer_;
 };
 MAKE_MARSHALLABLE(AlgorithmJob);
 }  // namespace c3picko

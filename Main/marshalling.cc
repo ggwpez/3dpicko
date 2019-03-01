@@ -51,7 +51,8 @@ PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
       obj["filament_extrusion_length_on_put_onto_master"].toDouble(),
       obj["filament_extrusion_length_after_cut"].toDouble(),
       obj["length_of_removed_filament"].toDouble(),
-      obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move"]
+      obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_"
+          "move"]
           .toDouble());
 }
 

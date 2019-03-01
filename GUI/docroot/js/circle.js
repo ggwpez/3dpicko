@@ -51,7 +51,7 @@ const Circle = new Class({
       context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
       context.fill();
 
-      context.lineWidth = 3;
+      context.lineWidth = 2;
       context.strokeStyle = this.options.linecolor;
       context.stroke();
 

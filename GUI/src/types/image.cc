@@ -96,8 +96,8 @@ void Image::clearCache() { image_.release(); }
 bool Image::crop(int x, int y, int w, int h, Image &output, QString &error) {
   x = qBound(0, x, width_ - 1);
   y = qBound(0, y, height_ - 1);
-  w = qBound(1, w, width_ -x);
-  h = qBound(1, h, height_ -y); // TODO is this correct?
+  w = qBound(1, w, width_ - x);
+  h = qBound(1, h, height_ - y);  // TODO is this correct?
 
   if (std::max(w, h) < 100) {
     error = "Cropped image to small";

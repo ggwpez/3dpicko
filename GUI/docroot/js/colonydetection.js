@@ -52,6 +52,7 @@ function getPositions(){
 }
 
 var img;
+var down_scale;
 function selectionTabEnter()
 {
     layer0.canvas  = document.getElementById('layer0');
@@ -64,16 +65,34 @@ function selectionTabEnter()
     img = new Image();
     img.onload = function ()
     {
-        layer0.canvas.width  = img.width; // in pixels
-        layer0.canvas.height = img.height; // in pixels
+        // TODO only downscale, would upscale on 4k screens
 
-        layer1.canvas.width  = img.width; // in pixels
-        layer1.canvas.height = img.height; // in pixels
+        var height, width;
+        if ($(window).width() < img.width)
+        {
+            width = $(window).width() *.75;
+            height = 0.75 *img.height /($(window).width() /$(window).height());
+            down_scale = width /img.width;
+        }
+        else
+        {
+            width = img.width;
+            height = img.height;
+            down_scale = 1;
+        }
 
-        layer2.canvas.width  = img.width; // in pixels
-        layer2.canvas.height = img.height; // in pixels
+        console.log("Downscale factor: ", down_scale);
 
-        layer0.context.drawImage(img, 0, 0);
+        layer0.canvas.width  = width; // in pixels
+        layer0.canvas.height = height; // in pixels
+
+        layer1.canvas.width  = width; // in pixels
+        layer1.canvas.height = height; // in pixels
+
+        layer2.canvas.width  = width; // in pixels
+        layer2.canvas.height = height; // in pixels
+
+        layer0.context.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
         // TODO only make the detection button ready when we are here
     }
     img.src = chosen_image.path;
@@ -106,7 +125,7 @@ function printPositions(){
         var ball = new Circle({
             x: colony[0] *layer1.canvas.width,
             y: colony[1] *layer1.canvas.height,
-            radius: colony[2] *1.25,            // Make them a bit better to see
+            radius: colony[2] *1.25 *down_scale,            // Make them a bit better to see
             linecolor: 'white',
             background: 'transparent',
             canvas: layer1.canvas
@@ -194,6 +213,6 @@ function drawTooltip(circle_id)
     layer2.context.fillStyle = "white";
     layer2.context.font = "12px sans-serif";
     layer2.context.textBaseline = "top";
-    layer2.context.wrapText("Colony #" +circle_id +"\nRadius " +ball.getRadius(), tooltip_pos.x +10, tooltip_pos.y +10, 80, 16);
+    layer2.context.wrapText("Colony #" +circle_id +"\nRadius " +(Math.round(ball.getRadius() *100) /100), tooltip_pos.x +10, tooltip_pos.y +10, 80, 16);
     console.log("Drawing tooltip #", circle_id, " at ", tooltip_pos.x +20, "/", tooltip_pos.y +10);
 }

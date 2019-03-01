@@ -206,7 +206,6 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 
 void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
                                     int col, QObject* client) {
-
   if (!db_->jobs().exists(id)) {
     emit OnSetStartingWellError("Job " + id + " not found", client);
   } else if (!db_->profiles().exists(plate_id)) {
@@ -241,14 +240,14 @@ void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
 
-  //if (!db_->profiles().exists(job.printer()))
-    //emit OnJobCreateError("Printer profile " + id + " unknown", client);
-  //else if (!db_->profiles().exists(job.socket()))
-    //emit OnJobCreateError("Socket profile " + id + " unknown", client);
-  //else {
-    job.setId(id);
-    db_->jobs().add(id, job);
-    emit OnJobCreated(job, client);
+  // if (!db_->profiles().exists(job.printer()))
+  // emit OnJobCreateError("Printer profile " + id + " unknown", client);
+  // else if (!db_->profiles().exists(job.socket()))
+  // emit OnJobCreateError("Socket profile " + id + " unknown", client);
+  // else {
+  job.setId(id);
+  db_->jobs().add(id, job);
+  emit OnJobCreated(job, client);
   //}
 }
 
@@ -298,6 +297,9 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id,
                         result_id, *algo_job->result());  // TODO not too cool
                     emit this->OnColonyDetected(&algo_job->result()->colonies_,
                                                 client);
+                    qDebug()
+                        << "Detected" << algo_job->result()->colonies_.size()
+                        << "in" << algo_job->took_ms() << "ms";
                   });
 
           return algo_job;
@@ -348,7 +350,8 @@ void APIController::startJob(Job::ID id, QObject* client) {
       detection.colonies();  // FIXME convert to local coordinates
   std::vector<LocalColonyCoordinates> coords;
   for (int i = 0; i < colonies.size(); ++i)
-    coords.push_back(Point(colonies[i].x() * 127, (1.0d -colonies[i].y()) * 85));
+    coords.push_back(
+        Point(colonies[i].x() * 127, (1.0d - colonies[i].y()) * 85));
 
   auto code = gen.CreateGcodeForTheEntirePickingProcess(
       job.startingRow(), job.startingCol(), coords);

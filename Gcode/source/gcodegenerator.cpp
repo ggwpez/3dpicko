@@ -48,7 +48,7 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
   std::vector<GcodeInstruction> gcodes = Init();
   gcodes.reserve(local_colony_coordinates.size());
   //  gcodes.push_back(gcode_raise_filament_above_source_plate_);
-  gcodes.push_back(gcode_raise_filament_above_goal_plate_); // TODO
+  gcodes.push_back(gcode_raise_filament_above_goal_plate_);  // TODO
   gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
   gcodes.push_back(gcode_extrude_filament_to_cut_length_);
   gcodes.push_back(gcode_push_trigger_);
