@@ -84,7 +84,7 @@ bool Image::writeToFile() {
 }
 
 bool Image::deleteFile() {
-  if (QDir(DocRoot()).remove(path_)) {
+  if (QDir(DocRoot()).remove(DocRoot() + path_)) {
     path_ = "";
     return true;
   }
