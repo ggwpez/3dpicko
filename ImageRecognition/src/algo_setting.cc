@@ -135,19 +135,19 @@ template <>
 Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
   throw std::runtime_error(
       "Marshalling::fromJson<AlgoSetting> not tested");  // TODO
-  AlgoSetting::ID id = obj["id"].toString();
-  QString type = obj["type"].toString().toLower();
-  QString name = obj["name"].toString();
-  QString description = obj["description"].toString();
+  AlgoSetting::ID id = Marshalling::fromJson<QString>(obj["id"]);
+  QString type = Marshalling::fromJson<QString>(obj["type"]).toLower();
+  QString name = Marshalling::fromJson<QString>(obj["name"]);
+  QString description = Marshalling::fromJson<QString>(obj["description"]);
   QVariant default_value = obj["defaultValue"].toVariant();
-  QString value_type = obj["valueType"].toString().toLower();
+  QString value_type = Marshalling::fromJson<QString>(obj["valueType"]).toLower();
 
   if (value_type != "float" && value_type != "double" && value_type != "int" &&
       value_type != "bool")
     throw std::runtime_error("Unknown value type");
 
   if (type == "slider") {
-    QString value_type = obj["valueType"].toString();
+    QString value_type = Marshalling::fromJson<QString>(obj["valueType"]);
     QVariant min = obj["min"].toVariant(), max = obj["max"].toVariant(),
              step = obj["step"].toVariant();
 

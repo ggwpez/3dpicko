@@ -97,7 +97,7 @@ PlateSocketProfile Marshalling::fromJson(const QJsonObject& obj) {
           obj["global_origin_of_master_plate"].toObject()),
       Marshalling::fromJson<Point>(
           obj["global_origin_of_goal_plate"].toObject()),
-      obj["orientation_of_goal_plate"].toString() ==
+      Marshalling::fromJson<QString>(obj["orientation_of_goal_plate"]) ==
               "kFirstRowFirstColumnAtCutoutOrigin"
           ? kFirstRowFirstColumnAtCutoutOrigin
           : kLastRowFirstColumnAtCutoutOrigin,

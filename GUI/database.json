@@ -7,15 +7,6 @@
     "deleted_jobs": {
     },
     "detection_results": {
-        "10": {
-            "cleanup_error": "",
-            "cleanup_succeeded": true,
-            "id": "10",
-            "last_stage": 5,
-            "stage_error": "",
-            "stages_succeeded": true,
-            "took_ns": 48
-        }
     },
     "images": {
         "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd": {
@@ -180,7 +171,7 @@
     "profiles": {
         "302": {
             "id": "302",
-            "profile_name": "labor",
+            "profile_name": "labor&lt;a&gt;&lt;font size=&quot;60&quot;&gt;",
             "settings": {
                 "cut_filament_position_above_trigger": {
                     "x": 191,

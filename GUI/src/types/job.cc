@@ -94,10 +94,10 @@ Job Marshalling::fromJson(const QJsonObject &obj) {
 
   for (auto detection : json_detections) detections.push(detection.toString());
 
-  return Job(obj["id"].toString(), obj["img_id"].toString(),
-             obj["name"].toString(), obj["description"].toString(),
+  return Job(Marshalling::fromJson<QString>(obj["id"]), Marshalling::fromJson<QString>(obj["img_id"]),
+             Marshalling::fromJson<QString>(obj["name"]), Marshalling::fromJson<QString>(obj["description"]),
              Marshalling::fromJson<QDateTime>(obj["created"].toObject()),
-             detections, obj["printer"].toString(), obj["socket"].toString(),
+             detections, Marshalling::fromJson<QString>(obj["printer"]), Marshalling::fromJson<QString>(obj["socket"]),
              obj["starting_row"].toInt(), obj["starting_col"].toInt(),
              obj["step"].toInt());
 }
