@@ -17,7 +17,10 @@ var profile_templates ={};
 // TODO delete "new_job" if job saved or executed
 var unsaved_elements = {};
 
-(function Setup()
+var global_alert = $('#global-alert');
+var alert_window = $('#alert-window');
+
+$(function Setup()
 {
     WsSetup(
         () =>
@@ -104,25 +107,22 @@ var unsaved_elements = {};
             }
             else if (type == "getprofilelist")
             {
+                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
                 default_profiles["printer-profile"] = data.defaultPrinter;
                 default_profiles["socket-profile"] = data.defaultSocket;
                 default_profiles["plate-profile"] = data.defaultPlate;
-                profile_templates["printer-profile"] = Object.assign(data["printerTemplate"],{type: "printer-profile"});
-                profile_templates["socket-profile"] = Object.assign(data["socketTemplate"],{type: "socket-profile"});
-                profile_templates["plate-profile"] = Object.assign(data["plateTemplate"],{type: "plate-profile"});
+                profile_templates["printer-profile"] = data["printerTemplate"];
+                profile_templates["socket-profile"] = data["socketTemplate"];
+                profile_templates["plate-profile"] = data["plateTemplate"];
+                // TOOO add type in Backend?
+                profile_templates["printer-profile"].type = "printer-profile";
+                profile_templates["socket-profile"].type = "socket-profile";
+                profile_templates["plate-profile"].type = "plate-profile";
                 // empty "new-profiles"
-                AddProfileToList(new_printer_profile);
-                AddProfileToList(new_socket_profile);
-                AddProfileToList(new_plate_profile);
-                // debugging profiles
-                // AddProfileToList(example_printer);
-                // AddProfileToList(makergear);
-                // AddProfileToList(creality);
-                // AddProfileToList(prototyp1);
-                // AddProfileToList(default_plate);
-                // AddProfileToList(large_plate);
+                AddProfileToList(profile_templates["printer-profile"]);
+                AddProfileToList(profile_templates["socket-profile"]);
+                AddProfileToList(profile_templates["plate-profile"]);
                 data.profiles.forEach(AddProfileToList);
-                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
             }
             else if (type == "setdefaultsettingsprofile"){
                 SetDefaultProfile(data.id);
@@ -173,12 +173,12 @@ var unsaved_elements = {};
             global_alert.css('display', 'block');
             document.title = "No connection - 3CPicko";
         });
-})();
+});
 
 function GetDetectionAlgorithms(detection_algorithms){
     algorithms = detection_algorithms;
     // TODO Remove (only for debugging)
-    /*algorithms["321"] = {
+    algorithms["321"] = {
         name: "Fluro",
         description: "Good for detecting fluorescent colonies",
         settings:[{
@@ -279,7 +279,7 @@ function GetDetectionAlgorithms(detection_algorithms){
             description: ""
         }
         ]
-    };*/
+    };
 
     const algorithm_selection = document.getElementById("select-algorithm");
     while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
@@ -526,7 +526,7 @@ $('#cut-tab').on('shown.bs.tab', function () {
     let cutImg = document.getElementById('cutImg');
     cropper = new Cropper(cutImg, {
         aspectRatio: 1.5/1,
-        moveable: false,
+        movable: false,
         zoomable: false
     });
 });
@@ -642,8 +642,6 @@ function executeTab(){
     form.classList.add('was-validated');
 }
 
-var global_alert = $('#global-alert');
-var alert_window = $('#alert-window');
 
 // bootstrap alert-type: success/warning/danger/primary/dark...
 function ShowAlert(message, type = "success", delay=3000){
