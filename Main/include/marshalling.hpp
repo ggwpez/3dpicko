@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDebug>
 #include <QJsonObject>
 #include "include/global.h"
 
@@ -14,6 +15,11 @@ class Marshalling {
   static T fromJson(QJsonObject const&);
   template <typename T>
   static void fromJson(QJsonObject const&, T& output);
+
+  template <typename T>
+  static inline T fromJson(QJsonValue const& val) {
+    return fromJson<T>(val.toObject());
+  }
 };
 
 #define MAKE_SERIALIZABLE(T)                 \
@@ -48,4 +54,12 @@ MAKE_MARSHALLABLE_CLASS(Point);
 MAKE_MARSHALLABLE_CLASS(PrinterProfile);
 MAKE_MARSHALLABLE_CLASS(PlateSocketProfile);
 MAKE_MARSHALLABLE_CLASS(PlateProfile);
+
+template <>
+/**
+ * HTML-Escapes all input strings
+ */
+inline QString Marshalling::fromJson<QString>(QJsonValue const& val) {
+  return val.toString().toHtmlEscaped();
+}
 }  // namespace c3picko
