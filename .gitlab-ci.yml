@@ -11,6 +11,7 @@ dependencies:linux:
   script:
     - apt update -qq
     - apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format
+    - bash opencv.sh
     - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
   except:
     - /^.*-format$/
