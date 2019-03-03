@@ -117,10 +117,10 @@ static int start(int argc, char** argv) {
                         new RequestMapper(staticFileController, &app), &app);
   // WS server
   QSettings* ws_settings =
+
       new QSettings(configFileName, QSettings::IniFormat, &app);
   ws_settings->beginGroup("websockets");
   WsServer* ws_server = new WsServer(ws_settings, ssl, &app);
-  ws_ptr = ws_server;
 
   QObject::connect(ws_server, &WsServer::OnRequest, api,
                    &APIController::request);
@@ -136,7 +136,10 @@ static int start(int argc, char** argv) {
         nullptr;  // also dont redirect the console output to WsServer anymore
   });
 
-  if (!ws_server->StartListen()) return 1;
+  if (!ws_server->StartListen())
+    return 1;
+  else
+    ws_ptr = ws_server;
 
   return app.exec();
 }
