@@ -167,16 +167,6 @@ input[type="range"].multirange {
 	padding: 0;
 	margin: 0;
 	vertical-align: top;
-	pointer-events: none;
-}
-input[type="range"].multirange::-moz-range-thumb {
-	pointer-events: auto !important;
-}
-input[type="range"].multirange::-webkit-slider-thumb {
-	pointer-events: auto !important;
-}
-input[type="range"].multirange::-ms-thumb {
-	pointer-events: auto !important;
 }
 input[type="range"].multirange.original::-webkit-slider-thumb {
 	position: relative;
