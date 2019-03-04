@@ -13,6 +13,7 @@
   <title>3CPickO</title>
 </head>
 <body>
+  <div id="overlay"><div class="spinner-border text-primary overlay-spinner"></div></div>
   <nav>
     <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
       <a class="nav-item nav-link" id="nav-start-tab" data-toggle="tab" href="#nav-start" role="tab" aria-controls="nav-start" aria-selected="false">Start</a>
@@ -66,28 +67,28 @@
             <div class="tab-content" id="tabContent">
               <div class="tab-pane fade show active" id="browse">
                 <div class="row mb-4">
-                  <div class="col-md-6 col-lg-4">
+                  <div class="col-md-6 col-lg-5">
                     <h2>Choose Image</h2>
-                    <form><input id="classicUpload" type="file" multiple style="display: none;"/></form>
+                    <h6 id="img-name"></h6>
+                    <form><input id="classicUpload" type="file" style="display: none;"/></form>
                     <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
-                    <div id="chosen-image" style="display: none"><div id="selectedimage-description"></div><button class="btn btn-primary next-step" onclick="cutTab()">Continue</button></div>
+                    <div id="chosen-image" style="display: none;"><div id="selectedimage-description" class="float-left"></div><button class="btn btn-success next-step float-right mt-1" onclick="cutTab()">Continue</button></div>
                   </div>
                 </div>
+                <hr>
                 <div class="row">
                   <div class="col" >
-                    <h2>All Images</h2>
-                    <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
                     <div id="all-images" style="display: none;"></div>
                   </div>
                 </div>
               </div>
               <div class="tab-pane fade col-md-8" id="cut">
-                <h2>Cut Image</h2>
-                <h4>Align selection with outer borders of plate.</h4>
+                <h2>Align selection with all <strong>outer</strong> borders of plate.</h2>
+                <h3>Make sure <strong>whole</strong> plate is visible.</h3>
                 <div>
                   <img id="cutImg" src="" alt="Picture">
                 </div>
-                <button class="btn btn-primary m-2 next-step" onclick="attributesTab()">Continue</button>
+                <button class="btn btn-success m-2 next-step" onclick="attributesTab()">Continue</button>
               </div>
               <div class="tab-pane fade col-md-6" id="attributes">
                 <h2>Pickjob Attributes</h2>
@@ -117,7 +118,7 @@
                 <button class="btn btn-primary m-2 next-step" onclick="selectionTab()">Continue</button>
               </div>
               <div class="tab-pane fade col-md-12 col-xl-10" id="selection">
-                <h2>Detect Colonys</h2>
+                <h2>Detect Colonies</h2>
                 <div id="layer_parent" style="position: relative;">
                  <canvas id="layer0" style="z-index: 0;"></canvas>
                  <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>

@@ -1,6 +1,29 @@
+var upload_timeout_id;
 $(function() {
-    var dropZone = document.getElementById('dropZone');
+    window.addEventListener("dragover",function(e){
+        e = e || event;
+        e.stopPropagation();
+        e.preventDefault();
+    },false);
+    window.addEventListener("drop",function(e){
+        e = e || event;
+        e.stopPropagation();
+        e.preventDefault();
+        // TODO upload on drop outside of dropzone?
+        // upload(e.dataTransfer.files[0]);
+    },false);
+    document.getElementById('overlay').addEventListener("dragover", function(e){
+        e = e || event;
+        e.stopPropagation();
+        e.preventDefault();
+    }, false);
+    document.getElementById('overlay').addEventListener("drop", function(e){
+        e = e || event;
+        e.stopPropagation();
+        e.preventDefault();
+    }, false);
 
+    let dropZone = document.getElementById('dropZone');
     dropZone.addEventListener('dragover', function(e) {
         e.stopPropagation();
         e.preventDefault();
@@ -17,19 +40,21 @@ $(function() {
     dropZone.addEventListener('drop', function(e) {
         e.stopPropagation();
         e.preventDefault();
-        dropZone.removeClass('dragover');
         upload(e.dataTransfer.files[0]);
     });
     // classic file selection
     $('#classicUpload').bind('change', function(e) {
-        // upload multiple files
-        for(i=0; i<this.files.length; i++){
-            upload(this.files[i]);
-        }
+        upload(this.files[0]);
     });
 });
 
 function upload(file){
+    dropZone.removeClass('dragover');
+    $('#overlay').show();
+    upload_timeout_id = setTimeout(function(){
+        $('#overlay').hide();
+        ShowAlert("Image Upload Timeout", "danger");
+    }, 5000);
     if(file){
         let rawData = new ArrayBuffer();    // TODO
         let reader = new FileReader();

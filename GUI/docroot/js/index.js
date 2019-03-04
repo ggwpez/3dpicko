@@ -38,11 +38,15 @@ $(function Setup()
             console.log("Response: ", data);
 
             if (type == "error"){
-                ShowAlert(JSON.stringify(data), "danger");
                 clearTimeout(loading_timeout_id);
+                clearTimeout(upload_timeout_id);
                 $('#apply-detection-settings').show();
                 $('#loading-detection-settings').hide();
                 $('#strategy-tab-button').prop("disabled", true);
+                $('#overlay').hide();
+                // TODO
+                if(data.uploadimage=="") ShowAlert("Upload failed.<br>Maybe Image already exists.", "danger");
+                else ShowAlert(JSON.stringify(data), "danger");
             }
             else if (type == "getimagelist")
             {
@@ -142,8 +146,6 @@ $(function Setup()
             else if (type == "debug")
             {
                 addDebugOutputLine(data.line);
-                // TODO...
-                if(data.line == "Ignoring doubled image") ShowAlert("Image already exists.", "danger");
             }
             else if (type == "getpositions")
             {
@@ -325,7 +327,7 @@ var UpdateDetectionSettings = function (e){
             $('#apply-detection-settings').show();
             $('#loading-detection-settings').hide();
             ShowAlert("Colony Detection Timeout", "danger");
-        }, 9000);
+        }, 4000);
         const form_data = new FormData(this);
         const algorithm_id = document.getElementById('select-algorithm').value;
         let new_settings = {
@@ -381,9 +383,9 @@ function AddImageToList(image_object){
         console.log("Adding image " +JSON.stringify(image_object));
         let html = `
         <div class="card m-1 image-card" id="img-${image_object.id}">
-        <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
+        <button type="button" class="close" style="line-height: 0.5;" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
         <div class="card-body p-1" onclick="SetChosen('${image_object.id}');" $(&quot;html, body&quot;).animate({ scrollTop: 0 }, &quot;slow&quot;);" style="cursor: pointer;">
-        <h5 class="card-title mr-2 p-1">${image_object.original_name}</h5>
+        <h7 class="card-title mr-3 p-1">${image_object.original_name}</h7>
         <div class="spinner-border m-5" id="loading-${image_object.id}"></div>
         <img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
         <p class="card-text">Date: ${image_object.uploaded.formatted}</li></p>
@@ -470,22 +472,26 @@ $(function(){
 
 function SetChosen(image_id){
     const div_chosen = document.getElementById('chosen-image');
+    const description = document.getElementById('selectedimage-description');
     const class_dropzone = document.getElementById('dropZone');
+    const img_name = document.getElementById('img-name');
 
     if(image_id){
         chosen_image = images_list[image_id];
         console.log("Selecting image ", image_id);
-        div_chosen.getElementById('selectedimage-description').innerHTML = `
-        <ul><li>Filename: ${chosen_image.original_name}</li>
-        <li>Upload Date: ${chosen_image.uploaded.formatted}</li></ul>
-        `;
+        description.innerHTML = `Upload Date: ${chosen_image.uploaded.formatted}`;
+        img_name.innerHTML = chosen_image.original_name;
+        $(img_name).show();
         $(div_chosen).show();
-        class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
+        $(description).show();
+        class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}" onload="clearTimeout(upload_timeout_id);$('#overlay').hide();"/>`;
         class_dropzone.removeClass('empty');
     }
     else{
         chosen_image = false;
+        $(img_name).hide();
         $(div_chosen).hide();
+        $(description).hide();
         class_dropzone.innerHTML = 'Drop Image';
         class_dropzone.addClass('empty');
     }
