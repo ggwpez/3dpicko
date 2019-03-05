@@ -7,6 +7,7 @@
 #include <map>
 #include <type_traits>
 #include <utility>
+#include "include/exception.h"
 #include "include/json_constructable.hpp"
 #include "include/json_convertable.h"
 #include "include/marshalling.hpp"
@@ -56,7 +57,7 @@ class Table : public JsonConvertable {
     auto it = entries_.find(key);
 
     if (it == entries_.end())
-      throw std::runtime_error("Key not found");
+      throw Exception("Table", "Key not found");
     else
       return it.value();
   }

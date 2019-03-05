@@ -6,7 +6,6 @@ CONFIG   += staticlib
 
 SOURCES += \
 	src/colony.cc \
-	src/colony_type.cc \
 	src/algo_setting.cc \
 	src/algorithm.cc \
 	src/algorithms/algo1_test.cc \
@@ -19,7 +18,6 @@ SOURCES += \
 
 HEADERS += \
 	include/colony.hpp \
-	include/colony_type.h \
 	include/algo_setting.h \
 	include/algorithm.h \
 	include/algorithms/algo1_test.h \

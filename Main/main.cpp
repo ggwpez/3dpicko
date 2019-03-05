@@ -117,7 +117,6 @@ static int start(int argc, char** argv) {
                         new RequestMapper(staticFileController, &app), &app);
   // WS server
   QSettings* ws_settings =
-
       new QSettings(configFileName, QSettings::IniFormat, &app);
   ws_settings->beginGroup("websockets");
   WsServer* ws_server = new WsServer(ws_settings, ssl, &app);

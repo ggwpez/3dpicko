@@ -2,6 +2,7 @@
 #include <QJsonArray>
 #include <opencv2/core/mat.hpp>
 #include "include/colony.hpp"
+#include "include/exception.h"
 
 namespace c3picko {
 AlgorithmResult::AlgorithmResult(ID id)
@@ -9,8 +10,8 @@ AlgorithmResult::AlgorithmResult(ID id)
 
 AlgorithmResult::~AlgorithmResult() { cleanup(); }
 
-cv::Mat &AlgorithmResult::newMat(cv::Mat const &copy_from) {
-  cv::Mat *new_mat = new cv::Mat();
+cv::Mat& AlgorithmResult::newMat(cv::Mat const& copy_from) {
+  cv::Mat* new_mat = new cv::Mat();
 
   copy_from.copyTo(*new_mat);
 
@@ -18,15 +19,15 @@ cv::Mat &AlgorithmResult::newMat(cv::Mat const &copy_from) {
   return *new_mat;
 }
 
-cv::Mat &AlgorithmResult::oldMat() {
+cv::Mat& AlgorithmResult::oldMat() {
   Q_ASSERT(stack_.back());
   return *stack_.back();
 }
 
 AlgorithmResult::ID AlgorithmResult::id() const { return id_; }
 
-cv::Mat &AlgorithmResult::newMat() {
-  cv::Mat *new_mat = new cv::Mat();
+cv::Mat& AlgorithmResult::newMat() {
+  cv::Mat* new_mat = new cv::Mat();
 
   stack_.push_back(new_mat);
 
@@ -55,7 +56,7 @@ bool AlgorithmResult::cleanupSucceeded() const { return cleanup_succeeded_; }
 bool AlgorithmResult::stagesSucceeded() const { return stages_succeeded_; }
 
 template <>
-QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
+QJsonObject Marshalling::toJson(const AlgorithmResult& value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -68,14 +69,14 @@ QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
 
   QJsonArray colonies;
 
-  for (Colony const &colony : value.colonies())
+  for (Colony const& colony : value.colonies())
     colonies.push_back(Marshalling::toJson(colony));
 
   return obj;
 }
 
 template <>
-AlgorithmResult Marshalling::fromJson(const QJsonObject &obj) {
-  throw std::runtime_error("Not implemented");
+AlgorithmResult Marshalling::fromJson(const QJsonObject& obj) {
+  throw Exception("Not implemented");
 }
 }  // namespace c3picko

@@ -6,30 +6,31 @@
 #include "include/algorithm_result.h"
 #include "include/algorithms/helper.h"
 #include "include/colony.hpp"
-#include "include/colony_type.h"
 
 namespace c3picko {
 
 Algo1Test::Algo1Test()
     : Algorithm(
-          "1", "Fluro1", "",
+          "1", "NormalWithPlate", "",
           {&Algo1Test::cvt, &Algo1Test::threshold, &Algo1Test::erodeAndDilate,
            &Algo1Test::plateDetection, &Algo1Test::label,
            &Algo1Test::relativeFiltering},
-          {AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "",
+          {AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
+                                                1, {120, 1000}),
+           AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+                                                "", 0, 1, .001, {.7, 1},
+                                                Qt::cyan),
+           AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+                                                0, 1, .001, {.7, 1},
+                                                Qt::magenta),
+           AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+                                                1, .001, {.8, 1}, Qt::green),
+           AlgoSetting::make_rangeslider_double(
+               "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+           AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "",
                                       true),
            AlgoSetting::make_checkbox("fluro_thresh", "Threshold by brightness",
                                       "", false),
-           AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
-                                                "", 0, 1, .001, {.7, 1}),
-           AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
-                                                0, 1, .001, {.7, 1}),
-           AlgoSetting::make_rangeslider_double("convexity", "Convexitx", "", 0,
-                                                1, .001, {.8, 1}),
-           AlgoSetting::make_rangeslider_double("circularity", "Circularity",
-                                                "", 0, 1, .001, {.6, 1}),
-           AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
-                                                1, {120, 1000}),
            AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
                                       "Select an attribute to filter",
                                       {{"n", "None"},
@@ -40,7 +41,7 @@ Algo1Test::Algo1Test()
            AlgoSetting::make_rangeslider_double("rel", "Mean",
                                                 "Mean +x*Standard deviation",
                                                 -5, 5, .01, {-5, 5})},
-          true) {}
+          true, 3000) {}
 
 Algo1Test::~Algo1Test() {}
 
@@ -83,15 +84,20 @@ void Algo1Test::drawText(cv::Mat& img, cv::Mat& output,
   }
 }
 
-static bool roundness(int area, int w, int h,
-                      std::vector<cv::Point> const& contour,
-                      math::Range<double> aabb_ratio,
-                      math::Range<double> bb_ratio,
-                      math::Range<double> circularity,
-                      math::Range<double> convexity) {
+/**
+ * @brief Checks the roundness of the given contour.
+ * @return ID of a setting that leaded to the exclusion of the colony
+ * or empty.
+ */
+static AlgoSetting::ID roundness(int area, int w, int h,
+                                 std::vector<cv::Point> const& contour,
+                                 math::Range<double> aabb_ratio,
+                                 math::Range<double> bb_ratio,
+                                 math::Range<double> circularity,
+                                 math::Range<double> convexity) {
   double ratio = (std::min(w, h) / double(std::max(w, h)));
 
-  if (aabb_ratio.excludes(ratio)) return false;
+  if (aabb_ratio.excludes(ratio)) return "aabb_ratio";
 
   // TODO try watershed algorithm
 
@@ -99,12 +105,12 @@ static bool roundness(int area, int w, int h,
 
   ratio = (std::min(rrect.size.width, rrect.size.height) /
            double(std::max(rrect.size.width, rrect.size.height)));
-  if (bb_ratio.excludes(ratio)) return false;
+  if (bb_ratio.excludes(ratio)) return "bb_ratio";
 
   double circ((4 * M_PI * area) / std::pow(cv::arcLength(contour, true), 2));
   if (circularity.excludes(circ))  // flouro .8
   {
-    return false;
+    return "circularity";
   }
   std::vector<cv::Point> hull, hull_contour;
 
@@ -113,7 +119,7 @@ static bool roundness(int area, int w, int h,
 
   double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-  return convexity.contains(convex);  // flouro .91
+  return convexity.contains(convex) ? "" : "circularity";  // flouro .91
 }
 
 void Algo1Test::cvt(AlgorithmJob* base, AlgorithmResult* result) {
@@ -238,7 +244,7 @@ void Algo1Test::plateDetection(AlgorithmJob* base, AlgorithmResult* result) {
     // std::cout << "c " << center.x << " / " << center.y << "\n";
   }
 
-  for (int i = 0; i < lines.size(); ++i) {
+  for (std::size_t i = 0; i < lines.size(); ++i) {
     cv::line(output, cv::Point(lines[i].x, lines[i].y),
              cv::Point(lines[i].endx, lines[i].endy),
              bin_clrs[labels.at<int>(i)], 2);
@@ -273,7 +279,7 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
     // Should be no problem with convex colonies.
     auto center =
         cv::Point2d(centers.at<double>(i, 0), centers.at<double>(i, 1));
-    int r = center.y, c = center.x;
+    int r = int(center.y), c = int(center.x);
     int label = labeled.at<int>(r, c);
 
     if (!label) continue;
@@ -284,21 +290,33 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
     int top = stats.at<int>(label, cv::CC_STAT_TOP);
     int left = stats.at<int>(label, cv::CC_STAT_LEFT);
 
-    if (!_area.contains(area)) continue;
+    if (!_area.contains(area))
+      // colonies.push_back(Colony(center.x / double(input.cols), center.y /
+      // double(input.rows), area, , ++id, "area"));
+      continue;
     // Filter by roundness
     else {
       std::vector<std::vector<cv::Point>> contours;
 
-      if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h))))
-        continue;
+      // We check the AABB_RATIO twice for speed NOTE look into this in
+      // benchmark phase
+      if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h)))) {
+        colonies.push_back(
+            Colony(center.x / double(input.cols), center.y / double(input.rows),
+                   area, 0, std::sqrt(area / M_PI), 0, ++id, "aabb_ratio"));
+      }
 
       cv::Mat submat(input, cv::Rect(left, top, w, h));
       cv::findContours(submat, contours, cv::RETR_EXTERNAL,
                        cv::CHAIN_APPROX_SIMPLE);
+      AlgoSetting::ID excluded_by =
+          roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio,
+                    _circularity, _convexity);
 
-      if (!roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio,
-                     _circularity, _convexity))
-        continue;
+      if (!excluded_by.isEmpty())
+        colonies.push_back(
+            Colony(center.x / double(input.cols), center.y / double(input.rows),
+                   area, 0, std::sqrt(area / M_PI), 0, ++id, excluded_by));
       else {
         double circ = cv::arcLength(contours[0], true);
 
@@ -308,7 +326,7 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
             contours[0], *reinterpret_cast<cv::Mat*>(base->input()));
         Colony detected(center.x / double(input.cols),
                         center.y / double(input.rows), area, circ,
-                        circ / (2 * M_PI), br, ++id, Colony::Type::INCLUDED);
+                        circ / (2 * M_PI), br, ++id, "");
         colonies.push_back(detected);
       }
     }
@@ -338,7 +356,7 @@ void Algo1Test::relativeFiltering(AlgorithmJob* base, AlgorithmResult* result) {
   else if (option == "brightness")
     get_data = &Colony::brightness;
   else
-    throw std::runtime_error("Unreachable");
+    throw Exception("Unreachable");
 
   for (std::size_t i = 0; i < input->size(); ++i)
     values[i] = (input->at(i).*get_data)();
@@ -362,16 +380,16 @@ void Algo1Test::cleanup() {
   /*int i = 0;
   for (void* stage : base->stack())
   {
-                                                                                                                                  std::string
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  std::string
   name = "stage" + std::to_string(i++);
 
-                                                                                                                                  cv::namedWindow(name,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  cv::namedWindow(name,
   cv::WINDOW_NORMAL); cv::resizeWindow(name, 1920, 1080); cv::imshow(name,
   *reinterpret_cast<cv::Mat*>(stage));
   }
 
   while (cv::waitKey(0) != 'q')
-                                                                                                                                  ;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;
   cv::destroyAllWindows();*/
 }
 }  // namespace c3picko

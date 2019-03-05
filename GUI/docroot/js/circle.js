@@ -17,7 +17,7 @@ const Circle = new Class({
       if (this.options.selected == true)
       {
          this.options.selected = false;  
-         this.set('linecolor', 'white');
+         this.set('linecolor', this.options.defaultLineColor);
       }
       else
       {

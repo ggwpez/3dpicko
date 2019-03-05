@@ -5,6 +5,7 @@
 #include "include/algo_setting.h"
 #include "include/algorithm_job.h"
 #include "include/algorithm_result.h"
+#include "include/exception.h"
 
 namespace c3picko {
 
@@ -26,28 +27,27 @@ void Algorithm::run() {
       << " crashed (step=";
   QTextStream(&error_postfix)
       << ",job=" << this->parent() << ",thread=" << QThread::currentThreadId()
-      << ")";
+      << ") ";
 
   job->timeStart();
-  for (int i = 0; i < steps_.size(); ++i) {
-    result->last_stage_ = i;
-    // Lets format an error string, in case it crashes
+  int i;
+  try {
+    for (i = 0; i < steps_.size(); ++i) {
+      result->last_stage_ = i;
+      if (job->elapsedMs() >= job->maxMs()) throw Exception("Timeout");
 
-    try {
       steps_[i](job, result);  // TODO only pass job
       result->stages_succeeded_ = true;
-    } catch (std::exception const& e) {
-      error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
-               << e.what();
-      result->stages_succeeded_ = false;
-      break;
-    } catch (...)  // FIXME abort
-    {
-      error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
-               << "unknown";
-      result->stages_succeeded_ = false;
-      break;
     }
+  } catch (std::exception const& e) {
+    error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
+             << e.what();
+    result->stages_succeeded_ = false;
+  } catch (...)  // FIXME abort
+  {
+    error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
+             << "unknown";
+    result->stages_succeeded_ = false;
   }
 
   try {
@@ -81,13 +81,14 @@ void Algorithm::run() {
 
 Algorithm::Algorithm(Algorithm::ID id, QString name, QString description,
                      QList<AlgoStep> steps, QList<AlgoSetting> settings,
-                     bool is_threadable)
+                     bool is_threadable, qint64 max_ms)
     : id_(id),
       name_(name),
       description_(description),
       steps_(steps),
       default_settings_(settings),
-      is_threadable_(is_threadable) {}
+      is_threadable_(is_threadable),
+      max_ms_(max_ms) {}
 
 typename Algorithm::ID Algorithm::id() const { return id_; }
 
@@ -100,6 +101,8 @@ QList<AlgoSetting> Algorithm::defaultSettings() const {
 }
 
 bool Algorithm::isThreadable() const { return is_threadable_; }
+
+qint64 Algorithm::maxMs() const { return max_ms_; }
 
 template <>
 QJsonObject Marshalling::toJson(const Algorithm& value) {

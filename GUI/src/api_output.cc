@@ -127,12 +127,10 @@ void APIOutput::ColonyDetectionStarted(
 void APIOutput::ColonyDetected(std::vector<Colony>* colonies, QObject* client) {
   QJsonArray json_coords;
 
-  for (Colony const& colony : *colonies) {
-    json_coords.push_back(
-        QJsonArray{colony.x(), colony.y(), colony.major_length()});
-  }
+  for (Colony const& colony : *colonies)
+    json_coords.push_back(Marshalling::toJson(colony));
 
-  emit op->toClient(client, "getpositions", {{"coords", json_coords}});
+  emit op->toClient(client, "getpositions", {{"colonies", json_coords}});
   //	delete colonies;
 }
 

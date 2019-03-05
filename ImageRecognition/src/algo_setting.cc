@@ -1,47 +1,51 @@
 #include "include/algo_setting.h"
+#include "include/exception.h"
 
 namespace c3picko {
 static QVariant empty_qv = QJsonValue();
 
 AlgoSetting AlgoSetting::make_checkbox(ID id, QString name, QString description,
-                                       bool default_value) {
+                                       bool default_value, QColor color) {
   return AlgoSetting(id, name, "checkbox", description, empty_qv, empty_qv,
-                     empty_qv, {}, default_value);
+                     empty_qv, {}, default_value, color);
 }
 
 AlgoSetting AlgoSetting::make_dropdown(AlgoSetting::ID id, QString name,
                                        QString description, QVariantMap options,
-                                       QString default_option_index) {
+                                       QString default_option_index,
+                                       QColor color) {
   return AlgoSetting(id, name, "dropdown", description, empty_qv, empty_qv,
-                     empty_qv, options, default_option_index);
+                     empty_qv, options, default_option_index, color);
 }
 
 AlgoSetting AlgoSetting::make_rangeslider_double(
     AlgoSetting::ID id, QString name, QString description, double min,
-    double max, double step, math::Range<double> default_value) {
+    double max, double step, math::Range<double> default_value, QColor color) {
   return AlgoSetting(id, name, "rangeslider", description, min, max, step, {},
-                     QVariant::fromValue(default_value));
+                     QVariant::fromValue(default_value), color);
 }
 
 AlgoSetting AlgoSetting::make_slider_int(ID id, QString name,
                                          QString description, int min, int max,
-                                         int step, int default_value) {
+                                         int step, int default_value,
+                                         QColor color) {
   return AlgoSetting(id, name, "slider", description, min, max, step, {},
-                     default_value);
+                     default_value, color);
 }
 
 AlgoSetting AlgoSetting::make_slider_double(ID id, QString name,
                                             QString description, double min,
                                             double max, double step,
-                                            double default_value) {
+                                            double default_value,
+                                            QColor color) {
   return AlgoSetting(id, name, "slider", description, min, max, step, {},
-                     default_value);
+                     default_value, color);
 }
 
 AlgoSetting::AlgoSetting(AlgoSetting::ID id, QString name, QString type,
                          QString description, QVariant min, QVariant max,
                          QVariant step, QVariantMap options,
-                         QVariant default_value, QVariant value)
+                         QVariant default_value, QColor color, QVariant value)
     : id_(id),
       name_(name),
       type_(type),
@@ -51,22 +55,22 @@ AlgoSetting::AlgoSetting(AlgoSetting::ID id, QString name, QString type,
       step_(step),
       options_(options),
       default_value_(default_value),
+      color_(color),
       value_(value) {
   if (type == "slider") {
     if (!min_.isValid() || !max_.isValid() || !default_value_.isValid())
-      throw std::runtime_error(
-          "AlgoSetting: All passed values must be non-null");
+      throw Exception("AlgoSetting: All passed values must be non-null");
 
     if ((min_.userType() != max_.userType()) ||
         (max_.userType() != step_.userType()) ||
         (step_.userType() != default_value_.userType()))
-      throw std::runtime_error(
+      throw Exception(
           "AlgoSetting: All passed values must have the declared type");
   }
   // TODO else
 
   if (value_.isValid() && (value_.userType() != default_value_.userType()))
-    throw std::runtime_error(
+    throw Exception(
         "AlgoSetting: default_value should have always the same type as value");
 }
 
@@ -90,16 +94,23 @@ QVariant AlgoSetting::defaultValueVariant() const { return default_value_; }
 
 QVariantMap const& AlgoSetting::options() const { return options_; }
 
+QColor AlgoSetting::color() const { return color_; }
+
 template <>
 QJsonObject Marshalling::toJson(const AlgoSetting& value) {
   QJsonObject obj;
   QString link = "/wiki/index.html#" + value.name().toLower().replace(' ', '-');
+  QString name = value.name();
+  // Color the name, if the color is not default
+  if (value.color() != AlgoSetting::DefaultColor)
+    name = "<font color=\"" + value.color().name() + "\">" + name + "</font>";
 
   obj["id"] = value.id();
   obj["type"] = value.type();
-  obj["name"] = value.name();
-  obj["description"] =
-      "<a href=\"" + link + "\" target=\"_blank\">Wiki link</a>";
+  obj["name"] = name;
+  obj["description"] = "";  // = "<a href=\"" + link + "\" target=\"_blank\"
+                            // rel=\"noopener\" >Wiki link</a>";
+  obj["color"] = value.color().name();
 
   if (value.type() == "slider") {
     obj["defaultValue"] = QJsonValue::fromVariant(value.defaultValueVariant());
@@ -123,7 +134,7 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
     obj["defaultValue"] = QJsonObject{{"min", def.lower_}, {"max", def.upper_}};
     obj["min"] = QJsonValue::fromVariant(value.minVariant());
     obj["max"] = QJsonValue::fromVariant(value.maxVariant());
-    obj["valueType"] = value.defaultValueVariant().typeName();
+    obj["valueType"] = "double";  // FIXME
     obj["step"] = QJsonValue::fromVariant(value.stepVariant());
   } else
     Q_UNREACHABLE();
@@ -133,18 +144,18 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
 
 template <>
 Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
-  throw std::runtime_error(
-      "Marshalling::fromJson<AlgoSetting> not tested");  // TODO
+  throw Exception("Marshalling::fromJson<AlgoSetting> not tested");  // TODO
   AlgoSetting::ID id = Marshalling::fromJson<QString>(obj["id"]);
   QString type = Marshalling::fromJson<QString>(obj["type"]).toLower();
   QString name = Marshalling::fromJson<QString>(obj["name"]);
   QString description = Marshalling::fromJson<QString>(obj["description"]);
   QVariant default_value = obj["defaultValue"].toVariant();
-  QString value_type = Marshalling::fromJson<QString>(obj["valueType"]).toLower();
-
+  QString value_type =
+      Marshalling::fromJson<QString>(obj["valueType"]).toLower();
+  // color missing
   if (value_type != "float" && value_type != "double" && value_type != "int" &&
       value_type != "bool")
-    throw std::runtime_error("Unknown value type");
+    throw Exception("Unknown value type");
 
   if (type == "slider") {
     QString value_type = Marshalling::fromJson<QString>(obj["valueType"]);
@@ -155,7 +166,7 @@ Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
                        default_value);
   } else if (type == "checkbox") {
     if (!default_value.canConvert<bool>())
-      throw std::runtime_error(
+      throw Exception(
           "Could not convert default value for checkbox to boolean");
 
     return AlgoSetting(id, name, "checkbox", description, empty_qv, empty_qv,
@@ -164,13 +175,14 @@ Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
     QVariantMap options = obj["options"].toObject().toVariantMap();
 
     if (!default_value.canConvert<int>())
-      throw std::runtime_error(
-          "Could not convert default value for dropdown to int");
+      throw Exception("Could not convert default value for dropdown to int");
 
     return AlgoSetting(id, name, "dropdown", description, empty_qv, empty_qv,
                        empty_qv, options, default_value);
   } else if (type == "rangeslider") {
   } else
-    throw std::runtime_error("Parsing exception");
+    throw Exception("Parsing exception");
 }
+
+const QColor AlgoSetting::DefaultColor = QColor::fromRgb(0, 0, 0, 0);
 }  // namespace c3picko

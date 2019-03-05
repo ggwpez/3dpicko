@@ -44,9 +44,11 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     api->startJob(job, client);
   } else if (path == "uploadimage") {
     // Get image data
-    QByteArray img_data(QByteArray::fromBase64(
-        Marshalling::fromJson<QString>(req_data["file"]).toUtf8()));  // TODO ugly code
-    QString img_name = Marshalling::fromJson<QString>(req_data["original_filename"]);
+    QByteArray img_data(
+        QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
+                                   .toUtf8()));  // TODO ugly code
+    QString img_name =
+        Marshalling::fromJson<QString>(req_data["original_filename"]);
     Image image =
         Image(img_data, img_name, "descrtiption", QDateTime::currentDateTime());
     qDebug() << "Hash" << image.id();

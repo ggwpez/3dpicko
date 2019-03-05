@@ -3,6 +3,7 @@
 #include "include/algorithm_manager.h"
 #include "include/algorithm_result.h"
 #include "include/commands/arbitrary_command.h"
+#include "include/exception.h"
 #include "include/gcodegenerator.h"
 #include "include/octoprint.h"
 
@@ -299,7 +300,7 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id,
                                                 client);
                     qDebug()
                         << "Detected" << algo_job->result()->colonies_.size()
-                        << "in" << algo_job->took_ms() << "ms";
+                        << "in" << algo_job->tookMs() << "ms";
                   });
 
           return algo_job;
@@ -358,8 +359,7 @@ void APIController::startJob(Job::ID id, QObject* client) {
   std::ostringstream s;
 
   QFile file("out.gcode");
-  if (!file.open(QIODevice::WriteOnly))
-    throw std::runtime_error("Could not save gcode");
+  if (!file.open(QIODevice::WriteOnly)) throw Exception("Could not save gcode");
   QTextStream ts(&file);
 
   QStringList gcode_list;
@@ -468,6 +468,9 @@ void APIController::request(QJsonObject request, QString raw_request,
                             QObject* client) {
   try {
     input_->serviceRequest(request, raw_request, client);
+  } catch (Exception const& e) {
+    output_->Error(e.what(), e.what(), client);
+    qWarning("std::exception %s", e.what());
   } catch (std::exception const& e) {
     output_->Error("Exception", e.what(), client);
     qWarning("std::exception %s", e.what());

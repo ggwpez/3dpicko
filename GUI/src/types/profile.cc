@@ -291,8 +291,10 @@ QJsonObject Marshalling::toJson(const Profile& value) {
 
 template <>
 Profile Marshalling::fromJson(const QJsonObject& obj) {
-  return Profile(Marshalling::fromJson<QString>(obj["type"]), Marshalling::fromJson<QString>(obj["profile_name"]),
-                 Marshalling::fromJson<QString>(obj["id"]), obj["settings"].toObject());
+  return Profile(Marshalling::fromJson<QString>(obj["type"]),
+                 Marshalling::fromJson<QString>(obj["profile_name"]),
+                 Marshalling::fromJson<QString>(obj["id"]),
+                 obj["settings"].toObject());
 }
 
 }  // namespace c3picko

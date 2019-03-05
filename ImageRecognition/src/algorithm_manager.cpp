@@ -6,24 +6,25 @@
 using namespace c3picko;
 
 namespace c3picko {
-AlgorithmManager::AlgorithmManager(QThreadPool *pool, QList<Algorithm *> algos,
-                                   QObject *_parent)
+AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
+                                   QObject* _parent)
     : QObject(_parent), pool_(pool), algos_(algos) {
-  for (Algorithm *algo : algos_) algo->setParent(this);
+  for (Algorithm* algo : algos_) algo->setParent(this);
 }
 
-AlgorithmJob *AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
+AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
                                           AlgorithmJob::ID job_id,
                                           AlgorithmResult::ID res_id,
                                           QJsonObject settings) {
-  for (Algorithm *algo : algos_) {
+  for (Algorithm* algo : algos_) {
     if (algo->id() == algo_id) {
-      cv::Mat *input = new cv::Mat(source.clone());
-      Algorithm *new_algo = algo->cloneEmpty();
-      AlgorithmResult *result = new AlgorithmResult(res_id);
+      cv::Mat* input = new cv::Mat(source.clone());
+      Algorithm* new_algo = algo->cloneEmpty();
+      AlgorithmResult* result = new AlgorithmResult(res_id);
+      qint64 max_time = new_algo->maxMs() * 2;
 
-      AlgorithmJob *job = new AlgorithmJob(job_id, new_algo, settings, input,
-                                           result, pool_, nullptr);
+      AlgorithmJob* job = new AlgorithmJob(job_id, new_algo, settings, input,
+                                           result, pool_, max_time, nullptr);
       connect(job, &AlgorithmJob::OnFinished, job,
               [input, job]() {  // TODO do we need a context object here?
                 delete input;
@@ -37,6 +38,6 @@ AlgorithmJob *AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
   return nullptr;
 }
 
-QList<Algorithm *> AlgorithmManager::algos() const { return algos_; }
+QList<Algorithm*> AlgorithmManager::algos() const { return algos_; }
 
 }  // namespace c3picko

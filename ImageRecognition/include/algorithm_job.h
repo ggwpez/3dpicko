@@ -24,7 +24,8 @@ class AlgorithmJob : public QObject {
 
  private:
   AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings, void* input,
-               AlgorithmResult* result, QThreadPool* pool, QObject* _parent);
+               AlgorithmResult* result, QThreadPool* pool, qint64 maxMs,
+               QObject* _parent);
 
  public:
   ~AlgorithmJob();
@@ -44,7 +45,10 @@ class AlgorithmJob : public QObject {
   ID id() const;
   AlgorithmResult::ID result_id() const;
 
-  qint64 took_ms() const;
+  qint64 tookMs() const;
+  qint64 elapsedMs() const;
+
+  qint64 maxMs() const;
 
  signals:
   void OnAlgoSucceeded();
@@ -80,7 +84,12 @@ class AlgorithmJob : public QObject {
    */
   AlgorithmResult* result_;
   AlgorithmResult::ID result_id_;
-  qint64 took_ms_;
+  /**
+   * @brief max_ms_ Soft limit for the maximal time, a job should take in ms.
+   *
+   * Hard limit is the expiryTimeout of the passed QThreadPool
+   */
+  qint64 max_ms_, took_ms_;
   QElapsedTimer timer_;
 };
 MAKE_MARSHALLABLE(AlgorithmJob);

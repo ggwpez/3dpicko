@@ -190,8 +190,10 @@ QJsonObject Marshalling::toJson(const Image &value) {
 
 template <>
 Image Marshalling::fromJson(const QJsonObject &obj) {
-  return Image(Marshalling::fromJson<QString>(obj["id"]), Marshalling::fromJson<QString>(obj["original_name"]),
-               Marshalling::fromJson<QString>(obj["description"]), Marshalling::fromJson<QString>(obj["path"]),
+  return Image(Marshalling::fromJson<QString>(obj["id"]),
+               Marshalling::fromJson<QString>(obj["original_name"]),
+               Marshalling::fromJson<QString>(obj["description"]),
+               Marshalling::fromJson<QString>(obj["path"]),
                Marshalling::fromJson<QDateTime>(obj["uploaded"].toObject()),
                obj["width"].toInt(), obj["height"].toInt());
 }

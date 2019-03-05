@@ -18,13 +18,9 @@ Größe Petrischale:
 */
 //  Image        Colonies     Tooltips
 var layer0 = {}, layer1 = {}, layer2 = { };
-// Variable containing the list of colonies
-var colony_coords = [];
 
-
-// Variable containing the list of colonies in mm
-var coordinatesMm = {"colonies":[]};
-
+// Array of colonies. See ImageRecognition/include/Colony.hpp
+var colonies = [];
 
 // Correct canvas size
 //resizeCanvas(drawArea);
@@ -100,7 +96,7 @@ function selectionTabEnter()
 
 function drawPositions(coords)
 {
-    colony_coords = coords.coords;
+    colonies = coords.colonies;
 
     printPositions();
 }
@@ -114,19 +110,28 @@ function printPositions(){
     balls = [];
 
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
-    layer1.context.font = "30px Arial";
-    layer1.context.fillStyle = "red";
-    layer1.context.textAlign = "left";
-    layer1.context.fillText(colony_coords.length,50,50);
 
     // Print new positions
-    colony_coords.forEach((colony) =>
+    colonies.forEach((colony) =>
     {
+        var color = 'white';
+        // TODO build color lookuptabl before for speedup
+        if (colony.excluded_by != "")
+        {
+            const found = algorithms["1"].settings.filter(s => (s.id == colony.excluded_by));
+
+            if (found && found.length)
+                color = found[0].color;
+            else
+                console.warn("Could not find setting ", colony.excluded_by);
+        }
+
         var ball = new Circle({
-            x: colony[0] *layer1.canvas.width,
-            y: colony[1] *layer1.canvas.height,
-            radius: colony[2] *1.25 *down_scale,            // Make them a bit better to see
-            linecolor: 'white',
+            x: colony.x *layer1.canvas.width,
+            y: colony.y *layer1.canvas.height,
+            radius: colony.major_length *1.25 *down_scale,            // Make them a bit better to see
+            linecolor: color,
+            defaultLinecolor: color,
             background: 'transparent',
             canvas: layer1.canvas
         });
