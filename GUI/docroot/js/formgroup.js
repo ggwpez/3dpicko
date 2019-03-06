@@ -49,6 +49,7 @@ class FormGroup{
             setTimeout(function() {
                 sliders.forEach(input => {input.value = input.defaultValue;});
                 checkboxes.forEach(input => {input.onchange();});
+                $(form).change();
             });
         });
         // set as unsaved on change, set as saved on submit/reset
