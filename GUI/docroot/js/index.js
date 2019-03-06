@@ -1,4 +1,4 @@
-/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colony_coords, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting */
+/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colonies, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting */
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
@@ -40,8 +40,7 @@ $(function Setup()
             if (type == "error"){
                 clearTimeout(loading_timeout_id);
                 clearTimeout(upload_timeout_id);
-                $('#apply-detection-settings').show();
-                $('#loading-detection-settings').hide();
+                document.body.classList.remove('wait');
                 $('#strategy-tab-button').prop("disabled", true);
                 $('#overlay').hide();
                 // TODO
@@ -151,10 +150,9 @@ $(function Setup()
             {
                 drawPositions(data);
                 clearTimeout(loading_timeout_id);
-                $('#apply-detection-settings').show();
-                $('#loading-detection-settings').hide();
-                ShowAlert("Detected "+data.coords.length+" Colonies");
-                $('#strategy-tab-button').prop("disabled", data.coords.length <= 0);
+                document.body.classList.remove('wait');
+                document.getElementById('detected-colonies-number').innerHTML = data.colonies.length;
+                $('#strategy-tab-button').prop("disabled", data.colonies.length <= 0);
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
@@ -307,7 +305,7 @@ function GetDetectionAlgorithmSettings(id){
     settings.AddInputEvents();
 }
 var loading_timeout_id;
-var UpdateDetectionSettings = function (e){
+var UpdateDetectionSettings = function (){
     // Send as:
     // {
     //  job_id: "222",
@@ -318,27 +316,22 @@ var UpdateDetectionSettings = function (e){
     //      "123": true
     //  }
     // }
-    if (e){
-        e.preventDefault();
-        $('#apply-detection-settings').hide();
-        $('#loading-detection-settings').show();
-        clearTimeout(loading_timeout_id);
-        loading_timeout_id = setTimeout(function(){
-            $('#apply-detection-settings').show();
-            $('#loading-detection-settings').hide();
-            ShowAlert("Colony Detection Timeout", "danger");
-        }, 4000);
-        const form_data = new FormData(this);
-        const algorithm_id = document.getElementById('select-algorithm').value;
-        let new_settings = {
-            job_id : current_job.id,
-            algorithm: algorithm_id,
-        };
-        new_settings.settings = FormGroup.ReadForm(algorithms[algorithm_id], form_data);
-        console.log("New Settings:", new_settings);
-        api('updatedetectionsettings', new_settings);
-        // ShowAlert("Updated Detection Settings");
-    }
+    document.body.classList.add('wait');
+    let form = document.getElementById('detection-settings-form');
+    clearTimeout(loading_timeout_id);
+    loading_timeout_id = setTimeout(function(){
+        document.body.classList.remove('wait');
+        ShowAlert("Colony Detection Timeout", "danger");
+    }, 4000);
+    const form_data = new FormData(form);
+    const algorithm_id = document.getElementById('select-algorithm').value;
+    let new_settings = {
+        job_id : current_job.id,
+        algorithm: algorithm_id,
+    };
+    new_settings.settings = FormGroup.ReadForm(algorithms[algorithm_id], form_data);
+    console.log("New Settings:", new_settings);
+    api('updatedetectionsettings', new_settings);
 }
 
 function AddJobToList(job)
@@ -384,8 +377,8 @@ function AddImageToList(image_object){
         let html = `
         <div class="card m-1 image-card" id="img-${image_object.id}">
         <button type="button" class="close" style="line-height: 0.5;" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
-        <div class="card-body p-1" onclick="SetChosen('${image_object.id}');" $(&quot;html, body&quot;).animate({ scrollTop: 0 }, &quot;slow&quot;);" style="cursor: pointer;">
-        <h7 class="card-title mr-3 p-1">${image_object.original_name}</h7>
+        <div class="card-body p-1" onclick="SetChosen('${image_object.id}');window.scrollTo(0,0);" style="cursor: pointer;">
+        <h7 class="card-title mb-1 mr-3">${image_object.original_name}</h7>
         <div class="spinner-border m-5" id="loading-${image_object.id}"></div>
         <img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
         <p class="card-text">Date: ${image_object.uploaded.formatted}</li></p>
@@ -417,6 +410,9 @@ $(function(){
     });
 
     FormGroup.AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
+    $('#detection-settings-form').change(function(){
+        UpdateDetectionSettings();
+    });
 
     $('#delete-dialog').on('show.bs.modal', function (e) {
     // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
@@ -554,10 +550,12 @@ function attributesTab(){
     var rect = cropper.getData();
     api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
-
+$('#selection-tab').on('shown.bs.tab', function () {
+    selectionTabEnter();
+    UpdateDetectionSettings();
+});
 function selectionTab(){
     if(chosen_image.path){
-        selectionTabEnter();
         const printer_selection = document.getElementById('select-printer-profile');
         const socket_selection = document.getElementById('select-socket-profile');
         const printer_id = printer_selection.options[printer_selection.selectedIndex].value;
@@ -573,9 +571,6 @@ function selectionTab(){
         }
         api("createjob", current_job);
         api("getdetectionalgorithms");  // TODO should we put this in the init?
-        // TODO Remove (only for debugging)
-        //GetDetectionAlgorithms({});
-        $('#detection-settings-div').show();
         tabEnter(3);
     }
 }
@@ -586,7 +581,7 @@ function strategyTab(){
     for(let profile_id in all_profiles){
         let profile = all_profiles[profile_id];
         if(profile.type=="plate-profile"){
-            if(profile.settings.number_of_rows*profile.settings.number_of_columns >= colony_coords.length){
+            if(profile.settings.number_of_rows*profile.settings.number_of_columns >= colonies.length){
                 let plate_profile_option = document.createElement('option');
                 plate_profile_option.value = profile.id;
                 plate_profile_option.text = profile.profile_name;
@@ -596,12 +591,11 @@ function strategyTab(){
     }
     if(plate_selection.length > 0){
         let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-        drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colony_coords.length);
+        drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colonies.length);
         plate_selection.addEventListener("change", function(){
             let plate_id = this.options[this.selectedIndex].value;
-            drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colony_coords.length);
+            drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colonies.length);
         });
-        $('#detection-settings-div').hide();
         tabEnter(4);
     } else ShowAlert("Too many colonys :(", "danger");
 }

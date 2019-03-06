@@ -8,7 +8,7 @@ niedrige Prio:
 	passe Kreisgröße auf Durchschnitt von erkannten Kolonien an.
 	ziehe umrandung für die echte clickArea und füge Punkte hinzu.
 	erkenne Farbe und invertiere sie für die Kreise.
-*/
+    */
 
 /*
 Infos:
@@ -29,21 +29,20 @@ var colonies = [];
 
 // Select size of the canvas
 function resizeCanvas(canvas) {
-   const width = canvas.clientWidth;
-   const height = canvas.clientHeight;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
 
-   if (canvas.width !== width || canvas.height !== height) {
-     canvas.width = width;
-     canvas.height = height;
-   }
+    if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+    }
 }
 
 // colony detection
 function getPositions(){
     var image_id = chosen_image.id;
     console.log("colonies  from image " +image_id);
-// lade Ergebnisse der Kolonieerkennung
-
+    // lade Ergebnisse der Kolonieerkennung
     api('getpositions', { id: image_id });
 }
 
@@ -64,9 +63,9 @@ function selectionTabEnter()
         // TODO only downscale, would upscale on 4k screens
 
         var height, width;
-        if ($(window).width() < img.width)
+        if ($('#colony-layers').width() < img.width)
         {
-            width = $(window).width() *.75;
+            width = $('#colony-layers').width();
             down_scale = width /img.width;
             height = down_scale *img.height;
         }
@@ -76,6 +75,10 @@ function selectionTabEnter()
             height = img.height;
             down_scale = 1;
         }
+
+        // fix width
+        // TODO enable resizing?
+        $('#selection').css('min-width', width+$('#detection-settings-div').innerWidth());
 
         console.log("Downscale factor: ", down_scale);
 
@@ -148,35 +151,35 @@ function printPositions(){
     });
 
     layer2.canvas.onmousemove =
-        function (e)
+    function (e)
+    {
+        var rect = layer2.canvas.getBoundingClientRect();
+        var x = e.clientX -rect.left,
+        y = e.clientY -rect.top;
+
+        for (var i = 0; i < balls.length; ++i)
         {
-            var rect = layer2.canvas.getBoundingClientRect();
-            var x = e.clientX -rect.left,
-            y = e.clientY -rect.top;
+            var ball = balls[i];
 
-            for (var i = 0; i < balls.length; ++i)
+            if (ball.isMouseOver(x, y))
             {
-                var ball = balls[i];
-
-                if (ball.isMouseOver(x, y))
+                if (! ball.mouseover)
                 {
-                    if (! ball.mouseover)
-                    {
-                        ball.fireEvent('mouseenter');
-                        ball.mouseover = true;
+                    ball.fireEvent('mouseenter');
+                    ball.mouseover = true;
 
-                        drawTooltip(i);
-                    }
-                }
-                else if (ball.mouseover)
-                {
-                    ball.mouseover = false;
-                    ball.fireEvent('mouseleave');
-
-                    layer2.context.clearRect(0, 0, layer1.canvas.width, layer1.canvas.height);
+                    drawTooltip(i);
                 }
             }
-        };
+            else if (ball.mouseover)
+            {
+                ball.mouseover = false;
+                ball.fireEvent('mouseleave');
+
+                layer2.context.clearRect(0, 0, layer1.canvas.width, layer1.canvas.height);
+            }
+        }
+    };
 
     layer2.canvas.onmousedown = (e) =>
     {

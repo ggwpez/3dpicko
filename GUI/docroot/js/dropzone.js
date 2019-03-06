@@ -54,7 +54,7 @@ function upload(file){
     upload_timeout_id = setTimeout(function(){
         $('#overlay').hide();
         ShowAlert("Image Upload Timeout", "danger");
-    }, 5000);
+    }, 10000);
     if(file){
         let rawData = new ArrayBuffer();    // TODO
         let reader = new FileReader();

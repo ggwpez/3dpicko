@@ -68,7 +68,9 @@ var multirange = function(input) {
             evt.preventDefault();
             if(isInverted) input.valueHigh = clickValue;
             else input.valueLow = clickValue;
+            // manually trigger oninput and onchange
             input.oninput();
+            $(input.form).change();
             return false;
         }
     });
