@@ -6,31 +6,26 @@
 #include "include/algorithm.h"
 
 namespace c3picko {
-class Algo1Test : public Algorithm {
+class Normal1 : public Algorithm {
   Q_OBJECT
  public:
-  Algo1Test();
-  virtual ~Algo1Test() override;
+  Normal1();
+  virtual ~Normal1() override;
 
-  static void cvt(AlgorithmJob *base, AlgorithmResult *result);
-  static void threshold(AlgorithmJob *base, AlgorithmResult *result);
-  static void erodeAndDilate(AlgorithmJob *base, AlgorithmResult *result);
-  static void plateDetection(AlgorithmJob *base, AlgorithmResult *result);
-  static void label(AlgorithmJob *base, AlgorithmResult *result);
-  static void relativeFiltering(AlgorithmJob *base, AlgorithmResult *result);
+  static void cvt(AlgorithmJob* base, AlgorithmResult* result);
+  static void threshold(AlgorithmJob* base, AlgorithmResult* result);
+  static void erodeAndDilate(AlgorithmJob* base, AlgorithmResult* result);
+  static void plateDetection(AlgorithmJob* base, AlgorithmResult* result);
+  static void label(AlgorithmJob* base, AlgorithmResult* result);
+  static void relativeFiltering(AlgorithmJob* base, AlgorithmResult* result);
 
-  /**
-   * @brief Outdated
-   */
-  static void cleanup();
-
-  virtual inline Algorithm *cloneEmpty() const override {
-    return new Algo1Test();
+  virtual inline Algorithm* cloneEmpty() const override {
+    return new Normal1();
   }
 
-  void render_rrect(cv::Mat &out, cv::RotatedRect rect);
-  void drawText(cv::Mat &img, cv::Mat &output,
-                std::vector<cv::Vec3f> &colonies);
+  void render_rrect(cv::Mat& out, cv::RotatedRect rect);
+  void drawText(cv::Mat& img, cv::Mat& output,
+                std::vector<cv::Vec3f>& colonies);
 
  private:
 };

@@ -19,10 +19,10 @@ class AlgorithmResult {
   AlgorithmResult(ID id);
   ~AlgorithmResult();
 
-  cv::Mat &newMat();
-  cv::Mat &newMat(cv::Mat const &copy_from);
+  cv::Mat& newMat();
+  cv::Mat& newMat(cv::Mat const& copy_from);
 
-  cv::Mat &oldMat();
+  cv::Mat& oldMat();
 
  public:
   ID id_;
@@ -43,11 +43,6 @@ class AlgorithmResult {
   int last_stage_;
   QString stage_error_, cleanup_error_;
 
-  /**
-   * @brief Amount of nanoseconds the job took.
-   */
-  quint64 took_ns_;
-
   struct {
   } plate_;  // TODO
   std::vector<Colony> colonies_;
@@ -62,7 +57,7 @@ class AlgorithmResult {
   QString stageError() const;
 
  private:
-  std::list<cv::Mat *> stack_;
+  std::list<cv::Mat*> stack_;
 };
 MAKE_MARSHALLABLE(AlgorithmResult);
 }  // namespace c3picko

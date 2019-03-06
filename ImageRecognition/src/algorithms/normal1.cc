@@ -1,4 +1,4 @@
-#include "include/algorithms/algo1_test.h"
+#include "include/algorithms/normal1.h"
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include "include/algo_setting.h"
@@ -9,13 +9,15 @@
 
 namespace c3picko {
 
-Algo1Test::Algo1Test()
+Normal1::Normal1()
     : Algorithm(
-          "1", "NormalWithPlate", "",
-          {&Algo1Test::cvt, &Algo1Test::threshold, &Algo1Test::erodeAndDilate,
-           &Algo1Test::plateDetection, &Algo1Test::label,
-           &Algo1Test::relativeFiltering},
-          {AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
+          "1", "Normal1", "Detects colonies with standard illumination",
+          {&Normal1::cvt, &Normal1::threshold, &Normal1::erodeAndDilate,
+           &Normal1::label, &Normal1::relativeFiltering},
+          {AlgoSetting::make_checkbox("show_excluded_by_algo",
+                                      "Show ignored by algorithm", "", true,
+                                      Qt::red),
+           AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
                                                 1, {120, 1000}),
            AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
                                                 "", 0, 1, .001, {.7, 1},
@@ -27,10 +29,8 @@ Algo1Test::Algo1Test()
                                                 1, .001, {.8, 1}, Qt::green),
            AlgoSetting::make_rangeslider_double(
                "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-           AlgoSetting::make_checkbox("plate_detection", "Detect the plate", "",
-                                      true),
-           AlgoSetting::make_checkbox("fluro_thresh", "Threshold by brightness",
-                                      "", false),
+           //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
+           //plate", "", true),
            AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
                                       "Select an attribute to filter",
                                       {{"n", "None"},
@@ -43,9 +43,9 @@ Algo1Test::Algo1Test()
                                                 -5, 5, .01, {-5, 5})},
           true, 3000) {}
 
-Algo1Test::~Algo1Test() {}
+Normal1::~Normal1() {}
 
-void Algo1Test::render_rrect(cv::Mat& out, cv::RotatedRect rect) {
+void Normal1::render_rrect(cv::Mat& out, cv::RotatedRect rect) {
   cv::Point2f vertices2f[4];
   rect.points(vertices2f);
 
@@ -54,8 +54,8 @@ void Algo1Test::render_rrect(cv::Mat& out, cv::RotatedRect rect) {
   cv::fillConvexPoly(out, vertices, 4, cv::Vec3b(255, 255, 255));
 }
 
-void Algo1Test::drawText(cv::Mat& img, cv::Mat& output,
-                         std::vector<cv::Vec3f>& colonies) {
+void Normal1::drawText(cv::Mat& img, cv::Mat& output,
+                       std::vector<cv::Vec3f>& colonies) {
   cv::Point2i img_center{img.cols / 2, img.rows / 2};
 
   // Sort the colonies by ascending distance from the center
@@ -122,31 +122,24 @@ static AlgoSetting::ID roundness(int area, int w, int h,
   return convexity.contains(convex) ? "" : "circularity";  // flouro .91
 }
 
-void Algo1Test::cvt(AlgorithmJob* base, AlgorithmResult* result) {
+void Normal1::cvt(AlgorithmJob* base, AlgorithmResult* result) {
   result->newMat();
 
   cv::Mat* input = reinterpret_cast<cv::Mat*>(base->input());
   cv::cvtColor(*input, result->newMat(), CV_BGR2GRAY);
 }
 
-void Algo1Test::threshold(AlgorithmJob* base, AlgorithmResult* result) {
-  bool fluro_thresh = base->settingById("fluro_thresh").value<bool>();
+void Normal1::threshold(AlgorithmJob* base, AlgorithmResult* result) {
   // Calculate mean and standart deviation
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
 
   cv::Scalar mean, stddev;
-  // Filter by brightest pixels
-  if (fluro_thresh) {
-    cv::meanStdDev(input, mean, stddev);
-    cv::threshold(input, output, mean[0] + 1.5 * stddev[0], 255,
-                  cv::THRESH_BINARY);  // flour TODO tryp Otsu's method
-  } else
-    cv::adaptiveThreshold(input, output, 255, cv::ADAPTIVE_THRESH_MEAN_C,
-                          cv::THRESH_BINARY_INV, 51, 1);  // non flour
+  cv::adaptiveThreshold(input, output, 255, cv::ADAPTIVE_THRESH_MEAN_C,
+                        cv::THRESH_BINARY_INV, 51, 1);  // non flour
 }
 
-void Algo1Test::erodeAndDilate(AlgorithmJob* base, AlgorithmResult* result) {
+void Normal1::erodeAndDilate(AlgorithmJob* base, AlgorithmResult* result) {
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
 
@@ -160,7 +153,7 @@ void Algo1Test::erodeAndDilate(AlgorithmJob* base, AlgorithmResult* result) {
   cv::dilate(output, output, kernel);
 }
 
-void Algo1Test::plateDetection(AlgorithmJob* base, AlgorithmResult* result) {
+void Normal1::plateDetection(AlgorithmJob* base, AlgorithmResult* result) {
   cv::Mat& erroded = result->oldMat();
   // cv::Mat& output  =
   // result->newMat(*reinterpret_cast<cv::Mat*>(base->input()));
@@ -251,7 +244,7 @@ void Algo1Test::plateDetection(AlgorithmJob* base, AlgorithmResult* result) {
   }
 }
 
-void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
+void Normal1::label(AlgorithmJob* base, AlgorithmResult* result) {
   cv::Mat& input = result->oldMat();
   auto& colonies = result->colonies_;
 
@@ -266,6 +259,7 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
       base->settingById("circularity").value<math::Range<double>>();
   math::Range<double> _convexity =
       base->settingById("convexity").value<math::Range<double>>();
+  bool show_excluded = base->settingById("show_excluded_by_algo").value<bool>();
 
   cv::Mat stats, labeled, centers;
 
@@ -282,7 +276,13 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
     int r = int(center.y), c = int(center.x);
     int label = labeled.at<int>(r, c);
 
-    if (!label) continue;
+    if (!label) {
+      if (show_excluded)
+        colonies.push_back(Colony(center.x / double(input.cols),
+                                  center.y / double(input.rows), 0, 0, 10, 0,
+                                  ++id, "show_excluded_by_algo"));
+      continue;
+    }
 
     int area = stats.at<int>(label, cv::CC_STAT_AREA);
     int w = stats.at<int>(label, cv::CC_STAT_WIDTH);
@@ -290,10 +290,12 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
     int top = stats.at<int>(label, cv::CC_STAT_TOP);
     int left = stats.at<int>(label, cv::CC_STAT_LEFT);
 
-    if (!_area.contains(area))
-      // colonies.push_back(Colony(center.x / double(input.cols), center.y /
-      // double(input.rows), area, , ++id, "area"));
+    if (!_area.contains(area)) {
+      colonies.push_back(Colony(center.x / double(input.cols),
+                                center.y / double(input.rows), area, 0,
+                                std::sqrt(area / M_PI), 0, ++id, "area"));
       continue;
+    }
     // Filter by roundness
     else {
       std::vector<std::vector<cv::Point>> contours;
@@ -333,7 +335,7 @@ void Algo1Test::label(AlgorithmJob* base, AlgorithmResult* result) {
   }
 }
 
-void Algo1Test::relativeFiltering(AlgorithmJob* base, AlgorithmResult* result) {
+void Normal1::relativeFiltering(AlgorithmJob* base, AlgorithmResult* result) {
   std::vector<Colony>* input = &result->colonies_;
   // Should we skip the step?
   QString option =
@@ -376,20 +378,4 @@ void Algo1Test::relativeFiltering(AlgorithmJob* base, AlgorithmResult* result) {
   }
 }
 
-void Algo1Test::cleanup() {
-  /*int i = 0;
-  for (void* stage : base->stack())
-  {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  std::string
-  name = "stage" + std::to_string(i++);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  cv::namedWindow(name,
-  cv::WINDOW_NORMAL); cv::resizeWindow(name, 1920, 1080); cv::imshow(name,
-  *reinterpret_cast<cv::Mat*>(stage));
-  }
-
-  while (cv::waitKey(0) != 'q')
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ;
-  cv::destroyAllWindows();*/
-}
 }  // namespace c3picko

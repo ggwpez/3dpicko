@@ -1,4 +1,15 @@
-#ifndef FLURO1_H
-#define FLURO1_H
+#pragma once
 
-#endif // FLURO1_H
+#include "include/algorithm.h"
+
+namespace c3picko {
+class Fluro1 : public Algorithm {
+  Q_OBJECT
+ public:
+  Fluro1();
+
+  static void threshold(AlgorithmJob* base, AlgorithmResult* result);
+
+  virtual inline Algorithm* cloneEmpty() const override { return new Fluro1(); }
+};
+}  // namespace c3picko

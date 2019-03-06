@@ -1,5 +1,6 @@
 #include "include/algorithm_manager.h"
-#include "include/algorithms/algo1_test.h"
+#include "include/algorithms/fluro1.h"
+#include "include/algorithms/normal1.h"
 #include "include/api_controller.h"
 #include "include/database.hpp"
 #include "include/requestmapper.h"
@@ -12,6 +13,7 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QThreadPool>
+#include <QtGlobal>
 
 #ifdef Q_OS_UNIX
 #include "include/signal_daemon.h"
@@ -81,7 +83,7 @@ static int start(int argc, char** argv) {
   QString configFileName = searchConfigFile();
 
   AlgorithmManager* detector = new AlgorithmManager(
-      QThreadPool::globalInstance(), {new Algo1Test()}, &app);
+      QThreadPool::globalInstance(), {new Normal1(), new Fluro1()}, &app);
 
   Database* db = new Database("database.json", &app);
   APIController* api = new APIController(detector, db, &app);
