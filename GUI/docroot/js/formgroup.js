@@ -130,7 +130,7 @@ class FormGroup{
             value = Math.round(value * (1/step)) / (1/step);
             html += `<br>
             <input type="range" class="custom-range" id="slider-${id}${this.form_id}" name="${id}" min="${min}" max="${max}" step="${step}" value="${value}" oninput="$('#number-${id}${this.form_id}')[0].value=this.value;$('#number-${id}${this.form_id}').trigger('input');">
-            <div style="text-align: center;"><span style="float:left;">${min}</span>
+            <div style="text-align: center;margin-top:-5px;"><span style="float:left;">${min}</span>
             <input style="max-width: 40%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${this.form_id}" value="${value}" oninput="$('#slider-${id}${this.form_id}')[0].value=this.value;">
             <span style="float:right">${max}</span></div>
             `;
@@ -143,8 +143,8 @@ class FormGroup{
             <input type="range" class="custom-range" id="slider-${id}${this.form_id}" multiple value="${value.min},${value.max}" min="${min}" max="${max}" step="${step}" oninput="$('#number-${id}${this.form_id}-min')[0].value=this.valueLow;$('#number-${id}${this.form_id}-min').trigger('input');$('#number-${id}${this.form_id}-max')[0].value=this.valueHigh;$('#number-${id}${this.form_id}-max').trigger('input');" >
             </div>
             <div style="text-align: center;"><span style="float:left;">${min}</span>
-            <input style="max-width: 20%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${this.form_id}-min" name="${id}" value="${value.min}" onchange="$('#slider-${id}${this.form_id}')[0].valueLow=this.value;$('#slider-${id}${this.form_id}').trigger('input');">
-            <input style="max-width: 20%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${this.form_id}-max" name="${id}" value="${value.max}" onchange="$('#slider-${id}${this.form_id}')[0].valueHigh=this.value;$('#slider-${id}${this.form_id}').trigger('input');">
+            <input style="max-width: 30%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${this.form_id}-min" name="${id}" value="${value.min}" onchange="$('#slider-${id}${this.form_id}')[0].valueLow=this.value;$('#slider-${id}${this.form_id}').trigger('input');">
+            <input style="max-width: 30%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="number-${id}${this.form_id}-max" name="${id}" value="${value.max}" onchange="$('#slider-${id}${this.form_id}')[0].valueHigh=this.value;$('#slider-${id}${this.form_id}').trigger('input');">
             <span style="float:right">${max}</span></div>
             `;
         }

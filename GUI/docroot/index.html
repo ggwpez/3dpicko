@@ -104,11 +104,8 @@
                 </form>
                 <button class="btn btn-success next-step" onclick="selectionTab()">Continue</button>
               </div>
-              
-
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
-
                   <div class="col-10" id="colony-layers">
                     <h2>Detected Colonies: <span id="detected-colonies-number" class="text-primary"></span></h2>
                     <div id="layer_parent" style="position: relative;">
@@ -121,7 +118,6 @@
                     </div>
                     <div id="showCoordinates"></div>
                   </div>
-
                   <div class="col-2" id="detection-settings-div">
                     <h4>Detection Settings</h4>
                     <div class="form-group">
@@ -129,28 +125,27 @@
                       <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
                     </div>
                     <form id="detection-settings-form">
-                      <button type="reset" class="btn btn-outline-primary btn-sm">Reset Default Values</button>
+                      <button type="reset" class="btn btn-outline-primary btn-sm w-100">Reset to Default Values</button>
                       <div id="detection-settings"></div>
                     </form>
                   </div>
-
                 </div>
               </div>
-
-
-
-              <div class="tab-pane fade col-md-8" id="strategy">
-                <h2>Goal Plate</h2>
-                <form id="strategy-form" name="strategy-form">
-                  <div class="form-group">
-                    <!-- <label for="select-plate-profile">Plates:</label> -->
-                    <select id="select-plate-profile"></select>
-                  </div>
-                </form>
-                <h2>Choose Starting Well</h2>
-                <canvas id="pickstrategy-canvas"></canvas>
-                <br>
-                <button class="btn btn-success m-2 next-step" onclick="overviewTab()">Continue</button>
+              <div class="tab-pane fade col-md-8 col-lg-5" id="strategy">
+                  <h2>Choose Goal Plate and Number of Colonies</h2>
+                  <div style="width: fit-content; width: -moz-fit-content;">
+                  <form id="strategy-form" name="strategy-form">
+                    <div class="form-group">
+                      <label for="select-plate-profile">Goal Plate:</label>
+                      <select class="form-control" id="select-plate-profile"></select>
+                    </div>
+                    <div id="number-of-colonies-slider"></div>
+                  </form>
+                  <h2>Choose Starting Well</h2>
+                  <canvas id="pickstrategy-canvas"></canvas>
+                  <br>
+                  <button class="btn btn-success next-step" onclick="overviewTab()">Continue</button>
+                </div>
               </div>
               <div class="tab-pane fade col-md-8" id="overview">
                 <h2>Overview</h2>
@@ -178,7 +173,7 @@
                     </div>
                   </div>
                 </form>
-                <button class="btn btn-primary m-2" id="execute-button" onclick="executeTab()">Start picking ></button>
+                <button class="btn btn-primary m-2" id="execute-button" onclick="executeTab()">Start picking</button>
                 <button class="btn btn-primary" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
               </div>
               <div class="tab-pane fade col-md-8" id="execute">

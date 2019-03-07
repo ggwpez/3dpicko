@@ -1,4 +1,4 @@
-body.wait, body.wait * { 
+body.wait, body.wait * {
 	cursor: progress !important;
 }
 label{
@@ -7,10 +7,10 @@ label{
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
-.nav{
-	white-space: nowrap;
+.next-step{
+	float: right;
 }
-#nav-new-job h4{
+.nav{
 	white-space: nowrap;
 }
 /* close button */
@@ -44,7 +44,7 @@ label{
 }
 .card-title{
 	display: block;
-	word-break: break-all;	
+	word-break: break-all;
 }
 .card-header{
 	padding-bottom: 0px;
@@ -107,10 +107,10 @@ label{
 
 #overlay{
 	position: fixed;
-	top: 0; 
-	left: 0; 
+	top: 0;
+	left: 0;
 	width: 100%;
-	height: 100%; 
+	height: 100%;
 	background: rgba(0,0,0,0.5);
 	text-align: center;
 	z-index: 10;
@@ -151,6 +151,12 @@ img {
 }
 .form-group{
 	margin-bottom: 0.5rem;
+}
+
+/* Strategy Tab */
+#strategy input[type=number]{
+	width: 2ch;
+	min-width: 5ch;
 }
 
 /* Profile Settings Page */

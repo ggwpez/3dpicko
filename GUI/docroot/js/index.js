@@ -1,4 +1,4 @@
-/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colonies, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting */
+/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colonies, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting, number_of_colonies */
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
@@ -151,8 +151,8 @@ $(function Setup()
                 drawPositions(data);
                 clearTimeout(loading_timeout_id);
                 document.body.classList.remove('wait');
-                document.getElementById('detected-colonies-number').innerHTML = data.colonies.length;
-                $('#strategy-tab-button').prop("disabled", data.colonies.length <= 0);
+                document.getElementById('detected-colonies-number').innerHTML = number_of_colonies;
+                $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
@@ -292,7 +292,7 @@ function GetDetectionAlgorithms(detection_algorithms){
         algorithm_option.title = algorithm.description;
         algorithm_selection.appendChild(algorithm_option);
     }
-    algorithm_selection.onchange = function(){GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);};
+    algorithm_selection.onchange = function(){GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);UpdateDetectionSettings()};
     GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);
 }
 
@@ -535,7 +535,7 @@ $('#cut-tab').on('shown.bs.tab', function () {
 function cutTab(){
     if(chosen_image.path){
         const cutImg = document.getElementById('cutImg');
-        cutImg.onload = function(){ 
+        cutImg.onload = function(){
             tabEnter(1);
         }
         cutImg.src = chosen_image.path;
@@ -581,23 +581,43 @@ function strategyTab(){
     for(let profile_id in all_profiles){
         let profile = all_profiles[profile_id];
         if(profile.type=="plate-profile"){
-            if(profile.settings.number_of_rows*profile.settings.number_of_columns >= colonies.length){
-                let plate_profile_option = document.createElement('option');
-                plate_profile_option.value = profile.id;
-                plate_profile_option.text = profile.profile_name;
-                plate_selection.appendChild(plate_profile_option);
-            }
+            if(profile.id == default_profiles[profile.type]) plate_selection.add(new Option(profile.profile_name,  profile.id, true, true), 0);
+            else plate_selection.add(new Option(profile.profile_name, profile.id));
         }
     }
     if(plate_selection.length > 0){
-        let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-        drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colonies.length);
-        plate_selection.addEventListener("change", function(){
+        plate_selection.onchange = function(){
             let plate_id = this.options[this.selectedIndex].value;
-            drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colonies.length);
-        });
+            let plate = all_profiles[plate_id];
+            drawWells(plate.settings.number_of_columns, plate.settings.number_of_rows, number_of_colonies);
+            let max_colonies = Math.min(number_of_colonies, plate.settings.number_of_columns*plate.settings.number_of_rows);
+            let template = {
+                settings: [
+                {
+                    name: "Number of Colonies to be picked",
+                    id: "max_number_of_colonies",
+                    type: "slider",
+                    min: 1,
+                    max: max_colonies,
+                    step: 1,
+                    description: "Choose number of detected colonies that will be transferred to Goal Plate.",
+                    defaultValue: max_colonies
+                }
+                ]
+            }
+            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].description += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Not all detected colonies fit on this plate.</span>";
+            let form = new FormGroup(template, "strategy-form");
+            document.getElementById("number-of-colonies-slider").innerHTML = form.getHtml();
+            form.AddInputEvents();
+            document.getElementById('number-max_number_of_coloniesstrategy-form').insertAdjacentHTML('afterend', "/"+number_of_colonies);
+            document.getElementById('slider-max_number_of_coloniesstrategy-form').addEventListener('input', function(){
+                updateWells(this.value);
+            });
+            updateWells(max_colonies);
+        };
+        plate_selection.onchange();
         tabEnter(4);
-    } else ShowAlert("Too many colonys :(", "danger");
+    }
 }
 
 function overviewTab(){
@@ -638,7 +658,7 @@ function executeTab(){
         $('#execute-button').hide();
         $('#pickjob-running').show();
         api('startjob', {id: current_job.id});
-    } 
+    }
     form.classList.add('was-validated');
 }
 

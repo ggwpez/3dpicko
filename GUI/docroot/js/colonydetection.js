@@ -21,11 +21,11 @@ var layer0 = {}, layer1 = {}, layer2 = { };
 
 // Array of colonies. See ImageRecognition/include/Colony.hpp
 var colonies = [];
-
+var number_of_colonies = 0;
 // Correct canvas size
 //resizeCanvas(drawArea);
 
-// React to clicks insiede of drawArea
+// React to clicks inside of drawArea
 
 // Select size of the canvas
 function resizeCanvas(canvas) {
@@ -61,7 +61,6 @@ function selectionTabEnter()
     img.onload = function ()
     {
         // TODO only downscale, would upscale on 4k screens
-
         var height, width;
         if ($('#colony-layers').width() < img.width)
         {
@@ -114,6 +113,7 @@ function printPositions(){
 
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
 
+    number_of_colonies = 0;
     // Print new positions
     colonies.forEach((colony) =>
     {
@@ -127,7 +127,7 @@ function printPositions(){
                 color = found[0].color;
             else
                 console.warn("Could not find setting ", colony.excluded_by);
-        }
+        } else number_of_colonies++;
 
         var ball = new Circle({
             x: colony.x *layer1.canvas.width,
