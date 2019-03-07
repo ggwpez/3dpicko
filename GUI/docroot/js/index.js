@@ -631,20 +631,21 @@ function overviewTab(){
         const canvas_layer0 = document.getElementById('layer0');
         const canvas_layer1 = document.getElementById('layer1');
         // TODO onclick resize
+        document.getElementById('processed-layer0').src = canvas_layer0.toDataURL();
+        document.getElementById('processed-layer1').src = canvas_layer1.toDataURL();
         const html = `
-        <div style="position: relative;">
-        <img id="processed-layer0" src="${canvas_layer0.toDataURL()}" width="100%" style="z-index: 0;">
-        <img id="processed-layer1" src="${canvas_layer1.toDataURL()}" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
-        </div>
         <ul class="mt-2">
         <li>Job name: ${current_job.name}</li>
         <li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
         <li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
+        <li>Plate: ${all_profiles[plate_id].profile_name}</li>
         <li>Description: ${current_job.description}</li>
+        <li>Number of detected colonies: ${number_of_colonies}</li>
+        <li>Number of picked colonies: ${document.getElementById('number-max_number_of_coloniesstrategy-form').value}</li>
         <li>Pick strategy: Starting at ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
         </ul>
         `;
-        document.getElementById('overview-content').insertAdjacentHTML('afterbegin', html);
+        document.getElementById('overview-metadata').insertAdjacentHTML('afterbegin', html);
         tabEnter(5);
     }, 100);
 }
@@ -653,7 +654,6 @@ function executeTab(){
     var form = document.getElementById('check-preconditions');
     if (form.checkValidity() === true){
         //tabEnter(6);
-        $('#check-preconditions-header').hide();
         $('#check-preconditions').hide();
         $('#execute-button').hide();
         $('#pickjob-running').show();

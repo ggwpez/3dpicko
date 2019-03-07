@@ -87,12 +87,13 @@
                     <label for="inputJobName">Job name</label>
                     <input type="text" class="form-control" id="inputJobName" placeholder="optional">
                   </div>
-                  <div class="form-row">
+                  <!-- Achtung Profi-Code -->
+                  <div class="form-row" style="display: none;">
                     <div class="form-group col-md-6">
                       <label for="select-printer-profile">Printer-Profile</label>
                       <select class="form-control" id="select-printer-profile"></select>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-6" style="display: none;">
                       <label for="select-socket-profile">Socket-Profile</label>
                       <select class="form-control" id="select-socket-profile"></select>
                     </div>
@@ -132,8 +133,8 @@
                 </div>
               </div>
               <div class="tab-pane fade col-md-8 col-lg-5" id="strategy">
-                  <h2>Choose Goal Plate and Number of Colonies</h2>
-                  <div style="width: fit-content; width: -moz-fit-content;">
+                <h2>Choose Goal Plate and Number of Colonies</h2>
+                <div style="width: fit-content; width: -moz-fit-content;">
                   <form id="strategy-form" name="strategy-form">
                     <div class="form-group">
                       <label for="select-plate-profile">Goal Plate:</label>
@@ -147,34 +148,47 @@
                   <button class="btn btn-success next-step" onclick="overviewTab()">Continue</button>
                 </div>
               </div>
-              <div class="tab-pane fade col-md-8" id="overview">
+              <div class="tab-pane fade col-md-10 col-lg-8" id="overview">
                 <h2>Overview</h2>
-                <div id="overview-content"></div>
-                <h2 id="check-preconditions-header">Check Preconditions</h2>
-                <form id="check-preconditions" class="needs-validation" novalidate>
-                  <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                      <input class="custom-control-input" type="checkbox" value="" id="check-plates" required>
-                      <label class="custom-control-label" for="check-plates">
-                        Plates correctly positioned in colony picker?
-                      </label>
-                      <div class="invalid-feedback">
-                        Check plates and confirm!
-                      </div>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                      <input class="custom-control-input" type="checkbox" value="" id="invalidCheck" required>
-                      <label class="custom-control-label" for="invalidCheck">
-                        Agree to terms and conditions.
-                      </label>
-                      <div class="invalid-feedback">
-                        You must agree!
-                      </div>
+                <div class="row">
+                  <div class="col-md-8">
+                    <div id="overview-image" style="position: relative;">
+                      <img id="processed-layer0" width="100%" style="z-index: 0;">
+                      <img id="processed-layer1" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
                     </div>
                   </div>
-                </form>
-                <button class="btn btn-primary m-2" id="execute-button" onclick="executeTab()">Start picking</button>
-                <button class="btn btn-primary" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
+                  <div class="col-md-4">
+                    <div id="overview-metadata"></div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-8">
+                    <form id="check-preconditions" class="needs-validation" novalidate>
+                      <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                          <input class="custom-control-input" type="checkbox" value="" id="check-plates" required>
+                          <label class="custom-control-label" for="check-plates">
+                            Plates correctly positioned in colony picker?
+                          </label>
+                          <div class="invalid-feedback">
+                            Check plates and confirm!
+                          </div>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                          <input class="custom-control-input" type="checkbox" value="" id="invalidCheck" required>
+                          <label class="custom-control-label" for="invalidCheck">
+                            Agree to terms and conditions.
+                          </label>
+                          <div class="invalid-feedback">
+                            You must agree!
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    <button class="btn btn-primary m-2" id="execute-button" onclick="executeTab()">Start picking</button>
+                    <button class="btn btn-primary m-2" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
+                  </div>
+                </div>
               </div>
               <div class="tab-pane fade col-md-8" id="execute">
                 <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->

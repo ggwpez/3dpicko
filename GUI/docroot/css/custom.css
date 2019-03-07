@@ -158,6 +158,9 @@ img {
 	width: 2ch;
 	min-width: 5ch;
 }
+#pickstrategy-canvas{
+	cursor: pointer;
+}
 
 /* Profile Settings Page */
 /* remove number input spinner */
