@@ -103,13 +103,27 @@ function drawPositions(coords)
     printPositions();
 }
 
-var balls = [];
+var circles = [];
+function removeUnselectedColonies()
+{
+    var j = 0;
+    layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
+
+    for (var i = 0; i < circles.length; ++i)
+    {
+        var ball = circles[i];
+
+        if (ball.options.linecolor == 'white')
+            ball.draw();
+    }
+}
+
 // Print colonies
 function printPositions(){
     // show coordinatesPx
-    for (ball in balls)
+    for (ball in circles)
         delete ball;
-    balls = [];
+    circles = [];
 
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
 
@@ -147,7 +161,7 @@ function printPositions(){
             this.set('linecolor', 'white');
         });*/
 
-        balls.push(ball);
+        circles.push(ball);
     });
 
     layer2.canvas.onmousemove =
@@ -157,9 +171,9 @@ function printPositions(){
         var x = e.clientX -rect.left,
         y = e.clientY -rect.top;
 
-        for (var i = 0; i < balls.length; ++i)
+        for (var i = 0; i < circles.length; ++i)
         {
-            var ball = balls[i];
+            var ball = circles[i];
 
             if (ball.isMouseOver(x, y))
             {
@@ -183,9 +197,9 @@ function printPositions(){
 
     layer2.canvas.onmousedown = (e) =>
     {
-        for (var i = 0; i < balls.length; ++i)
+        for (var i = 0; i < circles.length; ++i)
         {
-            var ball = balls[i];
+            var ball = circles[i];
 
             if (ball.mouseover && !ball.mousedown)  // superfluous
             {
@@ -209,7 +223,7 @@ function printPositions(){
 
 function drawTooltip(circle_id)
 {
-    var ball = balls[circle_id];
+    var ball = circles[circle_id];
     const ball_pos = ball.getPosition();
     const tooltip_pos = {x:ball_pos.x, y:ball_pos.y +ball.getRadius() *1.5};
 

@@ -617,6 +617,7 @@ function strategyTab(){
         };
         plate_selection.onchange();
         tabEnter(4);
+        removeUnselectedColonies();
     }
 }
 

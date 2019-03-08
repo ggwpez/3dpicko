@@ -7,70 +7,1650 @@
     "deleted_jobs": {
     },
     "detection_results": {
-    },
-    "images": {
-        "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd": {
-            "description": "Cropped version of 'cropped.JPG'",
-            "height": 2070,
-            "id": "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd",
-            "original_name": "cropped.JPG_1",
-            "path": "/uploads/FKAaLrtE",
-            "uploaded": {
-                "formatted": "28.02.19 21:29",
-                "ms": 1551385748385
-            },
-            "width": 3105
-        },
-        "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53": {
-            "description": "descrtiption",
-            "height": 1080,
-            "id": "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53",
-            "original_name": "test.png",
-            "path": "/uploads/mAIVYHGj",
-            "uploaded": {
-                "formatted": "27.02.19 19:03",
-                "ms": 1551290638571
-            },
-            "width": 1920
-        },
-        "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51": {
-            "description": "descrtiption",
-            "height": 2588,
-            "id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "original_name": "cropped.JPG",
-            "path": "/uploads/HHtOblIG",
-            "uploaded": {
-                "formatted": "28.02.19 18:22",
-                "ms": 1551374536136
-            },
-            "width": 3992
-        },
-        "f18e73346cdf13d8c0b30493d60e60d79dc039d7227c7e86b84b42a62767d1f4": {
-            "description": "Cropped version of 'cropped.JPG'",
-            "height": 2070,
-            "id": "f18e73346cdf13d8c0b30493d60e60d79dc039d7227c7e86b84b42a62767d1f4",
-            "original_name": "cropped.JPG_1",
-            "path": "/uploads/DpIVsAiJ",
-            "uploaded": {
-                "formatted": "28.02.19 21:44",
-                "ms": 1551386683175
-            },
-            "width": 3105
+        "48": {
+            "cleanup_error": "",
+            "cleanup_succeeded": true,
+            "colonies": [
+                {
+                    "area": 0,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "show_excluded_by_algo",
+                    "id": 1,
+                    "major_length": 10,
+                    "x": 0.502637020191601,
+                    "y": 0.5006554881890377
+                },
+                {
+                    "area": 1376,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 2,
+                    "major_length": 20.928315827817965,
+                    "x": 0.007305137879765478,
+                    "y": 0.06655266757865938
+                },
+                {
+                    "area": 31,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 3,
+                    "major_length": 3.141274657157109,
+                    "x": 0.028094478384372932,
+                    "y": 0.002043497299664283
+                },
+                {
+                    "area": 14,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 4,
+                    "major_length": 2.111004122822376,
+                    "x": 0.33926417370325695,
+                    "y": 0.0006464124111182935
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 5,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.44330518697225574,
+                    "y": 0.0022624434389140274
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 6,
+                    "major_length": 2.326213245840639,
+                    "x": 0.3335343787696019,
+                    "y": 0.004524886877828055
+                },
+                {
+                    "area": 724,
+                    "brightness": 0.36084114805342427,
+                    "circumference": 111.74011445045471,
+                    "excluded_by": "",
+                    "id": 7,
+                    "major_length": 17.783991556443993,
+                    "x": 0.19158408253303919,
+                    "y": 0.021401964950876227
+                },
+                {
+                    "area": 34,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 8,
+                    "major_length": 3.2897623212397704,
+                    "x": 0.8667068757539204,
+                    "y": 0.023076923076923078
+                },
+                {
+                    "area": 715,
+                    "brightness": 0.3414828431372549,
+                    "circumference": 104.9116872549057,
+                    "excluded_by": "",
+                    "id": 9,
+                    "major_length": 16.69721361472924,
+                    "x": 0.5017343332180485,
+                    "y": 0.04019238679872164
+                },
+                {
+                    "area": 261,
+                    "brightness": 0.3866421568627451,
+                    "circumference": 61.21320307254791,
+                    "excluded_by": "",
+                    "id": 10,
+                    "major_length": 9.742383851483996,
+                    "x": 0.833716937269202,
+                    "y": 0.05494010159324561
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 11,
+                    "major_length": 2.326213245840639,
+                    "x": 0.5735826296743064,
+                    "y": 0.0579185520361991
+                },
+                {
+                    "area": 564,
+                    "brightness": 0.3590497737556561,
+                    "circumference": 91.8406194448471,
+                    "excluded_by": "",
+                    "id": 12,
+                    "major_length": 14.616888561269057,
+                    "x": 0.6418888860371805,
+                    "y": 0.07615448798177209
+                },
+                {
+                    "area": 37,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 13,
+                    "major_length": 3.431831258788849,
+                    "x": 0.5398885012877775,
+                    "y": 0.07420814479638009
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 14,
+                    "major_length": 2.326213245840639,
+                    "x": 0.8172496984318456,
+                    "y": 0.08144796380090498
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 15,
+                    "major_length": 2.326213245840639,
+                    "x": 0.43727382388419783,
+                    "y": 0.08959276018099548
+                },
+                {
+                    "area": 11,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 16,
+                    "major_length": 1.8712051592547776,
+                    "x": 0.998903388529444,
+                    "y": 0.09230769230769231
+                },
+                {
+                    "area": 25,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 17,
+                    "major_length": 2.8209479177387813,
+                    "x": 0.6749095295536791,
+                    "y": 0.11764705882352941
+                },
+                {
+                    "area": 247,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "aabb_ratio",
+                    "id": 18,
+                    "major_length": 8.866935315394846,
+                    "x": 0.024013127371644294,
+                    "y": 0.15100298605895177
+                },
+                {
+                    "area": 247,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "aabb_ratio",
+                    "id": 19,
+                    "major_length": 8.866935315394846,
+                    "x": 0.024013127371644294,
+                    "y": 0.15100298605895177
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 20,
+                    "major_length": 2.326213245840639,
+                    "x": 0.007237635705669481,
+                    "y": 0.13574660633484162
+                },
+                {
+                    "area": 135,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "aabb_ratio",
+                    "id": 21,
+                    "major_length": 6.555290583552474,
+                    "x": 0.007197426618415762,
+                    "y": 0.1519021283727166
+                },
+                {
+                    "area": 135,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "aabb_ratio",
+                    "id": 22,
+                    "major_length": 6.555290583552474,
+                    "x": 0.007197426618415762,
+                    "y": 0.1519021283727166
+                },
+                {
+                    "area": 667,
+                    "brightness": 0.3614565826330532,
+                    "circumference": 105.74011445045471,
+                    "excluded_by": "",
+                    "id": 23,
+                    "major_length": 16.82906189789262,
+                    "x": 0.10953298983801224,
+                    "y": 0.1575569681222737
+                },
+                {
+                    "area": 365,
+                    "brightness": 0.3551939924906133,
+                    "circumference": 74.76955187320709,
+                    "excluded_by": "",
+                    "id": 24,
+                    "major_length": 11.899943773386791,
+                    "x": 0.6203480013880397,
+                    "y": 0.1545155891650654
+                },
+                {
+                    "area": 78,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 25,
+                    "major_length": 4.982787485166879,
+                    "x": 0.0021341746311589497,
+                    "y": 0.15364891518737672
+                },
+                {
+                    "area": 41,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 26,
+                    "major_length": 3.6125759969217834,
+                    "x": 0.7216158168819324,
+                    "y": 0.16225582165323915
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 27,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4969843184559711,
+                    "y": 0.16470588235294117
+                },
+                {
+                    "area": 647,
+                    "brightness": 0.3731833910034602,
+                    "circumference": 100.91168737411499,
+                    "excluded_by": "",
+                    "id": 28,
+                    "major_length": 16.060593861334404,
+                    "x": 0.45765833959464025,
+                    "y": 0.17924146950422068
+                },
+                {
+                    "area": 98,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 29,
+                    "major_length": 5.585191925620057,
+                    "x": 0.007329952487629552,
+                    "y": 0.1798504016991412
+                },
+                {
+                    "area": 700,
+                    "brightness": 0.3803921568627451,
+                    "circumference": 104.56854152679443,
+                    "excluded_by": "",
+                    "id": 30,
+                    "major_length": 16.64260027589946,
+                    "x": 0.18000861623298295,
+                    "y": 0.1881874595992243
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 31,
+                    "major_length": 2.326213245840639,
+                    "x": 0.016887816646562123,
+                    "y": 0.17828054298642534
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 32,
+                    "major_length": 2.326213245840639,
+                    "x": 0.6827503015681544,
+                    "y": 0.19004524886877827
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 33,
+                    "major_length": 2.326213245840639,
+                    "x": 0.2322074788902292,
+                    "y": 0.20361990950226244
+                },
+                {
+                    "area": 639,
+                    "brightness": 0.3638562091503268,
+                    "circumference": 99.25483322143555,
+                    "excluded_by": "",
+                    "id": 34,
+                    "major_length": 15.796897332953138,
+                    "x": 0.026931593582403147,
+                    "y": 0.2174834831007159
+                },
+                {
+                    "area": 6344,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 35,
+                    "major_length": 44.937266471715525,
+                    "x": 0.007108813243747689,
+                    "y": 0.5516583168333781
+                },
+                {
+                    "area": 43,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 36,
+                    "major_length": 3.6996385101659595,
+                    "x": 0.17439055179959045,
+                    "y": 0.22144585920235715
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 37,
+                    "major_length": 2.326213245840639,
+                    "x": 0.7177322074788902,
+                    "y": 0.2244343891402715
+                },
+                {
+                    "area": 54,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 38,
+                    "major_length": 4.145929793656026,
+                    "x": 0.1451212974132154,
+                    "y": 0.2343891402714932
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 39,
+                    "major_length": 2.326213245840639,
+                    "x": 0.2503015681544029,
+                    "y": 0.2407239819004525
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 40,
+                    "major_length": 2.326213245840639,
+                    "x": 0.9439083232810616,
+                    "y": 0.24615384615384617
+                },
+                {
+                    "area": 642,
+                    "brightness": 0.3724847315975571,
+                    "circumference": 100.42640614509583,
+                    "excluded_by": "",
+                    "id": 41,
+                    "major_length": 15.983358954946295,
+                    "x": 0.16669766900029687,
+                    "y": 0.26007527381908907
+                },
+                {
+                    "area": 739,
+                    "brightness": 0.3500612745098039,
+                    "circumference": 110.32590091228485,
+                    "excluded_by": "",
+                    "id": 42,
+                    "major_length": 17.55891248125678,
+                    "x": 0.4867685441970779,
+                    "y": 0.269836332576124
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 43,
+                    "major_length": 2.326213245840639,
+                    "x": 0.2310012062726176,
+                    "y": 0.25882352941176473
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 44,
+                    "major_length": 2.326213245840639,
+                    "x": 0.24004825090470447,
+                    "y": 0.25972850678733034
+                },
+                {
+                    "area": 636,
+                    "brightness": 0.35740099961553246,
+                    "circumference": 95.01219260692596,
+                    "excluded_by": "",
+                    "id": 45,
+                    "major_length": 15.1216601073915,
+                    "x": 0.5248660961528249,
+                    "y": 0.27180198639688097
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 46,
+                    "major_length": 2.326213245840639,
+                    "x": 0.18636911942098913,
+                    "y": 0.2687782805429864
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 47,
+                    "major_length": 2.326213245840639,
+                    "x": 0.5615199034981906,
+                    "y": 0.27873303167420815
+                },
+                {
+                    "area": 206,
+                    "brightness": 0.3439096850861557,
+                    "circumference": 54.870057225227356,
+                    "excluded_by": "",
+                    "id": 48,
+                    "major_length": 8.732840835130101,
+                    "x": 0.4302557766404722,
+                    "y": 0.28935992619601986
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 49,
+                    "major_length": 2.326213245840639,
+                    "x": 0.5579010856453559,
+                    "y": 0.302262443438914
+                },
+                {
+                    "area": 27,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 50,
+                    "major_length": 2.9316150714175193,
+                    "x": 0.7255729794933655,
+                    "y": 0.3067873303167421
+                },
+                {
+                    "area": 39,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 51,
+                    "major_length": 3.523362819972964,
+                    "x": 0.440815316569237,
+                    "y": 0.32537417333797425
+                },
+                {
+                    "area": 342,
+                    "brightness": 0.3724400871459695,
+                    "circumference": 69.11269783973694,
+                    "excluded_by": "",
+                    "id": 52,
+                    "major_length": 10.99962749161069,
+                    "x": 0.2925704893516461,
+                    "y": 0.3370432113466169
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 53,
+                    "major_length": 2.326213245840639,
+                    "x": 0.3455971049457177,
+                    "y": 0.3339366515837104
+                },
+                {
+                    "area": 27,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 54,
+                    "major_length": 2.9316150714175193,
+                    "x": 0.7985524728588661,
+                    "y": 0.334841628959276
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 55,
+                    "major_length": 2.326213245840639,
+                    "x": 0.612183353437877,
+                    "y": 0.3384615384615385
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 56,
+                    "major_length": 2.326213245840639,
+                    "x": 0.7949336550060314,
+                    "y": 0.34660633484162895
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 57,
+                    "major_length": 2.326213245840639,
+                    "x": 0.3884197828709288,
+                    "y": 0.3556561085972851
+                },
+                {
+                    "area": 27,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 58,
+                    "major_length": 2.9316150714175193,
+                    "x": 0.49758745476477684,
+                    "y": 0.3592760180995475
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 59,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.14173703256936068,
+                    "y": 0.36515837104072396
+                },
+                {
+                    "area": 32,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 60,
+                    "major_length": 3.1915382432114616,
+                    "x": 0.44547270808202655,
+                    "y": 0.36456447963800903
+                },
+                {
+                    "area": 38,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 61,
+                    "major_length": 3.477898169151024,
+                    "x": 0.4859056567836963,
+                    "y": 0.36563467492260066
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 62,
+                    "major_length": 2.326213245840639,
+                    "x": 0.49939686369119424,
+                    "y": 0.36470588235294116
+                },
+                {
+                    "area": 62,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 63,
+                    "major_length": 4.442433223290478,
+                    "x": 0.49463986925561304,
+                    "y": 0.3715078090789666
+                },
+                {
+                    "area": 600,
+                    "brightness": 0.35885918003565065,
+                    "circumference": 95.01219260692596,
+                    "excluded_by": "",
+                    "id": 64,
+                    "major_length": 15.1216601073915,
+                    "x": 0.7486359067149175,
+                    "y": 0.38329864253393664
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 65,
+                    "major_length": 2.326213245840639,
+                    "x": 0.623642943305187,
+                    "y": 0.3773755656108597
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 66,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4734620024125452,
+                    "y": 0.38733031674208146
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 67,
+                    "major_length": 2.326213245840639,
+                    "x": 0.37394451145958985,
+                    "y": 0.39547511312217193
+                },
+                {
+                    "area": 530,
+                    "brightness": 0.38283388827229003,
+                    "circumference": 89.01219248771667,
+                    "excluded_by": "",
+                    "id": 68,
+                    "major_length": 14.166730429867382,
+                    "x": 0.5933962264150944,
+                    "y": 0.405612567232989
+                },
+                {
+                    "area": 44,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 69,
+                    "major_length": 3.742410318509555,
+                    "x": 0.4836056585151881,
+                    "y": 0.41608391608391604
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 70,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4794933655006031,
+                    "y": 0.4244343891402715
+                },
+                {
+                    "area": 35,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 71,
+                    "major_length": 3.3377905890622728,
+                    "x": 0.36444942271239017,
+                    "y": 0.43407886231415643
+                },
+                {
+                    "area": 567,
+                    "brightness": 0.37179222566219466,
+                    "circumference": 92.08326029777527,
+                    "excluded_by": "",
+                    "id": 72,
+                    "major_length": 14.655506052408608,
+                    "x": 0.5926947109094274,
+                    "y": 0.4496237241335281
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 73,
+                    "major_length": 2.326213245840639,
+                    "x": 0.09288299155609167,
+                    "y": 0.4678733031674208
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 74,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4583835946924005,
+                    "y": 0.4669683257918552
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 75,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4987937273823884,
+                    "y": 0.47420814479638007
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 76,
+                    "major_length": 2.326213245840639,
+                    "x": 0.7834740651387213,
+                    "y": 0.4805429864253394
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 77,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.4321471652593486,
+                    "y": 0.48778280542986424
+                },
+                {
+                    "area": 35,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 78,
+                    "major_length": 3.3377905890622728,
+                    "x": 0.7205583318972946,
+                    "y": 0.48809308338720103
+                },
+                {
+                    "area": 612,
+                    "brightness": 0.3806022408963585,
+                    "circumference": 95.25483322143555,
+                    "excluded_by": "",
+                    "id": 79,
+                    "major_length": 15.160277560585556,
+                    "x": 0.23574548436181872,
+                    "y": 0.5148212226066897
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 80,
+                    "major_length": 2.326213245840639,
+                    "x": 0.8998793727382388,
+                    "y": 0.5067873303167421
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 81,
+                    "major_length": 2.326213245840639,
+                    "x": 0.5024125452352232,
+                    "y": 0.5194570135746607
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 82,
+                    "major_length": 2.326213245840639,
+                    "x": 0.20446320868516285,
+                    "y": 0.5230769230769231
+                },
+                {
+                    "area": 35,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 83,
+                    "major_length": 3.3377905890622728,
+                    "x": 0.6620885748750647,
+                    "y": 0.5316354234001294
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 84,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4505428226779252,
+                    "y": 0.56289592760181
+                },
+                {
+                    "area": 47,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 85,
+                    "major_length": 3.8678889139475245,
+                    "x": 0.0010009496188691837,
+                    "y": 0.5732550303263695
+                },
+                {
+                    "area": 352,
+                    "brightness": 0.3643323996265173,
+                    "circumference": 71.35533833503723,
+                    "excluded_by": "",
+                    "id": 86,
+                    "major_length": 11.356554812015789,
+                    "x": 0.47310903059546006,
+                    "y": 0.5977812628547923
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 87,
+                    "major_length": 2.326213245840639,
+                    "x": 0.19360675512665862,
+                    "y": 0.5963800904977375
+                },
+                {
+                    "area": 352,
+                    "brightness": 0.36911764705882355,
+                    "circumference": 71.94112491607666,
+                    "excluded_by": "",
+                    "id": 88,
+                    "major_length": 11.449785641985114,
+                    "x": 0.7689628111635048,
+                    "y": 0.6206833607568901
+                },
+                {
+                    "area": 27,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 89,
+                    "major_length": 2.9316150714175193,
+                    "x": 0.0971049457177322,
+                    "y": 0.6144796380090498
+                },
+                {
+                    "area": 24,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 90,
+                    "major_length": 2.763953195770684,
+                    "x": 0.9351628468033776,
+                    "y": 0.6592760180995475
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 91,
+                    "major_length": 2.326213245840639,
+                    "x": 0.9191797346200241,
+                    "y": 0.6624434389140271
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 92,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.03347406513872135,
+                    "y": 0.6687782805429864
+                },
+                {
+                    "area": 387,
+                    "brightness": 0.3502941176470588,
+                    "circumference": 75.11269783973694,
+                    "excluded_by": "",
+                    "id": 93,
+                    "major_length": 11.954557150162062,
+                    "x": 0.3039479713112838,
+                    "y": 0.6954271750441381
+                },
+                {
+                    "area": 14,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 94,
+                    "major_length": 2.111004122822376,
+                    "x": 0.9988798897122178,
+                    "y": 0.6882352941176471
+                },
+                {
+                    "area": 38,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 95,
+                    "major_length": 3.477898169151024,
+                    "x": 0.2129229890165704,
+                    "y": 0.6911169326030008
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 96,
+                    "major_length": 2.326213245840639,
+                    "x": 0.6049457177322075,
+                    "y": 0.6932126696832579
+                },
+                {
+                    "area": 37,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 97,
+                    "major_length": 3.431831258788849,
+                    "x": 0.029472174224888337,
+                    "y": 0.7131221719457014
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 98,
+                    "major_length": 2.326213245840639,
+                    "x": 0.36429433051869725,
+                    "y": 0.7203619909502262
+                },
+                {
+                    "area": 34,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 99,
+                    "major_length": 3.2897623212397704,
+                    "x": 0.02675086922585681,
+                    "y": 0.7280010646792654
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 100,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.16133896260554886,
+                    "y": 0.7339366515837104
+                },
+                {
+                    "area": 603,
+                    "brightness": 0.3734046345811052,
+                    "circumference": 95.49747383594513,
+                    "excluded_by": "",
+                    "id": 101,
+                    "major_length": 15.19889501377961,
+                    "x": 0.2637256019860489,
+                    "y": 0.7569978163481237
+                },
+                {
+                    "area": 0,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "show_excluded_by_algo",
+                    "id": 102,
+                    "major_length": 10,
+                    "x": 0.4218817852834741,
+                    "y": 0.7529683257918551
+                },
+                {
+                    "area": 72,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 103,
+                    "major_length": 4.787307364817192,
+                    "x": 0.4505260688915695,
+                    "y": 0.7521995977878331
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 104,
+                    "major_length": 2.326213245840639,
+                    "x": 0.41556091676718937,
+                    "y": 0.755656108597285
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 105,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.46230398069963813,
+                    "y": 0.7610859728506787
+                },
+                {
+                    "area": 39,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 106,
+                    "major_length": 3.523362819972964,
+                    "x": 0.470152485230893,
+                    "y": 0.7632904049193642
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 107,
+                    "major_length": 2.326213245840639,
+                    "x": 0.7882991556091676,
+                    "y": 0.7674208144796381
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 108,
+                    "major_length": 2.326213245840639,
+                    "x": 0.9475271411338962,
+                    "y": 0.7683257918552037
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 109,
+                    "major_length": 2.326213245840639,
+                    "x": 0.19360675512665862,
+                    "y": 0.7782805429864253
+                },
+                {
+                    "area": 595,
+                    "brightness": 0.3684313725490196,
+                    "circumference": 97.84061968326569,
+                    "excluded_by": "",
+                    "id": 110,
+                    "major_length": 15.571818257765926,
+                    "x": 0.8281923143201791,
+                    "y": 0.7923586448153922
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 111,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4969843184559711,
+                    "y": 0.7891402714932126
+                },
+                {
+                    "area": 37,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 112,
+                    "major_length": 3.431831258788849,
+                    "x": 0.5037492257033873,
+                    "y": 0.7927112632994986
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 113,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.7686972255729795,
+                    "y": 0.7954751131221719
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 114,
+                    "major_length": 2.326213245840639,
+                    "x": 0.031966224366706875,
+                    "y": 0.820814479638009
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 115,
+                    "major_length": 2.326213245840639,
+                    "x": 0.7979493365500603,
+                    "y": 0.8226244343891402
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 116,
+                    "major_length": 2.326213245840639,
+                    "x": 0.05066344993968637,
+                    "y": 0.8479638009049774
+                },
+                {
+                    "area": 759,
+                    "brightness": 0.37487745098039216,
+                    "circumference": 108.32590079307556,
+                    "excluded_by": "",
+                    "id": 117,
+                    "major_length": 17.24060257610024,
+                    "x": 0.26401954193426375,
+                    "y": 0.8595508498321798
+                },
+                {
+                    "area": 32,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 118,
+                    "major_length": 3.1915382432114616,
+                    "x": 0.4538035283474065,
+                    "y": 0.8499151583710407
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 119,
+                    "major_length": 2.326213245840639,
+                    "x": 0.031363088057901084,
+                    "y": 0.8524886877828054
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 120,
+                    "major_length": 2.326213245840639,
+                    "x": 0.4028950542822678,
+                    "y": 0.8660633484162896
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 121,
+                    "major_length": 2.326213245840639,
+                    "x": 0.6200241254523522,
+                    "y": 0.8796380090497737
+                },
+                {
+                    "area": 33,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 122,
+                    "major_length": 3.2410224072142872,
+                    "x": 0.0013890411960375774,
+                    "y": 0.8868229809406281
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 123,
+                    "major_length": 2.326213245840639,
+                    "x": 0.020506634499396863,
+                    "y": 0.8877828054298642
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 124,
+                    "major_length": 2.326213245840639,
+                    "x": 0.34378769601930037,
+                    "y": 0.8886877828054298
+                },
+                {
+                    "area": 25,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 125,
+                    "major_length": 2.8209479177387813,
+                    "x": 0.7810615199034981,
+                    "y": 0.8950226244343892
+                },
+                {
+                    "area": 23,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 126,
+                    "major_length": 2.7057581899030048,
+                    "x": 0.0005506896732574605,
+                    "y": 0.8986425339366516
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 127,
+                    "major_length": 2.326213245840639,
+                    "x": 0.022919179734620022,
+                    "y": 0.9076923076923077
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 128,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.04523522316043426,
+                    "y": 0.9153846153846154
+                },
+                {
+                    "area": 529,
+                    "brightness": 0.3678104575163399,
+                    "circumference": 88.18376541137695,
+                    "excluded_by": "",
+                    "id": 129,
+                    "major_length": 14.034882165676748,
+                    "x": 0.7131944333597087,
+                    "y": 0.9272990103413766
+                },
+                {
+                    "area": 11,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 130,
+                    "major_length": 1.8712051592547776,
+                    "x": 0.998903388529444,
+                    "y": 0.918552036199095
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 131,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.015983112183353437,
+                    "y": 0.9230769230769231
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 132,
+                    "major_length": 2.326213245840639,
+                    "x": 0.016887816646562123,
+                    "y": 0.9312217194570136
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 133,
+                    "major_length": 2.326213245840639,
+                    "x": 0.20446320868516285,
+                    "y": 0.9656108597285068
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 134,
+                    "major_length": 2.326213245840639,
+                    "x": 0.8124246079613993,
+                    "y": 0.9683257918552036
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 135,
+                    "major_length": 2.326213245840639,
+                    "x": 0.7322074788902292,
+                    "y": 0.9828054298642533
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 136,
+                    "major_length": 2.326213245840639,
+                    "x": 0.04463208685162847,
+                    "y": 0.9900452488687783
+                },
+                {
+                    "area": 189,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "aabb_ratio",
+                    "id": 137,
+                    "major_length": 7.756324418739616,
+                    "x": 0.4277895852081618,
+                    "y": 0.9958773252890899
+                },
+                {
+                    "area": 189,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "aabb_ratio",
+                    "id": 138,
+                    "major_length": 7.756324418739616,
+                    "x": 0.4277895852081618,
+                    "y": 0.9958773252890899
+                },
+                {
+                    "area": 17,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 139,
+                    "major_length": 2.326213245840639,
+                    "x": 0.991556091676719,
+                    "y": 0.9936651583710407
+                },
+                {
+                    "area": 22,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 140,
+                    "major_length": 2.6462837142006137,
+                    "x": 0.20476477683956573,
+                    "y": 0.995475113122172
+                },
+                {
+                    "area": 11,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 141,
+                    "major_length": 1.8712051592547776,
+                    "x": 0.35826296743063935,
+                    "y": 0.9985191279308926
+                },
+                {
+                    "area": 11,
+                    "brightness": 0,
+                    "circumference": 0,
+                    "excluded_by": "area",
+                    "id": 142,
+                    "major_length": 1.8712051592547776,
+                    "x": 0.5838359469240049,
+                    "y": 0.9985191279308926
+                }
+            ],
+            "id": "48",
+            "last_stage": 4,
+            "stage_error": "",
+            "stages_succeeded": true
         }
     },
-    "job_id": 215,
+    "images": {
+        "2cc13740a022a9d5bf309836b1911f046fb8011e1837dfb1e227433f184277a5": {
+            "description": "Cropped version of 'GrüneKolonien.JPG'",
+            "height": 1382,
+            "id": "2cc13740a022a9d5bf309836b1911f046fb8011e1837dfb1e227433f184277a5",
+            "original_name": "GrüneKolonien.JPG_1",
+            "path": "/uploads/RaYsSwlZ",
+            "uploaded": {
+                "formatted": "07.03.19 18:12",
+                "ms": 1551978735394
+            },
+            "width": 2073
+        },
+        "31b4a99dd7cf9c4739b8ed4704a8042487dfbe2bbe21dbb07b33014685d1c532": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "31b4a99dd7cf9c4739b8ed4704a8042487dfbe2bbe21dbb07b33014685d1c532",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/HoYZPBJG",
+            "uploaded": {
+                "formatted": "08.03.19 02:43",
+                "ms": 1552009435260
+            },
+            "width": 1658
+        },
+        "4b9e891f6faff7f245d1f62221448f8856d1f826c9160a3bec5b7c77670efbb4": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG'",
+            "height": 1382,
+            "id": "4b9e891f6faff7f245d1f62221448f8856d1f826c9160a3bec5b7c77670efbb4",
+            "original_name": "PICT_20181031_113704.JPG_1",
+            "path": "/uploads/csRPdkYz",
+            "uploaded": {
+                "formatted": "08.03.19 02:32",
+                "ms": 1552008766640
+            },
+            "width": 2073
+        },
+        "60f346ceb99f25d0a72b0fd78cd840b3473bb3092bf18e0ce367d6d9d93f1638": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "60f346ceb99f25d0a72b0fd78cd840b3473bb3092bf18e0ce367d6d9d93f1638",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/QlzWufgf",
+            "uploaded": {
+                "formatted": "08.03.19 02:50",
+                "ms": 1552009836371
+            },
+            "width": 1658
+        },
+        "6dc615979093374e90237d126e21e9973ac9b0de8d755eb98950736a934713c6": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "6dc615979093374e90237d126e21e9973ac9b0de8d755eb98950736a934713c6",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/tngfZFBP",
+            "uploaded": {
+                "formatted": "08.03.19 02:41",
+                "ms": 1552009279563
+            },
+            "width": 1658
+        },
+        "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/YXOeVExm",
+            "uploaded": {
+                "formatted": "08.03.19 02:59",
+                "ms": 1552010376286
+            },
+            "width": 1658
+        },
+        "b9888a021258b45e8ebab6cc8dc6a97d4f614c024526e6cccd97bdc5a1fcdc9b": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG'",
+            "height": 1382,
+            "id": "b9888a021258b45e8ebab6cc8dc6a97d4f614c024526e6cccd97bdc5a1fcdc9b",
+            "original_name": "PICT_20181031_113704.JPG_1",
+            "path": "/uploads/SHdgpsrK",
+            "uploaded": {
+                "formatted": "07.03.19 18:05",
+                "ms": 1551978313030
+            },
+            "width": 2073
+        },
+        "bc432aafa29249d7f882e2d6c8c2999e092b6e96dee8285a8322b41ebcfaa7db": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "bc432aafa29249d7f882e2d6c8c2999e092b6e96dee8285a8322b41ebcfaa7db",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/jRVUvmWs",
+            "uploaded": {
+                "formatted": "08.03.19 02:34",
+                "ms": 1552008888204
+            },
+            "width": 1658
+        },
+        "befb95245c161a2261c0f7bfdfb1100d32b93a39367d9fa85657d1fb60b58a42": {
+            "description": "descrtiption",
+            "height": 1944,
+            "id": "befb95245c161a2261c0f7bfdfb1100d32b93a39367d9fa85657d1fb60b58a42",
+            "original_name": "PICT_20181031_113704.JPG",
+            "path": "/uploads/NEsXXQpz",
+            "uploaded": {
+                "formatted": "07.03.19 18:04",
+                "ms": 1551978296288
+            },
+            "width": 2592
+        },
+        "c68be96cfa7a7de26cfe5789bfbd91121616c8e04f8a9470dd2c8ca57a98791a": {
+            "description": "Cropped version of 'GrüneKolonien.JPG'",
+            "height": 1382,
+            "id": "c68be96cfa7a7de26cfe5789bfbd91121616c8e04f8a9470dd2c8ca57a98791a",
+            "original_name": "GrüneKolonien.JPG_1",
+            "path": "/uploads/iWMSYRWV",
+            "uploaded": {
+                "formatted": "07.03.19 18:08",
+                "ms": 1551978531547
+            },
+            "width": 2073
+        },
+        "c7a2f32277febe4fc5616f501aaa15dba3a1599ccdbd348011bd92f9fac30671": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "c7a2f32277febe4fc5616f501aaa15dba3a1599ccdbd348011bd92f9fac30671",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/PynDEAKG",
+            "uploaded": {
+                "formatted": "08.03.19 02:37",
+                "ms": 1552009042833
+            },
+            "width": 1658
+        },
+        "d46b9650b0c2b085045f60be654ecb1575844585bbb1c3c129a83793425f5ca1": {
+            "description": "descrtiption",
+            "height": 1944,
+            "id": "d46b9650b0c2b085045f60be654ecb1575844585bbb1c3c129a83793425f5ca1",
+            "original_name": "GrüneKolonien.JPG",
+            "path": "/uploads/mTCKBFSU",
+            "uploaded": {
+                "formatted": "07.03.19 18:08",
+                "ms": 1551978524833
+            },
+            "width": 2592
+        },
+        "ea2604ff8fcf6c67bf0d5bc6101711826bf7c37b7170f432fa87261c2a151817": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1216,
+            "id": "ea2604ff8fcf6c67bf0d5bc6101711826bf7c37b7170f432fa87261c2a151817",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/EcJUJmEC",
+            "uploaded": {
+                "formatted": "08.03.19 01:54",
+                "ms": 1552006489085
+            },
+            "width": 1824
+        },
+        "eb8fbf2e99fc1e10124bf3df5e4cba9326075ad3ebcced46fa0fed2395e9aadd": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG_1'",
+            "height": 1105,
+            "id": "eb8fbf2e99fc1e10124bf3df5e4cba9326075ad3ebcced46fa0fed2395e9aadd",
+            "original_name": "PICT_20181031_113704.JPG_1_1",
+            "path": "/uploads/clndrAAS",
+            "uploaded": {
+                "formatted": "08.03.19 02:34",
+                "ms": 1552008861155
+            },
+            "width": 1658
+        },
+        "fd1e2cc29153def2839ab1e51697b50efe64cf470d10bdcb9e2636019a553f17": {
+            "description": "Cropped version of 'PICT_20181031_113704.JPG'",
+            "height": 1382,
+            "id": "fd1e2cc29153def2839ab1e51697b50efe64cf470d10bdcb9e2636019a553f17",
+            "original_name": "PICT_20181031_113704.JPG_1",
+            "path": "/uploads/wNhyZAYp",
+            "uploaded": {
+                "formatted": "07.03.19 18:05",
+                "ms": 1551978328982
+            },
+            "width": 2073
+        }
+    },
+    "job_id": 239,
     "jobs": {
-        "209": {
+        "215": {
             "created": {
-                "formatted": "01.01.70 01:00",
-                "ms": 0
+                "formatted": "07.03.19 18:05",
+                "ms": 1551978318540
             },
             "description": "",
             "detections": [
-                "7"
+                "11"
             ],
-            "id": "209",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "id": "215",
+            "img_id": "b9888a021258b45e8ebab6cc8dc6a97d4f614c024526e6cccd97bdc5a1fcdc9b",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 3,
+            "step": 0
+        },
+        "216": {
+            "created": {
+                "formatted": "07.03.19 18:05",
+                "ms": 1551978330201
+            },
+            "description": "",
+            "detections": [
+                "12"
+            ],
+            "id": "216",
+            "img_id": "fd1e2cc29153def2839ab1e51697b50efe64cf470d10bdcb9e2636019a553f17",
             "name": "",
             "printer": "302",
             "socket": "303",
@@ -78,17 +1658,37 @@
             "starting_row": 0,
             "step": 0
         },
-        "210": {
+        "217": {
             "created": {
-                "formatted": "28.02.19 20:40",
-                "ms": 1551382843231
+                "formatted": "07.03.19 18:08",
+                "ms": 1551978533694
             },
             "description": "",
             "detections": [
-                "8"
+                "13",
+                "14"
             ],
-            "id": "210",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "id": "217",
+            "img_id": "c68be96cfa7a7de26cfe5789bfbd91121616c8e04f8a9470dd2c8ca57a98791a",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 8,
+            "starting_row": 6,
+            "step": 0
+        },
+        "218": {
+            "created": {
+                "formatted": "07.03.19 18:12",
+                "ms": 1551978736321
+            },
+            "description": "",
+            "detections": [
+                "15",
+                "16"
+            ],
+            "id": "218",
+            "img_id": "2cc13740a022a9d5bf309836b1911f046fb8011e1837dfb1e227433f184277a5",
             "name": "",
             "printer": "302",
             "socket": "303",
@@ -96,17 +1696,281 @@
             "starting_row": 0,
             "step": 0
         },
-        "211": {
+        "219": {
             "created": {
-                "formatted": "28.02.19 21:12",
-                "ms": 1551384739704
+                "formatted": "08.03.19 01:54",
+                "ms": 1552006489982
             },
             "description": "",
             "detections": [
-                "9"
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29"
             ],
-            "id": "211",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "id": "219",
+            "img_id": "ea2604ff8fcf6c67bf0d5bc6101711826bf7c37b7170f432fa87261c2a151817",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 6,
+            "starting_row": 4,
+            "step": 0
+        },
+        "220": {
+            "created": {
+                "formatted": "08.03.19 02:32",
+                "ms": 1552008767641
+            },
+            "description": "",
+            "detections": [
+                "30"
+            ],
+            "id": "220",
+            "img_id": "4b9e891f6faff7f245d1f62221448f8856d1f826c9160a3bec5b7c77670efbb4",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 10,
+            "starting_row": 6,
+            "step": 0
+        },
+        "221": {
+            "created": {
+                "formatted": "08.03.19 02:34",
+                "ms": 1552008862415
+            },
+            "description": "",
+            "detections": [
+                "31"
+            ],
+            "id": "221",
+            "img_id": "eb8fbf2e99fc1e10124bf3df5e4cba9326075ad3ebcced46fa0fed2395e9aadd",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 9,
+            "starting_row": 8,
+            "step": 0
+        },
+        "222": {
+            "created": {
+                "formatted": "08.03.19 02:34",
+                "ms": 1552008889169
+            },
+            "description": "",
+            "detections": [
+                "32"
+            ],
+            "id": "222",
+            "img_id": "bc432aafa29249d7f882e2d6c8c2999e092b6e96dee8285a8322b41ebcfaa7db",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "223": {
+            "created": {
+                "formatted": "08.03.19 02:35",
+                "ms": 1552008950638
+            },
+            "description": "",
+            "detections": [
+                "33"
+            ],
+            "id": "223",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "224": {
+            "created": {
+                "formatted": "08.03.19 02:37",
+                "ms": 1552009043894
+            },
+            "description": "",
+            "detections": [
+                "34"
+            ],
+            "id": "224",
+            "img_id": "c7a2f32277febe4fc5616f501aaa15dba3a1599ccdbd348011bd92f9fac30671",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "225": {
+            "created": {
+                "formatted": "08.03.19 02:40",
+                "ms": 1552009216487
+            },
+            "description": "",
+            "detections": [
+                "35"
+            ],
+            "id": "225",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "226": {
+            "created": {
+                "formatted": "08.03.19 02:41",
+                "ms": 1552009280425
+            },
+            "description": "",
+            "detections": [
+                "36"
+            ],
+            "id": "226",
+            "img_id": "6dc615979093374e90237d126e21e9973ac9b0de8d755eb98950736a934713c6",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 8,
+            "starting_row": 5,
+            "step": 0
+        },
+        "227": {
+            "created": {
+                "formatted": "08.03.19 02:42",
+                "ms": 1552009337039
+            },
+            "description": "",
+            "detections": [
+                "37"
+            ],
+            "id": "227",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "228": {
+            "created": {
+                "formatted": "08.03.19 02:43",
+                "ms": 1552009436231
+            },
+            "description": "",
+            "detections": [
+                "38"
+            ],
+            "id": "228",
+            "img_id": "31b4a99dd7cf9c4739b8ed4704a8042487dfbe2bbe21dbb07b33014685d1c532",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "229": {
+            "created": {
+                "formatted": "08.03.19 02:45",
+                "ms": 1552009557622
+            },
+            "description": "",
+            "detections": [
+                "39"
+            ],
+            "id": "229",
+            "img_id": "60f346ceb99f25d0a72b0fd78cd840b3473bb3092bf18e0ce367d6d9d93f1638",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "230": {
+            "created": {
+                "formatted": "08.03.19 02:49",
+                "ms": 1552009791873
+            },
+            "description": "",
+            "detections": [
+                "40"
+            ],
+            "id": "230",
+            "img_id": "60f346ceb99f25d0a72b0fd78cd840b3473bb3092bf18e0ce367d6d9d93f1638",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "231": {
+            "created": {
+                "formatted": "08.03.19 02:50",
+                "ms": 1552009837231
+            },
+            "description": "",
+            "detections": [
+                "41"
+            ],
+            "id": "231",
+            "img_id": "60f346ceb99f25d0a72b0fd78cd840b3473bb3092bf18e0ce367d6d9d93f1638",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "232": {
+            "created": {
+                "formatted": "08.03.19 02:52",
+                "ms": 1552009967727
+            },
+            "description": "",
+            "detections": [
+                "42"
+            ],
+            "id": "232",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "233": {
+            "created": {
+                "formatted": "08.03.19 02:53",
+                "ms": 1552010025214
+            },
+            "description": "",
+            "detections": [
+                "43"
+            ],
+            "id": "233",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
             "name": "",
             "printer": "302",
             "socket": "303",
@@ -114,16 +1978,17 @@
             "starting_row": 0,
             "step": 0
         },
-        "212": {
+        "234": {
             "created": {
-                "formatted": "28.02.19 21:16",
-                "ms": 1551384974876
+                "formatted": "08.03.19 02:54",
+                "ms": 1552010044822
             },
             "description": "",
             "detections": [
+                "44"
             ],
-            "id": "212",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "id": "234",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
             "name": "",
             "printer": "302",
             "socket": "303",
@@ -131,39 +1996,76 @@
             "starting_row": 0,
             "step": 0
         },
-        "213": {
+        "235": {
             "created": {
-                "formatted": "28.02.19 21:29",
-                "ms": 1551385754409
+                "formatted": "08.03.19 02:54",
+                "ms": 1552010072932
             },
             "description": "",
             "detections": [
-                "10"
+                "45"
             ],
-            "id": "213",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "id": "235",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
             "name": "",
             "printer": "302",
             "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
+            "starting_col": 1,
+            "starting_row": 1,
             "step": 0
         },
-        "214": {
+        "236": {
             "created": {
-                "formatted": "28.02.19 21:44",
-                "ms": 1551386684407
+                "formatted": "08.03.19 02:56",
+                "ms": 1552010171993
             },
             "description": "",
             "detections": [
+                "46"
             ],
-            "id": "214",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
+            "id": "236",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
             "name": "",
             "printer": "302",
             "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "237": {
+            "created": {
+                "formatted": "08.03.19 02:56",
+                "ms": 1552010218103
+            },
+            "description": "",
+            "detections": [
+                "47"
+            ],
+            "id": "237",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "238": {
+            "created": {
+                "formatted": "08.03.19 02:59",
+                "ms": 1552010376952
+            },
+            "description": "",
+            "detections": [
+                "48"
+            ],
+            "id": "238",
+            "img_id": "7871ac1f4edd434d1207e26630741c327111b748d2bed8492b928b4db8f0b84f",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
             "step": 0
         }
     },
@@ -171,7 +2073,7 @@
     "profiles": {
         "302": {
             "id": "302",
-            "profile_name": "labor&lt;a&gt;&lt;font size=&quot;60&quot;&gt;",
+            "profile_name": "labor&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;lt;a&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;lt;font size=&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;quot;60&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;quot;&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;",
             "settings": {
                 "cut_filament_position_above_trigger": {
                     "x": 191,
@@ -260,6 +2162,6 @@
             "type": "plate-profile"
         }
     },
-    "result_id": 11,
-    "result_job_id": 5
+    "result_id": 49,
+    "result_job_id": 43
 }

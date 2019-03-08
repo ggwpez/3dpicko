@@ -8,13 +8,12 @@
 #include <QVariant>
 
 class QSslConfiguration;
-namespace c3picko {
+namespace c3picko
+{
 
 QSslConfiguration* LoadSslConfig(QSettings* settings);
 
-inline QDateTime parseDateTime(QJsonValue obj) {
-  return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
-}
+inline QDateTime parseDateTime(QJsonValue obj) { return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong()); }
 
 inline QString Root() { return "/home/vados/Code/Projects/3cpicko/GUI/"; }
 
@@ -26,8 +25,10 @@ inline QString UploadFolderName() { return "uploads"; }
 
 inline QString UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
-inline void Setup() {
-  if (!QDir(UploadFolder()).exists()) QDir().mkdir(UploadFolder());
+inline void Setup()
+{
+	if (!QDir(UploadFolder()).exists())
+		QDir().mkdir(UploadFolder());
 }
 
 /**
@@ -36,5 +37,11 @@ inline void Setup() {
  */
 inline QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
 
+/**
+ * @brief Exit code indicating restart of the application.
+ * I would use a macro aka EXIT_RESTART but no macros since google style guide...
+ */
+inline int exitRestart() { return 123; }
+
 inline char const* defaultImageExtension() { return "jpg"; }
-}  // namespace c3picko
+} // namespace c3picko

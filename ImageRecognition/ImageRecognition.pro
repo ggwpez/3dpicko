@@ -13,7 +13,8 @@ SOURCES += \
     src/algorithms/helper.cc \
     src/algorithm_result.cc \
     src/algorithms/fluro1.cc \
-    src/algorithms/normal1.cc
+    src/algorithms/normal1.cc \
+    src/detection_result.cc
 
 	#src/main.cpp
 
@@ -26,7 +27,8 @@ HEADERS += \
 	include/algorithms/helper.h \
     include/algorithm_result.h \
     include/algorithms/fluro1.h \
-    include/algorithms/normal1.h
+    include/algorithms/normal1.h \
+    include/detection_result.h
 
 INCLUDEPATH += /usr/local/include/opencv
 
