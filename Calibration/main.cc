@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   std::vector<Point3f> object_blueprint;
   for (int i = 0; i < pattern.height; ++i)
 	for (int j = 0; j < pattern.width; ++j)
-	  object_blueprint.emplace_back(i, j, 0);
+	  object_blueprint.emplace_back(i * 3.5, j * 3.5, 0);
 
   std::vector<std::vector<Point3f>> object_points;
   std::vector<std::vector<Point2f>> image_points;
@@ -74,19 +74,21 @@ int main(int argc, char** argv) {
 	  remap(view, remapped, mapx, mapy, INTER_LINEAR);
 
 	  std::cout << "Thresh " << std::setprecision(3) << thresh << std::endl;
-	}
-	drawChessboardCorners(view, pattern, Mat(corners), found);
-	drawChessboardCorners(undistored, pattern, Mat(corners), found);
 
-	imshow("orig", view);
-	imshow("undistord", undistored);
-	imwrite(std::string("/home/vados/Pictures/chessboard/") + "out.jpg",
-			undistored);
-	// imshow("remapped", remapped);
-	waitKey(25);
+	  drawChessboardCorners(view, pattern, Mat(corners), found);
+	  drawChessboardCorners(undistored, pattern, Mat(corners), found);
 
-	while (waitKey() != 'q')
-	  ;
+	  imshow("orig", view);
+	  imshow("undistord", undistored);
+	  imwrite(std::string("/home/vados/Pictures/chessboard/") + "out.jpg",
+			  undistored);
+	  // imshow("remapped", remapped);
+	  waitKey(25);
+	  while (waitKey() != 'q')
+		;
+	} else
+	  std::cout << "Bad Image\n";
+
 	// imshow("frame", view);
 	// waitKey(25);
   }
