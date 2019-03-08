@@ -4,17 +4,23 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
+#include <stack>
 
 using namespace std;
 using namespace cv;
 
 Mat calc_mat() {}
 
-int main() {
-  cv::VideoCapture cam(0);
+int main(int argc, char** argv) {
+  std::stack<std::string> image_paths;
+  for (int i = 1; i < argc; ++i) {
+	image_paths.push(std::string("/home/vados/Pictures/chessboard/") + argv[i]);
+  }
+
+  // cv::VideoCapture cam(1);
 
   bool done = false;
-  Mat view, grey;
+  Mat view, grey, remapped;
   Size pattern(7, 7);
   int good = 0;
 
@@ -25,12 +31,16 @@ int main() {
 
   std::vector<std::vector<Point3f>> object_points;
   std::vector<std::vector<Point2f>> image_points;
+  Mat undistored, mapx, mapy;
 
-  object_points.push_back(object_blueprint);
+  while (!done && !image_paths.empty()) {
+	// cam.read(view);
+	view = imread(image_paths.top());
+	resize(view, view, Size(view.cols / 2, view.rows / 2));
+	std::cout << "Reading image " << image_paths.top() << "\n";
+	image_paths.pop();
 
-  while (!done) {
 	std::vector<Point2f> corners;
-	cam.read(view);
 	int w = view.rows, h = view.cols;
 	cv::cvtColor(view, grey, CV_BGR2GRAY);
 
@@ -48,28 +58,37 @@ int main() {
 	  std::vector<Mat> rvecs;
 	  std::vector<Mat> tvecs;
 
-	  image_points = {corners};
+	  image_points.push_back(corners);
+	  object_points.push_back(object_blueprint);
 
 	  double thresh = calibrateCamera(object_points, image_points, pattern,
 									  camera, dist, rvecs, tvecs);
 	  Mat optimised =
 		  getOptimalNewCameraMatrix(camera, dist, {w, h}, 1, {w, h});
 
-	  Mat undistored, mapx, mapy;
 	  undistort(view, undistored, camera, dist, optimised);
-	  initUndistortRectifyMap(camera, dist, Mat(), optimised, {w, h}, 5, mapx,
-							  mapy);
-	  Mat dst = view;
-	  remap(view, dst, mapx, mapy, INTER_LINEAR);
+	  initUndistortRectifyMap(camera, dist, Mat(), optimised, {w, h}, CV_16SC2,
+							  mapx, mapy);
 
-	  view = dst;
+	  remapped = Mat();
+	  remap(view, remapped, mapx, mapy, INTER_LINEAR);
 
 	  std::cout << "Thresh " << std::setprecision(3) << thresh << std::endl;
 	}
 	drawChessboardCorners(view, pattern, Mat(corners), found);
+	drawChessboardCorners(undistored, pattern, Mat(corners), found);
 
-	imshow("frame", view);
+	imshow("orig", view);
+	imshow("undistord", undistored);
+	imwrite(std::string("/home/vados/Pictures/chessboard/") + "out.jpg",
+			undistored);
+	// imshow("remapped", remapped);
 	waitKey(25);
+
+	while (waitKey() != 'q')
+	  ;
+	// imshow("frame", view);
+	// waitKey(25);
   }
 
   return 0;
