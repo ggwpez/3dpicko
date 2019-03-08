@@ -15,7 +15,7 @@ class AlgorithmManager : public QObject {
 
  public:
   AlgorithmJob *createJob(cv::Mat source, Algorithm::ID id,
-                          AlgorithmJob::ID job_id, AlgorithmResult* result,
+                          AlgorithmJob::ID job_id, AlgorithmResult *result,
                           QJsonObject settings);
   QList<Algorithm *> algos() const;
 
