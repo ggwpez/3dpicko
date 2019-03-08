@@ -50,12 +50,12 @@ $(function() {
 
 function upload(file){
     dropZone.removeClass('dragover');
-    $('#overlay').show();
-    upload_timeout_id = setTimeout(function(){
-        $('#overlay').hide();
-        ShowAlert("Image Upload Timeout", "danger");
-    }, 10000);
     if(file){
+        upload_timeout_id = setTimeout(function(){
+            $('#overlay').hide();
+            ShowAlert("Image Upload Timeout", "danger");
+        }, 10000);
+        $('#overlay').show();
         let rawData = new ArrayBuffer();    // TODO
         let reader = new FileReader();
         reader.readAsDataURL(file);
