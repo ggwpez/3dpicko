@@ -617,11 +617,11 @@ function strategyTab(){
         };
         plate_selection.onchange();
         tabEnter(4);
-        removeUnselectedColonies();
     }
 }
 
 function overviewTab(){
+    removeUnselectedColonies();
     // TODO disable clicks
     $('.next-step').html(`<span class="spinner-border spinner-border-sm"></span>`);
     // TODO hack

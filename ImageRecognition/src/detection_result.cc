@@ -8,13 +8,13 @@ std::vector<Colony> DetectionResult::colonies() const { return colonies_; }
 template <>
 QJsonObject Marshalling::toJson(const DetectionResult& value) {
   QJsonObject obj = Marshalling::toJson<AlgorithmResult>(
-      static_cast<AlgorithmResult const&>(value));
+	  static_cast<AlgorithmResult const&>(value));
   QJsonArray colonies;
 
-  for (Colony const& colony : value.colonies())
-    colonies.push_back(Marshalling::toJson(colony));
+  /*for (Colony const& colony : value.colonies())
+	colonies.push_back(Marshalling::toJson(colony));
 
-  obj["colonies"] = colonies;
+  obj["colonies"] = colonies;*/
 
   return obj;
 }
