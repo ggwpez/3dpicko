@@ -5,173 +5,20 @@
     "deleted_images": {
     },
     "deleted_jobs": {
+        "209": {
     },
     "detection_results": {
     },
     "images": {
-        "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd": {
-            "description": "Cropped version of 'cropped.JPG'",
-            "height": 2070,
-            "id": "05b4e8c9eade671d82c0f848e9d3a56a82ee71cdd0e776a80fc71418d6e7abbd",
-            "original_name": "cropped.JPG_1",
-            "path": "/uploads/FKAaLrtE",
-            "uploaded": {
-                "formatted": "28.02.19 21:29",
-                "ms": 1551385748385
-            },
-            "width": 3105
-        },
-        "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53": {
-            "description": "descrtiption",
-            "height": 1080,
-            "id": "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53",
-            "original_name": "test.png",
-            "path": "/uploads/mAIVYHGj",
-            "uploaded": {
-                "formatted": "27.02.19 19:03",
-                "ms": 1551290638571
-            },
-            "width": 1920
-        },
-        "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51": {
-            "description": "descrtiption",
-            "height": 2588,
-            "id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "original_name": "cropped.JPG",
-            "path": "/uploads/HHtOblIG",
-            "uploaded": {
-                "formatted": "28.02.19 18:22",
-                "ms": 1551374536136
-            },
-            "width": 3992
-        },
-        "f18e73346cdf13d8c0b30493d60e60d79dc039d7227c7e86b84b42a62767d1f4": {
-            "description": "Cropped version of 'cropped.JPG'",
-            "height": 2070,
-            "id": "f18e73346cdf13d8c0b30493d60e60d79dc039d7227c7e86b84b42a62767d1f4",
-            "original_name": "cropped.JPG_1",
-            "path": "/uploads/DpIVsAiJ",
-            "uploaded": {
-                "formatted": "28.02.19 21:44",
-                "ms": 1551386683175
-            },
-            "width": 3105
-        }
     },
     "job_id": 215,
     "jobs": {
-        "209": {
-            "created": {
-                "formatted": "01.01.70 01:00",
-                "ms": 0
-            },
-            "description": "",
-            "detections": [
-                "7"
-            ],
-            "id": "209",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "210": {
-            "created": {
-                "formatted": "28.02.19 20:40",
-                "ms": 1551382843231
-            },
-            "description": "",
-            "detections": [
-                "8"
-            ],
-            "id": "210",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "211": {
-            "created": {
-                "formatted": "28.02.19 21:12",
-                "ms": 1551384739704
-            },
-            "description": "",
-            "detections": [
-                "9"
-            ],
-            "id": "211",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "212": {
-            "created": {
-                "formatted": "28.02.19 21:16",
-                "ms": 1551384974876
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "212",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "213": {
-            "created": {
-                "formatted": "28.02.19 21:29",
-                "ms": 1551385754409
-            },
-            "description": "",
-            "detections": [
-                "10"
-            ],
-            "id": "213",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "214": {
-            "created": {
-                "formatted": "28.02.19 21:44",
-                "ms": 1551386684407
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "214",
-            "img_id": "64d09f89b8d8e9583adbd59d307af4b11055674eb60ab36022ec4f2be7027f51",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        }
     },
     "profile_id": 306,
     "profiles": {
         "302": {
             "id": "302",
-            "profile_name": "labor&lt;a&gt;&lt;font size=&quot;60&quot;&gt;",
+            "profile_name": "labor",
             "settings": {
                 "cut_filament_position_above_trigger": {
                     "x": 191,
