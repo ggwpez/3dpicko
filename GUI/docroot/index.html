@@ -118,7 +118,7 @@
                     </div>
                     <div id="showCoordinates"></div>
                   </div>
-                  <div class="col-2" id="detection-settings-div" style="min-width: 250px;">
+                  <div class="col-2" id="detection-settings-div">
                     <h4>Detection Settings</h4>
                     <div class="form-group">
                       <label for="select-algorithm">Algorithm:</label>
@@ -126,6 +126,8 @@
                     </div>
                     <form id="detection-settings-form">
                       <button type="reset" class="btn btn-outline-primary btn-sm w-100">Reset to Default Values</button>
+                      <!-- TODO noch mehr Profi-Code -->
+                      <button type="button" onclick="show_excluded = !show_excluded;printPositions();" class="btn btn-outline-primary btn-sm w-100 mt-1">Show/Hide Excluded Colonies</button>
                       <div id="detection-settings"></div>
                     </form>
                   </div>

@@ -119,6 +119,7 @@ function removeUnselectedColonies()
 }
 
 // Print colonies
+var show_excluded = false;
 function printPositions(){
     // show coordinatesPx
     for (ball in circles)
@@ -135,6 +136,7 @@ function printPositions(){
         // TODO build color lookuptabl before for speedup
         if (colony.excluded_by != "")
         {
+            if(!show_excluded) return;
             const found = algorithms["1"].settings.filter(s => (s.id == colony.excluded_by));
 
             if (found && found.length)

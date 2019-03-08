@@ -178,7 +178,7 @@ $(function Setup()
 function GetDetectionAlgorithms(detection_algorithms){
     algorithms = detection_algorithms;
     // TODO Remove (only for debugging)
-    algorithms["321"] = {
+    /*algorithms["321"] = {
         name: "Fluro",
         description: "Good for detecting fluorescent colonies",
         settings:[{
@@ -279,7 +279,7 @@ function GetDetectionAlgorithms(detection_algorithms){
             description: ""
         }
         ]
-    };
+    };*/
 
     const algorithm_selection = document.getElementById("select-algorithm");
     while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);

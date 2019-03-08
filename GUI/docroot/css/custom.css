@@ -7,6 +7,9 @@ label{
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
+.modal-title {
+    word-break: break-all;
+}
 .next-step{
 	float: right;
 }
