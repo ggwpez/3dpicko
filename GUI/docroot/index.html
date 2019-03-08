@@ -71,13 +71,12 @@
               </div>
               <div class="tab-pane fade col-md-8" id="cut">
                 <h2>Align selection with all <strong>outer</strong> borders of plate.</h2>
-                <h3>Make sure <strong>whole</strong> plate is visible.</h3>
                 <div>
                   <img id="cutImg" src="" alt="Picture">
                 </div>
                 <button class="btn btn-success mt-2 next-step" onclick="attributesTab()">Continue</button>
               </div>
-              <div class="tab-pane fade col-md-6" id="attributes">
+              <div class="tab-pane fade col-md-6 col-xl-4" id="attributes">
                 <h2>Pickjob Attributes</h2>
                 <form id="attributes-form" name="attributes-form">
                   <div class="form-group">
@@ -119,7 +118,7 @@
                     </div>
                     <div id="showCoordinates"></div>
                   </div>
-                  <div class="col-2" id="detection-settings-div">
+                  <div class="col-2" id="detection-settings-div" style="min-width: 250px;">
                     <h4>Detection Settings</h4>
                     <div class="form-group">
                       <label for="select-algorithm">Algorithm:</label>
@@ -132,20 +131,24 @@
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade col-md-8 col-lg-5" id="strategy">
-                <h2>Choose Goal Plate and Number of Colonies</h2>
-                <div style="width: fit-content; width: -moz-fit-content;">
-                  <form id="strategy-form" name="strategy-form">
-                    <div class="form-group">
-                      <label for="select-plate-profile">Goal Plate:</label>
-                      <select class="form-control" id="select-plate-profile"></select>
-                    </div>
-                    <div id="number-of-colonies-slider"></div>
-                  </form>
-                  <h2>Choose Starting Well</h2>
-                  <canvas id="pickstrategy-canvas"></canvas>
-                  <br>
-                  <button class="btn btn-success next-step" onclick="overviewTab()">Continue</button>
+              <div class="tab-pane fade col" id="strategy">
+                <div class="row">
+                  <div class="col-md-4 col-lg-2" style="min-width: 300px;">
+                    <h2>Choose Goal Plate</h2>
+                    <form id="strategy-form" name="strategy-form">
+                      <div class="form-group">
+                        <label for="select-plate-profile">Goal Plate:</label>
+                        <select class="form-control" id="select-plate-profile"></select>
+                      </div>
+                      <div id="number-of-colonies-slider"></div>
+                    </form>
+                    <button class="btn btn-success next-step" onclick="overviewTab()">Continue</button>
+                  </div>
+                  <div class="col">
+                    <h2>Choose Starting Well</h2>
+                    <canvas id="pickstrategy-canvas"></canvas>
+                    <br>
+                  </div>
                 </div>
               </div>
               <div class="tab-pane fade col-md-10 col-lg-8" id="overview">
@@ -185,8 +188,8 @@
                         </div>
                       </div>
                     </form>
-                    <button class="btn btn-primary m-2" id="execute-button" onclick="executeTab()">Start picking</button>
-                    <button class="btn btn-primary m-2" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
+                    <button class="btn btn-success m-2" id="execute-button" onclick="executeTab()">Start picking</button>
+                    <button class="btn btn-success m-2" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
                   </div>
                 </div>
               </div>
