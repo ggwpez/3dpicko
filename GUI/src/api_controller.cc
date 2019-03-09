@@ -92,7 +92,7 @@ void APIController::DeleteImage(Image::ID id, QObject* client) {
     // go out of scope after deletion
     emit OnImageDeleted(image, client);
   } else {
-    emit OnImageDeleteError(image.path(), client);
+    emit OnImageDeleteError(image.path().toSystemAbsolute(), client);
   }
 }
 
@@ -281,7 +281,8 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id,
       cv::Mat image;
 
       if (!img.readCvMat(image)) {
-        qCritical() << "CV could not read image" << img.path();
+        qCritical() << "CV could not read image"
+                    << img.path().toSystemAbsolute();
         emit OnColonyDetectionError("Image not readable or empty", client);
       } else {
         AlgorithmJob::ID result_job_id = db_->newResultJobId();

@@ -59,7 +59,7 @@ void APIOutput::ImageCreateError(QString path, QObject* client) {
 }
 
 void APIOutput::ImageDeleted(Image image, QObject* client) {
-  emit op->toAll("deleteimage", Marshalling::toJson(image));
+  emit op->toAll("deleteimage", {{"id", image.id()}});
 }
 
 void APIOutput::ImageDeleteError(QString path, QObject* client) {

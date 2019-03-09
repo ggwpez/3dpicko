@@ -9,18 +9,17 @@
 
 namespace c3picko {
 
-WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
-                   QObject *_parent)
+WsServer::WsServer(QSettings& settings, QSslConfiguration* ssl,
+                   QObject* _parent)
     : QObject(_parent),
-      settings_(settings),
       server_(new QWebSocketServer(QStringLiteral("Echo Server"),
                                    (ssl ? QWebSocketServer::SecureMode
                                         : QWebSocketServer::NonSecureMode),
                                    this)) {
   if (ssl) server_->setSslConfiguration(*ssl);
 
-  host_ = settings->value("host", defaultHost()).toString();
-  int port = settings->value("port", defaultPort()).toInt();
+  host_ = settings.value("host", defaultHost()).toString();
+  int port = settings.value("port", defaultPort()).toInt();
 
   if (port >= (1 << 16) || port < 0) {
     port_ = defaultPort();
@@ -30,7 +29,7 @@ WsServer::WsServer(QSettings *settings, QSslConfiguration *ssl,
 }
 
 void WsServer::NewConnection() {
-  QWebSocket *pSocket = server_->nextPendingConnection();
+  QWebSocket* pSocket = server_->nextPendingConnection();
   if (!pSocket) return;
 
   connect(pSocket, SIGNAL(error(QAbstractSocket::SocketError)), this,
@@ -46,7 +45,7 @@ void WsServer::NewConnection() {
 }
 
 void WsServer::NewTextData(QString data) {
-  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+  QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
   // qDebug() << "Text data" << data;
   if (client) {
@@ -64,7 +63,7 @@ void WsServer::NewTextData(QString data) {
 }
 
 void WsServer::NewBinaryData(QByteArray) {
-  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+  QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
   if (client) {
     qWarning() << "Binary from client ignored" << client;
@@ -72,7 +71,7 @@ void WsServer::NewBinaryData(QByteArray) {
 }
 
 void WsServer::ConnectionClosed() {
-  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+  QWebSocket* client = qobject_cast<QWebSocket*>(sender());
 
   // qDebug() << "Client disconnected" << client;
   if (client) {
@@ -101,7 +100,7 @@ bool WsServer::StartListen() {
     emit OnStarted();
     return true;
   } else {
-    qCritical("%s", qPrintable(server_->errorString()));
+    qCritical("WebSocket %s", qPrintable(server_->errorString()));
     return false;
   }
 }
@@ -114,7 +113,7 @@ void WsServer::acceptError(QAbstractSocket::SocketError ec) {
   qWarning() << "WsServer::acceptError " << ec;
 }
 
-void WsServer::peerVerifyError(const QSslError &error) {
+void WsServer::peerVerifyError(const QSslError& error) {
   qWarning() << "WsServer::peerVerifyError " << error;
 }
 
@@ -122,27 +121,27 @@ void WsServer::serverError(QWebSocketProtocol::CloseCode ec) {
   qWarning() << "WsServer::serverError " << ec;
 }
 
-void WsServer::sslErrors(const QList<QSslError> &errors) {
+void WsServer::sslErrors(const QList<QSslError>& errors) {
   for (QSslError error : errors)
     qWarning() << "Ssl error:" << error.errorString();
 }
 
-void WsServer::ToClient(QObject *client, QString type, QJsonObject data) {
-  SendToClient(qobject_cast<QWebSocket *>(client), type, data);
+void WsServer::ToClient(QObject* client, QString type, QJsonObject data) {
+  SendToClient(qobject_cast<QWebSocket*>(client), type, data);
 }
 
 void WsServer::ToAll(QString type, QJsonObject data) {
   for (auto client : clients_) SendToClient(client, type, data);
 }
 
-void WsServer::ToAllExClient(QObject *excluded, QString type,
+void WsServer::ToAllExClient(QObject* excluded, QString type,
                              QJsonObject data) {
   for (auto client : clients_) {
     if (client != excluded) SendToClient(client, type, data);
   }
 }
 
-void WsServer::SendToClient(QWebSocket *client, QString type,
+void WsServer::SendToClient(QWebSocket* client, QString type,
                             QJsonObject packet) {
   QByteArray data = QJsonDocument({{"type", type}, {"data", packet}}).toJson();
 

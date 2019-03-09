@@ -30,6 +30,6 @@ HEADERS += \
 	include/api_controller.h
 
 DEFINES += QT_NO_INFO_OUTPUT
-OTHER_FILES += etc/serverconfig.ini
+OTHER_FILES += serverconfig.ini
 
 include(../QtWebApp/httpserver/httpserver.pri)

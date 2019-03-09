@@ -154,13 +154,13 @@ QJsonObject Marshalling::toJson(const Point& value) {
 }
 
 template <>
-QDateTime Marshalling::fromJson(const QJsonObject& obj) {
-  return QDateTime::fromMSecsSinceEpoch(obj["ms"].toVariant().toLongLong());
+Point Marshalling::fromJson(const QJsonObject& obj) {
+  return Point(obj["x"].toDouble(), obj["y"].toDouble(), obj["z"].toDouble());
 }
 
 template <>
-Point Marshalling::fromJson(const QJsonObject& obj) {
-  return Point(obj["x"].toDouble(), obj["y"].toDouble(), obj["z"].toDouble());
+QDateTime Marshalling::fromJson(const QJsonObject& obj) {
+  return QDateTime::fromMSecsSinceEpoch(obj["ms"].toVariant().toLongLong());
 }
 
 template <>

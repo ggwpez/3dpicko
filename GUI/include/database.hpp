@@ -19,10 +19,10 @@ class Database : public QObject, JsonConvertable {
   typedef Table<DetectionResult> DetectionResultTable;
   // typedef Table<AlgorithmJob> DetectionJobTable;
 
-  Database(QString file_path, QObject* parent);
-  ~Database() override;
+  Database(QSettings& settings, QObject* parent);
 
   void saveToFile();
+  bool readOnly() const;
 
   JobTable& jobs();
   JobTable& deletedJobs();  // Tracks deleted jobs TODO neeeded?
@@ -49,7 +49,8 @@ class Database : public QObject, JsonConvertable {
   void write(QJsonObject&) const override;
 
  private:
-  QString file_path_;
+  ResourcePath file_path_;
+  bool read_only_;
 
   JobTable jobs_;
   JobTable deleted_jobs_;

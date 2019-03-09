@@ -36,7 +36,7 @@ cv::Mat& AlgorithmResult::newMat() {
 }
 
 void AlgorithmResult::cleanup() {
-  std::string name;
+  /*std::string name;
   int i = 0;
 
   for (void* stage : stack_) {
@@ -51,7 +51,7 @@ void AlgorithmResult::cleanup() {
 
   while (cv::waitKey(0) != 'q')
     ;
-  cv::destroyAllWindows();
+  cv::destroyAllWindows();*/
 
   // Dont delete them right now, otherwise we cant user them
   // colonies_.~vector();

@@ -10,11 +10,13 @@
 
 using namespace stefanfrings;
 
-StaticFileController::StaticFileController(QSettings *settings, QObject *parent)
+StaticFileController::StaticFileController(QSettings& settings,
+                                           QString docroot_absolute,
+                                           QObject* parent)
     : HttpRequestHandler(parent) {
-  maxAge = settings->value("maxAge", "60000").toInt();
-  encoding = settings->value("encoding", "UTF-8").toString();
-  docroot = settings->value("path", ".").toString();
+  maxAge = settings.value("maxAge", "60000").toInt();
+  encoding = settings.value("encoding", "UTF-8").toString();
+  docroot = docroot_absolute;
   if (!(docroot.startsWith(":/") || docroot.startsWith("qrc://"))) {
 // Convert relative path to absolute, based on the directory of the config file.
 #ifdef Q_OS_WIN32
@@ -24,27 +26,27 @@ StaticFileController::StaticFileController(QSettings *settings, QObject *parent)
     if (QDir::isRelativePath(docroot))
 #endif
     {
-      QFileInfo configFile(settings->fileName());
+      QFileInfo configFile(settings.fileName());
       docroot =
           QFileInfo(configFile.absolutePath(), docroot).absoluteFilePath();
     }
   }
   qInfo("StaticFileController: docroot=%s, encoding=%s, maxAge=%i",
         qPrintable(docroot), qPrintable(encoding), maxAge);
-  maxCachedFileSize = settings->value("maxCachedFileSize", "65536").toInt();
-  cache.setMaxCost(settings->value("cacheSize", "1000000").toInt());
-  cacheTimeout = settings->value("cacheTime", "60000").toInt();
+  maxCachedFileSize = settings.value("maxCachedFileSize", "65536").toInt();
+  cache.setMaxCost(settings.value("cacheSize", "1000000").toInt());
+  cacheTimeout = settings.value("cacheTime", "60000").toInt();
   qInfo("StaticFileController: cache timeout=%i, size=%i", cacheTimeout,
         cache.maxCost());
 }
 
-void StaticFileController::service(HttpRequest &request,
-                                   HttpResponse &response) {
+void StaticFileController::service(HttpRequest& request,
+                                   HttpResponse& response) {
   QByteArray path = request.getPath();
   // Check if we have the file in cache
   qint64 now = QDateTime::currentMSecsSinceEpoch();
   mutex.lock();
-  CacheEntry *entry = cache.object(path);
+  CacheEntry* entry = cache.object(path);
   if (entry && (cacheTimeout == 0 || entry->created > (now - cacheTimeout))) {
     QByteArray document =
         entry->document;  // copy the cached document, because other threads may
@@ -116,7 +118,7 @@ void StaticFileController::service(HttpRequest &request,
 }
 
 void StaticFileController::setContentType(QString fileName,
-                                          HttpResponse &response) const {
+                                          HttpResponse& response) const {
   if (fileName.endsWith(".png")) {
     response.setHeader("Content-Type", "image/png");
   } else if (fileName.endsWith(".jpg")) {
@@ -151,6 +153,6 @@ void StaticFileController::setContentType(QString fileName,
   // Todo: add all of your content types
   else {
     /* qDebug("StaticFileController: unknown MIME type for filename '%s'",
-                    qPrintable(fileName));*/
+                                    qPrintable(fileName));*/
   }
 }
