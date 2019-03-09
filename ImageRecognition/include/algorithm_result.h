@@ -51,6 +51,8 @@ class AlgorithmResult {
   QString cleanupError() const;
   QString stageError() const;
 
+  std::list<cv::Mat*> const& stack() const;
+
  private:
   std::list<cv::Mat*> stack_;
 };

@@ -10,29 +10,29 @@
 namespace c3picko {
 
 Normal1::Normal1()
-	: Algorithm(
-		  "1", "Normal1", "Detects colonies with standard illumination",
-		  {(AlgoStep)&Normal1::cvt, (AlgoStep)&Normal1::threshold,
-		   (AlgoStep)&Normal1::erodeAndDilate, (AlgoStep)&Normal1::label/*,
+    : Algorithm(
+          "1", "Normal1", "Detects colonies with standard illumination",
+          {(AlgoStep)&Normal1::cvt, (AlgoStep)&Normal1::threshold,
+           (AlgoStep)&Normal1::erodeAndDilate, (AlgoStep)&Normal1::label /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
-		  {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
-									  "Show ignored by algorithm", "", true, {},
-									  Qt::red),*/
-		   AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
-												1, {120, 1000}),
-		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
-												"", 0, 1, .001, {.7, 1},
-												Qt::cyan),
-		   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
-												0, 1, .001, {.7, 1},
-												Qt::magenta),
-		   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
-												1, .001, {.8, 1}, Qt::green),
-		   AlgoSetting::make_rangeslider_double(
-			   "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-		   //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
-		   // plate", "", true),
-		   /*AlgoSetting::make_checkbox(
+          {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
+                                                                                                                                                                                                                                          "Show ignored
+                          by algorithm", "", true, {}, Qt::red),*/
+           AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
+                                                1, {120, 1000}),
+           AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+                                                "", 0, 1, .001, {.7, 1},
+                                                Qt::cyan),
+           AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+                                                0, 1, .001, {.7, 1},
+                                                Qt::magenta),
+           AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+                                                1, .001, {.8, 1}, Qt::green),
+           AlgoSetting::make_rangeslider_double(
+               "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+           //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
+           // plate", "", true),
+           /*AlgoSetting::make_checkbox(
 			   "filter_relative", "Filter detected colonies", "", false,
 			   {AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
 										   "Select an attribute to filter",
@@ -45,7 +45,7 @@ Normal1::Normal1()
 					"rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01,
 					{-5, 5})},
 			   Qt::red)*/},
-		  true, 3000) {}
+          true, 3000) {}
 
 Normal1::~Normal1() {}
 
@@ -123,7 +123,7 @@ static AlgoSetting::ID roundness(int area, int w, int h,
 
   double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-  return convexity.contains(convex) ? "" : "circularity";  // flouro .91
+  return convexity.contains(convex) ? "" : "convexity";  // flouro .91
 }
 
 void Normal1::cvt(AlgorithmJob* base, DetectionResult* result) {
@@ -283,9 +283,9 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
 
     if (!label) {
       if (show_excluded)
-        colonies.push_back(Colony(center.x / double(input.cols),
-                                  center.y / double(input.rows), 0, 0, 10, 0,
-                                  ++id, "show_excluded_by_algo"));
+        colonies.emplace_back(center.x / double(input.cols),
+                              center.y / double(input.rows), 0, 0, 10, 0, ++id,
+                              "show_excluded_by_algo");
       continue;
     }
 
@@ -296,9 +296,9 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
     int left = stats.at<int>(label, cv::CC_STAT_LEFT);
 
     if (!_area.contains(area)) {
-      colonies.push_back(Colony(center.x / double(input.cols),
-                                center.y / double(input.rows), area, 0,
-                                std::sqrt(area / M_PI), 0, ++id, "area"));
+      colonies.emplace_back(center.x / double(input.cols),
+                            center.y / double(input.rows), area, 0,
+                            std::sqrt(area / M_PI), 0, ++id, "area");
       continue;
     }
     // Filter by roundness
@@ -316,6 +316,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
       cv::Mat submat(input, cv::Rect(left, top, w, h));
       cv::findContours(submat, contours, cv::RETR_EXTERNAL,
                        cv::CHAIN_APPROX_SIMPLE);
+
       AlgoSetting::ID excluded_by =
           roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio,
                     _circularity, _convexity);
