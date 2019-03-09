@@ -1,0 +1,4 @@
+#ifndef RESOURCE_PATH_H
+#define RESOURCE_PATH_H
+
+#endif // RESOURCE_PATH_H

@@ -7,72 +7,11 @@
     "deleted_jobs": {
     },
     "detection_results": {
-        "18": {
-            "cleanup_error": "",
-            "cleanup_succeeded": true,
-            "id": "18",
-            "last_stage": 3,
-            "stage_error": "",
-            "stages_succeeded": true
-        }
     },
     "images": {
-        "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771": {
-            "description": "descrtiption",
-            "height": 2752,
-            "id": "7003cf5116486669ab42bf3a95a167f728b4302a7165ee2a51759ce9053db771",
-            "original_name": "12.jpg",
-            "path": "/uploads/JOmpzxNz",
-            "uploaded": {
-                "formatted": "09.03.19 18:46",
-                "ms": 1552153570797
-            },
-            "width": 4896
-        },
-        "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302": {
-            "description": "Cropped version of '12.jpg'",
-            "height": 2201,
-            "id": "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302",
-            "original_name": "12.jpg_1",
-            "path": "/uploads/lmowDTzl",
-            "uploaded": {
-                "formatted": "09.03.19 18:46",
-                "ms": 1552153574941
-            },
-            "width": 3302
-        }
     },
     "job_id": 210,
     "jobs": {
-        "209": {
-            "created": {
-                "formatted": "09.03.19 18:46",
-                "ms": 1552153575650
-            },
-            "description": "",
-            "detections": [
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18"
-            ],
-            "id": "209",
-            "img_id": "eebd9456a8edc572f9bb5d85e119486372b275998c9e581504b07ebc788f5302",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        }
     },
     "profile_id": 306,
     "profiles": {
