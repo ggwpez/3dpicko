@@ -5,7 +5,6 @@ var balls, cols, rows;
 var collided_id, old_collided_id;
 // starting at 1
 var collided_row = 1, collided_column = 1;
-var mouse_down = false;
 var colony_count = 1;
 
 function drawWells(col_arg, rows_arg, colonys = 1)
@@ -53,30 +52,28 @@ function drawWells(col_arg, rows_arg, colonys = 1)
 
 }
 
-pickstrategy_canvas.addEvent('mousemove', function (e)
+var UpdateMouse = function(event)
 {
-	if(mouse_down){
-		var rect = pickstrategy_canvas.getBoundingClientRect();
-		var x = e.client.x -rect.left,
-		y = e.client.y -rect.top;
+	var rect = pickstrategy_canvas.getBoundingClientRect();
+	var x =event.clientX -rect.left,
+	y = event.clientY -rect.top;
 
-		for (let i = 0; i < balls.length; ++i)
+	for (let i = 0; i < balls.length; ++i)
+	{
+		var ball = balls[i];
+
+		if (ball.isMouseOver(x, y))
 		{
-			var ball = balls[i];
-
-			if (ball.isMouseOver(x, y))
+			if (! ball.mouseover)
 			{
-				if (! ball.mouseover)
-				{
-					ball.mouseover = true;
-					collided_id = i;
-				}
+				ball.mouseover = true;
+				collided_id = i;
 			}
-			else if (ball.mouseover) ball.mouseover = false;
 		}
-		if (old_collided_id != collided_id) updateWells();
-	} else return false;
-});
+		else if (ball.mouseover) ball.mouseover = false;
+	}
+	if (old_collided_id != collided_id) updateWells();
+}
 
 function updateWells(number_of_colonies = false){
 	if(collided_id == -1) collided_id = 0;
@@ -98,10 +95,13 @@ function updateWells(number_of_colonies = false){
 }
 
 pickstrategy_canvas.addEvent('mousedown', function (e){
-	mouse_down = true;
+	this.onmousemove = UpdateMouse;
 	// What a cheat!
-	pickstrategy_canvas.fireEvent('mousemove', e);
+	UpdateMouse(e.event);
 });
-pickstrategy_canvas.addEvent('mouseup', function (e){
-	mouse_down = false;
+pickstrategy_canvas.addEvent('mouseup', function (){
+	this.onmousemove = null;
+});
+pickstrategy_canvas.addEvent('mouseleave', function (){
+	this.onmousemove = null;
 });

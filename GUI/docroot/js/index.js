@@ -1,4 +1,4 @@
-/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colonies, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting, number_of_colonies */
+/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting, number_of_colonies */
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
@@ -8,6 +8,7 @@ var current_job = {};
 var all_jobs = [];
 var all_profiles = {};
 var algorithms;
+var algorithm_settings_values = {};
 var default_profiles = {
     "printer-profile": "",
     "socket-profile": "",
@@ -151,7 +152,12 @@ $(function Setup()
                 drawPositions(data);
                 clearTimeout(loading_timeout_id);
                 document.body.classList.remove('wait');
-                document.getElementById('detected-colonies-number').innerHTML = number_of_colonies;
+                let number = $('#detected-colonies-number');
+                if(number.text() != number_of_colonies){
+                    number.hide();
+                    number.text(number_of_colonies);
+                    number.fadeIn();
+                }
                 $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
             }
             else if (type == "getdetectionalgorithms"){
@@ -291,21 +297,30 @@ function GetDetectionAlgorithms(detection_algorithms){
         algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
         algorithm_option.title = algorithm.description;
         algorithm_selection.appendChild(algorithm_option);
+        CreateDetectionAlgorithmSettings(id);
     }
-    algorithm_selection.onchange = function(){GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);UpdateDetectionSettings()};
-    GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);
+    algorithm_selection.onchange = function(){$('#'+this.value+'-settings').collapse('show');UpdateDetectionSettings(this.value)};
 }
 
-function GetDetectionAlgorithmSettings(id){
+function CreateDetectionAlgorithmSettings(id){
     const detection_settings = document.getElementById("detection-settings");
-    while (detection_settings.firstChild) detection_settings.removeChild(detection_settings.firstChild);
+    // while (detection_settings.firstChild) detection_settings.removeChild(detection_settings.firstChild);
 
-    let settings = new FormGroup(algorithms[id], "detection-settings-form");
-    detection_settings.insertAdjacentHTML("beforeend", settings.getHtml());
+    let html = `<div id="${id}-settings" class="collapse" data-parent="#detection-settings">
+    <form id="${id}-settings-form">
+    <button type="reset" class="btn btn-outline-primary btn-sm w-100">Reset to Default Values</button>
+    <button type="button" onclick="show_excluded = !show_excluded;printPositions();" class="btn btn-outline-primary btn-sm w-100 mt-1">Show/Hide Excluded Colonies</button>
+    `;
+    let settings = new FormGroup(algorithms[id], id+"-settings-form");
+    detection_settings.insertAdjacentHTML("beforeend", html+settings.getHtml()+`</form></div>`);
     settings.AddInputEvents();
+    FormGroup.AddFormEvents(id+"-settings-form");
+    $('#'+id+'-settings-form').change(function(){
+        UpdateDetectionSettings(id);
+    });
 }
 var loading_timeout_id;
-var UpdateDetectionSettings = function (){
+var UpdateDetectionSettings = function (id){
     // Send as:
     // {
     //  job_id: "222",
@@ -317,7 +332,7 @@ var UpdateDetectionSettings = function (){
     //  }
     // }
     document.body.classList.add('wait');
-    let form = document.getElementById('detection-settings-form');
+    let form = document.getElementById(id+'-settings-form');
     clearTimeout(loading_timeout_id);
     loading_timeout_id = setTimeout(function(){
         document.body.classList.remove('wait');
@@ -325,13 +340,13 @@ var UpdateDetectionSettings = function (){
     }, 4000);
     const form_data = new FormData(form);
     const algorithm_id = document.getElementById('select-algorithm').value;
-    let new_settings = {
+    algorithm_settings_values[algorithm_id] = {
         job_id : current_job.id,
         algorithm: algorithm_id,
+        settings: FormGroup.ReadForm(algorithms[algorithm_id], form_data)
     };
-    new_settings.settings = FormGroup.ReadForm(algorithms[algorithm_id], form_data);
-    console.log("New Settings:", new_settings);
-    api('updatedetectionsettings', new_settings);
+    console.log("Update Settings:", algorithm_settings_values[algorithm_id]);
+    api('updatedetectionsettings', algorithm_settings_values[algorithm_id]);
 }
 
 function AddJobToList(job)
@@ -407,11 +422,6 @@ $(function(){
         else{
             return false;
         }
-    });
-
-    FormGroup.AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
-    $('#detection-settings-form').change(function(){
-        UpdateDetectionSettings();
     });
 
     $('#delete-dialog').on('show.bs.modal', function (e) {
@@ -545,14 +555,13 @@ function cutTab(){
 function attributesTab(){
     tabEnter(2);
     document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
-
+    document.getElementById('date-attribute').innerHTML = new Date().toLocaleDateString();
     // Do the cutting
     var rect = cropper.getData();
     api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
 $('#selection-tab').on('shown.bs.tab', function () {
     selectionTabEnter();
-    UpdateDetectionSettings();
 });
 function selectionTab(){
     if(chosen_image.path){
@@ -636,6 +645,7 @@ function overviewTab(){
         document.getElementById('processed-layer1').src = canvas_layer1.toDataURL();
         const html = `
         <ul class="mt-2">
+        <li>Date: ${new Date().toLocaleDateString()}</li>
         <li>Job name: ${current_job.name}</li>
         <li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
         <li>Socket: ${all_profiles[current_job.socket].profile_name}</li>

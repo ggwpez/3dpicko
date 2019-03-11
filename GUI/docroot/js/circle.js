@@ -1,4 +1,4 @@
-const Circle = new Class({ 
+const Circle = new Class({
    Implements: [Options, Events],
 
    initialize: function (options) {
@@ -16,7 +16,7 @@ const Circle = new Class({
    {
       if (this.options.selected == true)
       {
-         this.options.selected = false;  
+         this.options.selected = false;
          this.set('linecolor', this.options.defaultLinecolor);
       }
       else

@@ -7,6 +7,9 @@ label{
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
+li{
+	word-break: break-all;
+}
 .modal-title {
     word-break: break-all;
 }
@@ -152,8 +155,16 @@ img {
 #detection-settings{
 	position: relative;
 }
+#detection-settings-div{
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
 .form-group{
 	margin-bottom: 0.5rem;
+}
+#colony-layers{
+	margin-left: auto;
 }
 
 /* Strategy Tab */

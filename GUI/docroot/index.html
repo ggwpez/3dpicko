@@ -80,7 +80,10 @@
                 <h2>Pickjob Attributes</h2>
                 <form id="attributes-form" name="attributes-form">
                   <div class="form-group">
-                    <label for="staticImgName">Image:&nbsp;</label><span id="staticImgName"></span>
+                    <label for="staticImgName">Image:</label><span id="staticImgName"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="date-attribute">Date:</label><span id="date-attribute"></span>
                   </div>
                   <div class="form-group">
                     <label for="inputJobName">Job name</label>
@@ -106,8 +109,8 @@
               </div>
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
-                  <div class="col-10" id="colony-layers">
-                    <h2>Detected Colonies: <span id="detected-colonies-number" class="text-primary"></span></h2>
+                  <div id="colony-layers">
+                    <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span></h2>
                     <div id="layer_parent" style="position: relative;">
                       <canvas id="layer0" style="z-index: 0;"></canvas>
                       <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
@@ -118,18 +121,13 @@
                     </div>
                     <div id="showCoordinates"></div>
                   </div>
-                  <div class="col-2" id="detection-settings-div">
-                    <h4>Detection Settings</h4>
+                  <div id="detection-settings-div">
+                    <h2>Detection Settings</h2>
                     <div class="form-group">
                       <label for="select-algorithm">Algorithm:</label>
                       <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
                     </div>
-                    <form id="detection-settings-form">
-                      <button type="reset" class="btn btn-outline-primary btn-sm w-100">Reset to Default Values</button>
-                      <!-- TODO noch mehr Profi-Code -->
-                      <button type="button" onclick="show_excluded = !show_excluded;printPositions();" class="btn btn-outline-primary btn-sm w-100 mt-1">Show/Hide Excluded Colonies</button>
-                      <div id="detection-settings"></div>
-                    </form>
+                    <div id="detection-settings"></div>
                   </div>
                 </div>
               </div>

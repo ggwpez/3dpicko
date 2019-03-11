@@ -61,15 +61,14 @@ function selectionTabEnter()
     img.onload = function ()
     {
         // TODO only downscale, would upscale on 4k screens
-        var height, width;
-        if ($('#colony-layers').width() < img.width)
-        {
-            width = $('#colony-layers').width();
-            down_scale = width /img.width;
-            height = down_scale *img.height;
+        let width = $('#selection').width() - document.getElementById('detection-settings-div').offsetWidth - 20;
+        let height =  window.innerHeight - document.getElementById('layer_parent').getBoundingClientRect().top - 55;
+        if(width < img.width || height < img.height){
+            down_scale = Math.min(width/img.width, height/img.height);
+            width = down_scale*img.width;
+            height = down_scale*img.height;
         }
-        else
-        {
+        else{
             width = img.width;
             height = img.height;
             down_scale = 1;
@@ -77,7 +76,7 @@ function selectionTabEnter()
 
         // fix width
         // TODO enable resizing?
-        $('#selection').css('min-width', width+$('#detection-settings-div').innerWidth());
+        $('#selection').css('min-width', width + document.getElementById('detection-settings-div').offsetWidth);
 
         console.log("Downscale factor: ", down_scale);
 
@@ -91,7 +90,8 @@ function selectionTabEnter()
         layer2.canvas.height = height; // in pixels
 
         layer0.context.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
-        // TODO only make the detection button ready when we are here
+        // show settings and start detection
+        document.getElementById("select-algorithm").onchange();
     }
     img.src = chosen_image.path;
 }
