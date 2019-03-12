@@ -7,7 +7,6 @@ CONFIG -= app_bundle
 SOURCES += \
 		main.cc
 
-
 LIBS += -L/usr/local/lib/ \
 		-lopencv_core \
 		-lopencv_imgproc \
