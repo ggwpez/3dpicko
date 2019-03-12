@@ -16,8 +16,9 @@ Normal1::Normal1()
            (AlgoStep)&Normal1::erodeAndDilate, (AlgoStep)&Normal1::label /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
           {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
-                                                                                                                                                                                                                                          "Show ignored
-                          by algorithm", "", true, {}, Qt::red),*/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
+                                          by algorithm", "", true, {},
+              Qt::red),*/
            AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
                                                 1, {120, 1000}),
            AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
