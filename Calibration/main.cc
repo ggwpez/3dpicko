@@ -19,197 +19,193 @@ using namespace cv;
 
 const std::string root = "/home/vados/src/bc_pics/calibration/";
 
-int usage(int argc, char** argv)
-{
-	for (int i = 1; i < argc; ++i)
-		qDebug().nospace() << "Arg " << i << ": " << argv[i];
+int usage(int argc, char** argv) {
+  for (int i = 1; i < argc; ++i)
+    qDebug().nospace() << "Arg " << i << ": " << argv[i];
 
-	qCritical() << "Usage examples:\n"
-				<< "Main --detect <dir>\n"
-				<< "Main --transform <dir>";
+  qCritical() << "Usage examples:\n"
+              << "Main --detect <dir>\n"
+              << "Main --transform <dir>";
 
-	return 0;
+  return 0;
 }
 
-template <typename T> QJsonObject toJson(cv::Mat mat)
-{
-	QJsonObject ret;
-	ret["cols"] = mat.cols;
-	ret["rows"] = mat.rows;
-	ret["type"] = mat.type();
+template <typename T>
+QJsonObject toJson(cv::Mat mat) {
+  QJsonObject ret;
+  ret["cols"] = mat.cols;
+  ret["rows"] = mat.rows;
+  ret["type"] = mat.type();
 
-	QJsonArray data;
-	for (int r = 0; r < mat.rows; ++r)
-		for (int c = 0; c < mat.cols; ++c)
-		{
-			data.push_back(mat.at<T>(r, c));
-		}
-	ret["data"] = data;
+  QJsonArray data;
+  for (int r = 0; r < mat.rows; ++r)
+    for (int c = 0; c < mat.cols; ++c) {
+      data.push_back(mat.at<T>(r, c));
+    }
+  ret["data"] = data;
 
-	return ret;
+  return ret;
 }
 
-template <typename T> cv::Mat matFromJson(QJsonObject obj)
-{
-	cv::Mat ret(obj["rows"].toInt(), obj["cols"].toInt(), obj["type"].toInt());
+template <typename T>
+cv::Mat matFromJson(QJsonObject obj) {
+  cv::Mat ret(obj["rows"].toInt(), obj["cols"].toInt(), obj["type"].toInt());
 
-	QJsonArray data = obj["data"].toArray();
-	for (int r = 0; r < ret.rows; ++r)
-		for (int c = 0; c < ret.cols; ++c)
-		{
-			ret.at<T>(r, c) = data[c + r * ret.cols].toVariant().value<T>();
-		}
+  QJsonArray data = obj["data"].toArray();
+  for (int r = 0; r < ret.rows; ++r)
+    for (int c = 0; c < ret.cols; ++c) {
+      ret.at<T>(r, c) = data[c + r * ret.cols].toVariant().value<T>();
+    }
 
-	return ret;
+  return ret;
 }
 
-int detect(QStringList images)
-{
-	const cv::Size					  pattern(7, 7);
-	std::vector<std::vector<Point3f>> object_points;
-	std::vector<std::vector<Point2f>> image_points;
-	Mat								  undistored, mapx, mapy;
-	Mat								  camera, dist, optimised;
-	int								  good = 0, used = 0, all = images.size();
+int detect(QStringList images) {
+  const cv::Size pattern(7, 7);
+  std::vector<std::vector<Point3f>> object_points;
+  std::vector<std::vector<Point2f>> image_points;
+  Mat undistored, mapx, mapy;
+  Mat camera, dist, optimised;
+  int good = 0, used = 0, all = images.size();
 
-	std::vector<Point3f> object_blueprint;
-	for (int i = 0; i < pattern.height; ++i)
-		for (int j = 0; j < pattern.width; ++j)
-			object_blueprint.emplace_back(i * 2.3, j * 2.3, 0); // Size in cm
+  std::vector<Point3f> object_blueprint;
+  for (int i = 0; i < pattern.height; ++i)
+    for (int j = 0; j < pattern.width; ++j)
+      object_blueprint.emplace_back(i * 2.3, j * 2.3, 0);  // Size in cm
 
-	while (!images.empty() && ++used)
-	{
-		std::cerr << "Reading " << images.first().toStdString() << "\n";
-		// cam.read(view);
-		Mat image = imread(images.first().toStdString()), grey;
-		// resize(view, view, Size(view.cols / 2, view.rows / 2));
-		// qWarning() << "Reading image " << images.first();
-		images.pop_front();
+  while (!images.empty() && ++used) {
+    std::cerr << "Reading " << images.first().toStdString() << "\n";
+    // cam.read(view);
+    Mat image = imread(images.first().toStdString()), grey;
+    // resize(view, view, Size(view.cols / 2, view.rows / 2));
+    // qWarning() << "Reading image " << images.first();
+    images.pop_front();
 
-		std::vector<Point2f> corners;
-		int					 w = image.cols, h = image.rows;
-		cv::cvtColor(image, grey, CV_BGR2GRAY);
+    std::vector<Point2f> corners;
+    int w = image.cols, h = image.rows;
+    cv::cvtColor(image, grey, CV_BGR2GRAY);
 
-		bool found
-			= findChessboardCorners(grey, pattern, corners, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_NORMALIZE_IMAGE | CALIB_CB_FAST_CHECK);
+    bool found = findChessboardCorners(grey, pattern, corners,
+                                       CALIB_CB_ADAPTIVE_THRESH |
+                                           CALIB_CB_NORMALIZE_IMAGE |
+                                           CALIB_CB_FAST_CHECK);
 
-		if (found)
-		{
-			cornerSubPix(grey, corners, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, .001));
+    if (found) {
+      cornerSubPix(grey, corners, Size(11, 11), Size(-1, -1),
+                   TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, .001));
 
-			std::vector<Mat> rvecs; // translation
-			std::vector<Mat> tvecs; // rotation
+      std::vector<Mat> rvecs;  // translation
+      std::vector<Mat> tvecs;  // rotation
 
-			image_points.push_back(corners);
-			object_points.push_back(object_blueprint);
+      image_points.push_back(corners);
+      object_points.push_back(object_blueprint);
 
-			camera			= Mat();
-			double   thresh = calibrateCamera(object_points, image_points, {w, h}, camera, dist, rvecs, tvecs);
-			cv::Rect roi{0, 0, 0, 0};
-			optimised = getOptimalNewCameraMatrix(camera, dist, {w, h}, 1 /* TODO */, {w, h}, &roi);
-			std::cerr << "Reprojection error " << thresh << "\n";
-			/*if (!roi.width || !roi.height)
-			{
-																																																																																																																																			qDebug()
-			<< "Empty ROI"; continue;
-			}*/
+      camera = Mat();
+      double thresh = calibrateCamera(object_points, image_points, {w, h},
+                                      camera, dist, rvecs, tvecs);
+      cv::Rect roi{0, 0, 0, 0};
+      optimised = getOptimalNewCameraMatrix(camera, dist, {w, h}, 1 /* TODO */,
+                                            {w, h}, &roi);
+      std::cerr << "Reprojection error " << thresh << "\n";
+      /*if (!roi.width || !roi.height)
+      {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      qDebug()
+      << "Empty ROI"; continue;
+      }*/
 
-			//  cv::undistort(image, undistored, camera, dist, optimised);
-			// Mat tmp	= undistored({roi.y, roi.x, roi.height, roi.width});
-			// undistored = tmp;
+      //  cv::undistort(image, undistored, camera, dist, optimised);
+      // Mat tmp	= undistored({roi.y, roi.x, roi.height, roi.width});
+      // undistored = tmp;
 
-			// std::cerr << "Thresh " << std::setprecision(3) << thresh << std::endl;
-			++good;
+      // std::cerr << "Thresh " << std::setprecision(3) << thresh << std::endl;
+      ++good;
 
-			// drawChessboardCorners(view, pattern, Mat(corners), found);
-			// drawChessboardCorners(undistored, pattern, Mat(corners), found);
+      // drawChessboardCorners(view, pattern, Mat(corners), found);
+      // drawChessboardCorners(undistored, pattern, Mat(corners), found);
 
-			// imshow("orig", view);
-			// imshow("undistord", undistored);
-			// Mat grid = imread(root + "hig_colonies.png");
-			// undistort(grid, undistored, camera, dist, camera);
-			// imwrite(root + "hit_colonies_transform.jpg", undistored);
+      // imshow("orig", view);
+      // imshow("undistord", undistored);
+      // Mat grid = imread(root + "hig_colonies.png");
+      // undistort(grid, undistored, camera, dist, camera);
+      // imwrite(root + "hit_colonies_transform.jpg", undistored);
 
-			// imshow("remapped", remapped);
-			// waitKey(25);
-			// while (waitKey() != 'q')
-			//;
-		}
-		else
-			; // qWarning() << "Bad Image";
-	}
+      // imshow("remapped", remapped);
+      // waitKey(25);
+      // while (waitKey() != 'q')
+      //;
+    } else
+      ;  // qWarning() << "Bad Image";
+  }
 
-	QJsonObject ret;
-	ret["camera"]	= toJson<double>(camera);
-	ret["dist"]		 = toJson<double>(dist);
-	ret["optimised"] = toJson<double>(optimised);
-	std::cout << QJsonDocument(ret).toJson().toStdString() << "\n";
+  QJsonObject ret;
+  ret["camera"] = toJson<double>(camera);
+  ret["dist"] = toJson<double>(dist);
+  ret["optimised"] = toJson<double>(optimised);
+  std::cout << QJsonDocument(ret).toJson().toStdString() << "\n";
 
-	std::cerr << "camera\n" << camera << "\ndist\n" << dist << "\noptimised\n" << optimised << "\n";
-	std::cerr << "Images: Used " << used << ", Good " << good << ", All " << all << "\n";
+  std::cerr << "camera\n"
+            << camera << "\ndist\n"
+            << dist << "\noptimised\n"
+            << optimised << "\n";
+  std::cerr << "Images: Used " << used << ", Good " << good << ", All " << all
+            << "\n";
 
-	return 0;
+  return 0;
 }
 
-int transform(QStringList images)
-{
-	QTextStream		in(stdin);
-	QJsonParseError error;
-	QJsonObject		json = QJsonDocument::fromJson(qPrintable(in.readAll()), &error).object(); // wtf
+int transform(QStringList images) {
+  QTextStream in(stdin);
+  QJsonParseError error;
+  QJsonObject json = QJsonDocument::fromJson(qPrintable(in.readAll()), &error)
+                         .object();  // wtf
 
-	if (error.error != QJsonParseError::NoError)
-	{
-		qFatal("Json: %s", qPrintable(error.errorString()));
-		return 1;
-	}
+  if (error.error != QJsonParseError::NoError) {
+    qFatal("Json: %s", qPrintable(error.errorString()));
+    return 1;
+  }
 
-	cv::Mat camera, dist, optimised;
-	camera	= matFromJson<double>(json["camera"].toObject());
-	dist	  = matFromJson<double>(json["dist"].toObject());
-	optimised = matFromJson<double>(json["optimised"].toObject());
-	std::cerr << "camera " << camera << "\ndist\n" << dist << "\noptimised\n" << optimised << "\n";
+  cv::Mat camera, dist, optimised;
+  camera = matFromJson<double>(json["camera"].toObject());
+  dist = matFromJson<double>(json["dist"].toObject());
+  optimised = matFromJson<double>(json["optimised"].toObject());
+  std::cerr << "camera " << camera << "\ndist\n"
+            << dist << "\noptimised\n"
+            << optimised << "\n";
 
-	while (!images.empty())
-	{
-		cv::Mat img, undistorted;
+  while (!images.empty()) {
+    cv::Mat img, undistorted;
 
-		img = cv::imread(images.front().toStdString());
-		cv::undistort(img, undistorted, camera, dist, optimised);
+    img = cv::imread(images.front().toStdString());
+    cv::undistort(img, undistorted, camera, dist, optimised);
 
-		QString new_name(images.front() + "_undistored");
-		cv::imwrite(new_name.toStdString(), undistorted);
-		std::cerr << "Wrote " << new_name.toStdString() << "\n";
-		images.pop_front();
-	}
+    QString new_name(images.front() + "_undistored");
+    cv::imwrite(new_name.toStdString(), undistorted);
+    std::cerr << "Wrote " << new_name.toStdString() << "\n";
+    images.pop_front();
+  }
 
-	return 0;
+  return 0;
 }
 
-int main(int argc, char** argv)
-{
-	if (argc != 3)
-		return usage(argc, argv);
-	std::string mode(argv[1]);
+int main(int argc, char** argv) {
+  if (argc != 3) return usage(argc, argv);
+  std::string mode(argv[1]);
 
-	QStringList images;
-	for (int i = 2; i < argc; ++i)
-	{
-		QString		 path(argv[2]);
-		QDirIterator it(path);
+  QStringList images;
+  for (int i = 2; i < argc; ++i) {
+    QString path(argv[2]);
+    QDirIterator it(path);
 
-		while (it.hasNext())
-		{
-			QString path = it.next();
+    while (it.hasNext()) {
+      QString path = it.next();
 
-			if (path.toLower().endsWith(".jpg"))
-				images << path;
-		}
-	}
+      if (path.toLower().endsWith(".jpg")) images << path;
+    }
+  }
 
-	if (mode == "--detect")
-		return detect(images);
-	if (mode == "--transform")
-		return transform(images);
-	else
-		return usage(argc, argv);
+  if (mode == "--detect") return detect(images);
+  if (mode == "--transform")
+    return transform(images);
+  else
+    return usage(argc, argv);
 }

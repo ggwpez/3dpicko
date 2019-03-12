@@ -2,30 +2,28 @@
 
 #include <vector>
 
-#include "include/colony.hpp"
 #include <QObject>
+#include "include/colony.hpp"
 
-struct TestData
-{
-	std::vector<c3picko::Colony> colonies_;
-	const int					 r;
-	const int					 d;
-	const int					 min_num_;
+struct TestData {
+  std::vector<c3picko::Colony> colonies_;
+  const int r;
+  const int d;
+  const int min_num_;
 };
 
-class ColonyCollision : public QObject
-{
-	Q_OBJECT
+class ColonyCollision : public QObject {
+  Q_OBJECT
 
-  public:
-	ColonyCollision();
-	~ColonyCollision();
+ public:
+  ColonyCollision();
+  ~ColonyCollision();
 
-  private slots:
-	void initTestCase();
-	void cleanupTestCase();
-	void test_case1();
+ private slots:
+  void initTestCase();
+  void cleanupTestCase();
+  void test_case1();
 
-  private:
-	std::vector<TestData> solutions_;
+ private:
+  std::vector<TestData> solutions_;
 };
