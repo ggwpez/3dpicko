@@ -168,6 +168,12 @@ $(function Setup()
                 AddImageToList(data);
                 chosen_image = data;
             }
+            else if (type == "setcoloniestopick"){
+                // job: id, indices: array 
+                if(current_job.id == data.job){
+                    overviewTab(data.indices);
+                }
+            }
             else
             {
                 console.warn("Ignoring message of type '" +type +"'");
@@ -628,9 +634,8 @@ function strategyTab(){
         tabEnter(4);
     }
 }
-
-function overviewTab(){
-    removeUnselectedColonies();
+function overviewTab(selected_colonies){
+    removeUnselectedColonies(selected_colonies);
     // TODO disable clicks
     $('.next-step').html(`<span class="spinner-border spinner-border-sm"></span>`);
     // TODO hack

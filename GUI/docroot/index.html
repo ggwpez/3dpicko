@@ -142,7 +142,7 @@
                       </div>
                       <div id="number-of-colonies-slider"></div>
                     </form>
-                    <button class="btn btn-success next-step" onclick="overviewTab()">Continue</button>
+                    <button class="btn btn-success next-step" onclick="api('setcoloniestopick',{'job': current_job.id, 'number':parseInt(document.getElementById('number-max_number_of_coloniesstrategy-form').value)}")>Continue</button>
                   </div>
                   <div class="col">
                     <h2>Choose Starting Well</h2>

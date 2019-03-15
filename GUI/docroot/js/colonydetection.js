@@ -104,23 +104,12 @@ function drawPositions(coords)
 }
 
 var circles = [];
-function removeUnselectedColonies()
+function removeUnselectedColonies(indices)
 {
-    var j = 0;
-    var good = 0;
-    const max_good = parseInt(document.getElementById('number-max_number_of_coloniesstrategy-form').value);
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
-    console.log("Max good colonies: ", max_good);
-
-    for (var i = 0; i < circles.length && good < max_good; ++i)
-    {
-        var ball = circles[i];
-
-        if (ball.options.linecolor == 'white')
-        {
-            ball.draw();
-            good++;
-        }
+    for(let j=0; j<indices.length; ++j){
+        let ball = circles[j];
+        ball.draw();
     }
 }
 
