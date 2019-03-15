@@ -8,7 +8,7 @@
 namespace c3picko {
 namespace pi {
 template <typename T>
-inline void Command::CheckStatusCodeAndResponse(QNetworkReply *reply) {
+inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply) {
   QByteArray data = reply->readAll();
 
   if (data.size() == 0) {
@@ -17,15 +17,14 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply *reply) {
   }
 
   QJsonParseError error;
-  QJsonDocument doc =
-      QJsonDocument::fromJson(data, &error);  // FIXME check error
+  QJsonDocument doc = QJsonDocument::fromJson(data, &error);
 
   if (error.error != QJsonParseError::NoError) {
     emit OnNetworkErr("Json parsing failed: " + error.errorString());
     return;
   }
 
-  T *response = new T(doc.object());
+  T* response = new T(doc.object());
 
   CheckStatusCode(reply, response);
 }

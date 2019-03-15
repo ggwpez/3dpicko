@@ -1,6 +1,7 @@
 #include "include/algorithm_manager.h"
 #include "include/algorithms/fluro1.h"
 #include "include/algorithms/normal1.h"
+#include "include/algorithms/plate.h"
 #include "include/api_controller.h"
 #include "include/database.hpp"
 #include "include/requestmapper.h"
@@ -43,12 +44,15 @@ static int start(int argc, char** argv) {
 
   QThreadPool* algo_pool = new QThreadPool(&app);
   algo_pool->setMaxThreadCount(qMin(1, QThread::idealThreadCount() / 2));
-  AlgorithmManager* detector =
+  AlgorithmManager* colony_detector =
       new AlgorithmManager(algo_pool, {new Normal1(), new Fluro1()}, &app);
+  AlgorithmManager* plate_detector =
+      new AlgorithmManager(algo_pool, {new Plate1()}, &app);
 
   settings.beginGroup("database");
   Database* db = new Database(settings, &app);
-  APIController* api = new APIController(detector, db, &app);
+  APIController* api =
+      new APIController(colony_detector, plate_detector, db, &app);
 
   // Static file controller
   settings.beginGroup("files");

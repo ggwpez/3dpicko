@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <algorithm>
+#include <complex>
 #include <numeric>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
@@ -55,6 +56,30 @@ double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat) {
     sum += mat.at<quint8>(contour[i].y, contour[i].x);
 
   return (sum / 255.0) / double(contour.size());
+}
+
+cv::Point2d gravityCenter(cv::InputArray poly) {
+  cv::Moments m = cv::moments(poly);
+
+  if (!m.m00 || std::isnan(m.m00))
+    throw std::runtime_error("Cant find gravity center");
+
+  return cv::Point2d(m.m10 / m.m00, m.m01 / m.m00);
+}
+
+void drawText(cv::Mat& output, cv::Point pos, QString string,
+              cv::Scalar color) {
+  cv::Point2i img_center{output.cols / 2, output.rows / 2};
+
+  int f_type = cv::FONT_HERSHEY_SIMPLEX;
+  int f_scale = 2;
+  int f_thick = 2;
+
+  std::string text = string.toStdString();
+
+  cv::Size text_size = cv::getTextSize(text, f_type, f_scale, f_thick, nullptr);
+  cv::Point t_pos = {pos.x - text_size.width / 2, pos.y + text_size.height / 2};
+  cv::putText(output, text, t_pos, f_type, f_scale, color, f_thick);
 }
 
 std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const& colonies,
@@ -110,123 +135,275 @@ std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const& colonies,
   return ret;
 }
 
-cv::Mat detectPlate2(cv::Mat original, cv::Mat erroded) {
-  int pxl_count = original.rows * original.cols;
-  cv::Mat ret(original);
-  std::vector<std::vector<cv::Point>> contours;
+struct Curve {
+  // from cv::findContours
+  std::vector<cv::Point> raw;
+  // approximation epsilon
+  double eps;
+  double area;
+  // approximated
+  std::vector<cv::Point> curve;
+};
 
-  cv::findContours(erroded, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+// Strict include, points on the edge are considered outside
+bool polyIncludesPoly(std::vector<cv::Point> const& poly1,
+                      std::vector<cv::Point> const& poly2) {
+  for (int i = 0; i < poly2.size(); ++i)
+    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
 
-  int i = 0, good = 0;
-  for (auto const& contour : contours) {
-    std::vector<cv::Point> curve;
-    double eps = 0.1 * cv::arcLength(contour, true);  // good?
-    cv::approxPolyDP(contour, curve, eps, true);
-    double curve_area = cv::contourArea(curve);
-
-    if (curve_area >= pxl_count / 2) {
-      // cv::drawContours(ret, contours, i, cv::Scalar(0, 255, 0), 2);
-      contours[i] = curve;
-      cv::drawContours(ret, contours, i, cv::Scalar(0, 255, 0), 2);
-      qDebug() << "Found #" << ++good << "Eps" << eps;
-    }
-    ++i;
-  }
-
-  return ret;
+  return true;
 }
 
-cv::Mat detectPlate(cv::Mat original, cv::Mat erroded) {
-  cv::Mat output(original);
+// Calculates the rotation of a quasi rectangle, only works counter clockwise
+double calculateOuterRotation(const OuterBorder& cont, int a1, int h1) {
+  // There sure is an easier way but for now:
+  // Convert all angles to polarcoordinates with magnitude = 1, average them and
+  // take the resulting phase angle
 
-  cv::Mat canny_out;
-  std::vector<std::vector<cv::Point>> conts;
+  auto c1 = std::polar(1., std::atan2(cont[(a1 + 1) % 4].y - cont[a1].y,
+                                      cont[(a1 + 1) % 4].x - cont[a1].x));
 
-  cv::Canny(erroded, canny_out, 3, 11);
-  cv::findContours(canny_out, conts, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+  double ret = std::arg(c1) / M_PI * 180;
+  return ret < 0 ? ret + 360 : ret;
+  // FIXME
+  /*auto c2 = std::polar(1., std::atan2(cont[(a1 + 2) % 4].y - cont[(a1 + 1) %
+  4].y, cont[(a1 + 2) % 4].x - cont[(a1 + 1) % 4].x)
+                                                           + M_PI_2);
+  auto c3
+          = std::polar(1., std::atan2(cont[(a1 + 3) % 4].y - cont[(a1 + 2) %
+  4].y, cont[(a1 + 3) % 4].x - cont[(a1 + 2) % 4].x) + M_PI); auto c4 =
+  std::polar(1., std::atan2(cont[(a1 + 4) % 4].y - cont[(a1 + 3) % 4].y,
+  cont[(a1 + 4) % 4].x - cont[(a1 + 3) % 4].x)
+                                                           - M_PI_2);
 
-  std::vector<math::LineSeg> lines;
-  // Fit lines throug the contours and calculate the angle and length to image
-  // coordinate system
-  for (std::size_t i = 0; i < conts.size(); ++i) {
-    cv::RotatedRect rect = cv::minAreaRect(conts[i]);
+  auto sum = (c1 + c2 + c3 + c4);
 
-    // Check side ratio
-    double r(std::min(rect.size.width, rect.size.height) /
-             double(std::max(rect.size.width, rect.size.height)));
-    if (r > .05 || std::isnan(r) || cv::arcLength(conts[i], false) < 10)
-      continue;
-
-    cv::Vec4d fit_line;
-    // cv::drawContours(result, conts, i, color, 2, 8);
-    cv::fitLine(conts[i], fit_line, CV_DIST_L2, 0, .01, .01);
-
-    // Calc L2 length
-    double length =
-        std::sqrt(std::pow(rect.size.width, 2) + std::pow(rect.size.height, 2));
-    cv::Point2d v =
-        cv::Point2d(fit_line[0] * length / 2, fit_line[1] * length / 2);
-    // cv::fitLine matches the lines sometimes form top-to-bottom and sometimes
-    // from bottom-to-top
-    // so we need to turn the wrong ones around.
-    if (fit_line[1] < 0) {
-      v = -v;
-      fit_line[1] = -fit_line[1];
-    }
-
-    cv::Point2d start = cv::Point2d(fit_line[2], fit_line[3]) - v;
-    cv::Point2d send = cv::Point2d(fit_line[2], fit_line[3]) + v;
-
-    math::LineSeg line{
-        start.x, start.y, send.x, send.y, {fit_line[0], fit_line[1]}, length};
-    lines.push_back(line);
-  }
-
-  std::vector<cv::Scalar> bin_clrs;
-  cv::Mat labels;
-  std::vector<cv::Point2f> centers;
-  // kmeans only works with floats
-  std::vector<cv::Point2f> points(lines.size(), cv::Point2f());
-  cv::TermCriteria crit(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 10, 1);
-
-  for (std::size_t i = 0; i < lines.size(); ++i) {
-    // Order lines by their rotation angle
-    cv::Point2d p(-lines[i].angle.imag(), lines[i].angle.real());
-    // std::cout << (std::arg(lines[i].angle) / M_PI) * 180.f << "°\n";
-    points[i] = p;
-    cv::line(
-        output, cv::Point(output.cols / 2, output.rows / 2),
-        cv::Point2f(output.cols / 2 + p.x * 1000, output.rows / 2 + p.y * 1000),
-        cv::Scalar::all(255), 1);
-  }
-
-  int const ks = 3;
-  // We need atleast as many points as possible centers
-  if (points.size() < ks) {
-    throw std::runtime_error("Not enought edges found");
-  }
-  cv::kmeans(points, ks, labels, crit, 3, cv::KMEANS_PP_CENTERS, centers);
-
-  for (int i = 0; i < ks; ++i)
-    bin_clrs.push_back(cv::Scalar(rand() % 255, rand() % 255, rand() % 255));
-
-  cv::circle(output, cv::Point2f(output.cols / 2, output.rows / 2), 10,
-             cv::Scalar::all(255), 4);
-  for (auto const& center : centers) {
-    cv::line(output, cv::Point2f(output.cols / 2, output.rows / 2),
-             cv::Point2f(output.cols / 2, output.rows / 2) +
-                 cv::Point2f(center.x * 60, center.y * 60),
-             cv::Scalar(0, 0, 255), 3);
-    // std::cout << "c " << center.x << " / " << center.y << "\n";
-  }
-
-  for (std::size_t i = 0; i < lines.size(); ++i) {
-    cv::line(output, cv::Point(lines[i].x, lines[i].y),
-             cv::Point(lines[i].endx, lines[i].endy), cv::Scalar(0, 255, 0), 2);
-  }
-
-  return output;
+  double ret = std::arg(sum) / M_PI * 180;
+  return ret < 0 ? ret + 360 : ret;*/
 }
 
+cv::Point2d gravityCenter(std::vector<cv::Point> const& poly) {
+  cv::Moments m = cv::moments(poly);
+
+  if (!m.m00 || std::isnan(m.m00))
+    throw std::runtime_error("Cant find gravity center");
+
+  return cv::Point2d(m.m10 / m.m00, m.m01 / m.m00);
+}
+
+// this function assumes, that OpenCV creates contours counter clockwise
+// and that the image was not mirrored
+std::pair<int, int> findA1(const OuterBorder& outer_border,
+                           const InnerBorder& inner_border) {
+  // index of the outer_border points
+  int ia1 = -1, ih1 = -1;
+  // the length of the two diagonal edges
+  double ia1_min = INFINITY, ih1_min = INFINITY;
+  double eps_diag_edge_max = 10;
+
+  for (int i = 0; i < inner_border.size(); ++i)
+    for (int j = i + 1; j < inner_border.size(); ++j) {
+      double dist = cv::norm(inner_border[i] - inner_border[j]);
+
+      if (dist < ia1_min) {
+        ia1_min = dist;
+        ia1 = i;
+      }
+    }
+  for (int i = 0; i < inner_border.size(); ++i)
+    for (int j = i + 1; j < inner_border.size(); ++j) {
+      double dist = cv::norm(inner_border[i] - inner_border[j]);
+
+      if (dist < ih1_min && i != ia1) {
+        ih1_min = dist;
+        ih1 = i;
+      }
+    }
+
+  // NOTE Try to increase eps
+  if (ia1 == -1 || ih1 == -1 || ia1 == ih1)
+    throw std::runtime_error("Could not detect diagonal edges");
+
+  double a1_min = INFINITY, h1_min = INFINITY;
+  int a1 = -1, h1 = -1;
+  for (int i = 0; i < outer_border.size(); ++i) {
+    double dist_a1 = cv::norm(outer_border[i] - inner_border[ia1]);
+    double dist_h1 = cv::norm(outer_border[i] - inner_border[ih1]);
+
+    if (dist_a1 < a1_min) {
+      a1_min = dist_a1;
+      a1 = i;
+    }
+    if (dist_h1 < h1_min) {
+      h1_min = dist_h1;
+      h1 = i;
+    }
+  }
+
+  // swap a1 and h1 such that h1 is counter clockwise of a1
+  if ((h1 + 1) % outer_border.size() != a1) std::swap(a1, h1);
+  Q_ASSERT((h1 + 1) % outer_border.size() == a1);
+
+  if (a1 == -1 || h1 == -1 || a1 == h1)
+    throw std::runtime_error("Could not detect orientation of plate");
+
+  return {a1, h1};
+}
+
+/*cv::Mat detectPlate2(cv::Mat original, cv::Mat erroded)
+{
+        int
+pxl_count = original.rows * original.cols; cv::Mat
+ret(original);
+        std::vector<Curve>					outer_edges,
+inner_edges; std::vector<std::vector<cv::Point>> contours;
+
+        cv::findContours(erroded, contours, CV_RETR_LIST,
+CV_CHAIN_APPROX_SIMPLE);
+
+        for (int i = 0; i < contours.size(); ++i)
+        {
+                std::vector<cv::Point> curve;
+                double				   eps = 0.01 *
+cv::arcLength(contours[i], true); // good? cv::approxPolyDP(contours[i], curve,
+eps, true); double area = cv::contourArea(curve);
+
+                // Filter out all curves with 4 or 6 points and size atleast
+1/16 or the image size if ((curve.size() == 6 || curve.size() == 4) && area >=
+pxl_count / 16)
+                {
+                        if (curve.size() == 6)
+                                inner_edges.push_back({contours[i], eps, area,
+curve}); else outer_edges.push_back({contours[i], eps, area, curve});
+                }
+        }
+
+        if (!outer_edges.size())
+                throw std::runtime_error("Could not approximate outer edges");
+        if (!inner_edges.size())
+                throw std::runtime_error("Could not approximate inner edges");
+
+        double				eps			= .1;
+        double				plate_ratio = 128. / 85.9; //
+FIXME get data from plate profile double				optimal
+= 1 / plate_ratio; math::Range<double> outer_bb_ratio(optimal - eps, optimal +
+eps);
+        // Now filter the found curves to find the ones belonging to the plate
+
+        // Filter 4p polygons by bb side ratio
+        for (int i = 0; i < outer_edges.size();)
+        {
+                Curve edge(outer_edges[i]);
+
+                double w = distance(edge.curve[0].x, edge.curve[0].y,
+edge.curve[1].x, edge.curve[1].y); double h = distance(edge.curve[1].x,
+edge.curve[1].y, edge.curve[2].x, edge.curve[2].y);
+
+                double r(std::min(w, h) / double(std::max(w, h)));
+                if (!outer_bb_ratio.contains(r))
+                        outer_edges.erase(outer_edges.begin() + i);
+                else
+                        ++i;
+        }
+
+        // Filter 6p polygons
+        // Distances between the 4p's and 6p's to find the two, that are closest
+together
+        // and where the 4p strictly includes the 6p
+        // first int is the inner_edge index second one the outer
+        std::vector<std::tuple<int, int, double>> corner_distances;
+        for (int i = 0; i < inner_edges.size(); ++i)
+        {
+                Curve inner(inner_edges[i]);
+
+                for (int j = 0; j < outer_edges.size(); ++j)
+                {
+                        Curve outer(outer_edges[j]);
+                        // Sum of Squared error
+                        double corner_error = 0;
+
+                        // If the outer_edge that is not outside of this
+inner_edge, its an error
+                        // It would mean, that the 6p is outside the 4p, which
+is not how a plate looks like
+                        // NOTE if we kick out a correct 4p here, try to
+decrease the eps for the approxPolyDP if (!polyIncludesPoly(outer.curve,
+inner.curve)) continue;
+
+                        for (int c = 0; c < outer.curve.size(); ++c) // 4 loops,
+RIP me
+                        {
+                                // Minimum distance between the two closest
+points from 4p and 6p double d_min = std::numeric_limits<double>::infinity();
+                                // index of the d_min element
+                                int r_min = -1;
+
+                                for (int r = 0; r < inner.curve.size(); ++r)
+                                {
+                                        double d = cv::norm(inner.curve[r] -
+outer.curve[c]); if (d < d_min)
+                                        {
+                                                r_min = r;
+                                                d_min = d;
+                                        }
+                                }
+
+                                if (r_min == -1)
+                                        throw std::runtime_error("Could detect
+rotation of inner edges"); corner_error += std::pow(d_min, 2);
+                        }
+
+                        corner_distances.emplace_back(i, j, corner_error);
+                }
+        }
+
+        // Now filter for the best match by the Sum of Squared Error
+        auto it = std::min_element(corner_distances.begin(),
+corner_distances.end()); if (it == corner_distances.end()) throw
+std::runtime_error("Could detect rotation of inner edges");
+
+        Curve		outer_edge = outer_edges[std::get<0>(*it)],
+inner_edge = inner_edges[std::get<1>(*it)];
+        double		best_dist	= std::get<2>(*it);
+        cv::Point2d inner_center = gravityCenter(inner_edge.curve), outer_center
+= gravityCenter(outer_edge.curve); cv::Point2d center = (inner_center +
+outer_center) / 2;
+
+        // draw borders
+        cv::drawContours(ret,
+std::vector<std::vector<cv::Point>>{inner_edge.curve}, 0, cv::Scalar(0, 255, 0),
+2); cv::drawContours(ret, std::vector<std::vector<cv::Point>>{outer_edge.curve},
+0, cv::Scalar(0, 255, 0), 2);
+
+        // draw center
+        cv::ellipse(ret, center, cv::Size(20, 20), 90, 0, 360, cv::Scalar(255,
+0, 0), 2); cv::ellipse(ret, outer_center, cv::Size(20, 20), 90, 0, 180,
+cv::Scalar(0, 255, 0), 2); cv::ellipse(ret, inner_center, cv::Size(20, 20), 90,
+180, 360, cv::Scalar(0, 0, 255), 2);
+
+        // draw A1 and H1
+        std::pair<int, int> a1_h1 = findA1(outer_edge.curve, inner_edge.curve);
+        drawText(ret, outer_edge.curve[a1_h1.first], "A1");
+        drawText(ret, outer_edge.curve[a1_h1.second], "H1");
+
+        double angle = calculateOuterRotation(outer_edge.curve, a1_h1.first,
+a1_h1.second);
+
+        qDebug() << "\nFound borders, dist=" << best_dist << "Rotation" << angle
+<< "° Center" << inner_center.x << inner_center.y
+                         << "Diff" << cv::norm(inner_center - outer_center) <<
+"px";
+
+        // Rotate the image and curves
+        cv::Mat rotation = cv::getRotationMatrix2D(center, angle - 90, 1);
+        cv::warpAffine(ret, ret, rotation, cv::Size(ret.cols, ret.rows));
+        cv::transform(outer_edge.curve, outer_edge.curve, rotation);
+        cv::transform(inner_edge.curve, inner_edge.curve, rotation);
+
+        // Cut it
+        ret = ret(cv::boundingRect(outer_edge.curve)); // lazy
+
+        return ret;
+}*/
 }  // namespace math
 }  // namespace c3picko

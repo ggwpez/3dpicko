@@ -14,9 +14,9 @@ class Image {
   Image(ID id, QString original_name, QString description, ResourcePath path,
         QDateTime uploaded, int width, int hwight);
   Image(QByteArray data, QString original_name, QString description,
-        QDateTime uploaded);
+        QDateTime uploaded = QDateTime::currentDateTime());
   Image(cv::Mat image, QString original_name, QString description,
-        QDateTime uploaded);
+        QDateTime uploaded = QDateTime::currentDateTime());
 
   /**
    * @brief Writes the image into its path_ file.
@@ -59,6 +59,14 @@ class Image {
   bool readData(QByteArray& output) const;
   static bool decodeCvMat(QByteArray data, cv::Mat& output);
 
+  ResourcePath path() const;
+  ID id() const;
+  QString originalName() const;
+  int width() const;
+  int height() const;
+  QString description() const;
+  QDateTime uploaded() const;
+
  private:
   QString original_name_;
   QString description_;
@@ -74,15 +82,6 @@ class Image {
   cv::Mat image_;
   int width_ = 0, height_ = 0;
   ID id_;
-
- public:
-  ResourcePath path() const;
-  ID id() const;
-  QString originalName() const;
-  int width() const;
-  int height() const;
-  QString description() const;
-  QDateTime uploaded() const;
 };
 MAKE_MARSHALLABLE(Image);
 }  // namespace c3picko

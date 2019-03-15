@@ -3,7 +3,7 @@
 
 namespace c3picko {
 
-std::vector<Colony> DetectionResult::colonies() const { return colonies_; }
+std::vector<Colony>& DetectionResult::colonies() { return colonies_; }
 
 template <>
 QJsonObject Marshalling::toJson(const DetectionResult& value) {
@@ -12,7 +12,7 @@ QJsonObject Marshalling::toJson(const DetectionResult& value) {
   QJsonArray colonies;
 
   /*for (Colony const& colony : value.colonies())
-        colonies.push_back(Marshalling::toJson(colony));
+            colonies.push_back(Marshalling::toJson(colony));
 
   obj["colonies"] = colonies;*/
 

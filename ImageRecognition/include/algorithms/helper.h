@@ -3,9 +3,14 @@
 #include <complex>
 #include <opencv2/core.hpp>
 
+class QString;
 namespace c3picko {
 class Colony;
 namespace math {
+typedef double UnitValue;  // value in range [0,1]
+typedef std::array<cv::Point, 4> OuterBorder;
+typedef std::array<cv::Point, 6> InnerBorder;
+
 struct LineSeg {
   double x, y;
   double endx, endy;
@@ -82,6 +87,15 @@ bool LineLineIntersect(double x1, double y1,  // Line 1 start
 
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat);
 
+double calculateOuterRotation(OuterBorder const& cont, int a1, int h1);
+/**
+ * @brief Compute A1 and H1 well positions.
+ * @return The indices in outer_border
+ */
+std::pair<int, int> findA1(OuterBorder const& outer_border,
+                           InnerBorder const& inner_border);
+cv::Point2d gravityCenter(cv::InputArray poly);
+
 /**
  * @brief NOTE takes the distance between the borders, not the centers.
  */
@@ -89,7 +103,8 @@ std::vector<Colony> filterByMinDistanceSlow(const std::vector<Colony>& colonies,
                                             const int r, const int d,
                                             const int min_dist);
 
-cv::Mat detectPlate(cv::Mat original, cv::Mat erroded);
+void drawText(cv::Mat& output, cv::Point pos, QString string,
+              cv::Scalar color = cv::Scalar::all(255));
 cv::Mat detectPlate2(cv::Mat original, cv::Mat erroded);
 }  // namespace math
 }  // namespace c3picko

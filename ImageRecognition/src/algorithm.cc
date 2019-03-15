@@ -13,20 +13,16 @@ Algorithm::~Algorithm() {}
 
 void Algorithm::run() {
   AlgorithmJob* job = qobject_cast<AlgorithmJob*>(this->parent());
-  if (!job) {
-    qCritical() << "Algorithm always needs AlgorithmJob as parent";
-    return;
-  }
+  if (!job) throw Exception("Algorithm always needs AlgorithmJob as parent");
 
   AlgorithmResult* result = job->result();
 
   QString error_prefix, error_infix, error_postfix, error;
   QTextStream error_ts(&error);
   QTextStream(&error_prefix)
-      << "Algorithm " << name_ << " (" << this->metaObject()->className() << ")"
-      << " crashed (step=";
+      << "Algorithm " << this->metaObject()->className() << " crashed (step=";
   QTextStream(&error_postfix)
-      << ",job=" << this->parent() << ",thread=" << QThread::currentThreadId()
+      << ",job=" << job->id() << ",thread=" << QThread::currentThreadId()
       << ") ";
 
   job->timeStart();
@@ -51,6 +47,12 @@ void Algorithm::run() {
     result->stages_succeeded_ = false;
   }
 
+  job->timeStop();
+  if (result->stages_succeeded_)
+    emit job->OnAlgoSucceeded();
+  else
+    emit job->OnAlgoFailed();
+
   try {
     result->cleanup();
     result->cleanup_succeeded_ = true;
@@ -63,12 +65,6 @@ void Algorithm::run() {
               qPrintable(error_postfix), "unknown");
     result->cleanup_succeeded_ = false;
   }
-  job->timeStop();
-
-  if (result->stages_succeeded_)
-    emit job->OnAlgoSucceeded();
-  else
-    emit job->OnAlgoFailed();
 
   if (result->cleanup_succeeded_)
     emit job->OnCleanupSucceeded();

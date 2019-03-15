@@ -13,35 +13,45 @@ PlateDetection::PlateDetection() {}
 PlateDetection::~PlateDetection() {}
 
 void PlateDetection::initTestCase() {
-  cv::Mat grey;
-  image_ = cv::imread(
-      "/home/vados/Pictures/mit rahmen/PICT_20190308_172849.JPG_undistored");
+  QDirIterator it(dir_path_);
+  while (it.hasNext()) {
+    QString file_name(it.next());
+    if (!file_name.toLower().contains(".jpg", Qt::CaseInsensitive)) continue;
 
-  cv::cvtColor(image_, grey, CV_BGR2GRAY);
+    cv::Mat original = cv::imread(file_name.toStdString()), preprocessed;
 
-  int erosion_type = cv::MORPH_ELLIPSE;
-  int erosion_size = 2;
-  cv::Mat kernel = getStructuringElement(
-      erosion_type, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
-      cv::Point(erosion_size, erosion_size));
+    cv::cvtColor(original, preprocessed, CV_BGR2GRAY);
+    cv::adaptiveThreshold(preprocessed, preprocessed, 255,
+                          cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51,
+                          1);  // non flour
 
-  cv::adaptiveThreshold(grey, preprocessed_, 255, cv::ADAPTIVE_THRESH_MEAN_C,
-                        cv::THRESH_BINARY_INV, 51, 1);  // non flour
-  // cv::blur(grey, preprocessed_, cv::Size(5, 5));
-  // cv::erode(preprocessed_, preprocessed_, kernel);
-  // cv::dilate(preprocessed_, preprocessed_, kernel);
+    images_.emplace_back(original, preprocessed);
+  }
 }
 
-void PlateDetection::cleanupTestCase() {
-  cv::imwrite("undistorted_125.jpg", image_);
-}
+void PlateDetection::cleanupTestCase() {}
 
 void PlateDetection::test_case1() {
-  math::detectPlate2(image_, preprocessed_);
+  int i = 0;
+  for (auto const& it : images_) {
+    try {
+      /*cv::Mat out = math::detectPlate2(it.first, it.second);
+      cv::imwrite("out_" + std::to_string(i++) + ".png", out);
+      cv::resize(out, out, cv::Size(out.cols / 2, out.rows / 2));
+      cv::imshow("", out);
 
-  cv::imshow("detected", image_);
+      while (cv::waitKey(0) != 'q')
+              ;
+      cv::destroyAllWindows();*/
+    } catch (std::exception const& e) {
+      qCritical() << e.what();
+      continue;
+    }
+  }
+
+  /*cv::imshow("detected", image_);
 
   while (cv::waitKey(0) != 'q')
-    ;
-  cv::destroyAllWindows();
+          ;
+  cv::destroyAllWindows();*/
 }

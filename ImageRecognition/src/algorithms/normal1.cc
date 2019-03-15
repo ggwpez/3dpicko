@@ -10,32 +10,30 @@
 namespace c3picko {
 
 Normal1::Normal1()
-	: Algorithm(
-		  "1", "Normal1", "Detects colonies with standard illumination",
-		  {(AlgoStep)&Normal1::cvt, (AlgoStep)&Normal1::threshold,
-		   (AlgoStep)&Normal1::erodeAndDilate,
-		  (AlgoStep)&Normal1::plateDetection,
-		  (AlgoStep)&Normal1::label /*,
+    : Algorithm(
+          "1", "Normal1", "Detects colonies with standard illumination",
+          {(AlgoStep)Normal1::cvt, (AlgoStep)Normal1::threshold,
+           (AlgoStep)Normal1::erodeAndDilate, (AlgoStep)Normal1::label /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
-		  {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
-																																																																																																																		  "Show ignored
-										  by algorithm", "", true, {},
-			  Qt::red),*/
-		   AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
-												1, {120, 1000}),
-		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
-												"", 0, 1, .001, {.7, 1},
-												Qt::cyan),
-		   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
-												0, 1, .001, {.7, 1},
-												Qt::magenta),
-		   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
-												1, .001, {.8, 1}, Qt::green),
-		   AlgoSetting::make_rangeslider_double(
-			   "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-		   //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
-		   // plate", "", true),
-		   /*AlgoSetting::make_checkbox(
+          {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
+                                                                          by
+              algorithm", "", true, {}, Qt::red),*/
+           AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
+                                                1, {120, 1000}),
+           AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+                                                "", 0, 1, .001, {.7, 1},
+                                                Qt::cyan),
+           AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+                                                0, 1, .001, {.7, 1},
+                                                Qt::magenta),
+           AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+                                                1, .001, {.8, 1}, Qt::green),
+           AlgoSetting::make_rangeslider_double(
+               "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+           //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
+           // plate", "", true),
+           /*AlgoSetting::make_checkbox(
 			   "filter_relative", "Filter detected colonies", "", false,
 			   {AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
 										   "Select an attribute to filter",
@@ -48,9 +46,7 @@ Normal1::Normal1()
 					"rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01,
 					{-5, 5})},
 			   Qt::red)*/},
-		  true, 3000)
-{
-}
+          true, 3000) {}
 
 Normal1::~Normal1() {}
 
@@ -162,20 +158,9 @@ void Normal1::erodeAndDilate(AlgorithmJob* base, DetectionResult* result) {
   cv::dilate(output, output, kernel);
 }
 
-void Normal1::plateDetection(AlgorithmJob* base, DetectionResult* result) {
-  cv::Mat& erroded = result->oldMat();
-  // cv::Mat& output  =
-  // result->newMat(*reinterpret_cast<cv::Mat*>(base->input()));
-  cv::Mat output(*reinterpret_cast<cv::Mat*>(base->input()));
-
-  if (!base->settingById("plate_detection").value<bool>()) return;
-
-  // math::detectPlate(output, erroded);
-}
-
 void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
   cv::Mat& input = result->oldMat();
-  auto& colonies = result->colonies_;
+  auto& colonies = result->colonies();
 
   Colony::ID id = 0;
   math::Range<double> _area =
@@ -267,7 +252,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
 }
 
 void Normal1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
-  std::vector<Colony>* input = &result->colonies_;
+  std::vector<Colony>* input = &result->colonies();
   // Should we skip the step?
   if (!base->settingById("filter_relative").value<bool>()) return;
   QString option =

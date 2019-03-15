@@ -16,5 +16,7 @@ class PlateDetection : public QObject {
   void test_case1();
 
  private:
-  cv::Mat image_, preprocessed_;
+  QString const dir_path_ = "/home/vados/src/bc_pics/mit rahmen/undist/";
+  // original, preprocessed
+  std::vector<std::pair<cv::Mat, cv::Mat>> images_;
 };

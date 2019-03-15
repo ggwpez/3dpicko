@@ -24,7 +24,9 @@ class APIController : public QObject {
   friend class APIOutput;
 
  public:
-  APIController(AlgorithmManager* detector, Database* db, QObject* parent);
+  APIController(AlgorithmManager* colony_detector,
+                AlgorithmManager* plate_detector, Database* db,
+                QObject* parent);
 
   // Forwarded to APIInput
   void request(QJsonObject request, QString raw_request, QObject* client);
@@ -51,7 +53,7 @@ class APIController : public QObject {
   Database& db() const;
   QThreadPool* pool() const;
 
- public slots:
+ public:
   void DeleteImage(Image::ID, QObject* client);
   void DeleteJob(Job::ID id, QObject* client);
   void UploadImage(Image&, QObject* client);
@@ -130,7 +132,7 @@ class APIController : public QObject {
    * APIOutput::ColonyDetected
    * @param client
    */
-  void OnColonyDetected(std::vector<Colony>* colonies, QObject* client);
+  void OnColonyDetected(std::vector<Colony> const* colonies, QObject* client);
   void OnColonyDetectionError(QString error, QObject* client);
 
  private:
@@ -147,7 +149,7 @@ class APIController : public QObject {
                                QJsonObject settings, QObject* client);
 
  protected:
-  AlgorithmManager* detector_;
+  AlgorithmManager *colony_detector_, *plate_detector_;
   Database* db_;
 
   // Deleted by this

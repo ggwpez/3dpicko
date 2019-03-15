@@ -124,7 +124,8 @@ void APIOutput::ColonyDetectionStarted(
     QObject* client) { /* TODO inform client, maybe add a loading animtion */
 }
 
-void APIOutput::ColonyDetected(std::vector<Colony>* colonies, QObject* client) {
+void APIOutput::ColonyDetected(const std::vector<Colony>* colonies,
+                               QObject* client) {
   QJsonArray json_coords;
 
   for (Colony const& colony : *colonies)
@@ -139,6 +140,7 @@ void APIOutput::ColonyDetectionError(QString error, QObject* client) {
 }
 
 void APIOutput::Error(QString where, QString what, QObject* client) {
+  qCritical("Error %s: %s", qPrintable(where), qPrintable(what));
   emit op->toClient(client, "error", {{where, what}});
 }
 }  // namespace c3picko

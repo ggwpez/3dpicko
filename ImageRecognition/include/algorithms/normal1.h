@@ -16,7 +16,6 @@ class Normal1 : public Algorithm {
   static void cvt(AlgorithmJob* base, DetectionResult* result);
   static void threshold(AlgorithmJob* base, DetectionResult* result);
   static void erodeAndDilate(AlgorithmJob* base, DetectionResult* result);
-  static void plateDetection(AlgorithmJob* base, DetectionResult* result);
   static void label(AlgorithmJob* base, DetectionResult* result);
   static void relativeFiltering(AlgorithmJob* base, DetectionResult* result);
 

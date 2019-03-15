@@ -77,7 +77,7 @@ int detect(QStringList images) {
     std::cerr << "Reading " << images.first().toStdString() << "\n";
     // cam.read(view);
     Mat image = imread(images.first().toStdString()), grey;
-    // resize(view, view, Size(view.cols / 2, view.rows / 2));
+    resize(image, image, Size(image.cols / 2, image.rows / 2));
     // qWarning() << "Reading image " << images.first();
     images.pop_front();
 
@@ -107,27 +107,11 @@ int detect(QStringList images) {
       optimised = getOptimalNewCameraMatrix(camera, dist, {w, h}, 1 /* TODO */,
                                             {w, h}, &roi);
       std::cerr << "Reprojection error " << thresh << "\n";
-      /*if (!roi.width || !roi.height)
-      {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      qDebug()
-      << "Empty ROI"; continue;
-      }*/
 
-      //  cv::undistort(image, undistored, camera, dist, optimised);
-      // Mat tmp	= undistored({roi.y, roi.x, roi.height, roi.width});
-      // undistored = tmp;
-
-      // std::cerr << "Thresh " << std::setprecision(3) << thresh << std::endl;
       ++good;
 
       // drawChessboardCorners(view, pattern, Mat(corners), found);
       // drawChessboardCorners(undistored, pattern, Mat(corners), found);
-
-      // imshow("orig", view);
-      // imshow("undistord", undistored);
-      // Mat grid = imread(root + "hig_colonies.png");
-      // undistort(grid, undistored, camera, dist, camera);
-      // imwrite(root + "hit_colonies_transform.jpg", undistored);
 
       // imshow("remapped", remapped);
       // waitKey(25);
@@ -153,6 +137,9 @@ int detect(QStringList images) {
   return 0;
 }
 
+/**
+ * @brief Test: Lowers side ratio error for detected plate by 0.08-0.17%
+ */
 int transform(QStringList images) {
   QTextStream in(stdin);
   QJsonParseError error;

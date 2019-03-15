@@ -55,7 +55,7 @@ class APIOutput : public QObject {
   /**
    * @brief Always call this from ColonyDetector or derived!
    */
-  void ColonyDetected(std::vector<Colony>* detector, QObject* client);
+  void ColonyDetected(std::vector<Colony> const* detector, QObject* client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */
