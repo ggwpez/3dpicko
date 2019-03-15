@@ -9,14 +9,16 @@ namespace c3picko {
 AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
                            QJsonObject settings, void* input,
                            AlgorithmResult* result, QThreadPool* pool,
-                           QObject* _parent)
+                           qint64 max_ms, QObject* _parent)
     : QObject(_parent),
       id_(id),
       algo_(algo),
       pool_(pool),
       input_(input),
       result_(result),
-      result_id_(result->id()) {
+      result_id_(result->id()),
+      max_ms_(max_ms),
+      took_ms_(0) {
   algo_->setParent(this);
   algo_->setAutoDelete(false);
 
@@ -48,6 +50,16 @@ void AlgorithmJob::start(bool threaded, bool delete_when_done) {
     algo_->run();
 }
 
+void AlgorithmJob::timeStart() { timer_.start(); }
+
+void AlgorithmJob::timeStop() { took_ms_ = timer_.elapsed(); }
+
+qint64 AlgorithmJob::maxMs() const { return max_ms_; }
+
+qint64 AlgorithmJob::tookMs() const { return took_ms_; }
+
+qint64 AlgorithmJob::elapsedMs() const { return timer_.elapsed(); }
+
 AlgorithmResult::ID AlgorithmJob::result_id() const { return result_id_; }
 
 AlgorithmJob::ID AlgorithmJob::id() const { return id_; }
@@ -59,7 +71,7 @@ const AlgoSetting& AlgorithmJob::settingById(AlgoSetting::ID id) const {
     if (setting.id() == id) return setting;
   }
 
-  throw std::runtime_error("Could not find AlgoSetting (by id)");
+  throw Exception("Could not find AlgoSetting (id=" + id + ")");
 }
 
 const AlgoSetting& AlgorithmJob::settingByName(QString name) const {
@@ -67,7 +79,7 @@ const AlgoSetting& AlgorithmJob::settingByName(QString name) const {
     if (setting.name() == name) return setting;
   }
 
-  throw std::runtime_error("Could not find AlgoSetting (by name)");
+  throw Exception("Could not find AlgoSetting (name=" + name + ")");
 }
 
 void AlgorithmJob::setSettingsValueByID(AlgoSetting::ID id, QJsonValue value) {

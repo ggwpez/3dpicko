@@ -1,5 +1,6 @@
 #pragma once
 
+#include "include/algo_setting.h"
 #include "include/global.h"
 #include "include/marshalling.hpp"
 
@@ -7,11 +8,11 @@ namespace c3picko {
 
 class Colony {
  public:
-  enum class Type;
   typedef qint32 ID;
 
   Colony(double x, double y, double area, double circumference,
-         double major_length, double brightness, ID id, Type type);
+         double major_length, double brightness, ID id,
+         AlgoSetting::ID excluded_by);
 
   /**
    * @brief x position relative to image [0,1]
@@ -27,8 +28,8 @@ class Colony {
   double brightness() const;
   ID id() const;
 
-  Type type() const;
-  void setType(const Type &type);
+  bool excluded() const;
+  AlgoSetting::ID excludedBy() const;
 
  private:
   /**
@@ -67,7 +68,12 @@ class Colony {
 
   ID id_;
 
-  Type type_;
+  /**
+   * @brief Indicates whether a colony was excluded or not.
+   * Is empty if the colony was not excluded and otherwise set to the setting
+   * preventing the inclusion.
+   */
+  AlgoSetting::ID excluded_by_;
 };
 
 MAKE_MARSHALLABLE(Colony);

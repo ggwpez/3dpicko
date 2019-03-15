@@ -36,6 +36,5 @@ DEPENDPATH += $$ROOTPATH/ImageRecognition
 INCLUDEPATH += $$ROOTPATH/QtWebApp/httpserver/
 DEPENDPATH += $$ROOTPATH/QtWebApp/httpserver/
 
-
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Werror=implicit-fallthrough -std=c++11

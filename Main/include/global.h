@@ -6,37 +6,35 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
-#include "include/marshalling.hpp"
 
+class QCoreApplication;
 class QSslConfiguration;
 namespace c3picko {
+class ResourcePath;
 
-QSslConfiguration* LoadSslConfig(QSettings* settings);
+QSslConfiguration* LoadSslConfig(QSettings& settings);
 
-inline QDateTime parseDateTime(QJsonValue obj) {
-  return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
-}
+ResourcePath Root();
+ResourcePath Etc();
+ResourcePath DocRoot();
+QString UploadFolderName();
+ResourcePath UploadFolder();
 
-inline QString Root() { return "/home/vados/Code/Projects/3cpicko/GUI/"; }
-
-inline QString Etc() { return Root() + "etc/"; }
-
-inline QString DocRoot() { return Root() + "docroot/"; }
-
-inline QString UploadFolderName() { return "uploads"; }
-
-inline QString UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
-
-inline void Setup() {
-  if (!QDir(UploadFolder()).exists()) QDir().mkdir(UploadFolder());
-}
+QString searchConfigFile(int argc, char** argv);
+void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings);
 
 /**
  * @brief String format for formatting QDateTime.
  * See https://doc.qt.io/qt-5/qdatetime.html#toString
  */
-inline QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
+QString dateTimeFormat();
 
-inline char const* defaultImageExtension() { return "jpg"; }
-MAKE_MARSHALLABLE(QDateTime);
+/**
+ * @brief Exit code indicating restart of the application.
+ * I would use a macro aka EXIT_RESTART but no macros since google style
+ * guide...
+ */
+int exitRestart();
+
+char const* defaultImageExtension();
 }  // namespace c3picko

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "include/algorithm_job.h"
-#include "include/algorithm_result.h"
+#include "include/detection_result.h"
 #include "include/table.hpp"
 #include "include/types/image.hpp"
 #include "include/types/job.hpp"
@@ -16,13 +16,13 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Job> JobTable;
   typedef Table<Image> ImageTable;
   typedef Table<Profile> ProfileTable;
-  typedef Table<AlgorithmResult> DetectionResultTable;
+  typedef Table<DetectionResult> DetectionResultTable;
   // typedef Table<AlgorithmJob> DetectionJobTable;
 
-  Database(QString file_path, QObject* parent);
-  ~Database() override;
+  Database(QSettings& settings, QObject* parent);
 
   void saveToFile();
+  bool readOnly() const;
 
   JobTable& jobs();
   JobTable& deletedJobs();  // Tracks deleted jobs TODO neeeded?
@@ -49,7 +49,8 @@ class Database : public QObject, JsonConvertable {
   void write(QJsonObject&) const override;
 
  private:
-  QString file_path_;
+  ResourcePath file_path_;
+  bool read_only_;
 
   JobTable jobs_;
   JobTable deleted_jobs_;

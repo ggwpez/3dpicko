@@ -23,26 +23,32 @@ class AlgorithmJob : public QObject {
   typedef QString ID;
 
  private:
-  AlgorithmJob(ID id, Algorithm *algo, QJsonObject settings, void *input,
-               AlgorithmResult *result, QThreadPool *pool, QObject *_parent);
+  AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings, void* input,
+               AlgorithmResult* result, QThreadPool* pool, qint64 maxMs,
+               QObject* _parent);
 
  public:
   ~AlgorithmJob();
 
-  void *input();
-  AlgorithmResult *result() const;
+  void* input();
+  AlgorithmResult* result() const;
 
-  AlgoSetting const &settingById(AlgoSetting::ID id) const;
-  AlgoSetting const &settingByName(QString name) const;
+  AlgoSetting const& settingById(AlgoSetting::ID id) const;
+  AlgoSetting const& settingByName(QString name) const;
 
   void setSettingsValueByID(AlgoSetting::ID id, QJsonValue value);
   void setSettingsValueByName(QString name, QJsonValue value);
 
-  QList<AlgoSetting> const &settings() const;
-  void setSettings(QJsonObject const &);
+  QList<AlgoSetting> const& settings() const;
+  void setSettings(QJsonObject const&);
 
   ID id() const;
   AlgorithmResult::ID result_id() const;
+
+  qint64 tookMs() const;
+  qint64 elapsedMs() const;
+
+  qint64 maxMs() const;
 
  signals:
   void OnAlgoSucceeded();
@@ -63,18 +69,28 @@ class AlgorithmJob : public QObject {
    */
   void start(bool threaded, bool delete_when_done);
 
+  void timeStart();
+  void timeStop();
+
  private:
   ID id_;
-  Algorithm *algo_ = nullptr;
-  QThreadPool *pool_;
+  Algorithm* algo_ = nullptr;
+  QThreadPool* pool_;
   QList<AlgoSetting> settings_;
-  void *input_;
+  void* input_;
   /**
    * @brief This pointer is only valid during the call of start(...)
-   * It will not be de/serialised.
+   * It will not be de/serialised. TODO
    */
-  AlgorithmResult *result_;
+  AlgorithmResult* result_;
   AlgorithmResult::ID result_id_;
+  /**
+   * @brief max_ms_ Soft limit for the maximal time, a job should take in ms.
+   *
+   * Hard limit is the expiryTimeout of the passed QThreadPool
+   */
+  qint64 max_ms_, took_ms_;
+  QElapsedTimer timer_;
 };
 MAKE_MARSHALLABLE(AlgorithmJob);
 }  // namespace c3picko

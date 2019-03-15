@@ -1,13 +1,22 @@
+body.wait, body.wait * {
+	cursor: progress !important;
+}
 label{
 	display: inline;
 	font-weight: bold;
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
-.nav{
-	white-space: nowrap;
+li{
+	word-break: break-all;
 }
-#nav-new-job h4{
+.modal-title {
+    word-break: break-all;
+}
+.next-step{
+	float: right;
+}
+.nav{
 	white-space: nowrap;
 }
 /* close button */
@@ -15,8 +24,11 @@ label{
 	position: absolute;
 	display: block;
 	font-size: xx-large;
-	top: 5px; 
-	right: 10px;
+	top: 0px;
+	right: 0px;
+}
+.close:hover{
+	color: red;
 }
 #steps{
 	pointer-events: none;
@@ -24,10 +36,10 @@ label{
 .nav-pills .nav-link{
 	color: #888888;
 	font-weight: bold;
-} 
+}
 .nav-pills .nav-link:hover{
 	color: #888888;
-} 
+}
 .nav-pills .nav-link.active{
 	color: white;
 	/*background-color: #212529;*/
@@ -35,6 +47,10 @@ label{
 .nav-pills .nav-link.disabled{
 	color: #11d100;
 	background-color: transparent;
+}
+.card-title{
+	display: block;
+	word-break: break-all;
 }
 .card-header{
 	padding-bottom: 0px;
@@ -47,7 +63,7 @@ label{
 	display: inline-block;
 	vertical-align:top;
 	max-width: 200px;
-	min-height: 250px;
+	min-height: 200px;
 }
 .job-card{
 	display: inline-block;
@@ -69,19 +85,20 @@ label{
 
 /* Image-Upload-Tab */
 #dropZone{
+	position: relative;
 	background-color: transparent;
 	border: none;
-	width: 200px;
-	height: 200px;
 	cursor: pointer;
 }
 #dropZone.empty{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	height: 400px;
 	background-color: #ddd;
 	color: #666;
 	border: 2px dashed #666;
-	text-align: center;
-	vertical-align: middle;
-	line-height: 200px;
 	font-size: 2em;
 	font-weight: bold;
 }
@@ -92,6 +109,24 @@ label{
 #dropZone.dragover{
 	color: black;
 	border-color: black;
+}
+
+#overlay{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+	z-index: 10;
+	display: none;
+}
+.overlay-spinner{
+	position: absolute;
+	top: 20%;
+	width: 5rem;
+	height: 5rem;
 }
 
 /* Cut-Tab */
@@ -120,6 +155,26 @@ img {
 #detection-settings{
 	position: relative;
 }
+#detection-settings-div{
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.form-group{
+	margin-bottom: 0.5rem;
+}
+#colony-layers{
+	margin-left: auto;
+}
+
+/* Strategy Tab */
+#strategy input[type=number]{
+	width: 2ch;
+	min-width: 5ch;
+}
+#pickstrategy-canvas{
+	cursor: pointer;
+}
 
 /* Profile Settings Page */
 /* remove number input spinner */
@@ -133,10 +188,10 @@ img {
 input[type=number]{
 	-moz-appearance:textfield;
 }
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-	-webkit-appearance: none; 
-	margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }
 #group h2{
 	text-align: center;
@@ -167,18 +222,9 @@ input[type="range"].multirange {
 	padding: 0;
 	margin: 0;
 	vertical-align: top;
-	pointer-events: none;
-}
-input[type="range"].multirange::-moz-range-thumb {
-	pointer-events: auto !important;
-}
-input[type="range"].multirange::-webkit-slider-thumb {
-	pointer-events: auto !important;
-}
-input[type="range"].multirange::-ms-thumb {
-	pointer-events: auto !important;
 }
 input[type="range"].multirange.original::-webkit-slider-thumb {
+	cursor: inherit;
 	position: relative;
 	z-index: 1;
 }
@@ -200,7 +246,9 @@ input[type="range"].multirange.ghost {
 }
 input[type="range"].multirange.ghost::-webkit-slider-runnable-track {
 	background: var(--track-background);
+	cursor: inherit;
 }
 input[type="range"].multirange.ghost::-moz-range-track {
 	background: var(--track-background);
+	cursor: inherit;
 }

@@ -1,4 +1,4 @@
-const Circle = new Class({ 
+const Circle = new Class({
    Implements: [Options, Events],
 
    initialize: function (options) {
@@ -16,8 +16,8 @@ const Circle = new Class({
    {
       if (this.options.selected == true)
       {
-         this.options.selected = false;  
-         this.set('linecolor', 'white');
+         this.options.selected = false;
+         this.set('linecolor', this.options.defaultLinecolor);
       }
       else
       {
@@ -30,6 +30,11 @@ const Circle = new Class({
 
    // This function implies that a null value is as good as a nonexistent one.
    set: function (what, value) {
+    if (value == null)
+    {
+        console.error("Cant set option ", what, " to null");
+      return;
+    }
       if (this.options[what] != value)
       {
          this.options[what] = value;
@@ -51,7 +56,7 @@ const Circle = new Class({
       context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
       context.fill();
 
-      context.lineWidth = 3;
+      context.lineWidth = 2;
       context.strokeStyle = this.options.linecolor;
       context.stroke();
 
@@ -70,6 +75,10 @@ const Circle = new Class({
       }
 
       return position;
+   },
+
+   getColor: function(){
+    return this.options.linecolor;
    },
 
    isMouseOver: function (x, y)

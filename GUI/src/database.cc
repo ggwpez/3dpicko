@@ -3,29 +3,42 @@
 #include <QJsonDocument>
 
 namespace c3picko {
-Database::Database(QString file_path, QObject* parent)
-    : QObject(parent), file_path_(file_path), job_id_(200), profile_id_(300) {
-  QFile file(file_path);
+Database::Database(QSettings& settings, QObject* parent)
+    : QObject(parent),
+      file_path_(Root() + "/database.json"),
+      read_only_(!settings.value("saveChanges", true).toBool()),
+      job_id_(200),
+      profile_id_(300) {
+  const bool ignore_empty = settings.value("ignoreEmpty", true).toBool();
+  QFile file(file_path_.toSystemAbsolute());
 
   if (file.open(QIODevice::ReadOnly)) {
     QByteArray data = file.readAll();
     QJsonParseError error;
     QJsonObject json = QJsonDocument::fromJson(data, &error).object();
 
-    if (error.error) {
-      qFatal("Cannot parse JSON database: %s", qPrintable(error.errorString()));
-    } else {
+    if (error.error)
+      throw Exception("Cannot parse JSON database: " + error.errorString());
+    else {
       read(json);
-      qDebug() << "Loaded database from file" << file_path_;
+      qDebug().nospace() << "Loaded database from file: "
+                         << file_path_.toSystemAbsolute()
+                         << " (saveChanges=" << !read_only_ << ")";
     }
-  } else
-    qCritical() << "Error reading database from file" << file_path_;
+  } else if (ignore_empty)
+    qDebug() << "Database not found, creating new one (ignoreEmpty=true)";
+  else
+    throw Exception("Error reading database from file: " +
+                    file_path_.toSystemAbsolute() + " (ignoreEmpty=false)");
 }
 
-Database::~Database() { saveToFile(); }
-
 void Database::saveToFile() {
-  QFile file(file_path_);
+  if (read_only_) {
+    qDebug() << "NOT saving database changes (saveChanges=false)";
+    return;
+  }
+
+  QFile file(file_path_.toSystemAbsolute());
 
   if (file.open(QIODevice::WriteOnly)) {
     QJsonObject json;
@@ -33,9 +46,10 @@ void Database::saveToFile() {
     QByteArray data = QJsonDocument(json).toJson();
 
     file.write(data);
-    qDebug() << "Saving database to file" << file_path_;
+    qDebug() << "Saving database to file:" << file_path_.toSystemAbsolute();
   } else
-    qCritical() << "Error saving database to file" << file_path_;
+    qCritical() << "Error saving database to file:"
+                << file_path_.toSystemAbsolute();
 }
 
 Database::JobTable& Database::jobs() { return jobs_; }
@@ -87,9 +101,9 @@ void Database::read(QJsonObject const& obj) {
   result_id_ = obj["result_id"].toInt();
   result_job_id_ = obj["result_job_id"].toInt();
 
-  default_printer_ = obj["default_printer"].toString();
-  default_socket_ = obj["default_socket"].toString();
-  default_plate_ = obj["default_plate"].toString();
+  default_printer_ = Marshalling::fromJson<QString>(obj["default_printer"]);
+  default_socket_ = Marshalling::fromJson<QString>(obj["default_socket"]);
+  default_plate_ = Marshalling::fromJson<QString>(obj["default_plate"]);
 }
 
 void Database::write(QJsonObject& obj) const {
@@ -111,6 +125,8 @@ void Database::write(QJsonObject& obj) const {
   obj["default_socket"] = default_socket_;
   obj["default_plate"] = default_plate_;
 }
+
+bool Database::readOnly() const { return read_only_; }
 
 void Database::setdefaultPrinter(const Profile::ID& default_printer) {
   default_printer_ = default_printer;

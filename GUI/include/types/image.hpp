@@ -4,19 +4,19 @@
 #include <QImage>
 #include <opencv2/opencv.hpp>
 #include "include/global.h"
-#include "include/marshalling.hpp"
+#include "include/resource_path.h"
 
 namespace c3picko {
 class Image {
  public:
   typedef QString ID;
   Image() = default;
-  Image(ID id, QString original_name, QString description, QString path,
+  Image(ID id, QString original_name, QString description, ResourcePath path,
         QDateTime uploaded, int width, int hwight);
   Image(QByteArray data, QString original_name, QString description,
-        QDateTime uploaded);
+        QDateTime uploaded = QDateTime::currentDateTime());
   Image(cv::Mat image, QString original_name, QString description,
-        QDateTime uploaded);
+        QDateTime uploaded = QDateTime::currentDateTime());
 
   /**
    * @brief Writes the image into its path_ file.
@@ -40,7 +40,7 @@ class Image {
    * @brief Calculates a unique id (hash) for the given matrix
    * @return
    */
-  static ID calculateId(const cv::Mat &image);
+  static ID calculateId(const cv::Mat& image);
 
   /**
    * @brief Returns a cropped version of the current image.
@@ -53,11 +53,19 @@ class Image {
    * @param error Error string is set, when return is false
    * @return Success.
    */
-  bool crop(int x, int y, int w, int h, Image &output, QString &error);
+  bool crop(int x, int y, int w, int h, Image& output, QString& error);
 
-  bool readCvMat(cv::Mat &output);
-  bool readData(QByteArray &output) const;
-  static bool decodeCvMat(QByteArray data, cv::Mat &output);
+  bool readCvMat(cv::Mat& output);
+  bool readData(QByteArray& output) const;
+  static bool decodeCvMat(QByteArray data, cv::Mat& output);
+
+  ResourcePath path() const;
+  ID id() const;
+  QString originalName() const;
+  int width() const;
+  int height() const;
+  QString description() const;
+  QDateTime uploaded() const;
 
  private:
   QString original_name_;
@@ -66,7 +74,7 @@ class Image {
   /**
    * @brief The relative file path, not starting with /
    */
-  QString path_;
+  ResourcePath path_;
   QDateTime uploaded_;
   /**
    * @brief The image itself. Also referred to as the 'cache'.
@@ -74,15 +82,6 @@ class Image {
   cv::Mat image_;
   int width_ = 0, height_ = 0;
   ID id_;
-
- public:
-  QString path() const;
-  ID id() const;
-  QString originalName() const;
-  int width() const;
-  int height() const;
-  QString description() const;
-  QDateTime uploaded() const;
 };
 MAKE_MARSHALLABLE(Image);
 }  // namespace c3picko

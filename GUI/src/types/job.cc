@@ -71,7 +71,7 @@ QJsonObject Marshalling::toJson(const Job &value) {
   obj["img_id"] = value.imgID();
   obj["name"] = value.name();
   obj["description"] = value.description();
-  obj["job_created"] = value.job_created().toMSecsSinceEpoch();
+  obj["created"] = Marshalling::toJson(value.job_created());
   obj["printer"] = value.printer();
   obj["socket"] = value.socket();
   obj["step"] = value.step();
@@ -94,10 +94,13 @@ Job Marshalling::fromJson(const QJsonObject &obj) {
 
   for (auto detection : json_detections) detections.push(detection.toString());
 
-  return Job(obj["id"].toString(), obj["img_id"].toString(),
-             obj["name"].toString(), obj["description"].toString(),
-             parseDateTime(obj["job_created"]), detections,
-             obj["printer"].toString(), obj["socket"].toString(),
+  return Job(Marshalling::fromJson<QString>(obj["id"]),
+             Marshalling::fromJson<QString>(obj["img_id"]),
+             Marshalling::fromJson<QString>(obj["name"]),
+             Marshalling::fromJson<QString>(obj["description"]),
+             Marshalling::fromJson<QDateTime>(obj["created"].toObject()),
+             detections, Marshalling::fromJson<QString>(obj["printer"]),
+             Marshalling::fromJson<QString>(obj["socket"]),
              obj["starting_row"].toInt(), obj["starting_col"].toInt(),
              obj["step"].toInt());
 }

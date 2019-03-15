@@ -150,7 +150,10 @@ img {
 }
 
 .cropper-face {
-  background-color: #fff;
+  /*background-color: #fff;*/
+  background-image: url('/img/plate_border.png');
+  opacity: .8;
+  background-size: cover;
   left: 0;
   top: 0;
 }

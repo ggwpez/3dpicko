@@ -1,4 +1,4 @@
-/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, colony_coords, drawWells, collided_row, collided_column, FormGroup */
+/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting, number_of_colonies */
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
@@ -8,15 +8,20 @@ var current_job = {};
 var all_jobs = [];
 var all_profiles = {};
 var algorithms;
+var algorithm_settings_values = {};
 var default_profiles = {
     "printer-profile": "",
     "socket-profile": "",
     "plate-profile": ""
 };
+var profile_templates ={};
 // TODO delete "new_job" if job saved or executed
 var unsaved_elements = {};
 
-(function Setup()
+var global_alert = $('#global-alert');
+var alert_window = $('#alert-window');
+
+$(function Setup()
 {
     WsSetup(
         () =>
@@ -34,10 +39,14 @@ var unsaved_elements = {};
             console.log("Response: ", data);
 
             if (type == "error"){
-                ShowAlert(JSON.stringify(data), "danger");
                 clearTimeout(loading_timeout_id);
-                $('#apply-detection-settings').show();
-                $('#loading-detection-settings').hide();
+                clearTimeout(upload_timeout_id);
+                document.body.classList.remove('wait');
+                $('#strategy-tab-button').prop("disabled", true);
+                $('#overlay').hide();
+                // TODO
+                if(data.uploadimage=="") ShowAlert("Upload failed.<br>Maybe Image already exists.", "danger");
+                else ShowAlert(JSON.stringify(data), "danger");
             }
             else if (type == "getimagelist")
             {
@@ -96,13 +105,28 @@ var unsaved_elements = {};
                 data.jobs.forEach(AddJobToList);
                 console.log("Jobs:\n" +data +"\ncount: " +data.jobs.length);
             }
+            else if (type == "getgeneralsettings"){
+                // TODO
+                data.settings.forEach(AddGeneralSetting);
+            }
             else if (type == "getprofilelist")
             {
+                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
                 default_profiles["printer-profile"] = data.defaultPrinter;
                 default_profiles["socket-profile"] = data.defaultSocket;
                 default_profiles["plate-profile"] = data.defaultPlate;
+                profile_templates["printer-profile"] = data["printerTemplate"];
+                profile_templates["socket-profile"] = data["socketTemplate"];
+                profile_templates["plate-profile"] = data["plateTemplate"];
+                // TOOO add type in Backend?
+                profile_templates["printer-profile"].type = "printer-profile";
+                profile_templates["socket-profile"].type = "socket-profile";
+                profile_templates["plate-profile"].type = "plate-profile";
+                // empty "new-profiles"
+                AddProfileToList(profile_templates["printer-profile"]);
+                AddProfileToList(profile_templates["socket-profile"]);
+                AddProfileToList(profile_templates["plate-profile"]);
                 data.profiles.forEach(AddProfileToList);
-                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
             }
             else if (type == "setdefaultsettingsprofile"){
                 SetDefaultProfile(data.id);
@@ -122,23 +146,33 @@ var unsaved_elements = {};
             else if (type == "debug")
             {
                 addDebugOutputLine(data.line);
-                // TODO...
-                if(data.line == "Ignoring doubled image") ShowAlert("Image already exists.", "danger");
             }
             else if (type == "getpositions")
             {
                 drawPositions(data);
                 clearTimeout(loading_timeout_id);
-                $('#apply-detection-settings').show();
-                $('#loading-detection-settings').hide();
-                ShowAlert("Detected "+data.coords.length+" Colonies");
+                document.body.classList.remove('wait');
+                let number = $('#detected-colonies-number');
+                if(number.text() != number_of_colonies){
+                    number.hide();
+                    number.text(number_of_colonies);
+                    number.fadeIn();
+                }
+                $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
                 GetDetectionAlgorithms(data);
             }
             else if (type == "crop-image"){
-                // TODO
+                AddImageToList(data);
+                chosen_image = data;
+            }
+            else if (type == "setcoloniestopick"){
+                // job: id, indices: array 
+                if(current_job.id == data.job){
+                    overviewTab(data.indices);
+                }
             }
             else
             {
@@ -151,7 +185,7 @@ var unsaved_elements = {};
             global_alert.css('display', 'block');
             document.title = "No connection - 3CPicko";
         });
-})();
+});
 
 function GetDetectionAlgorithms(detection_algorithms){
     algorithms = detection_algorithms;
@@ -160,7 +194,7 @@ function GetDetectionAlgorithms(detection_algorithms){
         name: "Fluro",
         description: "Good for detecting fluorescent colonies",
         settings:[{
-            id: "1234",
+            id: "slider_1",
             name: "Threshold 1",
             type: "rangeslider",
             min: 0,
@@ -170,20 +204,53 @@ function GetDetectionAlgorithms(detection_algorithms){
             description: ""
         },
         {
-            id: "123",
+            id: "checkbox_1",
             name: "Erode & Dilate",
             type: "checkbox",
             defaultValue: true,
-            description: ""
-        },
-        {
-            id: "12sad3",
-            name: "Erode & Dilate 2",
-            type: "checkbox",
-            defaultValue: false,
-            description: "do not touch me!"
-        }
-        ]
+            description: "",
+            conditional_settings:[{
+                id: "checkbox_1_1",
+                name: "Erode & Dilate 2",
+                type: "checkbox",
+                defaultValue: false,
+                description: "Only visible if Erode & Dilate is true"
+            },
+            {
+                id: "slider_1_1",
+                name: "Erode & Dilate 3",
+                type: "rangeslider",
+                min: 0,
+                max: 1000,
+                step: 0.1,
+                defaultValue: {min: 1, max: 300},
+                description: "Only visible if E&D is true"
+            },
+            {
+                id: "checkbox_1_2",
+                name: "Erode & Dilate",
+                type: "checkbox",
+                defaultValue: false,
+                description: "",
+                conditional_settings:[{
+                    id: "checkbox_1_2_1",
+                    name: "Erode & Dilate 2",
+                    type: "checkbox",
+                    defaultValue: false,
+                    description: "Only visible if Erode & Dilate is true"
+                },
+                {
+                    id: "slider_1_2_1",
+                    name: "Erode & Dilate 3",
+                    type: "rangeslider",
+                    min: 0,
+                    max: 1000,
+                    step: 0.1,
+                    defaultValue: {min: 1, max: 300},
+                    description: "Only visible if E&D is true"
+                }]
+            }]
+        }]
     };
     algorithms["423"] = {
         name: "Fluro 2",
@@ -236,21 +303,30 @@ function GetDetectionAlgorithms(detection_algorithms){
         algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
         algorithm_option.title = algorithm.description;
         algorithm_selection.appendChild(algorithm_option);
+        CreateDetectionAlgorithmSettings(id);
     }
-    algorithm_selection.onchange = function(){GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);};
-    GetDetectionAlgorithmSettings(algorithm_selection.options[algorithm_selection.selectedIndex].value);
+    algorithm_selection.onchange = function(){$('#'+this.value+'-settings').collapse('show');UpdateDetectionSettings(this.value)};
 }
 
-function GetDetectionAlgorithmSettings(id){
+function CreateDetectionAlgorithmSettings(id){
     const detection_settings = document.getElementById("detection-settings");
-    while (detection_settings.firstChild) detection_settings.removeChild(detection_settings.firstChild);
+    // while (detection_settings.firstChild) detection_settings.removeChild(detection_settings.firstChild);
 
-    let settings = new FormGroup(algorithms[id], "detection-settings-form");
-    detection_settings.insertAdjacentHTML("beforeend", settings.getHtml());
+    let html = `<div id="${id}-settings" class="collapse" data-parent="#detection-settings">
+    <form id="${id}-settings-form">
+    <button type="reset" class="btn btn-outline-primary btn-sm w-100">Reset to Default Values</button>
+    <button type="button" onclick="show_excluded = !show_excluded;printPositions();" class="btn btn-outline-primary btn-sm w-100 mt-1">Show/Hide Excluded Colonies</button>
+    `;
+    let settings = new FormGroup(algorithms[id], id+"-settings-form");
+    detection_settings.insertAdjacentHTML("beforeend", html+settings.getHtml()+`</form></div>`);
     settings.AddInputEvents();
+    FormGroup.AddFormEvents(id+"-settings-form");
+    $('#'+id+'-settings-form').change(function(){
+        UpdateDetectionSettings(id);
+    });
 }
 var loading_timeout_id;
-var UpdateDetectionSettings = function (e){
+var UpdateDetectionSettings = function (id){
     // Send as:
     // {
     //  job_id: "222",
@@ -261,27 +337,22 @@ var UpdateDetectionSettings = function (e){
     //      "123": true
     //  }
     // }
-    if (e){
-        e.preventDefault();
-        $('#apply-detection-settings').hide();
-        $('#loading-detection-settings').show();
-        clearTimeout(loading_timeout_id);
-        loading_timeout_id = setTimeout(function(){
-            $('#apply-detection-settings').show();
-            $('#loading-detection-settings').hide();
-            ShowAlert("Colony Detection Timeout", "danger");
-        }, 9000);
-        const form_data = new FormData(this);
-        const algorithm_id = document.getElementById('select-algorithm').value;
-        let new_settings = {
-            job_id : current_job.id,
-            algorithm: algorithm_id,
-        };
-        new_settings.settings = FormGroup.ReadForm(algorithms[algorithm_id], form_data);
-        console.log("New Settings:", new_settings);
-        api('updatedetectionsettings', new_settings);
-        // ShowAlert("Updated Detection Settings");
-    }
+    document.body.classList.add('wait');
+    let form = document.getElementById(id+'-settings-form');
+    clearTimeout(loading_timeout_id);
+    loading_timeout_id = setTimeout(function(){
+        document.body.classList.remove('wait');
+        ShowAlert("Colony Detection Timeout", "danger");
+    }, 4000);
+    const form_data = new FormData(form);
+    const algorithm_id = document.getElementById('select-algorithm').value;
+    algorithm_settings_values[algorithm_id] = {
+        job_id : current_job.id,
+        algorithm: algorithm_id,
+        settings: FormGroup.ReadForm(algorithms[algorithm_id], form_data)
+    };
+    console.log("Update Settings:", algorithm_settings_values[algorithm_id]);
+    api('updatedetectionsettings', algorithm_settings_values[algorithm_id]);
 }
 
 function AddJobToList(job)
@@ -290,7 +361,7 @@ function AddJobToList(job)
     if (!(job.id in all_jobs))
     {
         console.log("Adding job: " +JSON.stringify(job));
-
+        // ${job.created.formatted}
         var name = (job.step == 7) ? "Job" : "Entwurf";
         var html = `<div class="card m-1 job-card" id="job-${job.id}" >
         <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="job" data-id="${job.id}">&times;</button>
@@ -299,7 +370,7 @@ function AddJobToList(job)
         <img class="card-img" src="${images_list[job.img_id].path}" alt="${images_list[job.img_id].original_name}">
         <p class="card-text"><ul>
         <li>ID: ${job.id}</li>
-        <li>Created: ${DateToString(job.job_created)}</li>
+        <li>Created: </li>
         <li>Step: ${job.step}</li>
         ${job.description}
         </p>
@@ -326,12 +397,12 @@ function AddImageToList(image_object){
         console.log("Adding image " +JSON.stringify(image_object));
         let html = `
         <div class="card m-1 image-card" id="img-${image_object.id}">
-        <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
-        <div class="card-body p-1" onclick="SetChosen('${image_object.id}');" $(&quot;html, body&quot;).animate({ scrollTop: 0 }, &quot;slow&quot;);" style="cursor: pointer;">
-        <h5 class="card-title mr-2 p-1">${image_object.original_name}</h5>
+        <button type="button" class="close" style="line-height: 0.5;" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
+        <div class="card-body p-1" onclick="SetChosen('${image_object.id}');window.scrollTo(0,0);" style="cursor: pointer;">
+        <h7 class="card-title mb-1 mr-3">${image_object.original_name}</h7>
         <div class="spinner-border m-5" id="loading-${image_object.id}"></div>
         <img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
-        <p class="card-text">Date: ${DateToString(image_object.uploaded)}</li></p>
+        <p class="card-text">Date: ${image_object.uploaded.formatted}</li></p>
         </div>
         </div>`;
 
@@ -358,8 +429,6 @@ $(function(){
             return false;
         }
     });
-
-    FormGroup.AddFormEvents("detection-settings-form", UpdateDetectionSettings, false);
 
     $('#delete-dialog').on('show.bs.modal', function (e) {
     // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
@@ -415,22 +484,26 @@ $(function(){
 
 function SetChosen(image_id){
     const div_chosen = document.getElementById('chosen-image');
+    const description = document.getElementById('selectedimage-description');
     const class_dropzone = document.getElementById('dropZone');
+    const img_name = document.getElementById('img-name');
 
     if(image_id){
         chosen_image = images_list[image_id];
         console.log("Selecting image ", image_id);
-        div_chosen.getElementById('selectedimage-description').innerHTML = `
-        <ul><li>Filename: ${chosen_image.original_name}</li>
-        <li>Upload Date: ${DateToString(chosen_image.uploaded)}</li></ul>
-        `;
+        description.innerHTML = `Upload Date: ${chosen_image.uploaded.formatted}`;
+        img_name.innerHTML = chosen_image.original_name;
+        $(img_name).show();
         $(div_chosen).show();
-        class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
+        $(description).show();
+        class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}" onload="clearTimeout(upload_timeout_id);$('#overlay').hide();"/>`;
         class_dropzone.removeClass('empty');
     }
     else{
         chosen_image = false;
+        $(img_name).hide();
         $(div_chosen).hide();
+        $(description).hide();
         class_dropzone.innerHTML = 'Drop Image';
         class_dropzone.addClass('empty');
     }
@@ -465,36 +538,39 @@ var cropper;
 //Navigation
 $('#steps').on('shown.bs.tab', function () {
     // TODO disable/enable button, only execute if disabled
-    $('.next-step').html('Next Step &gt;');
+    $('.next-step').html('Continue');
 })
 $('#cut-tab').on('shown.bs.tab', function () {
     let cutImg = document.getElementById('cutImg');
     cropper = new Cropper(cutImg, {
         aspectRatio: 1.5/1,
-        moveable: false,
+        movable: false,
         zoomable: false
     });
 });
 function cutTab(){
     if(chosen_image.path){
         const cutImg = document.getElementById('cutImg');
+        cutImg.onload = function(){
+            tabEnter(1);
+        }
         cutImg.src = chosen_image.path;
-        tabEnter(1);
     }
 }
 
 function attributesTab(){
     tabEnter(2);
     document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
-
+    document.getElementById('date-attribute').innerHTML = new Date().toLocaleDateString();
     // Do the cutting
     var rect = cropper.getData();
     api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
 }
-
+$('#selection-tab').on('shown.bs.tab', function () {
+    selectionTabEnter();
+});
 function selectionTab(){
     if(chosen_image.path){
-        selectionTabEnter();
         const printer_selection = document.getElementById('select-printer-profile');
         const socket_selection = document.getElementById('select-socket-profile');
         const printer_id = printer_selection.options[printer_selection.selectedIndex].value;
@@ -510,9 +586,6 @@ function selectionTab(){
         }
         api("createjob", current_job);
         api("getdetectionalgorithms");  // TODO should we put this in the init?
-        // TODO Remove (only for debugging)
-        //GetDetectionAlgorithms({});
-        $('#detection-settings-div').show();
         tabEnter(3);
     }
 }
@@ -523,29 +596,48 @@ function strategyTab(){
     for(let profile_id in all_profiles){
         let profile = all_profiles[profile_id];
         if(profile.type=="plate-profile"){
-            if(profile.settings.number_of_rows*profile.settings.number_of_columns >= colony_coords.length){
-                let plate_profile_option = document.createElement('option');
-                plate_profile_option.value = profile.id;
-                plate_profile_option.text = profile.profile_name;
-                plate_selection.appendChild(plate_profile_option);
-            }
+            if(profile.id == default_profiles[profile.type]) plate_selection.add(new Option(profile.profile_name,  profile.id, true, true), 0);
+            else plate_selection.add(new Option(profile.profile_name, profile.id));
         }
     }
     if(plate_selection.length > 0){
-        let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
-        drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colony_coords.length);
-        plate_selection.addEventListener("change", function(){
+        plate_selection.onchange = function(){
             let plate_id = this.options[this.selectedIndex].value;
-            drawWells(all_profiles[plate_id].settings.number_of_columns, all_profiles[plate_id].settings.number_of_rows, colony_coords.length);
-        });
-        $('#detection-settings-div').hide();
+            let plate = all_profiles[plate_id];
+            drawWells(plate.settings.number_of_columns, plate.settings.number_of_rows, number_of_colonies);
+            let max_colonies = Math.min(number_of_colonies, plate.settings.number_of_columns*plate.settings.number_of_rows);
+            let template = {
+                settings: [
+                {
+                    name: "Number of Colonies to be picked",
+                    id: "max_number_of_colonies",
+                    type: "slider",
+                    min: 1,
+                    max: max_colonies,
+                    step: 1,
+                    description: "Choose number of detected colonies that will be transferred to Goal Plate.",
+                    defaultValue: max_colonies
+                }
+                ]
+            }
+            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].description += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Not all detected colonies fit on this plate.</span>";
+            let form = new FormGroup(template, "strategy-form");
+            document.getElementById("number-of-colonies-slider").innerHTML = form.getHtml();
+            form.AddInputEvents();
+            document.getElementById('number-max_number_of_coloniesstrategy-form').insertAdjacentHTML('afterend', "/"+number_of_colonies);
+            document.getElementById('slider-max_number_of_coloniesstrategy-form').addEventListener('input', function(){
+                updateWells(this.value);
+            });
+            updateWells(max_colonies);
+        };
+        plate_selection.onchange();
         tabEnter(4);
-    } else ShowAlert("Too many colonys :(", "danger");
+    }
 }
-
-function overviewTab(){
+function overviewTab(selected_colonies){
     // TODO disable clicks
     $('.next-step').html(`<span class="spinner-border spinner-border-sm"></span>`);
+    removeUnselectedColonies(selected_colonies);
     // TODO hack
     setTimeout(function(){
         let plate_selection = document.getElementById("select-plate-profile");
@@ -554,33 +646,38 @@ function overviewTab(){
         const canvas_layer0 = document.getElementById('layer0');
         const canvas_layer1 = document.getElementById('layer1');
         // TODO onclick resize
+        document.getElementById('processed-layer0').src = canvas_layer0.toDataURL();
+        document.getElementById('processed-layer1').src = canvas_layer1.toDataURL();
         const html = `
-        <div style="position: relative;">
-        <img id="processed-layer0" src="${canvas_layer0.toDataURL()}" width="100%" style="z-index: 0;">
-        <img id="processed-layer1" src="${canvas_layer1.toDataURL()}" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
-        </div>
         <ul class="mt-2">
+        <li>Date: ${new Date().toLocaleDateString()}</li>
         <li>Job name: ${current_job.name}</li>
         <li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
         <li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
+        <li>Plate: ${all_profiles[plate_id].profile_name}</li>
         <li>Description: ${current_job.description}</li>
+        <li>Number of detected colonies: ${number_of_colonies}</li>
+        <li>Number of picked colonies: ${document.getElementById('number-max_number_of_coloniesstrategy-form').value}</li>
         <li>Pick strategy: Starting at ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
         </ul>
         `;
-        document.getElementById('overview-content').insertAdjacentHTML('afterbegin', html);
+        document.getElementById('overview-metadata').insertAdjacentHTML('afterbegin', html);
         tabEnter(5);
     }, 100);
 }
 
 function executeTab(){
-    api('startjob', {id: current_job.id});
     var form = document.getElementById('check-preconditions');
-    if (form.checkValidity() === true) tabEnter(6);
+    if (form.checkValidity() === true){
+        //tabEnter(6);
+        $('#check-preconditions').hide();
+        $('#execute-button').hide();
+        $('#pickjob-running').show();
+        api('startjob', {id: current_job.id});
+    }
     form.classList.add('was-validated');
 }
 
-var global_alert = $('#global-alert');
-var alert_window = $('#alert-window');
 
 // bootstrap alert-type: success/warning/danger/primary/dark...
 function ShowAlert(message, type = "success", delay=3000){

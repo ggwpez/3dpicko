@@ -26,7 +26,8 @@ class Algorithm : public QObject, public QRunnable {
   typedef void (*AlgoCleanup)(Algorithm*);
 
   Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps,
-            QList<AlgoSetting> defaultSettings, bool isThreadable);
+            QList<AlgoSetting> defaultSettings, bool isThreadable,
+            qint64 maxMs);
   virtual ~Algorithm() override;
 
   /**
@@ -56,6 +57,8 @@ class Algorithm : public QObject, public QRunnable {
    */
   QJsonObject baseToJson() const;
 
+  qint64 maxMs() const;
+
  protected:
   const ID id_;
   const QString name_, description_;
@@ -68,6 +71,11 @@ class Algorithm : public QObject, public QRunnable {
    */
   const QList<AlgoSetting> default_settings_;
   bool is_threadable_;
+  /**
+   * @brief Estimated maximal time the algorithm should take in ms.
+   * NOTE should this be a function taking a complexity value?
+   */
+  qint64 max_ms_;
 };
 MAKE_SERIALIZABLE(Algorithm);
 }  // namespace c3picko

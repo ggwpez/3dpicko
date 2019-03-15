@@ -3,11 +3,11 @@
 
 namespace c3picko {
 
-APIInput::APIInput(APIController *parent) : QObject(parent), api(parent) {}
+APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
 
-void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
-                              QObject *client) {
-  QString path = request["request"].toString().toLower();
+void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
+                              QObject* client) {
+  QString path = Marshalling::fromJson<QString>(request["request"]).toLower();
   QJsonObject req_data = request["data"].toObject();
 
   // All no-brainer requests are directly emittet as signals, indicating
@@ -22,39 +22,40 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
   } else if (path == "getdetectionalgorithms") {
     emit api->OnAlgorithmListRequested(client);
   } else if (path == "setdefaultsettingsprofile") {
-    Profile::ID id = req_data["id"].toString();
-
+    Profile::ID id = Marshalling::fromJson<QString>(req_data["id"]);
     api->setDefaultSettingsProfile(id, client);
   } else if (path == "setstartingwell") {
-    Job::ID job_id = req_data["job_id"].toString();
-    Profile::ID plate_id = req_data["plate_id"].toString();
+    Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);
+    Profile::ID plate_id = Marshalling::fromJson<QString>(req_data["plate_id"]);
     int row = req_data["row"].toInt();
     int col = req_data["column"].toInt();
 
     api->setStartingWell(job_id, plate_id, row, col, client);
   } else if (path == "deleteimage") {
-    Image::ID id = req_data["id"].toString();
+    Image::ID id = Marshalling::fromJson<QString>(req_data["id"]);
 
     api->DeleteImage(id, client);
   } else if (path == "deletejob") {
-    QString id = req_data["id"].toString();
+    QString id = Marshalling::fromJson<QString>(req_data["id"]);
     api->DeleteJob(id, client);
   } else if (path == "startjob") {
-    Job::ID job = req_data["id"].toString();
+    Job::ID job = Marshalling::fromJson<QString>(req_data["id"]);
 
     api->startJob(job, client);
   } else if (path == "uploadimage") {
     // Get image data
-    QByteArray img_data(QByteArray::fromBase64(
-        req_data["file"].toString().toUtf8()));  // TODO ugly code
-    QString img_name = req_data["original_filename"].toString();
+    QByteArray img_data(
+        QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
+                                   .toUtf8()));  // TODO ugly code
+    QString img_name =
+        Marshalling::fromJson<QString>(req_data["original_filename"]);
     Image image =
         Image(img_data, img_name, "descrtiption", QDateTime::currentDateTime());
     qDebug() << "Hash" << image.id();
 
     api->UploadImage(image, client);
   } else if (path == "crop-image") {
-    QString img_id = req_data["id"].toString();
+    QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
     int x = req_data["x"].toDouble(), y = req_data["y"].toDouble(),
         w = req_data["width"].toDouble(), h = req_data["height"].toDouble();
 
@@ -71,7 +72,7 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
 
     api->updateSettingsProfile(profile, client);
   } else if (path == "deletesettingsprofile") {
-    Profile::ID id = req_data["id"].toString();
+    Profile::ID id = Marshalling::fromJson<QString>(req_data["id"]);
 
     api->deleteSettingsProfile(id, client);
   } else if (path == "createjob") {
@@ -79,11 +80,11 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
 
     api->createJob(job_wo_id, client);
   } else if (path == "getpositions") {
-    QString img_id = req_data["id"].toString();
+    QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
     api->getPositions(img_id, client);
   } else if (path == "updatedetectionsettings") {
-    Job::ID job_id = req_data["job_id"].toString();
-    QString algo_id = req_data["algorithm"].toString();
+    Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);
+    QString algo_id = Marshalling::fromJson<QString>(req_data["algorithm"]);
     QJsonObject settings = req_data["settings"].toObject();
 
     emit api->OnColonyDetectionStarted(job_id, client);

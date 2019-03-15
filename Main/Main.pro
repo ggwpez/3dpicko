@@ -46,18 +46,25 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/libImageRecognition.a
 
 SOURCES += main.cpp \
 	global.cc \
-	marshalling.cc
+	marshalling.cc \
+	exception.cc \
+	setting.cc \
+	resource_path.cc
 
 HEADERS += \
 	include/json_constructable.hpp \
 	include/json_convertable.h \
 	include/global.h \
-	include/marshalling.hpp
+	include/marshalling.hpp \
+	include/exception.h \
+	include/setting.h \
+	include/resource_path.h
 
 LIBS += -lopencv_core \
 		-lopencv_imgproc \
 		-lopencv_highgui \
-		-lopencv_imgcodecs
+		-lopencv_imgcodecs \
+		-lopencv_photo
 
 unix {
 	HEADERS += include/signal_daemon.h

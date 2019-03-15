@@ -3,8 +3,11 @@
 #include "include/algorithm_manager.h"
 #include "include/algorithm_result.h"
 #include "include/commands/arbitrary_command.h"
+#include "include/detection_result.h"
+#include "include/exception.h"
 #include "include/gcodegenerator.h"
 #include "include/octoprint.h"
+#include "include/plate_result.h"
 
 #include <QCoreApplication>
 #include <QJsonArray>
@@ -12,10 +15,12 @@
 
 using namespace c3picko::pi;
 namespace c3picko {
-APIController::APIController(AlgorithmManager* detector, Database* db,
+APIController::APIController(AlgorithmManager* colony_detector,
+                             AlgorithmManager* plate_detector, Database* db,
                              QObject* parent)
     : QObject(parent),
-      detector_(detector),
+      colony_detector_(colony_detector),
+      plate_detector_(plate_detector),
       db_(db),
       input_(new APIInput(this)),
       output_(new APIOutput(this)) {
@@ -90,7 +95,7 @@ void APIController::DeleteImage(Image::ID id, QObject* client) {
     // go out of scope after deletion
     emit OnImageDeleted(image, client);
   } else {
-    emit OnImageDeleteError(image.path(), client);
+    emit OnImageDeleteError(image.path().toSystemAbsolute(), client);
   }
 }
 
@@ -129,23 +134,73 @@ void APIController::cropImage(Image::ID id, int x, int y, int w, int h,
     return emit OnImageCropError(id, client);
   else {
     QString error;
-    Image cropped;
     Image& original = db_->images().get(id);
 
-    // Is the cropped image empty?
-    if (!original.crop(x, y, w, h, cropped, error)) {
-      emit OnImageCropError(id, client);  // TODO inform client
-      return;
-    }
-    if (!cropped.writeToFile())  // save cropped image to the hdd
+    // FIXME cheat, normally we should cut the image to the crop box, but now we
+    // just autodetect the frame
     {
-      emit OnImageCreateError("<cropped>", client);
-      return;
+      cv::Mat mat;
+      if (!original.readCvMat(mat)) {
+        emit OnImageCropError("Internal error, could not find image", client);
+        return;
+      }
+
+      AlgorithmJob::ID result_job_id = db_->newResultJobId();
+      PlateResult* result = new PlateResult(db_->newResultId());
+      AlgorithmJob* algo_job = plate_detector_->createJob(
+          mat, "1", result_job_id, result, QJsonObject());
+
+      if (!algo_job) {
+        emit OnImageCropError(
+            "Internal error, could not create Plate detection job", client);
+        return;
+      } else {
+        QString new_name = "cropped_" + original.originalName();
+
+        connect(algo_job, &AlgorithmJob::OnAlgoSucceeded, client,
+                [this, client, algo_job, result, new_name] {
+                  cv::Mat cropped_mat(result->oldMat());
+                  Image cropped =
+                      Image(cropped_mat, new_name,
+                            "Autodetected frame");  // TODO description
+                  qDebug() << "Detected Frame in" << algo_job->tookMs() << "ms";
+
+                  if (!cropped.writeToFile())  // save cropped image to the hdd
+                  {
+                    emit OnImageCreateError("<cropped>", client);
+                    return;
+                  }
+
+                  db_->images().add(cropped.id(), cropped);
+                  // response = {{"id", cropped.id()}}; // TODO
+                  emit OnImageCropped(cropped, client);
+                });
+        connect(algo_job, &AlgorithmJob::OnAlgoFailed, client,
+                [this, result, client] {
+                  emit this->OnImageCropError(result->stageError(), client);
+                });
+
+        algo_job->start(true, true);
+      }
+    }
+
+    /*Image cropped;
+    // Is the cropped image valid?
+    if (!original.crop(x, y, w, h, cropped, error))
+    {
+            emit OnImageCropError(id, client); // TODO inform client
+            return;
+    }
+
+    if (!cropped.writeToFile()) // save cropped image to the hdd
+    {
+            emit OnImageCreateError("<cropped>", client);
+            return;
     }
 
     db_->images().add(cropped.id(), cropped);
     // response = {{"id", cropped.id()}}; // TODO
-    emit OnImageCropped(cropped, client);
+    emit OnImageCropped(cropped, client);*/
   }
 }
 
@@ -240,15 +295,15 @@ void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
 
-  if (!db_->profiles().exists(job.printer()))
-    emit OnJobCreateError("Printer profile " + id + " unknown", client);
-  else if (!db_->profiles().exists(job.socket()))
-    emit OnJobCreateError("Socket profile " + id + " unknown", client);
-  else {
-    job.setId(id);
-    db_->jobs().add(id, job);
-    emit OnJobCreated(job, client);
-  }
+  // if (!db_->profiles().exists(job.printer()))
+  // emit OnJobCreateError("Printer profile " + id + " unknown", client);
+  // else if (!db_->profiles().exists(job.socket()))
+  // emit OnJobCreateError("Socket profile " + id + " unknown", client);
+  // else {
+  job.setId(id);
+  db_->jobs().add(id, job);
+  emit OnJobCreated(job, client);
+  //}
 }
 
 void APIController::getPositions(Image::ID id, QObject* client) {
@@ -279,24 +334,30 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id,
       cv::Mat image;
 
       if (!img.readCvMat(image)) {
-        qCritical() << "CV could not read image" << img.path();
+        qCritical() << "CV could not read image"
+                    << img.path().toSystemAbsolute();
         emit OnColonyDetectionError("Image not readable or empty", client);
       } else {
         AlgorithmJob::ID result_job_id = db_->newResultJobId();
-        AlgorithmResult::ID result_id = db_->newResultId();
-        job.setResultID(result_id);
-        AlgorithmJob* algo_job = detector_->createJob(
-            image, algo_id, result_job_id, result_id, settings);
+        DetectionResult* result = new DetectionResult(db_->newResultId());
+        job.setResultID(result->id());
+        AlgorithmJob* algo_job = colony_detector_->createJob(
+            image, algo_id, result_job_id, result, settings);
 
         if (!algo_job) {
           emit OnColonyDetectionError("Algorithm not found", client);
         } else {
-          connect(algo_job, &AlgorithmJob::OnFinished, client,
-                  [this, client, algo_job, result_id]() {
-                    db_->detectionResults().add(
-                        result_id, *algo_job->result());  // TODO not too cool
-                    emit this->OnColonyDetected(&algo_job->result()->colonies_,
-                                                client);
+          connect(algo_job, &AlgorithmJob::OnAlgoSucceeded, client,
+                  [this, client, algo_job, result] {
+                    db_->detectionResults().add(result->id(),
+                                                *result);  // TODO not too cool
+                    emit this->OnColonyDetected(&result->colonies(), client);
+                    qDebug() << "Detected" << result->colonies().size() << "in"
+                             << algo_job->tookMs() << "ms";
+                  });
+          connect(algo_job, &AlgorithmJob::OnAlgoFailed, client,
+                  [this, result, client] {
+                    emit OnColonyDetectionError(result->stageError(), client);
                   });
 
           return algo_job;
@@ -332,7 +393,8 @@ void APIController::startJob(Job::ID id, QObject* client) {
         client);
     return;
   }
-  AlgorithmResult& detection = db_->detectionResults().get(job.resultID());
+  DetectionResult& detection = static_cast<DetectionResult&>(
+      db_->detectionResults().get(job.resultID()));
 
   // FIXME check
   PrinterProfile* printerp =
@@ -347,15 +409,15 @@ void APIController::startJob(Job::ID id, QObject* client) {
       detection.colonies();  // FIXME convert to local coordinates
   std::vector<LocalColonyCoordinates> coords;
   for (int i = 0; i < colonies.size(); ++i)
-    coords.push_back(Point(colonies[i].x() * 127, colonies[i].y() * 85));
+    coords.push_back(
+        Point(colonies[i].x() * 127, (1.0 - colonies[i].y()) * 85));
 
   auto code = gen.CreateGcodeForTheEntirePickingProcess(
       job.startingRow(), job.startingCol(), coords);
   std::ostringstream s;
 
   QFile file("out.gcode");
-  if (!file.open(QIODevice::WriteOnly))
-    throw std::runtime_error("Could not save gcode");
+  if (!file.open(QIODevice::WriteOnly)) throw Exception("Could not save gcode");
   QTextStream ts(&file);
 
   QStringList gcode_list;
@@ -371,12 +433,12 @@ void APIController::startJob(Job::ID id, QObject* client) {
 
 void APIController::shutdown(QObject*) {
   qDebug() << "Shutdown";
-  qApp->exit(0);
+  qApp->exit(EXIT_SUCCESS);
 }
 
 void APIController::restart(QObject*) {
   qDebug() << "Restart";
-  qApp->exit(123);
+  qApp->exit(exitRestart());
 }
 
 QJsonObject APIController::createImageList() const {
@@ -435,13 +497,18 @@ QJsonObject APIController::createProfileList() {
 
   json["profiles"] = json_profiles;
 
+  json["printerTemplate"] = Profile::printerTemplate();
+  json["socketTemplate"] = Profile::socketTemplate();
+  json["plateTemplate"] = Profile::plateTemplate();
+  // json["octoprintTemplate"] = ;
+
   return json;
 }
 
 QJsonObject APIController::CreateAlgorithmList() {
   QJsonObject json;
 
-  for (Algorithm* algo : detector_->algos())
+  for (Algorithm* algo : colony_detector_->algos())
     json[algo->id()] = Marshalling::toJson(*algo);
 
   return json;
@@ -459,6 +526,9 @@ void APIController::request(QJsonObject request, QString raw_request,
                             QObject* client) {
   try {
     input_->serviceRequest(request, raw_request, client);
+  } catch (Exception const& e) {
+    output_->Error(e.what(), e.what(), client);
+    qWarning("std::exception %s", e.what());
   } catch (std::exception const& e) {
     output_->Error("Exception", e.what(), client);
     qWarning("std::exception %s", e.what());

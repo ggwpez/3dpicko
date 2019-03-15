@@ -8,7 +8,7 @@ niedrige Prio:
 	passe Kreisgröße auf Durchschnitt von erkannten Kolonien an.
 	ziehe umrandung für die echte clickArea und füge Punkte hinzu.
 	erkenne Farbe und invertiere sie für die Kreise.
-*/
+    */
 
 /*
 Infos:
@@ -18,40 +18,36 @@ Größe Petrischale:
 */
 //  Image        Colonies     Tooltips
 var layer0 = {}, layer1 = {}, layer2 = { };
-// Variable containing the list of colonies
-var colony_coords = [];
 
-
-// Variable containing the list of colonies in mm
-var coordinatesMm = {"colonies":[]};
-
-
+// Array of colonies. See ImageRecognition/include/Colony.hpp
+var colonies = [];
+var number_of_colonies = 0;
 // Correct canvas size
 //resizeCanvas(drawArea);
 
-// React to clicks insiede of drawArea
+// React to clicks inside of drawArea
 
 // Select size of the canvas
 function resizeCanvas(canvas) {
-   const width = canvas.clientWidth;
-   const height = canvas.clientHeight;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
 
-   if (canvas.width !== width || canvas.height !== height) {
-     canvas.width = width;
-     canvas.height = height;
-   }
+    if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+    }
 }
 
 // colony detection
 function getPositions(){
     var image_id = chosen_image.id;
     console.log("colonies  from image " +image_id);
-// lade Ergebnisse der Kolonieerkennung
-
+    // lade Ergebnisse der Kolonieerkennung
     api('getpositions', { id: image_id });
 }
 
 var img;
+var down_scale;
 function selectionTabEnter()
 {
     layer0.canvas  = document.getElementById('layer0');
@@ -64,50 +60,92 @@ function selectionTabEnter()
     img = new Image();
     img.onload = function ()
     {
-        layer0.canvas.width  = img.width; // in pixels
-        layer0.canvas.height = img.height; // in pixels
+        // TODO only downscale, would upscale on 4k screens
+        let width = $('#selection').width() - document.getElementById('detection-settings-div').offsetWidth - 20;
+        let height =  window.innerHeight - document.getElementById('layer_parent').getBoundingClientRect().top - 55;
+        if(width < img.width || height < img.height){
+            down_scale = Math.min(width/img.width, height/img.height);
+            width = down_scale*img.width;
+            height = down_scale*img.height;
+        }
+        else{
+            width = img.width;
+            height = img.height;
+            down_scale = 1;
+        }
 
-        layer1.canvas.width  = img.width; // in pixels
-        layer1.canvas.height = img.height; // in pixels
+        // fix width
+        // TODO enable resizing?
+        $('#selection').css('min-width', width + document.getElementById('detection-settings-div').offsetWidth);
 
-        layer2.canvas.width  = img.width; // in pixels
-        layer2.canvas.height = img.height; // in pixels
+        console.log("Downscale factor: ", down_scale);
 
-        layer0.context.drawImage(img, 0, 0);
-        // TODO only make the detection button ready when we are here
+        layer0.canvas.width  = width; // in pixels
+        layer0.canvas.height = height; // in pixels
+
+        layer1.canvas.width  = width; // in pixels
+        layer1.canvas.height = height; // in pixels
+
+        layer2.canvas.width  = width; // in pixels
+        layer2.canvas.height = height; // in pixels
+
+        layer0.context.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+        // show settings and start detection
+        document.getElementById("select-algorithm").onchange();
     }
     img.src = chosen_image.path;
 }
 
 function drawPositions(coords)
 {
-    colony_coords = coords.coords;
+    colonies = coords.colonies;
 
     printPositions();
 }
 
-var balls = [];
+var circles = [];
+function removeUnselectedColonies(indices)
+{
+    layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
+    for(let j=0; j<indices.length; ++j){
+        let ball = circles[parseInt(indices[j])];
+        ball.draw();
+    }
+}
+
 // Print colonies
+var show_excluded = false;
 function printPositions(){
     // show coordinatesPx
-    for (ball in balls)
+    for (ball in circles)
         delete ball;
-    balls = [];
+    circles = [];
 
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
-    layer1.context.font = "30px Arial";
-    layer1.context.fillStyle = "red";
-    layer1.context.textAlign = "left";
-    layer1.context.fillText(colony_coords.length,50,50);
 
+    number_of_colonies = 0;
     // Print new positions
-    colony_coords.forEach((colony) =>
+    colonies.forEach((colony) =>
     {
+        var color = 'white';
+        // TODO build color lookuptabl before for speedup
+        if (colony.excluded_by != "")
+        {
+            if(!show_excluded) return;
+            const found = algorithms["1"].settings.filter(s => (s.id == colony.excluded_by));
+
+            if (found && found.length)
+                color = found[0].color;
+            else
+                console.warn("Could not find setting ", colony.excluded_by);
+        } else number_of_colonies++;
+
         var ball = new Circle({
-            x: colony[0] *layer1.canvas.width,
-            y: colony[1] *layer1.canvas.height,
-            radius: colony[2] *1.25,            // Make them a bit better to see
-            linecolor: 'white',
+            x: colony.x *layer1.canvas.width,
+            y: colony.y *layer1.canvas.height,
+            radius: colony.major_length *1.25 *down_scale,            // Make them a bit better to see
+            linecolor: color,
+            defaultLinecolor: color,
             background: 'transparent',
             canvas: layer1.canvas
         });
@@ -120,45 +158,45 @@ function printPositions(){
             this.set('linecolor', 'white');
         });*/
 
-        balls.push(ball);
+        circles.push(ball);
     });
 
     layer2.canvas.onmousemove =
-        function (e)
+    function (e)
+    {
+        var rect = layer2.canvas.getBoundingClientRect();
+        var x = e.clientX -rect.left,
+        y = e.clientY -rect.top;
+
+        for (var i = 0; i < circles.length; ++i)
         {
-            var rect = layer2.canvas.getBoundingClientRect();
-            var x = e.clientX -rect.left,
-            y = e.clientY -rect.top;
+            var ball = circles[i];
 
-            for (var i = 0; i < balls.length; ++i)
+            if (ball.isMouseOver(x, y))
             {
-                var ball = balls[i];
-
-                if (ball.isMouseOver(x, y))
+                if (! ball.mouseover)
                 {
-                    if (! ball.mouseover)
-                    {
-                        ball.fireEvent('mouseenter');
-                        ball.mouseover = true;
+                    ball.fireEvent('mouseenter');
+                    ball.mouseover = true;
 
-                        drawTooltip(i);
-                    }
-                }
-                else if (ball.mouseover)
-                {
-                    ball.mouseover = false;
-                    ball.fireEvent('mouseleave');
-
-                    layer2.context.clearRect(0, 0, layer1.canvas.width, layer1.canvas.height);
+                    drawTooltip(i);
                 }
             }
-        };
+            else if (ball.mouseover)
+            {
+                ball.mouseover = false;
+                ball.fireEvent('mouseleave');
+
+                layer2.context.clearRect(0, 0, layer1.canvas.width, layer1.canvas.height);
+            }
+        }
+    };
 
     layer2.canvas.onmousedown = (e) =>
     {
-        for (var i = 0; i < balls.length; ++i)
+        for (var i = 0; i < circles.length; ++i)
         {
-            var ball = balls[i];
+            var ball = circles[i];
 
             if (ball.mouseover && !ball.mousedown)  // superfluous
             {
@@ -182,7 +220,7 @@ function printPositions(){
 
 function drawTooltip(circle_id)
 {
-    var ball = balls[circle_id];
+    var ball = circles[circle_id];
     const ball_pos = ball.getPosition();
     const tooltip_pos = {x:ball_pos.x, y:ball_pos.y +ball.getRadius() *1.5};
 
@@ -194,6 +232,6 @@ function drawTooltip(circle_id)
     layer2.context.fillStyle = "white";
     layer2.context.font = "12px sans-serif";
     layer2.context.textBaseline = "top";
-    layer2.context.wrapText("Colony #" +circle_id +"\nRadius " +ball.getRadius(), tooltip_pos.x +10, tooltip_pos.y +10, 80, 16);
+    layer2.context.wrapText("Colony #" +circle_id +"\nRadius " +(Math.round(ball.getRadius() *100) /100), tooltip_pos.x +10, tooltip_pos.y +10, 80, 16);
     console.log("Drawing tooltip #", circle_id, " at ", tooltip_pos.x +20, "/", tooltip_pos.y +10);
 }

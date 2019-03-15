@@ -9,19 +9,8 @@
     "detection_results": {
     },
     "images": {
-        "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53": {
-            "description": "descrtiption",
-            "height": 1080,
-            "id": "62cb547e490a36df2622ef4ecc85a4c654dd60b7924cb0feb4ce426c45f3fc53",
-            "original_name": "test.png",
-            "path": "/uploads/mAIVYHGj",
-            "uploaded": {
-                "ms": 1551290638571
-            },
-            "width": 1920
-        }
     },
-    "job_id": 209,
+    "job_id": 210,
     "jobs": {
     },
     "profile_id": 306,
@@ -31,15 +20,21 @@
             "profile_name": "labor",
             "settings": {
                 "cut_filament_position_above_trigger": {
-                    "x": 203.5,
-                    "y": 87,
+                    "x": 191,
+                    "y": 88.5,
                     "z": 17
                 },
-                "distance_between_pushed_trigger_and_gap_between_scissors_blade": 6,
-                "filament_extrusion_length_on_move_offset": 0,
-                "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": 0,
+                "filament_extrusion_length_after_cut": 3.200000047683716,
+                "filament_extrusion_length_on_move_cut_to_pick": 3,
+                "filament_extrusion_length_on_move_goal_to_cut": 3,
+                "filament_extrusion_length_on_move_master_to_goal": 3,
+                "filament_extrusion_length_on_move_pick_to_master": 3,
+                "filament_extrusion_length_on_pick": 3,
+                "filament_extrusion_length_on_put_onto_master": 3,
+                "length_of_removed_filament": 4.800000190734863,
                 "movement_speed": 10800,
-                "z_coordinate_pushing_the_trigger": 11
+                "safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move": 3,
+                "z_coordinate_pushing_the_trigger": 10
             },
             "type": "printer-profile"
         },
@@ -51,25 +46,25 @@
                 "depth_of_cutout_the_master_plate_lies_in": 7.5,
                 "depth_of_cutout_the_source_plate_lies_in": 7.5,
                 "global_origin_of_goal_plate": {
-                    "x": 139.10000610351562,
-                    "y": 97.5,
+                    "x": 121.10000610351562,
+                    "y": 91.5,
                     "z": 0
                 },
                 "global_origin_of_master_plate": {
-                    "x": 26.600000381469727,
-                    "y": 97.5,
+                    "x": 14.5,
+                    "y": 91.5,
                     "z": 0
                 },
                 "global_origin_of_source_plate": {
-                    "x": 19.5,
-                    "y": 4.599999904632568,
+                    "x": 14.5,
+                    "y": 2.5999999046325684,
                     "z": 0
                 },
                 "orientation_of_goal_plate": "kFirstRowFirstColumnAtCutoutOrigin",
                 "socket_origin_offset": {
-                    "x": -1,
-                    "y": 5.5,
-                    "z": 3.799999952316284
+                    "x": 11,
+                    "y": 8,
+                    "z": 1.5
                 }
             },
             "type": "socket-profile"
@@ -80,7 +75,8 @@
             "settings": {
                 "a1_column_offset": 14.300000190734863,
                 "a1_row_offset": 11.199999809265137,
-                "culture_medium_thickness": 6,
+                "culture_medium_thickness_master_plate": 8,
+                "culture_medium_thickness_source_plate": 8,
                 "height_goal_plate": 15.5,
                 "height_master_plate": 14.5,
                 "height_source_plate": 14.5,
@@ -97,7 +93,8 @@
             "settings": {
                 "a1_column_offset": 12.100000381469727,
                 "a1_row_offset": 9,
-                "culture_medium_thickness": 6,
+                "culture_medium_thickness_master_plate": 0,
+                "culture_medium_thickness_source_plate": 0,
                 "height_goal_plate": 10,
                 "height_master_plate": 14.5,
                 "height_source_plate": 14.5,
@@ -109,6 +106,6 @@
             "type": "plate-profile"
         }
     },
-    "result_id": 7,
-    "result_job_id": 1
+    "result_id": 19,
+    "result_job_id": 13
 }
