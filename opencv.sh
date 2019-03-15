@@ -20,8 +20,17 @@ cd ~
 
 # VERSION TO BE INSTALLED
 
-OPENCV_VERSION='3.4.2'
+OPENCV_VERSION='3.4.3'
 
+opencv_version=`pkg-config --modversion opencv | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{3\}$/\1/"`
+
+if [ -z "$opencv_version" ]
+then
+    echo "OpenCV is NOT installed"
+else
+	echo "OpenCV is installed"
+	exit 0
+fi
 
 # 1. KEEP UBUNTU OR DEBIAN UP TO DATE
 
@@ -49,7 +58,7 @@ cd OpenCV
 mkdir build
 cd build
 cmake -DWITH_QT=OFF -DWITH_GTK=ON -DWITH_TBB=ON -DENABLE_PRECOMPILED_HEADERS=OFF -DWITH_CUDA=OFF -DWITH_MATLAB=OFF -DBUILD_opencv_apps=OFF -DBUILD_ANDROID_EXAMPLES=OFF -DBUILD_DOCS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_FAT_JAVA_LIB=OFF -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_opencv_videostab=OFF -DBUILD_opencv_matlab=OFF ..
-make -j4
+make -j6
 sudo make install
 sudo ldconfig
 
