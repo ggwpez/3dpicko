@@ -9,10 +9,11 @@ stages:
 dependencies:linux:
   stage: dependencies
   script:
-    - apt update -qq
-    - apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format
-    - bash opencv.sh
-    - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
+    - sudo apt update -qq
+    - sudo apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format
+    - sudo bash opencv.sh
+    - mkdir -p ~/.ssh/
+    - sudo ssh-keyscan gitlab.com > ~/.ssh/known_hosts
   except:
     - /^.*-format$/
 
@@ -22,7 +23,7 @@ build:linux:
     - mkdir build
     - cd build
     - qmake ..
-    - make -j4
+    - make -j6
     - cd ..
   artifacts:
     paths:
@@ -34,7 +35,7 @@ test:linux:
     - mkdir build
     - cd build
     - qmake ..
-    - make -j4
+    - make -j6
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   except:
