@@ -41,8 +41,8 @@ sudo apt-get install -y libtbb-dev
 # 3. INSTALL THE LIBRARY
 
 sudo apt-get install -y unzip wget
-# wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip
-unzip opencv-${OPENCV_VERSION}.zip
+wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip
+unzip -qq opencv-${OPENCV_VERSION}.zip
 rm opencv-${OPENCV_VERSION}.zip
 mv opencv-${OPENCV_VERSION} OpenCV
 cd OpenCV
