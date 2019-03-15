@@ -22,7 +22,7 @@ build:linux:
   script:
     - mkdir build
     - cd build
-    - qmake -qt=5 ..
+    - qmake -qt=qt5 ..
     - make -j6
     - cd ..
   artifacts:
@@ -34,7 +34,7 @@ test:linux:
   script:
     - mkdir build
     - cd build
-    - qmake -qt=5 ..
+    - qmake -qt=qt5 ..
     - make -j6
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
