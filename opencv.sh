@@ -27,7 +27,6 @@ opencv_version=`pkg-config --modversion opencv | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{
 if [ -z "$opencv_version" ]
 then
     echo "OpenCV is NOT installed"
-    exit 1
 else
 	echo "OpenCV is installed"
 	exit 0
