@@ -4,6 +4,8 @@
 #include <QMetaEnum>
 #include <QUrlQuery>
 #include "include/command.h"
+#include <utility>
+#include <functional>
 
 namespace c3picko {
 namespace pi {

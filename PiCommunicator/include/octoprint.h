@@ -3,6 +3,7 @@
 
 #include <QNetworkAccessManager>
 #include <QObject>
+#include <QUrl>
 
 #include "include/octoconfig.h"
 

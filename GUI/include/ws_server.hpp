@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSslConfiguration>
 #include <QSslError>
-#include <QWebSocketProtocol>
+#include <qwebsocketprotocol.h>
 #include "include/api_input.h"
 
 using namespace stefanfrings;
