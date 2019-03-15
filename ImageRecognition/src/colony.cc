@@ -50,7 +50,7 @@ double Colony::major_length() const { return major_length_; }
 
 Colony::ID Colony::id() const { return id_; }
 
-bool Colony::excluded() const { return excluded_by_.size(); }
+bool Colony::excluded() const { return !excluded_by_.isEmpty(); }
 
 AlgoSetting::ID Colony::excludedBy() const { return excluded_by_; }
 

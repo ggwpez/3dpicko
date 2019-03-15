@@ -1,9 +1,9 @@
 #include "include/api_output.h"
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QVariant>
 #include "include/api_controller.h"
 #include "include/colony.hpp"
-
-#include <QJsonDocument>
 
 namespace c3picko {
 APIOutput::APIOutput(APIController* parent)
@@ -117,6 +117,21 @@ void APIOutput::SetStartingWell(Job::ID job, Profile::ID plate, int row,
 
 void APIOutput::SetStartingWellError(QString error, QObject* client) {
   Error("setstartingwell", error, client);
+}
+
+void APIOutput::SetColoniesToPick(Job::ID job, std::set<std::size_t> colonies,
+                                  QObject* client) {
+  // TODO send to all
+  QJsonArray cols;
+  for (auto it = colonies.begin(); it != colonies.end(); ++it)
+    cols << QJsonValue::fromVariant(QVariant::fromValue(*it));  // Qt pls
+
+  emit op->toClient(client, "setcoloniestopick",
+                    {{"job", job}, {"indices", cols}});
+}
+
+void APIOutput::SetColoniesToPickError(QString error, QObject* client) {
+  Error("setColoniesToPick", error, client);
 }
 
 void APIOutput::ColonyDetectionStarted(

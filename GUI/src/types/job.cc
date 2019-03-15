@@ -41,7 +41,7 @@ AlgorithmResult::ID Job::resultID() const {
 
 QStack<AlgorithmResult::ID> Job::resultIDs() const { return result_ids_; }
 
-void Job::setResultID(const AlgorithmResult::ID &result_id) {
+void Job::setResultID(const AlgorithmResult::ID& result_id) {
   result_ids_.push(result_id);
 }
 
@@ -53,7 +53,21 @@ int Job::startingRow() const { return starting_row_; }
 
 void Job::setStartingRow(int starting_row) { starting_row_ = starting_row; }
 
-void Job::setPlate(const Profile::ID &plate) { plate_ = plate; }
+void Job::setPlate(const Profile::ID& plate) { plate_ = plate; }
+
+int Job::coloniesToPick() const { return colonies_to_pick_; }
+
+void Job::setcoloniesToPick(int colonies_to_pick) {
+  colonies_to_pick_ = colonies_to_pick;
+}
+
+const std::set<std::size_t>& Job::selectedToPick() const {
+  return selected_to_pick_;
+}
+
+void Job::setselectedToPick(const std::set<std::size_t>& selected_to_pick) {
+  selected_to_pick_ = selected_to_pick;
+}
 
 qint32 Job::step() const { return step_; }
 
@@ -64,7 +78,7 @@ QString Job::name() const { return name_; }
 QString Job::description() const { return description_; }
 
 template <>
-QJsonObject Marshalling::toJson(const Job &value) {
+QJsonObject Marshalling::toJson(const Job& value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -79,7 +93,7 @@ QJsonObject Marshalling::toJson(const Job &value) {
   obj["starting_col"] = value.startingCol();
 
   QJsonArray detections;
-  for (auto const &detection : value.resultIDs())
+  for (auto const& detection : value.resultIDs())
     detections.push_back(detection);
 
   obj["detections"] = detections;
@@ -88,7 +102,7 @@ QJsonObject Marshalling::toJson(const Job &value) {
 }
 
 template <>
-Job Marshalling::fromJson(const QJsonObject &obj) {
+Job Marshalling::fromJson(const QJsonObject& obj) {
   QJsonArray json_detections = obj["detections"].toArray();
   QStack<AlgorithmResult::ID> detections;
 

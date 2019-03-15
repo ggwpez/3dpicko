@@ -50,6 +50,9 @@ class APIOutput : public QObject {
   void SetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
                        QObject* client);
   void SetStartingWellError(QString error, QObject* client);
+  void SetColoniesToPick(Job::ID job, std::set<std::size_t> colonies,
+                         QObject* client);
+  void SetColoniesToPickError(QString error, QObject* client);
 
   void ColonyDetectionStarted(Job::ID, QObject* client);
   /**

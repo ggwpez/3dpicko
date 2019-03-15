@@ -35,7 +35,7 @@ class Job {
 
   AlgorithmResult::ID resultID() const;
   QStack<AlgorithmResult::ID> resultIDs() const;
-  void setResultID(const AlgorithmResult::ID &resultID);
+  void setResultID(const AlgorithmResult::ID& resultID);
 
   int startingCol() const;
   void setStartingCol(int startingCol);
@@ -43,7 +43,13 @@ class Job {
   int startingRow() const;
   void setStartingRow(int startingRow);
 
-  void setPlate(const Profile::ID &plate);
+  void setPlate(const Profile::ID& plate);
+
+  int coloniesToPick() const;
+  void setcoloniesToPick(int coloniesToPick);
+
+  std::set<std::size_t> const& selectedToPick() const;
+  void setselectedToPick(const std::set<std::size_t>& selectedToPick);
 
  private:
   ID id_;
@@ -57,6 +63,9 @@ class Job {
   QDateTime job_created_;
   Profile::ID plate_, printer_, socket_;
   int starting_row_, starting_col_;
+  int colonies_to_pick_;
+  std::set<std::size_t>
+      selected_to_pick_;  // TODO set it when colonies_to_pick is set
 
   /**
    * @brief How far is the configuration of this Job?

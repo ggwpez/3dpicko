@@ -82,6 +82,11 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
   } else if (path == "getpositions") {
     QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
     api->getPositions(img_id, client);
+  } else if (path == "setcoloniestopick") {
+    Job::ID job = Marshalling::fromJson<Job::ID>(req_data["job"]);
+    quint32 number = req_data["number"].toInt();
+
+    api->setColoniesToPick(job, number, client);
   } else if (path == "updatedetectionsettings") {
     Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);
     QString algo_id = Marshalling::fromJson<QString>(req_data["algorithm"]);

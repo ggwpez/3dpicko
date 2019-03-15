@@ -12,6 +12,7 @@
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QMetaMethod>
+#include <QRandomGenerator64>
 
 using namespace c3picko::pi;
 namespace c3picko {
@@ -291,6 +292,50 @@ void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
   }
 }
 
+void APIController::setColoniesToPick(Job::ID id, quint32 number,
+                                      QObject* client) {
+  if (!db_->jobs().exists(id)) {
+    emit OnSetColoniesToPickError("Job " + id + " not found", client);
+  } else {
+    Job& job = db_->jobs().get(id);
+    job.setcoloniesToPick(number);
+    if (!db_->detectionResults().exists(job.resultID())) {
+      emit OnSetColoniesToPickError(
+          "Job " + id + " has no detected colonies attatched to it", client);
+    } else {
+      DetectionResult& result = db_->detectionResults().get(job.resultID());
+      std::vector<Colony> all_colonies = result.colonies();
+      std::vector<std::size_t> included;
+      std::set<std::size_t> good_colonies;  // index
+
+      // filter out all that are excluded by a setting
+      for (std::size_t i = 0; i < all_colonies.size(); ++i)
+        if (!all_colonies[i].excluded()) included.push_back(i);
+
+      QRandomGenerator64 ran(456);  // constant seed for determinism
+      int max_good = number;
+      Q_ASSERT(max_good);
+
+      if (max_good > included.size()) {
+        emit OnSetColoniesToPickError("Cant pick more colonies than available",
+                                      client);
+        return;
+      }
+
+      while (max_good--) {
+        int index = ran.bounded(quint32(included.size() - 1));
+
+        good_colonies.insert(all_colonies[included[index]].id());
+        qDebug() << "Inserting" << all_colonies[included[index]].id();
+        included.erase(included.begin() + index);
+      }
+
+      job.setselectedToPick(good_colonies);
+      emit OnSetColoniesToPick(id, good_colonies, client);
+    }
+  }
+}
+
 void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
@@ -377,11 +422,12 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
 }
 
 void APIController::startJob(Job::ID id, QObject* client) {
-  static OctoConfig config("192.168.2.2", "F866D6261972458CACAE9CB56E484758");
+  static OctoConfig config("10.14.0.150", "F866D6261972458CACAE9CB56E484758");
   static OctoPrint* printer = new OctoPrint(config, this);
 
   if (!db_->jobs().exists(id)) {
-    emit OnColonyDetectionError("Job '" + id + "' job found", client);
+    emit OnColonyDetectionError("Job '" + id + "' job found",
+                                client);  // FIXME OnJobStartError
     return;
   }
   Job& job = db_->jobs().get(id);
@@ -393,9 +439,9 @@ void APIController::startJob(Job::ID id, QObject* client) {
         client);
     return;
   }
-  DetectionResult& detection = static_cast<DetectionResult&>(
-      db_->detectionResults().get(job.resultID()));
 
+  DetectionResult& result = static_cast<DetectionResult&>(
+      db_->detectionResults().get(job.resultID()));
   // FIXME check
   PrinterProfile* printerp =
       (PrinterProfile*)(db_->profiles().get(job.printer()));
@@ -405,23 +451,24 @@ void APIController::startJob(Job::ID id, QObject* client) {
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 
-  std::vector<Colony> colonies =
-      detection.colonies();  // FIXME convert to local coordinates
+  std::vector<Colony> all_colonies = result.colonies();
+  std::set<std::size_t> good_colonies = job.selectedToPick();
   std::vector<LocalColonyCoordinates> coords;
-  for (int i = 0; i < colonies.size(); ++i)
-    coords.push_back(
-        Point(colonies[i].x() * 127, (1.0 - colonies[i].y()) * 85));
 
-  auto code = gen.CreateGcodeForTheEntirePickingProcess(
-      job.startingRow(), job.startingCol(), coords);
-  std::ostringstream s;
+  for (auto it = good_colonies.begin(); it != good_colonies.end(); ++it)
+    coords.push_back(Point(all_colonies[*it].x() * 128,
+                           (1.0 - all_colonies[*it].y()) * 85.9));
+
+  std::vector<GcodeInstruction> code =
+      gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
+                                                job.startingCol(), coords);
 
   QFile file("out.gcode");
   if (!file.open(QIODevice::WriteOnly)) throw Exception("Could not save gcode");
   QTextStream ts(&file);
 
   QStringList gcode_list;
-  for (auto c : code) {
+  for (auto const& c : code) {
     ts << QString::fromStdString(c.ToString()) << endl;
     gcode_list << QString::fromStdString(c.ToString());
   }

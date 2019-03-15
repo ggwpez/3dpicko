@@ -23,12 +23,14 @@ void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
 void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
-
-  cv::GaussianBlur(input, output, cv::Size(5, 5), 0);
+  cv::GaussianBlur(input, output, cv::Size(9, 9), 0);
   cv::adaptiveThreshold(output, output, 255, cv::ADAPTIVE_THRESH_MEAN_C,
                         cv::THRESH_BINARY_INV, 51, 1);  // non flour
+  // cv::bilateralFilter(output, output, 3, 10, 10);
   cv::Canny(output, output, 3, 11);
+  // cv::Laplacian(output, output);
   cv::GaussianBlur(output, output, cv::Size(3, 3), 0);
+  // cv::imshow("output", output);
 }
 
 // Strict include, points on the edge are considered outside
@@ -252,10 +254,10 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   Plate plate(outer_edge, inner_edge);
   Plate normalized = plate.normalized(ret, ret);
 
-  math::drawText(ret, outer_edge[plate.a1()], "A1");
-  math::drawText(ret, outer_edge[plate.h1()], "H1");
-  for (int i = 0; i < outer_edge.size(); ++i)
-    math::drawText(ret, outer_edge[i], QString::number(i));
+  // math::drawText(ret, outer_edge[plate.a1()], "A1");
+  // math::drawText(ret, outer_edge[plate.h1()], "H1");
+  // for (int i = 0; i < outer_edge.size(); ++i)
+  // math::drawText(ret, outer_edge[i], QString::number(i));
 
   // draw borders
   /*cv::drawContours(ret, std::vector<std::vector<cv::Point>>{inner_edge.curve},
@@ -279,7 +281,8 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
 
   qDebug() << "\nFound borders, dist=" << best_dist << "Rotation" << angle << "°
   Center" << inner_center.x << inner_center.y << "Diff"
-                   << cv::norm(inner_center - outer_center) << "px";
+                                   << cv::norm(inner_center - outer_center) <<
+  "px";
 
   // Rotate the image and curves
   cv::Mat rotation = cv::getRotationMatrix2D(center, angle - 90, 1);

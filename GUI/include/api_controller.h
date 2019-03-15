@@ -65,6 +65,7 @@ class APIController : public QObject {
   void setDefaultSettingsProfile(Profile::ID id, QObject* client);
   void setStartingWell(Job::ID id, Profile::ID plate_id, int row, int col,
                        QObject* client);
+  void setColoniesToPick(Job::ID id, quint32 number, QObject* client);
 
   /**
    * @brief createJob
@@ -124,6 +125,10 @@ class APIController : public QObject {
   void OnSetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
                          QObject* client);
   void OnSetStartingWellError(QString error, QObject* client);
+
+  void OnSetColoniesToPick(Job::ID job, std::set<std::size_t> colonies,
+                           QObject* client);
+  void OnSetColoniesToPickError(QString error, QObject* client);
 
   void OnColonyDetectionStarted(Job::ID, QObject* client);
   /**

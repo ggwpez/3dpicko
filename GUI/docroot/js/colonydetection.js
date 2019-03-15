@@ -107,9 +107,23 @@ var circles = [];
 function removeUnselectedColonies(indices)
 {
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
+
+    circles = [];
+    console.log("colonies.lengt = ", colonies.length);
     for(let j=0; j<indices.length; ++j){
-        let ball = circles[parseInt(indices[j])];
-        ball.draw();
+        let colony = colonies[parseInt(indices[j])];
+
+        var color = 'white';
+        circles.push(new Circle({
+            x: colony.x *layer1.canvas.width,
+            y: colony.y *layer1.canvas.height,
+            radius: colony.major_length *1.25 *down_scale,            // Make them a bit better to see
+            linecolor: color,
+            defaultLinecolor: color,
+            background: 'transparent',
+            canvas: layer1.canvas
+        }));
+        console.log("#" ,indices[j]);
     }
 }
 
