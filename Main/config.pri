@@ -1,4 +1,10 @@
-!versionAtLeast(QT_VERSION, 5.7):error("Use at least Qt version 5.7")
+lessThan(QT_MAJOR_VERSION, 5)
+{
+    lessThan(QT_MINOR_VERSION, 3)
+    {
+    error("Use at least Qt version 5.3")
+    }
+}
 
 CONFIG += warn_on qt
 CONFIG -= c++11
