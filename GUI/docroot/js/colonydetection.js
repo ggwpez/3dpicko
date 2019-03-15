@@ -108,7 +108,7 @@ function removeUnselectedColonies(indices)
 {
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
     for(let j=0; j<indices.length; ++j){
-        let ball = circles[j];
+        let ball = circles[parseInt(indices[j])];
         ball.draw();
     }
 }
