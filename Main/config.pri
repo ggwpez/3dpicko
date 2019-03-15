@@ -1,3 +1,5 @@
+!versionAtLeast(QT_VERSION, 5.7):error("Use at least Qt version 5.7")
+
 CONFIG += warn_on qt
 CONFIG -= c++11
 QT = network core websockets gui
