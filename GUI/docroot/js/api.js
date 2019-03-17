@@ -44,5 +44,6 @@ function connect()
 
 function api(query, data)
 {
-	ws.send(JSON.stringify({request: /*"/apiv2/" +*/query, data: data}));
+	console.log("Request",JSON.stringify({request: query, data: data}));
+	ws.send(JSON.stringify({request: query, data: data}));
 }

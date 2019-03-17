@@ -35,6 +35,9 @@ class FormGroup{
         }).trigger('input');
         // select value on focus
         // $(form).on('focus', 'input', function(){this.select();});
+        // enable tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover();
     }
 
     // applies necessary events to a form
@@ -97,7 +100,7 @@ class FormGroup{
     */
     CreateNumberInputHtml(id, min, max, step = 1, value = "", placeholder = 0, required = true){
         value = Math.round(value * (1/step)) / (1/step);
-        return `<input type="number" id="${id}" name="${id}" class="d-inline form-control-plaintext" ${required?`required="required"`:``} placeholder="${placeholder}" ${(min!="")?`min=${min}`:``} ${(max!="")?`max=${max}`:``} ${(step)?`step=${step}`:`1`} value="${value}">`;
+        return `<input type="number" id="${id}" name="${id}" class="d-inline form-control-plaintext" ${required?`required="required"`:``} placeholder="${placeholder}" ${min?`min=${min}`:``} ${max?`max=${max}`:``} step=${step} value="${value}">`;
     }
 
     CreateRadioOptionHtml(id, option_id, option, value, form_id){
@@ -111,11 +114,15 @@ class FormGroup{
         return `<option value=${option_id} ${(value==option_id)?`selected`:``}>${option}</option>`;
     }
 
-    CreateFormGroupHtml({id, name, type, defaultValue = "", value = "", description="", min="" , max="", step=1, unit="", options={}, placeholder = 0, required = true, conditional_settings = []}, new_value = ""){
+    CreateFormGroupHtml({id, name, type, defaultValue = "", value = "", description, help_text, min, max, step=1, unit, options={}, placeholder = 0, required = true, conditional_settings = []}, new_value = ""){
         // console.log("Input-Field:",{id, name, type, defaultValue, value, description, min , max, step, unit, options, placeholder, required, new_value});
+        let wiki_description;
+        if(wiki) wiki_description = wiki.find('#'+id).next().html();
         if(new_value !== "") value = new_value;
         else if(value === "") value = defaultValue;
-        let html = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label for="${id}">${name}:</label>`;
+        let html = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label>`;
+        if(wiki_description || description) html += `<a tabindex="0" class="textLink" data-toggle="popover" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-content="${wiki_description || description}" ${wiki_description?`href='/wiki/index.html#${id}' target='_blank'`:``}>${name}</a>:</label>`;
+        else html += `${name}:</label>`;
 
         if (type == "number"){
             html += `${this.CreateNumberInputHtml(id, min, max, step, value)} ${unit}`;
@@ -178,8 +185,29 @@ class FormGroup{
             html += `<input type="text" id="${id}" class="form-control" name="${id}" placeholder="${placeholder}" ${(min!="")?`minlength=${min}`:``} ${(max!="")?`maxlength=${max}`:``} value="${value}" ${required?`required="required"`:``}>`;
         }
 
-        if (description && description.length>0) html += `<small class="form-text text-muted">${description}</small>`;
+        if (help_text) html += `<small class="form-text text-muted">${help_text}</small>`;
 
         return html += `</div>`;
+    }
+}
+
+// Load Wiki
+var wiki;
+$.get("wiki/index.html", function(data){
+    let doc = document.implementation.createHTMLDocument('wiki').createElement('div');
+    doc.innerHTML = data;
+    wiki = $(doc).find('#documentation-container');
+    AddWikiLinks();
+});
+
+function AddWikiLinks(){
+    if(wiki){
+        $('.wiki').each(function(){
+            let id = this.id.slice(5);
+            let link = '/wiki/index.html';
+            if(wiki.find('#'+id).length > 0) link+='#'+id;
+            this.innerHTML = `<a href="${link}" class="textLink" target="_blank" title="open documentation">${this.innerHTML}</a>`;
+            this.classList.remove("wiki");
+        })
     }
 }

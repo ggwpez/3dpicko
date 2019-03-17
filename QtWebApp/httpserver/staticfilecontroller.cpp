@@ -21,7 +21,7 @@ StaticFileController::StaticFileController(QSettings& settings,
 // Convert relative path to absolute, based on the directory of the config file.
 #ifdef Q_OS_WIN32
     if (QDir::isRelativePath(docroot) &&
-        settings->format() != QSettings::NativeFormat)
+        settings.format() != QSettings::NativeFormat)
 #else
     if (QDir::isRelativePath(docroot))
 #endif

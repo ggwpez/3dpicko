@@ -55,11 +55,11 @@
               <div class="tab-pane fade show active col-12" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-5">
-                    <h2>Choose Image</h2>
+                    <h2 id="wiki-4-choose-image" class="wiki">Choose Image</h2>
                     <h6 id="img-name"></h6>
                     <form><input id="classicUpload" type="file" style="display: none;"/></form>
-                    <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
-                    <div id="chosen-image" style="display: none;"><div id="selectedimage-description" class="float-left"></div><button class="btn btn-success next-step float-right mt-1" onclick="cutTab()">Continue</button></div>
+                    <div id="dropZone" class="empty"></div>
+                    <div id="chosen-image" style="display: none;"><div id="selectedimage-description" class="float-left"></div><button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="cutTab()">Continue</button></div>
                   </div>
                 </div>
                 <hr>
@@ -69,15 +69,15 @@
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade col-md-8" id="cut">
-                <h2>Align selection with all <strong>outer</strong> borders of plate.</h2>
+              <div class="tab-pane fade col-md-7 col-xl-5" id="cut">
+                <h2 id="wiki-5-cut-image" class="wiki">Align selection with all <strong>outer</strong> borders of plate.</h2>
                 <div>
                   <img id="cutImg" src="" alt="Picture">
                 </div>
                 <button class="btn btn-success mt-2 next-step" onclick="attributesTab()">Continue</button>
               </div>
               <div class="tab-pane fade col-md-6 col-xl-4" id="attributes">
-                <h2>Pickjob Attributes</h2>
+                <h2 id="wiki-6-set-attributes" class="wiki">Pickjob Attributes</h2>
                 <form id="attributes-form" name="attributes-form">
                   <div class="form-group">
                     <label for="staticImgName">Image:</label><span id="staticImgName"></span>
@@ -112,6 +112,17 @@
                   <div id="colony-layers">
                     <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span></h2>
                     <div id="layer_parent" style="position: relative;">
+                      <div class="btn-toolbar" id="layer-control">
+                        <h5 class="mr-2 mb-0">Toggle Layers:</h5>
+                        <div class="btn-group btn-group-toggle mr-1" data-toggle="buttons">
+                          <label id="show-selected-button" class="btn btn-secondary active btn-sm"><input type="checkbox" id="show-selected" autocomplete="off" checked">Selected</label>
+                          <label class="btn btn-secondary btn-sm"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
+                        </div>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                          <label id="hide-colonies-button" class="btn btn-secondary btn-sm"><input id="hide-colonies" type="checkbox" autocomplete="off">Hide All</label>
+                          <!-- <button type="button" class="btn btn-secondary">8</button> -->
+                        </div>
+                      </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas>
                       <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
                       <canvas id="layer2" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas> <!-- For tooltips -->
@@ -124,7 +135,7 @@
                   <div id="detection-settings-div">
                     <h2>Detection Settings</h2>
                     <div class="form-group">
-                      <label for="select-algorithm">Algorithm:</label>
+                      <label id="wiki-algorithm" class="wiki">Algorithm:</label>
                       <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
                     </div>
                     <div id="detection-settings"></div>
@@ -134,15 +145,15 @@
               <div class="tab-pane fade col" id="strategy">
                 <div class="row">
                   <div class="col-md-4 col-lg-2" style="min-width: 300px;">
-                    <h2>Choose Goal Plate</h2>
-                    <form id="strategy-form" name="strategy-form">
+                    <h2 id="wiki-8-choose-plate" class="wiki">Choose Goal Plate</h2>
+                    <form id="strategy-form" action="javascript:void(0);">
                       <div class="form-group">
                         <label for="select-plate-profile">Goal Plate:</label>
                         <select class="form-control" id="select-plate-profile"></select>
                       </div>
                       <div id="number-of-colonies-slider"></div>
                     </form>
-                    <button class="btn btn-success next-step" onclick="api('setcoloniestopick',{'job': current_job.id, 'number':parseInt(document.getElementById('number-max_number_of_coloniesstrategy-form').value)})">Continue</button>
+                    <button class="btn btn-success next-step" onclick="api('setcoloniestopick',{'job': current_job.id, 'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)})">Continue</button>
                   </div>
                   <div class="col">
                     <h2>Choose Starting Well</h2>
@@ -151,8 +162,8 @@
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade col-md-10 col-lg-8" id="overview">
-                <h2>Overview</h2>
+              <div class="tab-pane fade col-xl-10" id="overview">
+                <h2 id="wiki-9-overview" class="wiki">Overview</h2>
                 <div class="row">
                   <div class="col-md-8">
                     <div id="overview-image" style="position: relative;">
@@ -226,15 +237,15 @@
             <div class="accordion" id="general-settings"></div>
           </div>
           <div class="col">
-            <h2>Printer Profiles</h2>
+            <h2 id="wiki-printer-profiles" class="wiki">Printer Profiles</h2>
             <div class="accordion" id="printer-profiles"></div>
           </div>
           <div class="col">
-            <h2>Socket Profiles</h2>
+            <h2 id="wiki-socket-profiles" class="wiki">Socket Profiles</h2>
             <div class="accordion" id="socket-profiles"></div>
           </div>
           <div class="col">
-            <h2>Plate Profiles</h2>
+            <h2 id="wiki-plate-profiles" class="wiki">Plate Profiles</h2>
             <div class="accordion" id="plate-profiles"></div>
           </div>
         </div>
@@ -289,7 +300,6 @@
   <script type="text/javascript" src="js/multirange.js"></script>
   <script type="text/javascript" src="js/formgroup.js"></script>
   <script type="text/javascript" src="js/dropzone.js"></script>
-  <script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
   <script type="text/javascript" src="js/cropper.js"></script>
   <script type="text/javascript" src="js/colonydetection.js"></script>
   <script type="text/javascript" src="js/pickstrategie.js"></script>

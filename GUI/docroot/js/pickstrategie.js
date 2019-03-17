@@ -34,10 +34,12 @@ function drawWells(col_arg, rows_arg, colonys = 1)
 				x: x * size + 50,
 				y: y * size + 65,
 				radius: size/2-2,
+				linecolor: 'black',
+				defaultLinecolor: 'black',
 				background: 'white',
 				canvas: pickstrategy_canvas
 			});
-
+			ball.draw();
 			balls.push(ball);
 		}
 	}
@@ -94,14 +96,14 @@ function updateWells(number_of_colonies = false){
 	pickstrategy_context.fillText("Start at Well: "+String.fromCharCode(64 + collided_row)+(collided_column),0, pickstrategy_context.canvas.height-10);
 }
 
-pickstrategy_canvas.addEvent('mousedown', function (e){
+pickstrategy_canvas.addEventListener('mousedown', function (e){
 	this.onmousemove = UpdateMouse;
 	// What a cheat!
-	UpdateMouse(e.event);
+	UpdateMouse(e);
 });
-pickstrategy_canvas.addEvent('mouseup', function (){
+pickstrategy_canvas.addEventListener('mouseup', function (){
 	this.onmousemove = null;
 });
-pickstrategy_canvas.addEvent('mouseleave', function (){
+pickstrategy_canvas.addEventListener('mouseleave', function (){
 	this.onmousemove = null;
 });

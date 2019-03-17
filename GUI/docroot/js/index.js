@@ -21,6 +21,9 @@ var unsaved_elements = {};
 var global_alert = $('#global-alert');
 var alert_window = $('#alert-window');
 
+var connected = false;
+var changed_settings = {id:'', value: false, processed: true};
+
 $(function Setup()
 {
     WsSetup(
@@ -32,6 +35,8 @@ $(function Setup()
             api("getimagelist");
             api("getjoblist");
             api("getprofilelist");
+            connected = true;
+            EnableDropzone();
         },
         (type, data) =>
         {
@@ -43,7 +48,9 @@ $(function Setup()
                 clearTimeout(upload_timeout_id);
                 document.body.classList.remove('wait');
                 $('#strategy-tab-button').prop("disabled", true);
-                $('#overlay').hide();
+                changed_settings = {id:'', value: false, processed: true};
+                // $('#overlay').hide();
+                EnableDropzone();
                 // TODO
                 if(data.uploadimage=="") ShowAlert("Upload failed.<br>Maybe Image already exists.", "danger");
                 else ShowAlert(JSON.stringify(data), "danger");
@@ -89,9 +96,15 @@ $(function Setup()
             }
             else if (type == "uploadimage")
             {
-                AddImageToList(data);
-                SetChosen(data.id);
-                ShowAlert("Image "+data.original_name+" uploaded.", "success");
+                clearTimeout(upload_timeout_id);
+                let image = new Image();
+                image.onload = function(){
+                    AddImageToList(data);
+                    SetChosen(data.id);
+                    ShowAlert("Image "+data.original_name+" uploaded.", "success");
+                    EnableDropzone();
+                }
+                image.src = data.path;
             }
             else if (type == "createjob")
             {
@@ -149,7 +162,7 @@ $(function Setup()
             }
             else if (type == "getpositions")
             {
-                drawPositions(data);
+                updatePositions(data);
                 clearTimeout(loading_timeout_id);
                 document.body.classList.remove('wait');
                 let number = $('#detected-colonies-number');
@@ -159,6 +172,11 @@ $(function Setup()
                     number.fadeIn();
                 }
                 $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
+                
+                if(changed_settings.value){
+                    UpdateDetectionSettings(changed_settings.id);
+                    changed_settings.value = false;
+                } else changed_settings.processed = true;
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
@@ -181,9 +199,11 @@ $(function Setup()
         },
         () =>
         {
+            DisableDropzone();
             global_alert.addClass('alert alert-danger');
             global_alert.css('display', 'block');
             document.title = "No connection - 3CPicko";
+            connected = false;
         });
 });
 
@@ -314,15 +334,21 @@ function CreateDetectionAlgorithmSettings(id){
 
     let html = `<div id="${id}-settings" class="collapse" data-parent="#detection-settings">
     <form id="${id}-settings-form">
-    <button type="reset" class="btn btn-outline-primary btn-sm w-100">Reset to Default Values</button>
-    <button type="button" onclick="show_excluded = !show_excluded;printPositions();" class="btn btn-outline-primary btn-sm w-100 mt-1">Show/Hide Excluded Colonies</button>
     `;
     let settings = new FormGroup(algorithms[id], id+"-settings-form");
-    detection_settings.insertAdjacentHTML("beforeend", html+settings.getHtml()+`</form></div>`);
+    html += settings.getHtml()+`<button type="reset" class="btn btn-primary btn-sm w-100 mt-1">Reset to Default Values</button></form></div>`;
+    detection_settings.insertAdjacentHTML("beforeend", html);
     settings.AddInputEvents();
     FormGroup.AddFormEvents(id+"-settings-form");
     $('#'+id+'-settings-form').change(function(){
-        UpdateDetectionSettings(id);
+        if(changed_settings.processed){
+            UpdateDetectionSettings(id);
+            changed_settings.processed = false;  
+        }
+        else{
+            changed_settings.id = id;
+            changed_settings.value = true;
+        }
     });
 }
 var loading_timeout_id;
@@ -398,17 +424,24 @@ function AddImageToList(image_object){
         let html = `
         <div class="card m-1 image-card" id="img-${image_object.id}">
         <button type="button" class="close" style="line-height: 0.5;" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
-        <div class="card-body p-1" onclick="SetChosen('${image_object.id}');window.scrollTo(0,0);" style="cursor: pointer;">
+        <div class="card-body p-1" style="cursor: pointer;">
         <h7 class="card-title mb-1 mr-3">${image_object.original_name}</h7>
         <div class="spinner-border m-5" id="loading-${image_object.id}"></div>
-        <img class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;" onload="$(this).show();$('#loading-${image_object.id}').remove();">
+        <img id="image-${image_object.id}" class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;">
         <p class="card-text">Date: ${image_object.uploaded.formatted}</li></p>
         </div>
         </div>`;
 
-        let div_images = document.getElementById('all-images');
         images_list[image_object.id] = image_object;
-        div_images.insertAdjacentHTML('afterbegin',html);
+        document.getElementById('all-images').insertAdjacentHTML('afterbegin',html);
+        document.getElementById('image-'+image_object.id).onload = function(){
+            $(this).show();
+            $('#loading-'+image_object.id).remove();
+            this.parentElement.onclick = function(){
+                SetChosen(image_object.id);
+                window.scrollTo(0,0);   
+            };
+        };
     }
 }
 
@@ -489,15 +522,15 @@ function SetChosen(image_id){
     const img_name = document.getElementById('img-name');
 
     if(image_id){
-        chosen_image = images_list[image_id];
         console.log("Selecting image ", image_id);
+        chosen_image = images_list[image_id];
         description.innerHTML = `Upload Date: ${chosen_image.uploaded.formatted}`;
         img_name.innerHTML = chosen_image.original_name;
         $(img_name).show();
-        $(div_chosen).show();
         $(description).show();
-        class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}" onload="clearTimeout(upload_timeout_id);$('#overlay').hide();"/>`;
-        class_dropzone.removeClass('empty');
+        class_dropzone.classList.remove('empty');
+        class_dropzone.innerHTML = `<img style="height: 100%; width: 100%; object-fit: contain" src="${chosen_image.path}"/>`;
+        $(div_chosen).show();
     }
     else{
         chosen_image = false;
@@ -505,7 +538,7 @@ function SetChosen(image_id){
         $(div_chosen).hide();
         $(description).hide();
         class_dropzone.innerHTML = 'Drop Image';
-        class_dropzone.addClass('empty');
+        class_dropzone.classList.add('empty');
     }
 }
 
@@ -615,16 +648,19 @@ function strategyTab(){
                     min: 1,
                     max: max_colonies,
                     step: 1,
-                    description: "Choose number of detected colonies that will be transferred to Goal Plate.",
+                    help_text: "Choose number of detected colonies that will be transferred to Goal Plate.",
                     defaultValue: max_colonies
                 }
                 ]
             }
-            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].description += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Not all detected colonies fit on this plate.</span>";
+            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].help_text += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Not all detected colonies fit on this plate.</span>";
             let form = new FormGroup(template, "strategy-form");
             document.getElementById("number-of-colonies-slider").innerHTML = form.getHtml();
             form.AddInputEvents();
             document.getElementById('number-max_number_of_coloniesstrategy-form').insertAdjacentHTML('afterend', "/"+number_of_colonies);
+            document.getElementById('number-max_number_of_coloniesstrategy-form').addEventListener('change', function(){
+                updateWells(this.value);
+            });
             document.getElementById('slider-max_number_of_coloniesstrategy-form').addEventListener('input', function(){
                 updateWells(this.value);
             });
