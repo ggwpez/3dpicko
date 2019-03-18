@@ -40,10 +40,6 @@ function resizeCanvas(img) {
         down_scale = 1;
     }
 
-    // fix width
-    // TODO enable resizing?
-    $('#selection').css('min-width', width + document.getElementById('detection-settings-div').offsetWidth);
-
     console.log("Downscale factor: ", down_scale);
 
     layer0.canvas.width  = width; // in pixels
@@ -56,6 +52,10 @@ function resizeCanvas(img) {
     layer2.canvas.height = height; // in pixels
 
     layer0.context.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+    
+    // fix width
+    // TODO enable resizing?
+    $('#selection').css('min-width', this.width);
 }
 
 // colony detection
@@ -163,23 +163,10 @@ function selectionTabEnter()
     document.getElementById('show-selected').onchange = function(){
         show_selected = this.checked;
         printPositions();
-        if(hide_colonies_button.checked){
-            $('#hide-colonies').click();
-            hide_colonies_button.checked = false;
-        }
     };
     document.getElementById('show-excluded').onchange = function(){
         show_excluded = this.checked;
         printPositions();
-        if(hide_colonies_button.checked){
-            $('#hide-colonies').click();
-            hide_colonies_button.checked = false;
-        }
-    };
-    hide_colonies_button.onchange = function(){
-        if(this.checked){
-            $('#layer1').hide();
-        } else $('#layer1').show();
     };
 }
 
@@ -193,13 +180,13 @@ function removeUnselectedColonies(indices)
         let colony = colony_array[parseInt(i)];
         let hash = colony.x+','+colony.y;
         included_colonies.set(hash, new Circle({
-                x: colony.x * layer1.canvas.width,
-                y: colony.y * layer1.canvas.height,
-                radius: colony.major_length * 1.25 * down_scale,
-                linecolor: 'white',
-                canvas: layer1.canvas,
-                hash: hash
-            }));
+            x: colony.x * layer1.canvas.width,
+            y: colony.y * layer1.canvas.height,
+            radius: colony.major_length * 1.25 * down_scale,
+            linecolor: 'white',
+            canvas: layer1.canvas,
+            hash: hash
+        }));
     });    
     show_selected = true;
     show_excluded = false;
@@ -215,7 +202,7 @@ function updatePositions(coords)
     excluded_colonies = new Map();
     included_colonies = new Map();
     
-    colony_array.forEach((colony) =>
+    colony_array.forEach((colony, index) =>
     {
         let hash = colony.x+','+colony.y;
         
@@ -228,6 +215,7 @@ function updatePositions(coords)
             else
                 console.warn("Could not find setting ", colony.excluded_by);
             excluded_colonies.set(hash, new Circle({
+                id: index,
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
@@ -240,6 +228,7 @@ function updatePositions(coords)
         }
         else{
             included_colonies.set(hash, new Circle({
+                id: index,
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
@@ -254,7 +243,7 @@ function updatePositions(coords)
 
     excluded_by_user.forEach((value, key) => {
         included_colonies.delete(key);
-        excluded_colonies.set(key, value);
+        excluded_colonies.set(key, value);  
     });
     included_by_user.forEach((value, key) => {
         excluded_colonies.delete(key);
@@ -269,8 +258,7 @@ var show_selected = true;
 function printPositions(){
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
 
-    // TODO remove
-    number_of_colonies = included_colonies.size;
+    UpdateNumberOfColonies();
     
     // Print new positions
     if(show_excluded){
@@ -282,6 +270,32 @@ function printPositions(){
         for(let colony of included_colonies.values()){
             colony.draw();
         }   
+    }
+}
+
+function UpdateNumberOfColonies(){
+    number_of_colonies = included_colonies.size;
+    let number = $('#detected-colonies-number');
+    if(number.text() != number_of_colonies){
+        number.hide();
+        number.text(number_of_colonies);
+        number.fadeIn();
+    }
+    $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
+    return number_of_colonies;
+
+}
+
+function SetColoniesToPick(){
+    // TODO update number of colonies?
+    let excluded_user = [], included_user = [];
+    colony_array.forEach((colony, index) => {
+        let hash = colony.x+','+colony.y;
+        if(colony.excluded_by == "" && excluded_colonies.has(hash)) excluded_user.push(index);
+        else if(included_colonies.has(hash) && colony.excluded_by != "") included_user.push(index);
+    });
+    document.getElementById('enter-overview-button').onclick = function(){
+        api('setcoloniestopick',{'job': current_job.id, 'excluded_user': excluded_user, 'included_user': included_user,'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
     }
 }
 
@@ -298,21 +312,17 @@ function drawTooltip(colony){
     } 
     else if(colony.get('included_by')){ 
         text += "\nIncluded by " + colony.get('included_by');
-     }
+    }
 
     let lines = text.split("\n");
     lines.forEach(line =>{
-        console.log(line);
-        console.log(layer2.context.measureText(line));
         tooltip_pos.width = Math.max(tooltip_pos.width, layer2.context.measureText(line).width+20);
         tooltip_pos.height += 20;
     });
     if(tooltip_pos.x + tooltip_pos.width > layer2.canvas.width) tooltip_pos.x -= tooltip_pos.x + tooltip_pos.width - layer2.canvas.width;  
     if(tooltip_pos.y + tooltip_pos.height > layer2.canvas.height) tooltip_pos.y = colony_pos.y - colony.getRadius()*1.5 - tooltip_pos.height;
     layer2.context.fillStyle = "white";
-    console.log("Width", tooltip_pos.width);
-    console.log("height", tooltip_pos.height);
-
+    
     layer2.context.fillRect(tooltip_pos.x, tooltip_pos.y, tooltip_pos.width, tooltip_pos.height);  
 
     layer2.context.fillStyle = "black";
@@ -320,7 +330,6 @@ function drawTooltip(colony){
     
     let y_offset = 10;
     lines.forEach(line =>{
-        console.log(line);
         layer2.context.fillText(line, tooltip_pos.x+10, tooltip_pos.y+y_offset);
         y_offset += 16; // line-height
     });

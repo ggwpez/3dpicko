@@ -182,13 +182,15 @@ img {
 #colony-layers{
 	margin-left: auto;
 }
-#layer-parent{
+#layer_parent{
+	position: relative;
 	cursor: pointer;
+	min-width: 700px;
 }
 #layer-control{
 	display: none;
 	position: absolute;
-	top: -31px;
+	top: -38px;
 	right: 0px;
 	/*transform: rotate(90deg);
 	top: 154px;
