@@ -223,6 +223,7 @@ function updatePositions(coords)
                 defaultLinecolor: color,
                 canvas: layer1.canvas,
                 excluded_by: colony.excluded_by,
+                area: colony.area,
                 hash: hash
             }));
         }
@@ -236,6 +237,7 @@ function updatePositions(coords)
                 defaultLinecolor: color,
                 canvas: layer1.canvas,
                 excluded_by: "",
+                area: colony.area,
                 hash: hash
             }));
         }
@@ -304,9 +306,9 @@ function drawTooltip(colony){
     layer2.context.font = "12px sans-serif";
     colony.draw(layer2.context, 3);
     const colony_pos = colony.getPosition();
-    let tooltip_pos = {x:colony_pos.x, y:colony_pos.y +colony.getRadius() *1.5, width: 10, height: 10};
+    let tooltip_pos = {x:colony_pos.x, y:colony_pos.y +colony.getRadius() *1.5, width: 10, height: 15};
 
-    let text = "Radius " + (Math.round(colony.getRadius() * 1000) / 1000);
+    let text = "Colony #"+colony.get('id')+"\nArea: " + (Math.round(colony.get('area') * 1000) / 1000);
     if(colony.get('excluded_by') != ""){
         text += "\nExcluded by " + colony.get('excluded_by');
     } 
@@ -317,7 +319,7 @@ function drawTooltip(colony){
     let lines = text.split("\n");
     lines.forEach(line =>{
         tooltip_pos.width = Math.max(tooltip_pos.width, layer2.context.measureText(line).width+20);
-        tooltip_pos.height += 20;
+        tooltip_pos.height += 16;
     });
     if(tooltip_pos.x + tooltip_pos.width > layer2.canvas.width) tooltip_pos.x -= tooltip_pos.x + tooltip_pos.width - layer2.canvas.width;  
     if(tooltip_pos.y + tooltip_pos.height > layer2.canvas.height) tooltip_pos.y = colony_pos.y - colony.getRadius()*1.5 - tooltip_pos.height;
