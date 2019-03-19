@@ -3,9 +3,9 @@
 #include <QJsonArray>
 #include <QMetaEnum>
 #include <QUrlQuery>
-#include "include/command.h"
-#include <utility>
 #include <functional>
+#include <utility>
+#include "include/command.h"
 
 namespace c3picko {
 namespace pi {

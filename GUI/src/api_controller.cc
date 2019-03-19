@@ -311,7 +311,7 @@ void APIController::setColoniesToPick(Job::ID id, quint32 number,
       for (std::size_t i = 0; i < all_colonies.size(); ++i)
         if (!all_colonies[i].excluded()) included.push_back(i);
 
-      //QRandomGenerator ran(456);  // constant seed for determinism
+      // QRandomGenerator ran(456);  // constant seed for determinism
       int max_good = number;
       Q_ASSERT(max_good);
 
@@ -322,8 +322,8 @@ void APIController::setColoniesToPick(Job::ID id, quint32 number,
       }
 
       while (max_good--) {
-//        int index = ran.bounded(quint32(included.size() - 1));
-int index = 10;
+        //        int index = ran.bounded(quint32(included.size() - 1));
+        int index = 10;
 
         good_colonies.insert(all_colonies[included[index]].id());
         qDebug() << "Inserting" << all_colonies[included[index]].id();

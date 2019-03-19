@@ -172,4 +172,49 @@ QJsonObject Marshalling::toJson(const QDateTime& value) {
 
   return obj;
 }
+
+template <>
+std::set<qint32> Marshalling::fromJson(const QJsonObject& obj) {
+  QJsonArray elements = obj["elements"].toArray();
+  std::set<qint32> ret;
+
+  for (QJsonValueRef element : elements) ret.insert(element.toInt());
+
+  return ret;
+}
+
+template <>
+QJsonObject Marshalling::toJson(const std::set<qint32>& value) {
+  QJsonObject obj;
+  QJsonArray elements;
+
+  for (auto it = value.begin(); it != value.end(); ++it)
+    elements.push_back(*it);
+
+  obj["elements"] = elements;
+  return obj;
+}
+
+template <>
+std::set<QString> Marshalling::fromJson(const QJsonObject& obj) {
+  QJsonArray elements = obj["elements"].toArray();
+  std::set<QString> ret;
+
+  for (QJsonValueRef element : elements)
+    ret.insert(Marshalling::fromJson<QString>(element));
+
+  return ret;
+}
+
+template <>
+QJsonObject Marshalling::toJson(const std::set<QString>& value) {
+  QJsonObject obj;
+  QJsonArray elements;
+
+  for (auto it = value.begin(); it != value.end(); ++it)
+    elements.push_back(*it);
+
+  obj["elements"] = elements;
+  return obj;
+}
 }  // namespace c3picko

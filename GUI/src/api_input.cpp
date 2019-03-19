@@ -85,6 +85,26 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
   } else if (path == "setcoloniestopick") {
     Job::ID job = Marshalling::fromJson<Job::ID>(req_data["job"]);
     quint32 number = req_data["number"].toInt();
+    std::set<Colony::ID> ex_user = Marshalling::fromJson<std::set<Colony::ID>>(
+                             req_data["ex_user"]),
+                         in_user = Marshalling::fromJson<std::set<Colony::ID>>(
+                             req_data["in_user"]);
+
+#ifdef QT_DEBUG
+    std::vector<Colony::ID> intersection;
+    std::set_intersection(ex_user.begin(), ex_user.end(), in_user.begin(),
+                          in_user.end(), std::back_inserter(intersection));
+
+    if (!intersection.empty()) qWarning() << L"EX_USER ∩ IN_USER != ∅";
+#endif
+
+    //
+    // EXLUDED, INCLUDED
+    // EX_USER, IN_USER
+    // number
+    //
+    // (INCLUDED U IN_USER) \ EX_USER
+    //
 
     api->setColoniesToPick(job, number, client);
   } else if (path == "updatedetectionsettings") {

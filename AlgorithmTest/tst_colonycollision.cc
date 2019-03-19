@@ -22,9 +22,7 @@ void ColonyCollision::initTestCase() {
    */
   solutions_.push_back(
       {{makeColony(0, 0), makeColony(r * 2 + p, 0), makeColony(0, r * 2 + p),
-        makeColony(r * 2 + p, r * 2 + p),
-
-        makeColony(r + p / 2, r + p / 2)},
+        makeColony(r * 2 + p, r * 2 + p), makeColony(r + p / 2, r + p / 2)},
        r,
        d,
        2});

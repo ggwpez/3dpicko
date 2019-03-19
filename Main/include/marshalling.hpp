@@ -2,7 +2,22 @@
 
 #include <QDebug>
 #include <QJsonObject>
+#include <set>
 #include "include/global.h"
+
+#if __cplusplus <= 201703L
+// non C++20 code FIXME should be c++20 but is c++17, there is no c++20 define
+// yet
+/**
+ * https://en.cppreference.com/w/cpp/types/type_identity
+ */
+namespace std {
+template <class T>
+struct type_identity {
+  using type = T;
+};
+}  // namespace std
+#endif
 
 namespace c3picko {
 class Marshalling {
@@ -23,7 +38,6 @@ class Marshalling {
 };
 
 #define MAKE_SERIALIZABLE(T)                 \
-                                             \
   template <>                                \
   QJsonObject Marshalling::toJson(T const&); \
   template <>                                \
@@ -49,11 +63,18 @@ class Marshalling {
 // Here we instantiate the template functions, so the compiler knows they must
 // exist somewhere. The classes themself are unaltered by this.
 MAKE_MARSHALLABLE(QDateTime);
+// template <> inline QJsonObject Marshalling::toJson(std::set<D> const&) {
+// return QJsonObject(); }
 
 MAKE_MARSHALLABLE_CLASS(Point);
 MAKE_MARSHALLABLE_CLASS(PrinterProfile);
 MAKE_MARSHALLABLE_CLASS(PlateSocketProfile);
 MAKE_MARSHALLABLE_CLASS(PlateProfile);
+
+// not good style, but partial specialization of template member functions is
+// not allowed
+MAKE_MARSHALLABLE(std::set<QString>);
+MAKE_MARSHALLABLE(std::set<qint32>);
 
 template <>
 /**

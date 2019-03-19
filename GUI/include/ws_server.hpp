@@ -1,10 +1,10 @@
 #ifndef WS_SERVER_HPP
 #define WS_SERVER_HPP
 
+#include <qwebsocketprotocol.h>
 #include <QObject>
 #include <QSslConfiguration>
 #include <QSslError>
-#include <qwebsocketprotocol.h>
 #include "include/api_input.h"
 
 using namespace stefanfrings;
