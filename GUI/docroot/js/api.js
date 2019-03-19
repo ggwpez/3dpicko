@@ -32,12 +32,12 @@ function connect()
 		ws.onerror = function (errorEvent)
 		{
 	    	cbOnDisconnected_("Die Verbindung wurde unerwartet geschlossen");
-	    	setTimeout(connect, 1000);
+	    	setTimeout(connect, 3000);
 		};
 		ws.onclose = function()
 		{
 			cbOnDisconnected_("Connection closed");
-			setTimeout(connect, 1000);
+			setTimeout(connect, 3000);
 		};
 	}
 }

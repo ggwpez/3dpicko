@@ -165,14 +165,7 @@ $(function Setup()
                 updatePositions(data);
                 clearTimeout(loading_timeout_id);
                 document.body.classList.remove('wait');
-                let number = $('#detected-colonies-number');
-                if(number.text() != number_of_colonies){
-                    number.hide();
-                    number.text(number_of_colonies);
-                    number.fadeIn();
-                }
-                $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
-                
+                                
                 if(changed_settings.value){
                     UpdateDetectionSettings(changed_settings.id);
                     changed_settings.value = false;
@@ -667,6 +660,7 @@ function strategyTab(){
             updateWells(max_colonies);
         };
         plate_selection.onchange();
+        SetColoniesToPick();
         tabEnter(4);
     }
 }

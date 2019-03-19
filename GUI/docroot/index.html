@@ -52,7 +52,7 @@
           </div>
           <div class="col p-0">
             <div class="tab-content mb-2" id="tabContent">
-              <div class="tab-pane fade show active col-12" id="browse">
+              <div class="tab-pane fade show active ml-2" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-5">
                     <h2 id="wiki-4-choose-image" class="wiki">Choose Image</h2>
@@ -111,16 +111,12 @@
                 <div class="row">
                   <div id="colony-layers">
                     <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span></h2>
-                    <div id="layer_parent" style="position: relative;">
+                    <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
-                        <h5 class="mr-2 mb-0">Toggle Layers:</h5>
-                        <div class="btn-group btn-group-toggle mr-1" data-toggle="buttons">
-                          <label id="show-selected-button" class="btn btn-secondary active btn-sm"><input type="checkbox" id="show-selected" autocomplete="off" checked">Selected</label>
-                          <label class="btn btn-secondary btn-sm"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
-                        </div>
+                        <h4 class="mr-2">Toggle Layers:</h4>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                          <label id="hide-colonies-button" class="btn btn-secondary btn-sm"><input id="hide-colonies" type="checkbox" autocomplete="off">Hide All</label>
-                          <!-- <button type="button" class="btn btn-secondary">8</button> -->
+                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked">Selected</label>
+                          <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
                         </div>
                       </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas>
@@ -153,7 +149,7 @@
                       </div>
                       <div id="number-of-colonies-slider"></div>
                     </form>
-                    <button class="btn btn-success next-step" onclick="api('setcoloniestopick',{'job': current_job.id, 'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)})">Continue</button>
+                    <button id="enter-overview-button" class="btn btn-success next-step">Continue</button>
                   </div>
                   <div class="col">
                     <h2>Choose Starting Well</h2>
