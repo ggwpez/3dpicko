@@ -22,6 +22,9 @@
       <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">History</a>
       <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
       <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-settings" aria-selected="false">Admin</a>
+	  <!-- inserted Wiki -->
+	  <a class="nav-item nav-link" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-settings" aria-selected="false">Wiki</a>
+	  <!-- /inserted Wiki -->
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -258,7 +261,49 @@
       <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
       <div id="debug-output"></div>
     </div>
+	<!-- inserted Wiki -->
+    <div class="tab-pane fade" id="nav-wiki" role="tabpanel" aria-labelledby="nav-wiki-tab">
+	  <div class="container-fluid">
+		<div class="row">
+		  <div class="col-auto">
+			<h4 id ="headertag">Wiki</h4>
+            <div class="row">
+			  <button class="btn btn-default m-1" id="Introduction" onclick="loadWiki('./docs/Introduction.html')">Introduction</button>
+			</div>
+            <h5 id ="headertag">User Manual</h5>
+            <div class="row">
+			  <button class="btn btn-default m-1" id="User-Manual-First-Steps" onclick="loadWiki('./docs/User-Manual-First-Steps.html')">First Steps</button>
+			</div>
+			<div class="row">
+			  <button class="btn btn-default m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('./docs/User-Manual-Example-Picking-Process.html')" >Example Picking Process</button>
+            </div>
+            <div class="row">
+              <button class="btn btn-default m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('./docs/User-Manual-Advanced-Settings.html')" >Advanced Settings</button>
+            </div>
+			<h5 id ="headertag">Configuration</h5>
+			<div class="row">
+			  <button class="btn btn-default m-1" id="Configuration-Hardware" onclick="loadWiki('./docs/Configuration-Hardware.html')" >Hardware</button>
+            </div>
+            <div class="row">
+			  <button class="btn btn-default m-1" id="Configuration-Software" onclick="loadWiki('./docs/Configuration-Software.html')" >Software</button>
+            </div>
+			<h5 id ="headertag">Administration</h5>
+			<div class="row">
+			  <button class="btn btn-default m-1" id="Administration-Hardware" onclick="loadWiki('./docs/Administration-Hardware.html')" >Hardware</button>
+            </div>
+            <div class="row">
+			  <button class="btn btn-default m-1" id="Administration-Software" onclick="loadWiki('./docs/Administration-Software.html')" >Software</button>
+            </div>
+		  </div>
+		  <div class="col">
+            <p id="wiki-content">Error: Page not found</p>
+          </div>
+	    </div>
+	  </div>
+    </div>
+	<!-- /inserted Wiki -->
   </div>
+  
   <!-- Info-Dialog -->
   <div class="modal fade" id="info-dialog" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -293,6 +338,25 @@
   <div id="alert-window">
     <div id="global-alert" style="display: none;">Disconnected from server.</div>
   </div>
+    <!-- inserted Wiki -->
+  <!-- change aria-labelledby -->
+  <div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
+        </div>
+        <div class="modal-body">
+          <p id=help-body>Error: Help not found </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /inserted Wiki -->
+  
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Bootstrap JS -->
   <script src="js/jquery-3.3.1.js"></script>
@@ -307,5 +371,8 @@
   <script type="text/javascript" src="js/api.js"></script>
   <script type="text/javascript" src="js/config.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
+  <!-- /inserted Wiki -->
+  <script type="text/javascript" src="js/wiki.js"></script>
+  <!-- /inserted Wiki -->
 </body>
 </html>

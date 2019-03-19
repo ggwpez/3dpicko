@@ -116,13 +116,19 @@ class FormGroup{
 
     CreateFormGroupHtml({id, name, type, defaultValue = "", value = "", description, help_text, min, max, step=1, unit, options={}, placeholder = 0, required = true, conditional_settings = []}, new_value = ""){
         // console.log("Input-Field:",{id, name, type, defaultValue, value, description, min , max, step, unit, options, placeholder, required, new_value});
-        let wiki_description;
+        /*
+		let wiki_description;
         if(wiki) wiki_description = wiki.find('#'+id).next().html();
+		*/
         if(new_value !== "") value = new_value;
         else if(value === "") value = defaultValue;
         let html = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label>`;
-        if(wiki_description || description) html += `<a tabindex="0" class="textLink" data-toggle="popover" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-content="${wiki_description || description}" ${wiki_description?`href='/wiki/index.html#${id}' target='_blank'`:``}>${name}</a>:</label>`;
-        else html += `${name}:</label>`;
+		/*
+        if(wiki_description || description) html += `<a tabindex="0" class="textLink" data-toggle="popover" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-content="${wiki_description || description}" ${wiki_description?`href='/wiki/index.html#${id}' target=#colony-detection-help'_blank'`:``}>${name}</a>:</label>`;	
+		*/
+		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('${id}','./docs/User-Manual-Advanced-Settings.html #${id}')">${name}</a></span>:</label>`;
+
+        //else html += `${name}:</label>`;
 
         if (type == "number"){
             html += `${this.CreateNumberInputHtml(id, min, max, step, value)} ${unit}`;
