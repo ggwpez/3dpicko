@@ -10,6 +10,7 @@ function loadWiki(site){
 }
 
 function loadHelp(headline, site){
+	/*
 	switch (headline) {
 		case "area":
 			headline = "Area";
@@ -28,7 +29,8 @@ function loadHelp(headline, site){
 			break;		
 		default:
 	}
-    $("#help-headline").text(headline);
-	//$("#help-headline").load(headline);
+	*/
+    //$("#help-headline").text(headline);
+	$("#help-headline").load(headline);
     $("#help-body").load(site);
 }

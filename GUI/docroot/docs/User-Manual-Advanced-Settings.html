@@ -4,67 +4,73 @@
 
 <h4 id="algorithm-h"> Algorithm </h4>
 <div id="algorithm">
-  <p> Here you can select the Algorithm which will be used for the colony detection. There are two choices either "Normal" or "Fluro". Normal is for any kind of colonies while Fluro is only for fluorescent. </p>
+  <p>
+    Here you can select the Algorithm which will be used for the colony detection. There are two choices either "Normal" or "Fluro". Normal is for any kind of colonies while Fluro is only for fluorescent. </p>
 </div>
 
 <h4 id="area-h"> Area </h4>
 <div id="area">
-  <p> With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles. </p>
-
-  <img src="./img/wiki/Area.jpg"  width="400">
+  <p>
+    With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles. <br>
+    <img src="./img/wiki/Area.jpg"  width="400">
+  </p>
 </div>
 
 <h4 id="aabb_ratio-h"> AABB Side Ratio </h4>
 <div id="aabb_ratio">
-  <p> This option lets you choose what ratio of length and with the colony can have. A perfectly round colony would have the ration 1. In the example image refer to the green bounding box, the calculation is as follows: whatever side is shorter is divided by the longer side. </p>
-
-  <img src="./img/wiki/side_ratio.jpg"  width="400">
-
-  <p> $`min(width, height) / max(width, height)`$ whereas _width_ and _height_ are side lengths of an Axix Aligned Bounding Box. </p>
+  <p>
+    This option lets you choose what ratio of length and with the colony can have. A perfectly round colony would have the ration 1. In the example image refer to the green bounding box, the calculation is as follows: whatever side is shorter is divided by the longer side. <br>
+    <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+    $`min(width, height) / max(width, height)`$ whereas _width_ and _height_ are side lengths of an Axix Aligned Bounding Box.
+  </p>
 </div>
 
 <h4 id="bb_ratio-h"> BB Side Ratio </h4>
 <div id="bb_ratio">
-  <p> This option is similar to the one above, the only difference is that the bounding box is rotated to be as small as possible and not aligned with the edges of the image. Refer to the red bounding box. </p>
-
-  <img src="./img/wiki/side_ratio.jpg"  width="400">
-
-  <p> $`min(width, height) / max(width, height)`$ whereas _width_ and _height_ are side lengths of an Rotated Minimum Area Bounding Box. </p>
+  <p>
+    This option is similar to the one above, the only difference is that the bounding box is rotated to be as small as possible and not aligned with the edges of the image. Refer to the red bounding box. <br>
+    <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+    $`min(width, height) / max(width, height)`$ whereas _width_ and _height_ are side lengths of an Rotated Minimum Area Bounding Box.
+  </p>
 </div>
   
 <h4 id="convexity-h"> Convexity </h4>
 <div id="convexity">
-  <p> This is option filters the convexity, it processes the outline of the colony and checks if the arc is evenly, the more evenly it is the higher the number becomes. </p>
-
-  <img src="./img/wiki/Convexity.jpg"  width="400">
-
-  <p> $`area(contour) / area(hull)`$ whereas _contour_ is the polygon representing the edge and  
-_hull_ is the an approximated convex hull polygon. </p>
+  <p>
+    This is option filters the convexity, it processes the outline of the colony and checks if the arc is evenly, the more evenly it is the higher the number becomes. <br>
+    <img src="./img/wiki/Convexity.jpg"  width="400"> <br>
+    $`area(contour) / area(hull)`$ whereas _contour_ is the polygon representing the edge and _hull_ is the an approximated convex hull polygon.
+  </p>
 </div>
 
 <h4 id="circularity-h"> Circularity </h4>
 <div id="circularity">
-  <p> This option checks the roundness of the colonies The rounder the colony the higher the number. </p>
-
-  <img src="./img/wiki/Circularity.jpg"  width="400">
-
-  <p> $`(4 * \pi * area) / {circumference(contour)}^2`$ whereas _area_ is the area of the Colony detected in pixel and _contour_ is the polygon representing the edge. </p>
+  <p>
+    This option checks the roundness of the colonies The rounder the colony the higher the number. <br>
+    <img src="./img/wiki/Circularity.jpg"  width="400"> <br>
+    $`(4 * \pi * area) / {circumference(contour)}^2`$ whereas _area_ is the area of the Colony detected in pixel and _contour_ is the polygon representing the edge.
+  </p>
 </div>
 
+<!--
 <h4 id="filter-h"> Filter Colonies </h4>
 <div id="filter">
-  <p> This setting is similar to the Area setting, but instead of setting the limits directly you define a deviation from the calculated average colony. You have three options to choose from: </p>
-
-  <b>Area</b>
-  <p> How much smaller or bigger the colonies can be from the average. </p>
-
-  <b>Brightness</b>  
-  <p> This is for selecting the brightness. It is possible to choose colonies with different colours or fluorescent ones. Note that different colours can have the same brightness. You might want to change the colour of the lightning while photographing to improve results. </p>
-
-  <b>Circumference</b>  
-  <p> How much smaller or bigger the circumference of colonies can be from the average, this setting is interesting if you have non-round colonies. </p>
-
-  <p> With mean you select the actual deviation for filtering, in this example image, the area of colony two is larger than the area of colony one but the circumference of colony one is actually greater than the one of colony two. It is possible to use either area or circumference to select the colonies intended for the pick. </p>
-
-  <img src="./img/wiki/filter.jpg"  width="400">
+  <p>
+    This setting is similar to the Area setting, but instead of setting the limits directly you define a deviation from the calculated average colony. You have three options to choose from: <br>
+	<p>
+	  <b>Area</b> <br>
+      How much smaller or bigger the colonies can be from the average.
+	</p>
+	<p>
+      <b>Brightness</b> <br>
+	  This is for selecting the brightness. It is possible to choose colonies with different colours or fluorescent ones. Note that different colours can have the same brightness. You might want to change the colour of the lightning while photographing to improve results.
+	</p>
+	<p>
+	  <b>Circumference</b> <br>
+	  How much smaller or bigger the circumference of colonies can be from the average, this setting is interesting if you have non-round colonies.
+	</p>
+	With mean you select the actual deviation for filtering, in this example image, the area of colony two is larger than the area of colony one but the circumference of colony one is actually greater than the one of colony two. It is possible to use either area or circumference to select the colonies intended for the pick. <br>
+    <img src="./img/wiki/filter.jpg"  width="400"> <br>
+  </p>
 </div>
+-->

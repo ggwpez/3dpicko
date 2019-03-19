@@ -1,6 +1,9 @@
 /* global $, multirange*/
 /* exported FormGroup */
 // TODO extend to Form?
+// TODO give the path to the wiki a proper place
+
+
 class FormGroup{
     constructor(template, form_id = "", values = ""){
         this.template = template;
@@ -124,9 +127,13 @@ class FormGroup{
         else if(value === "") value = defaultValue;
         let html = `<div class="form-group ${(type=="slider")?`text-wrap`:``}"><label>`;
 		/*
-        if(wiki_description || description) html += `<a tabindex="0" class="textLink" data-toggle="popover" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-content="${wiki_description || description}" ${wiki_description?`href='/wiki/index.html#${id}' target=#colony-detection-help'_blank'`:``}>${name}</a>:</label>`;	
+        if(wiki_description || description) html += `<a tabindex="0" class="textLink" data-toggle="popover" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-content="${wiki_description || description}" ${wiki_description?`href='/wiki/index.html#${id}' target=#colony-detection-help'_blank'`:``}>${name}</a>:</label>`;
 		*/
+		/*
+		WORKING:
 		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('${id}','./docs/User-Manual-Advanced-Settings.html #${id}')">${name}</a></span>:</label>`;
+		*/
+		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('./docs/User-Manual-Advanced-Settings.html #${id}-h','./docs/User-Manual-Advanced-Settings.html #${id}')">${name}</a></span>:</label>`;
 
         //else html += `${name}:</label>`;
 
