@@ -65,8 +65,8 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   for (std::size_t i = 0; i < contours.size(); ++i) {
     auto curve = contours[i];
     /*std::vector<cv::Point> curve;
-    double				   eps = 0.05 * cv::arcLength(contours[i],
-    true);
+    double				   eps = 0.05 *
+    cv::arcLength(contours[i], true);
     // good? cv::approxPolyDP(contours[i], curve, eps, true);*/
     double a = cv::contourArea(curve);
 
