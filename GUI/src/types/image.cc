@@ -154,15 +154,17 @@ QDateTime Image::uploaded() const { return uploaded_; }
 QString Image::description() const { return description_; }
 
 Image::ID Image::calculateId(cv::Mat const& image) {
-  QCryptographicHash hasher(QCryptographicHash::Sha256);
+  /*QCryptographicHash hasher(QCryptographicHash::Sha256);
 
   std::vector<char> data;  // TODO this is not gud
   for (int i = 0; i < image.rows; ++i)
     data.insert(data.end(), image.ptr<uint8_t>(i),
-                image.ptr<uint8_t>(i) + image.cols);
+                            image.ptr<uint8_t>(i) + image.cols);
 
   hasher.addData(data.data(), data.size());
-  return hasher.result().toHex();
+  return hasher.result().toHex();*/
+
+  return QString::number(rand());
 }
 
 Image::ID Image::id() const { return id_; }

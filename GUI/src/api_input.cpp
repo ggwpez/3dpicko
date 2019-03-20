@@ -56,10 +56,8 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     api->UploadImage(image, client);
   } else if (path == "crop-image") {
     QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
-    int x = req_data["x"].toDouble(), y = req_data["y"].toDouble(),
-        w = req_data["width"].toDouble(), h = req_data["height"].toDouble();
 
-    api->cropImage(img_id, x, y, w, h, client);
+    api->cropImage(img_id, client);
   } else if (path == "createsettingsprofile") {
     // Profile::ID newId		 = api->db().newProfileId();
 

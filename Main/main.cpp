@@ -1,7 +1,7 @@
 #include "include/algorithm_manager.h"
 #include "include/algorithms/fluro1.h"
 #include "include/algorithms/normal1.h"
-#include "include/algorithms/plate.h"
+#include "include/algorithms/plate1.h"
 #include "include/api_controller.h"
 #include "include/database.hpp"
 #include "include/requestmapper.h"
