@@ -27,6 +27,8 @@ class Normal1 : public Algorithm {
   void drawText(cv::Mat& img, cv::Mat& output,
                 std::vector<cv::Vec3f>& colonies);
 
+  static void safetyMargin(AlgorithmJob* base, DetectionResult* result);
+
  private:
 };
 }  // namespace c3picko

@@ -21,7 +21,8 @@ cv::Mat& AlgorithmResult::newMat(cv::Mat const& copy_from) {
 }
 
 cv::Mat& AlgorithmResult::oldMat() {
-  Q_ASSERT(stack_.size() && stack_.back());
+  if (!stack_.size() || !stack_.back())
+    throw Exception("Assertion failure: Stack empty");
   return *stack_.back();
 }
 

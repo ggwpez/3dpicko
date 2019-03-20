@@ -1,5 +1,5 @@
 {
-    "default_plate": "305",
+    "default_plate": "304",
     "default_printer": "302",
     "default_socket": "303",
     "deleted_images": {
@@ -75,11 +75,11 @@
             "settings": {
                 "a1_column_offset": 14.300000190734863,
                 "a1_row_offset": 11.199999809265137,
-                "culture_medium_thickness_master_plate": 8,
-                "culture_medium_thickness_source_plate": 8,
+                "culture_medium_thickness_master_plate": 7,
+                "culture_medium_thickness_source_plate": 7,
                 "height_goal_plate": 15.5,
                 "height_master_plate": 14.5,
-                "height_source_plate": 14.5,
+                "height_source_plate": 16.5,
                 "number_of_columns": 12,
                 "number_of_rows": 8,
                 "well_depth": 15.5,

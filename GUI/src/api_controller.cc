@@ -12,8 +12,8 @@
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QMetaMethod>
-#include <QRandomGenerator64>
 
+#include <random>
 using namespace c3picko::pi;
 namespace c3picko {
 APIController::APIController(AlgorithmManager* colony_detector,
@@ -137,20 +137,26 @@ void APIController::UploadImage(Image image, QObject* client) {
       emit OnImageCreateError(
           "Internal Error: Algorithm not found (" + aid + ")", client);
     else {
-      connect(ajob, &AlgorithmJob::OnAlgoSucceeded, client,
-              [this, client, image, ajob, result] {
-                Image cropped(*result->stack().back(), image.originalName(),
-                              image.description(), image.uploaded());
+      connect(
+          ajob, &AlgorithmJob::OnAlgoSucceeded, client,
+          [this, client, image, ajob, result] {
+            cv::Mat* mat;
+            if (result->stack().empty() || !(mat = result->stack().back())) {
+              emit OnImageCreateError("Assertion failure", client);
+              return;
+            }
+            Image cropped(*mat, image.originalName(), image.description(),
+                          image.uploaded());
 
-                if (!cropped.writeToFile()) {
-                  emit OnImageCreateError(cropped.id(), client);
-                } else {
-                  db_->images().add(cropped.id(), cropped);
+            if (!cropped.writeToFile()) {
+              emit OnImageCreateError(cropped.id(), client);
+            } else {
+              db_->images().add(cropped.id(), cropped);
 
-                  emit this->OnImageCreated(cropped, client);
-                  qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
-                }
-              });
+              emit this->OnImageCreated(cropped, client);
+              qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
+            }
+          });
       connect(ajob, &AlgorithmJob::OnAlgoFailed, client,
               [this, result, client] {
                 emit OnImageCreateError(result->stageError(), client);
@@ -220,14 +226,14 @@ void APIController::cropImage(Image::ID id, QObject* client) {
     // Is the cropped image valid?
     if (!original.crop(x, y, w, h, cropped, error))
     {
-                                    emit OnImageCropError(id, client); // TODO
-    inform client return;
+                                                                    emit
+    OnImageCropError(id, client); // TODO inform client return;
     }
 
     if (!cropped.writeToFile()) // save cropped image to the hdd
     {
-                                    emit OnImageCreateError("<cropped>",
-    client); return;
+                                                                    emit
+    OnImageCreateError("<cropped>", client); return;
     }
 
     db_->images().add(cropped.id(), cropped);
@@ -343,7 +349,7 @@ void APIController::setColoniesToPick(Job::ID id, quint32 number,
       for (std::size_t i = 0; i < all_colonies.size(); ++i)
         if (!all_colonies[i].excluded()) included.push_back(i);
 
-      QRandomGenerator64 ran(456);  // constant seed for determinism
+      std::mt19937_64 mt(123);  // constant seed for determinism
       int max_good = number;
       Q_ASSERT(max_good);
 
@@ -354,7 +360,7 @@ void APIController::setColoniesToPick(Job::ID id, quint32 number,
       }
 
       while (max_good--) {
-        int index = ran.bounded(quint32(included.size() - 1));
+        int index = std::uniform_int_distribution<>(0, included.size() - 1)(mt);
 
         good_colonies.insert(all_colonies[included[index]].id());
         included.erase(included.begin() + index);

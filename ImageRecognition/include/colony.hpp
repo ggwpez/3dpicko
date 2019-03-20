@@ -31,6 +31,8 @@ class Colony {
   bool excluded() const;
   AlgoSetting::ID excludedBy() const;
 
+  void setExcluded_by(const AlgoSetting::ID& excluded_by);
+
  private:
   /**
    * @brief Center X position relative to the image size. Value in interval

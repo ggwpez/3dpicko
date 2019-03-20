@@ -54,6 +54,10 @@ bool Colony::excluded() const { return !excluded_by_.isEmpty(); }
 
 AlgoSetting::ID Colony::excludedBy() const { return excluded_by_; }
 
+void Colony::setExcluded_by(const AlgoSetting::ID& excluded_by) {
+  excluded_by_ = excluded_by;
+}
+
 double Colony::brightness() const { return brightness_; }
 
 }  // namespace c3picko

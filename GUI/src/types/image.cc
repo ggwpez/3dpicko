@@ -159,7 +159,8 @@ Image::ID Image::calculateId(cv::Mat const& image) {
   std::vector<char> data;  // TODO this is not gud
   for (int i = 0; i < image.rows; ++i)
     data.insert(data.end(), image.ptr<uint8_t>(i),
-                            image.ptr<uint8_t>(i) + image.cols);
+                                                    image.ptr<uint8_t>(i) +
+  image.cols);
 
   hasher.addData(data.data(), data.size());
   return hasher.result().toHex();*/
