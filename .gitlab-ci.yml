@@ -17,6 +17,8 @@ dependencies:linux:
     - sudo bash opencv.sh
     - mkdir -p ~/.ssh/
     - sudo ssh-keyscan gitlab.com > ~/.ssh/known_hosts
+    - git config --global user.email "gitlab@spam.tasty.limo"
+    - git config --global user.name "Commitbot"
   except:
     - /^.*-format$/
 
