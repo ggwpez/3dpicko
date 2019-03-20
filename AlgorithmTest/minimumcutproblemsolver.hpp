@@ -33,14 +33,14 @@ class MinimumCutProblemSolver {
   const std::vector<Colony> colonies_;
   const std::vector<Node> nodes_;
 
-  std::tuple<int, std::vector<Node>, int> SolveGreedyMax(int h, std::vector<Node> binary_heap);
-  std::tuple<int, std::vector<Node>, int> SolveGreedyMin(int h, std::vector<Node> binary_heap);
-  std::tuple<int, std::vector<Node>> SolveRandomBetweenMinAndMax(int h, std::vector<Node> binary_heap, const int max_number_of_collisions, const int min_number_of_collisions, const std::mt19937& rng);
+  std::tuple<int, std::vector<Node>> SolveGreedyMax(int h, std::vector<Node> binary_heap);
+  std::tuple<int, std::vector<Node>> SolveGreedyMin(int h, std::vector<Node> binary_heap);
+  std::tuple<int, std::vector<Node>> SolveRandomBetweenMinAndMax(int h, std::vector<Node> binary_heap, const std::mt19937& rng);
 
   void ExpandCurrentState(std::vector<Node>& old_state, std::function<bool(const Node& node1, const Node& node2)> cmp);
-  int EvaluateGreedyMax(std::vector<Node>& current_state, int& h);
-  int EvaluateGreedyMin(std::vector<Node>& current_state, int& h);
-  void EvaluateRandomBetweenMinAndMax(std::vector<Node>& current_state, int& h, const int min_number_of_collisions, const int max_number_of_collisions, const std::mt19937& rng);
+  void EvaluateGreedyMax(std::vector<Node>& current_state, int& h);
+  void EvaluateGreedyMin(std::vector<Node>& current_state, int& h);
+  void EvaluateRandomBetweenMinAndMax(std::vector<Node>& current_state, int& h, const std::mt19937& rng);
 
   std::vector<Node> MapColoniesToNodes(const std::vector<Colony>& colonies);
   std::vector<Colony> MapNodesToColonies(const std::vector<Node>& nodes_solution);
