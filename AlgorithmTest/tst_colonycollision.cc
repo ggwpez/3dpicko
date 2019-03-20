@@ -69,8 +69,6 @@ void ColonyCollision::test_case1() {
     if (result.size() !=
         solutions_[i]
             .min_num_)  // TODO build server does not link against QTest
-      throw QException("Algorithm removed more colonies than needed (" +
-                       QString::number(result.size()) + " vs " +
-                       QString::number(solutions_[i].min_num_));
+      throw QException();
   }
 }
