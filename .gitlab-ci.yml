@@ -12,11 +12,11 @@ dependencies:linux:
     - whoami
     - uname -a
     - lsb_release -a
-    - sudo apt update -qq
-    - sudo apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config
-    - sudo bash opencv.sh
+    #- sudo apt update -qq
+    #- sudo apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config
+    #- sudo bash opencv.sh
     - mkdir -p ~/.ssh/
-    - sudo ssh-keyscan gitlab.com > ~/.ssh/known_hosts
+    - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
     - git config --global user.email "gitlab@spam.tasty.limo"
     - git config --global user.name "Commitbot"
   except:
