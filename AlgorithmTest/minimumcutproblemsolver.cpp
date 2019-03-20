@@ -140,10 +140,10 @@ std::vector<c3picko::Colony> c3picko::MinimumCutProblemSolver::MapNodesToColonie
 
 void c3picko::MinimumCutProblemSolver::UpdateNodesNeighbours(
     c3picko::Node& node, std::vector<Node>& current_state) {
-  auto lambda = [&](Node & neighbour) {
+  auto lambda = [&node, &current_state](std::pair<int, Node*> neighbour) {
     for (int i = 0; i < current_state.size(); ++i) {
       Node& current_node = current_state.at(i);
-      if (neighbour.index() == current_node.index()) {
+      if (neighbour.first == current_node.index()) {
         current_node.neighbours().erase(node.index());
         break;
       }
