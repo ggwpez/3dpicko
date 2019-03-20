@@ -19,7 +19,6 @@ dependencies:linux:
     - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
     - git config --global user.email "gitlab@spam.tasty.limo"
     - git config --global user.name "Commitbot"
-    - export GIT_SSH_COMMAND="ssh -i ~/.ssh/gitlab"
   except:
     - /^.*-format$/
 
@@ -57,7 +56,9 @@ check:linux:
 format:linux:
   stage: format
   script:
+    - clang-format --version
     - git remote set-url origin git@gitlab.com:ggwpez/3cpicko.git
+    - export GIT_SSH_COMMAND="ssh -i ~/.ssh/gitlab"
     - git branch -D `echo $CI_COMMIT_REF_NAME-format` || true
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\|hpp\|cpp\)' -exec clang-format -style=file -i {} \;
