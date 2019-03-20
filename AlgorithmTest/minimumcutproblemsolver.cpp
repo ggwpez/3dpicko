@@ -92,7 +92,7 @@ std::tuple<int, std::vector<c3picko::Node>> c3picko::MinimumCutProblemSolver::So
   return std::make_tuple(i, binary_heap);
 }
 
-std::vector<c3picko::Node> c3picko::MinimumCutProblemSolver::ExpandCurrentState(std::vector<Node>& old_state, std::function<bool(const Node&, const Node&)> cmp) {
+void c3picko::MinimumCutProblemSolver::ExpandCurrentState(std::vector<Node>& old_state, std::function<bool(const Node&, const Node&)> cmp) {
   std::make_heap(old_state.begin(), old_state.end(), cmp);
 }
 
