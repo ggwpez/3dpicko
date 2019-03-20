@@ -59,7 +59,7 @@ format:linux:
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\|hpp\|cpp\)' -exec clang-format -style=file -i {} \;
     - find . -name '*\.html' -type f -exec xmllint --html --output '{}' --format '{}' \;
-    - git diff --exit-code || (git add -u && git commit -m"=Auto formatting=" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
+    - git diff --quiet --exit-code || (git add -u && git commit -m"=Auto formatting=" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
   except:
     - /^.*-format$/
 
