@@ -49,7 +49,11 @@ $(function Setup()
                 // $('#overlay').hide();
                 EnableDropzone();
                 // TODO
-                if(data.uploadimage=="") ShowAlert("Upload failed.<br>Maybe Image already exists.", "danger");
+                if('uploadimage' in data) ShowAlert("Upload failed.<br>Maybe Image already exists.", "danger");
+                else if('crop-image' in data){
+                    ShowAlert("Can't detect border.<br>Original image will be used.", "danger");
+                    document.getElementById('enter-selection-button').disabled = false;
+                }
                 else ShowAlert(JSON.stringify(data), "danger");
             }
             else if (type == "getimagelist")
@@ -168,6 +172,7 @@ $(function Setup()
             else if (type == "crop-image"){
                 AddImageToList(data);
                 chosen_image = data;
+                document.getElementById('enter-selection-button').disabled = false;
             }
             else if (type == "setcoloniestopick"){
                 // job: id, indices: array 
@@ -376,37 +381,19 @@ function tabEnter(tabId)
     $("#" +tabOrder[tabId] +"-tab").tab('show');
 }
 
-var cropper;
 //Navigation
 $('#steps').on('shown.bs.tab', function () {
     // TODO disable/enable button, only execute if disabled
     $('.next-step').html('Continue');
 })
-$('#cut-tab').on('shown.bs.tab', function () {
-    let cutImg = document.getElementById('cutImg');
-    cropper = new Cropper(cutImg, {
-        aspectRatio: 1.5/1,
-        movable: false,
-        zoomable: false
-    });
-});
-function cutTab(){
-    if(chosen_image.path){
-        const cutImg = document.getElementById('cutImg');
-        cutImg.onload = function(){
-            tabEnter(1);
-        }
-        cutImg.src = chosen_image.path;
-    }
-}
 
 function attributesTab(){
     tabEnter(2);
     document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
     document.getElementById('date-attribute').innerHTML = new Date().toLocaleDateString();
-    // Do the cutting
-    var rect = cropper.getData();
-    api('crop-image', { id: chosen_image.id, x: rect.x, y: rect.y, width: rect.width, height: rect.height });
+    // detect frame
+    api('crop-image', { id: chosen_image.id });
+    document.getElementById('enter-selection-button').disabled = true;
 }
 $('#selection-tab').on('shown.bs.tab', function () {
     selectionTabEnter();
@@ -494,12 +481,12 @@ function overviewTab(selected_colonies){
         // TODO onclick resize
         document.getElementById('processed-layer0').src = canvas_layer0.toDataURL();
         document.getElementById('processed-layer1').src = canvas_layer1.toDataURL();
+        // <li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
+        // <li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
         const html = `
         <ul class="mt-2">
         <li>Date: ${new Date().toLocaleDateString()}</li>
         <li>Job name: ${current_job.name}</li>
-        <li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
-        <li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
         <li>Plate: ${all_profiles[plate_id].profile_name}</li>
         <li>Description: ${current_job.description}</li>
         <li>Number of detected colonies: ${number_of_colonies}</li>
