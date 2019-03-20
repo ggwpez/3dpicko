@@ -166,7 +166,7 @@ void findConnectedComponentEdges(cv::Mat const& input,
   for (std::size_t i = 0; i < components.size(); ++i) {
     std::vector<cv::Point> hull;
     cv::convexHull(components[i], hull, true);
-    double eps = .01 * cv::arcLength(hull, true);
+    double eps = .005 * cv::arcLength(hull, true);
     cv::approxPolyDP(hull, contours[i], eps, true);
   }
 }
