@@ -71,5 +71,3 @@ document:linux:
   stage: document
   script:
     - doxygen Doxyfile
-  except:
-    - /^.*-format$/
