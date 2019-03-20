@@ -9,8 +9,6 @@
 namespace c3picko {
 class Colony;
 
-enum EvaluationPolicy { kGreedyMax, kGreedyMin, kRandomBetweenMinAndMax };
-
 class Node {
  public:
   Node(const std::unordered_map<int, Node*>& neighbours);
