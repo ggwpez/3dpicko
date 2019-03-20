@@ -39,7 +39,7 @@ class MinimumCutProblemSolver {
   std::tuple<int, std::vector<Node>, int> SolveGreedyMin(int h, std::vector<Node> binary_heap);
   std::tuple<int, std::vector<Node>> SolveRandomBetweenMinAndMax(int h, std::vector<Node> binary_heap, const int max_number_of_collisions, const int min_number_of_collisions, const std::mt19937& rng);
 
-  std::vector<Node> ExpandCurrentState(std::vector<Node>& old_state, std::function<bool(const Node& node1, const Node& node2)> cmp);
+  void ExpandCurrentState(std::vector<Node>& old_state, std::function<bool(const Node& node1, const Node& node2)> cmp);
   int EvaluateGreedyMax(std::vector<Node>& current_state, int& h);
   int EvaluateGreedyMin(std::vector<Node>& current_state, int& h);
   void EvaluateRandomBetweenMinAndMax(std::vector<Node>& current_state, int& h, const int min_number_of_collisions, const int max_number_of_collisions, const std::mt19937& rng);
