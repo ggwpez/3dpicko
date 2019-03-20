@@ -1,3 +1,4 @@
+// TODO subclasses colony and well
 class Circle{
     constructor(options){
         this.options = options;
@@ -50,27 +51,29 @@ class Circle{
         let context = ctx || this.options.canvas.getContext('2d');
 
         context.beginPath();
-        context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
-        if(this.options.background){
-            context.fillStyle = this.options.background;
-            context.fill();
-        }
-
         context.lineWidth = line_width || 2;
         context.strokeStyle = this.options.linecolor;
-        context.stroke();
+        if(!this.options.excluded_by || this.options.excluded_by == ""){
+            context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
+            if(this.options.background){
+                context.fillStyle = this.options.background;
+                context.fill();
+            }
+            context.stroke();
+        }
+        else{
+            // cross out colony
+            context.lineWidth = line_width || 1;
+            // 0.71 = sin(45deg)...
+            let offset = 0.71 * this.options.radius;
+            context.moveTo(this.options.x+offset, this.options.y+offset);
+            context.lineTo(this.options.x-offset, this.options.y-offset);
+            context.moveTo(this.options.x-offset, this.options.y+offset);
+            context.lineTo(this.options.x+offset, this.options.y-offset);
+            context.stroke();
+        }
 
         return this;
-    }
-
-    eraseBorder(){
-        let context = this.options.canvas.getContext('2d');
-        context.globalCompositeOperation = 'destination-out';
-        context.beginPath();
-        context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
-        context.lineWidth = 2.5;
-        context.stroke();     
-        context.globalCompositeOperation = 'source-over';   
     }
 
     getRadius(){

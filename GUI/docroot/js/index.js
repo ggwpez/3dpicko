@@ -7,8 +7,6 @@ var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
 var all_profiles = {};
-var algorithms;
-var algorithm_settings_values = {};
 var default_profiles = {
     "printer-profile": "",
     "socket-profile": "",
@@ -22,7 +20,6 @@ var global_alert = $('#global-alert');
 var alert_window = $('#alert-window');
 
 var connected = false;
-var changed_settings = {id:'', value: false, processed: true};
 
 $(function Setup()
 {
@@ -163,13 +160,6 @@ $(function Setup()
             else if (type == "getpositions")
             {
                 updatePositions(data);
-                clearTimeout(loading_timeout_id);
-                document.body.classList.remove('wait');
-                                
-                if(changed_settings.value){
-                    UpdateDetectionSettings(changed_settings.id);
-                    changed_settings.value = false;
-                } else changed_settings.processed = true;
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
@@ -199,180 +189,6 @@ $(function Setup()
             connected = false;
         });
 });
-
-function GetDetectionAlgorithms(detection_algorithms){
-    algorithms = detection_algorithms;
-    // TODO Remove (only for debugging)
-    /*algorithms["321"] = {
-        name: "Fluro",
-        description: "Good for detecting fluorescent colonies",
-        settings:[{
-            id: "slider_1",
-            name: "Threshold 1",
-            type: "rangeslider",
-            min: 0,
-            max: 1000,
-            step: 0.1,
-            defaultValue: {min: 1, max: 30},
-            description: ""
-        },
-        {
-            id: "checkbox_1",
-            name: "Erode & Dilate",
-            type: "checkbox",
-            defaultValue: true,
-            description: "",
-            conditional_settings:[{
-                id: "checkbox_1_1",
-                name: "Erode & Dilate 2",
-                type: "checkbox",
-                defaultValue: false,
-                description: "Only visible if Erode & Dilate is true"
-            },
-            {
-                id: "slider_1_1",
-                name: "Erode & Dilate 3",
-                type: "rangeslider",
-                min: 0,
-                max: 1000,
-                step: 0.1,
-                defaultValue: {min: 1, max: 300},
-                description: "Only visible if E&D is true"
-            },
-            {
-                id: "checkbox_1_2",
-                name: "Erode & Dilate",
-                type: "checkbox",
-                defaultValue: false,
-                description: "",
-                conditional_settings:[{
-                    id: "checkbox_1_2_1",
-                    name: "Erode & Dilate 2",
-                    type: "checkbox",
-                    defaultValue: false,
-                    description: "Only visible if Erode & Dilate is true"
-                },
-                {
-                    id: "slider_1_2_1",
-                    name: "Erode & Dilate 3",
-                    type: "rangeslider",
-                    min: 0,
-                    max: 1000,
-                    step: 0.1,
-                    defaultValue: {min: 1, max: 300},
-                    description: "Only visible if E&D is true"
-                }]
-            }]
-        }]
-    };
-    algorithms["423"] = {
-        name: "Fluro 2",
-        description: "Good for detecting more fluorescent colonies",
-        settings:[{
-            id: "ft",
-            "defaultValue":"1",
-            "description":"lel",
-            "name":"Filter Type",
-            "options":
-            {
-                "0":"Option A",
-                "1":"Option B",
-                "lol":"Option V"
-            },
-            "type":"dropdown"
-        },
-        {
-            id: "1234",
-            name: "Thres",
-            type: "number",
-            valueType: "float",
-            min: -10,
-            max: 10,
-            step: 1,
-            defaultValue: 1,
-            description: "Hi this is very descriptive"
-        },
-        {
-            id: "123",
-            name: "Zahl",
-            type: "slider",
-            valueType: "float",
-            min: -10,
-            max: 10,
-            step: 1,
-            defaultValue: 1,
-            description: ""
-        }
-        ]
-    };*/
-
-    const algorithm_selection = document.getElementById("select-algorithm");
-    while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
-
-    for (let id in algorithms){
-        let algorithm = algorithms[id];
-        let algorithm_option = document.createElement('option');
-        algorithm_option.value = id;
-        algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
-        algorithm_option.title = algorithm.description;
-        algorithm_selection.appendChild(algorithm_option);
-        CreateDetectionAlgorithmSettings(id);
-    }
-    algorithm_selection.onchange = function(){$('#'+this.value+'-settings').collapse('show');UpdateDetectionSettings(this.value)};
-}
-
-function CreateDetectionAlgorithmSettings(id){
-    const detection_settings = document.getElementById("detection-settings");
-    // while (detection_settings.firstChild) detection_settings.removeChild(detection_settings.firstChild);
-
-    let html = `<div id="${id}-settings" class="collapse" data-parent="#detection-settings">
-    <form id="${id}-settings-form">
-    `;
-    let settings = new FormGroup(algorithms[id], id+"-settings-form");
-    html += settings.getHtml()+`<button type="reset" class="btn btn-primary btn-sm w-100 mt-1">Reset to Default Values</button></form></div>`;
-    detection_settings.insertAdjacentHTML("beforeend", html);
-    settings.AddInputEvents();
-    FormGroup.AddFormEvents(id+"-settings-form");
-    $('#'+id+'-settings-form').change(function(){
-        if(changed_settings.processed){
-            UpdateDetectionSettings(id);
-            changed_settings.processed = false;  
-        }
-        else{
-            changed_settings.id = id;
-            changed_settings.value = true;
-        }
-    });
-}
-var loading_timeout_id;
-var UpdateDetectionSettings = function (id){
-    // Send as:
-    // {
-    //  job_id: "222",
-    //  algorithm: "321",
-    //  settings:
-    //  {
-    //      "1234": 6,
-    //      "123": true
-    //  }
-    // }
-    document.body.classList.add('wait');
-    let form = document.getElementById(id+'-settings-form');
-    clearTimeout(loading_timeout_id);
-    loading_timeout_id = setTimeout(function(){
-        document.body.classList.remove('wait');
-        ShowAlert("Colony Detection Timeout", "danger");
-    }, 4000);
-    const form_data = new FormData(form);
-    const algorithm_id = document.getElementById('select-algorithm').value;
-    algorithm_settings_values[algorithm_id] = {
-        job_id : current_job.id,
-        algorithm: algorithm_id,
-        settings: FormGroup.ReadForm(algorithms[algorithm_id], form_data)
-    };
-    console.log("Update Settings:", algorithm_settings_values[algorithm_id]);
-    api('updatedetectionsettings', algorithm_settings_values[algorithm_id]);
-}
 
 function AddJobToList(job)
 {
@@ -627,6 +443,7 @@ function strategyTab(){
         }
     }
     if(plate_selection.length > 0){
+        SetColoniesToPick();
         plate_selection.onchange = function(){
             let plate_id = this.options[this.selectedIndex].value;
             let plate = all_profiles[plate_id];
@@ -660,7 +477,6 @@ function strategyTab(){
             updateWells(max_colonies);
         };
         plate_selection.onchange();
-        SetColoniesToPick();
         tabEnter(4);
     }
 }

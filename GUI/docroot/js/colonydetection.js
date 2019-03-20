@@ -1,16 +1,4 @@
 /*
-Zu tun:
-hohe Prio:
-	starte Kolonieerkennung.
-	gebe Daten weiter.
-niedrige Prio:
-	automatisch die größe Anpassen
-	passe Kreisgröße auf Durchschnitt von erkannten Kolonien an.
-	ziehe umrandung für die echte clickArea und füge Punkte hinzu.
-	erkenne Farbe und invertiere sie für die Kreise.
-    */
-
-/*
 Infos:
 Größe Petrischale:
 127,5 x 85
@@ -22,8 +10,11 @@ var layer0 = {}, layer1 = {}, layer2 = { };
 // Array of colonies. See ImageRecognition/include/Colony.hpp
 var colony_array = [];
 var number_of_colonies = 0;
-
-// React to clicks inside of drawArea
+let excluded_by_user = new Map(), included_by_user = new Map();
+let excluded_colonies = new Map(), included_colonies = new Map();
+let included_by_server;
+var algorithms;
+var changed_settings = {id:'', changed_algorithm: false, new_request: false, processed: true};
 
 // fit size of canvas to window (max: image-size)
 function resizeCanvas(img) {
@@ -55,7 +46,7 @@ function resizeCanvas(img) {
     
     // fix width
     // TODO enable resizing?
-    $('#selection').css('min-width', this.width);
+    $('#selection').css('min-width', $('#layer_parent').width()+$('#detection-settings-div').width());
 }
 
 // colony detection
@@ -126,7 +117,6 @@ function selectionTabEnter()
     layer2.canvas.onmousedown = (e) =>
     {
         e.preventDefault();
-        // TODO include/exclude colonies
         for(let colony of included_colonies.values()){
             if(colony.mouseover){
                 colony.exclude();
@@ -193,9 +183,6 @@ function removeUnselectedColonies(indices)
     printPositions();
 }
 
-let excluded_by_user = new Map(), included_by_user = new Map();
-let excluded_colonies = new Map(), included_colonies = new Map();
-
 function updatePositions(coords)
 {
     colony_array = coords.colonies;
@@ -208,12 +195,8 @@ function updatePositions(coords)
         
         let color = '#FFFFFF';
         if(colony.excluded_by != ""){
-            // TODO build lookup table
-            const found = algorithms["1"].settings.filter(s => (s.id == colony.excluded_by));
-            if (found && found.length)
-                color = found[0].color;
-            else
-                console.warn("Could not find setting ", colony.excluded_by);
+            if(excluded_colonies.has(hash)) console.log(colony);
+            color = settings_color[changed_settings.id][colony.excluded_by] || 'grey';
             excluded_colonies.set(hash, new Circle({
                 id: index,
                 x: colony.x * layer1.canvas.width,
@@ -228,6 +211,7 @@ function updatePositions(coords)
             }));
         }
         else{
+            if(included_colonies.has(hash)) console.log(colony);
             included_colonies.set(hash, new Circle({
                 id: index,
                 x: colony.x * layer1.canvas.width,
@@ -243,6 +227,9 @@ function updatePositions(coords)
         }
     });
 
+    included_by_server = included_colonies.size;
+    if(changed_settings.changed_algorithm) SetColoniesToPick();
+
     excluded_by_user.forEach((value, key) => {
         included_colonies.delete(key);
         excluded_colonies.set(key, value);  
@@ -253,6 +240,15 @@ function updatePositions(coords)
     });
 
     printPositions();
+
+    clearTimeout(loading_timeout_id);
+    document.body.classList.remove('wait');
+    
+    changed_settings.processed = true;
+    if(changed_settings.new_request){
+        UpdateDetectionSettings(changed_settings.id);
+        changed_settings.new_request = false;
+    }
 }
 // Print colonies
 var show_excluded = false;
@@ -289,16 +285,26 @@ function UpdateNumberOfColonies(){
 }
 
 function SetColoniesToPick(){
-    // TODO update number of colonies?
     let excluded_user = [], included_user = [];
+    let included = new Map(), excluded = new Map();
     colony_array.forEach((colony, index) => {
         let hash = colony.x+','+colony.y;
-        if(colony.excluded_by == "" && excluded_colonies.has(hash)) excluded_user.push(index);
-        else if(included_colonies.has(hash) && colony.excluded_by != "") included_user.push(index);
+        if(colony.excluded_by == "" && excluded_by_user.has(hash)){
+            excluded_user.push(index);
+            excluded.set(hash, excluded_by_user.get(hash));
+        }
+        else if(included_by_user.has(hash) && colony.excluded_by != "" && !included.has(hash)){
+            included_user.push(index);
+            included.set(hash, included_by_user.get(hash));   
+        }
     });
+    included_by_user = included;
+    excluded_by_user = excluded;
+    number_of_colonies = included_by_server - excluded_by_user.size /*TODO add colonies backend + included_by_user.size*/;
     document.getElementById('enter-overview-button').onclick = function(){
-        api('setcoloniestopick',{'job': current_job.id, 'excluded_user': excluded_user, 'included_user': included_user,'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
+        api('setcoloniestopick',{'job': current_job.id, 'ex_user': excluded_user, 'in_user': included_user,'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
     }
+    return number_of_colonies;
 }
 
 function drawTooltip(colony){
@@ -335,4 +341,86 @@ function drawTooltip(colony){
         layer2.context.fillText(line, tooltip_pos.x+10, tooltip_pos.y+y_offset);
         y_offset += 16; // line-height
     });
+}
+
+let settings_color = {};
+function GetDetectionAlgorithms(detection_algorithms){
+    algorithms = detection_algorithms;
+
+    const algorithm_selection = document.getElementById("select-algorithm");
+    while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
+
+    for (let id in algorithms){
+        let algorithm = algorithms[id];
+        // create color lookup table
+        settings_color[id] = {};
+        for(let setting of algorithm.settings){
+            settings_color[id][setting.id] = setting.color;
+        }
+        let algorithm_option = document.createElement('option');
+        algorithm_option.value = id;
+        algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
+        algorithm_option.title = algorithm.description;
+        algorithm_selection.appendChild(algorithm_option);
+        CreateDetectionAlgorithmSettings(id);
+    }
+    changed_settings.id = algorithm_selection.value;
+    algorithm_selection.onchange = function(){
+        $('#'+this.value+'-settings').collapse('show');
+        UpdateDetectionSettings(this.value)
+    };
+}
+
+function CreateDetectionAlgorithmSettings(id){
+    const detection_settings = document.getElementById("detection-settings");
+    
+    let html = `<div id="${id}-settings" class="collapse" data-parent="#detection-settings">
+    <form id="${id}-settings-form">
+    `;
+    let settings = new FormGroup(algorithms[id], id+"-settings-form");
+    html += settings.getHtml()+`<button type="reset" class="btn btn-primary btn-sm w-100 mt-1">Reset to Default Values</button></form></div>`;
+    detection_settings.insertAdjacentHTML("beforeend", html);
+    settings.AddInputEvents();
+    FormGroup.AddFormEvents(id+"-settings-form");
+    $('#'+id+'-settings-form').change(function(){
+        UpdateDetectionSettings(id);
+    });
+}
+var loading_timeout_id;
+var UpdateDetectionSettings = function (id){
+    // Send as:
+    // {
+    //  job_id: "222",
+    //  algorithm: "321",
+    //  settings:
+    //  {
+    //      "1234": 6,
+    //      "123": true
+    //  }
+    // }
+    if(changed_settings.processed){
+        document.body.classList.add('wait');
+        let form = document.getElementById(id+'-settings-form');
+        clearTimeout(loading_timeout_id);
+        loading_timeout_id = setTimeout(function(){
+            document.body.classList.remove('wait');
+            ShowAlert("Colony Detection Timeout", "danger");
+        }, 4000);
+        const form_data = new FormData(form);
+        const algorithm_id = document.getElementById('select-algorithm').value;
+        let new_settings = {
+            job_id : current_job.id,
+            algorithm: algorithm_id,
+            settings: FormGroup.ReadForm(algorithms[algorithm_id], form_data)
+        };
+        console.log("Update Settings:", new_settings);
+        api('updatedetectionsettings', new_settings);
+        changed_settings.processed = false;
+        changed_settings.changed_algorithm = changed_settings.id != id;
+        changed_settings.id = id;
+    }
+    else{
+        changed_settings.id = id;
+        changed_settings.new_request = true;
+    }
 }
