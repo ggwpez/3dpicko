@@ -4,18 +4,17 @@
 #include <limits>
 #include <random>
 
-c3picko::Node::Node(
-    const std::vector<std::shared_ptr<c3picko::Node>>& neighbours)
+c3picko::Node::Node(const std::unordered_map<int, Node*>& neighbours)
   : index_(neighbours.size()), neighbours_(neighbours) {}
 
-int c3picko::Node::NumberOfCollisions() { return neighbours_.size(); }
+int c3picko::Node::NumberOfCollisions() const { return neighbours_.size(); }
 
 std::unordered_map<int, c3picko::Node*> c3picko::Node::neighbours() {
   return neighbours_;
 }
 
 int c3picko::Node::index() const {
-
+  return index_;
 }
 
 c3picko::MinimumCutProblemSolver::MinimumCutProblemSolver(
@@ -62,7 +61,7 @@ std::tuple<int, std::vector<c3picko::Node>, int> c3picko::MinimumCutProblemSolve
   int i = 0;
   std::vector<int> number_of_collisions;
   while (h > 0) {
-    ExpandCurrentState(binary_heap, [](Node & node1, Node & node2) {return node1.NumberOfCollisions() > node2.NumberOfCollisions();});
+    ExpandCurrentState(binary_heap, [](const Node & node1, const Node & node2) {return node1.NumberOfCollisions() > node2.NumberOfCollisions();});
     number_of_collisions.push_back(EvaluateGreedyMax(binary_heap, h));
     ++i;
   }
@@ -74,7 +73,7 @@ std::tuple<int, std::vector<c3picko::Node>, int> c3picko::MinimumCutProblemSolve
   int i = 0;
   std::vector<int> number_of_collisions;
   while (h > 0) {
-    ExpandCurrentState(binary_heap, [](Node & node1, Node & node2) {return node1.NumberOfCollisions() < node2.NumberOfCollisions();});
+    ExpandCurrentState(binary_heap, [](const Node & node1, const Node & node2) {return node1.NumberOfCollisions() < node2.NumberOfCollisions();});
     number_of_collisions.push_back(EvaluateGreedyMin(binary_heap, h));
     ++i;
   }
@@ -85,8 +84,7 @@ std::tuple<int, std::vector<c3picko::Node>, int> c3picko::MinimumCutProblemSolve
 std::tuple<int, std::vector<c3picko::Node>> c3picko::MinimumCutProblemSolver::SolveRandomBetweenMinAndMax(int h, std::vector<Node> binary_heap, const int min_number_of_collisions, const int max_number_of_collisions, const std::mt19937& rng) {
   int i = 0;
   while (h > 0) {
-    auto cmp = [](Node & node1, Node & node2) -> bool{return node1.NumberOfCollisions() < node2.NumberOfCollisions();};
-    ExpandCurrentState(binary_heap, cmp);
+    ExpandCurrentState(binary_heap, [](const Node & node1, const Node & node2) {return node1.NumberOfCollisions() < node2.NumberOfCollisions();});
     EvaluateRandomBetweenMinAndMax(binary_heap, h, min_number_of_collisions, max_number_of_collisions, rng);
     ++i;
   }

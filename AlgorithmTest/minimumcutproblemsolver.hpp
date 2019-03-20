@@ -14,7 +14,7 @@ enum EvaluationPolicy { kGreedyMax, kGreedyMin, kRandomBetweenMinAndMax };
 class Node {
  public:
   Node(const std::unordered_map<int, Node*>& neighbours);
-  int NumberOfCollisions();
+  int NumberOfCollisions() const;
   std::unordered_map<int, Node*> neighbours();
   int index() const;
 
