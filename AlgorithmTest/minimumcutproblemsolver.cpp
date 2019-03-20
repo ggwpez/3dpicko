@@ -107,7 +107,7 @@ void c3picko::MinimumCutProblemSolver::EvaluateGreedyMin(std::vector<c3picko::No
 }
 
 void c3picko::MinimumCutProblemSolver::EvaluateRandomBetweenMinAndMax(std::vector<c3picko::Node>& current_state, int& h, const std::mt19937& rng) {
-  std::uniform_int_distribution<int> uni(1, current_state.size()); // guaranteed unbiased
+  std::uniform_int_distribution<int> uni(1, current_state.size() - 1); // guaranteed unbiased
   auto random_integer = uni(rng);
 
   for (int i = 0; i < random_integer; ++i)
