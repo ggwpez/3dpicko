@@ -56,9 +56,8 @@ class APIController : public QObject {
  public:
   void DeleteImage(Image::ID, QObject* client);
   void DeleteJob(Job::ID id, QObject* client);
-  void UploadImage(Image&, QObject* client);
-  void cropImage(Image::ID id, int x, int y, int w, int h,
-                 QObject* client);  // TODO make rect from (x,y,w,h)
+  void UploadImage(Image, QObject* client);
+  void cropImage(Image::ID id, QObject* client);
   void createSettingsProfile(Profile& prof_wo_id, QObject* client);
   void updateSettingsProfile(Profile& profile, QObject* client);
   void deleteSettingsProfile(Profile::ID id, QObject* client);

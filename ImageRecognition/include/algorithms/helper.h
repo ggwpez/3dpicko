@@ -37,7 +37,8 @@ struct Range {
         lower_closed_(lower_closed),
         upper_closed_(upper_closed) {}
 
-  inline bool contains(T const& value) {
+  template <typename S>
+  inline bool contains(S const& value) const {
     bool ok = !std::isnan(value);
 
     if (lower_closed_)
@@ -53,7 +54,10 @@ struct Range {
     return ok;
   }
 
-  inline bool excludes(T const& value) { return !contains(value); }
+  template <typename S>
+  inline bool excludes(S const& value) const {
+    return !contains(value);
+  }
 
   T lower_, upper_;
   short _pad;
@@ -87,13 +91,10 @@ bool LineLineIntersect(double x1, double y1,  // Line 1 start
 
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat);
 
-double calculateOuterRotation(OuterBorder const& cont, int a1, int h1);
 /**
  * @brief Compute A1 and H1 well positions.
  * @return The indices in outer_border
  */
-std::pair<int, int> findA1(OuterBorder const& outer_border,
-                           InnerBorder const& inner_border);
 cv::Point2d gravityCenter(cv::InputArray poly);
 
 /**
@@ -103,9 +104,15 @@ std::vector<Colony> filterByMinDistanceSlow(const std::vector<Colony>& colonies,
                                             const int r, const int d,
                                             const int min_dist);
 
+/**
+ * @brief Used for edge detection in the plate algorithm
+ */
+void findConnectedComponentEdges(const cv::Mat& input,
+                                 std::vector<std::vector<cv::Point>>& contours,
+                                 math::Range<int> const& area);
+
 void drawText(cv::Mat& output, cv::Point pos, QString string,
               cv::Scalar color = cv::Scalar::all(255));
-cv::Mat detectPlate2(cv::Mat original, cv::Mat erroded);
 }  // namespace math
 }  // namespace c3picko
 #include <QMetaType>

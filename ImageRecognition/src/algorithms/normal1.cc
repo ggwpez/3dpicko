@@ -16,9 +16,9 @@ Normal1::Normal1()
            (AlgoStep)Normal1::erodeAndDilate, (AlgoStep)Normal1::label /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
           {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
-                                                                          by
-              algorithm", "", true, {}, Qt::red),*/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
+                                                                                                                                          by
+                  algorithm", "", true, {}, Qt::red),*/
            AlgoSetting::make_rangeslider_double("area", "Area", "lel", 10, 2000,
                                                 1, {120, 1000}),
            AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
@@ -46,7 +46,7 @@ Normal1::Normal1()
 					"rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01,
 					{-5, 5})},
 			   Qt::red)*/},
-          true, 3000) {}
+          false, 3000) {}
 
 Normal1::~Normal1() {}
 
@@ -194,7 +194,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
     if (!label) {
       if (show_excluded)
         colonies.emplace_back(center.x / double(input.cols),
-                              center.y / double(input.rows), 0, 0, 10, 0, ++id,
+                              center.y / double(input.rows), 0, 0, 10, 0, id++,
                               "show_excluded_by_algo");
       continue;
     }
@@ -208,7 +208,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
     if (!_area.contains(area)) {
       colonies.emplace_back(center.x / double(input.cols),
                             center.y / double(input.rows), area, 0,
-                            std::sqrt(area / M_PI), 0, ++id, "area");
+                            std::sqrt(area / M_PI), 0, id++, "area");
       continue;
     }
     // Filter by roundness
@@ -220,7 +220,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
       if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h)))) {
         colonies.push_back(
             Colony(center.x / double(input.cols), center.y / double(input.rows),
-                   area, 0, std::sqrt(area / M_PI), 0, ++id, "aabb_ratio"));
+                   area, 0, std::sqrt(area / M_PI), 0, id++, "aabb_ratio"));
       }
 
       cv::Mat submat(input, cv::Rect(left, top, w, h));
@@ -234,7 +234,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
       if (!excluded_by.isEmpty())
         colonies.push_back(
             Colony(center.x / double(input.cols), center.y / double(input.rows),
-                   area, 0, std::sqrt(area / M_PI), 0, ++id, excluded_by));
+                   area, 0, std::sqrt(area / M_PI), 0, id++, excluded_by));
       else {
         double circ = cv::arcLength(contours[0], true);
 
@@ -244,7 +244,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
             contours[0], *reinterpret_cast<cv::Mat*>(base->input()));
         Colony detected(center.x / double(input.cols),
                         center.y / double(input.rows), area, circ,
-                        circ / (2 * M_PI), br, ++id, "");
+                        circ / (2 * M_PI), br, id++, "");
         colonies.push_back(detected);
       }
     }

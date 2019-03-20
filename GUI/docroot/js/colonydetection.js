@@ -1,16 +1,4 @@
 /*
-Zu tun:
-hohe Prio:
-	starte Kolonieerkennung.
-	gebe Daten weiter.
-niedrige Prio:
-	automatisch die größe Anpassen
-	passe Kreisgröße auf Durchschnitt von erkannten Kolonien an.
-	ziehe umrandung für die echte clickArea und füge Punkte hinzu.
-	erkenne Farbe und invertiere sie für die Kreise.
-    */
-
-/*
 Infos:
 Größe Petrischale:
 127,5 x 85
@@ -22,8 +10,11 @@ var layer0 = {}, layer1 = {}, layer2 = { };
 // Array of colonies. See ImageRecognition/include/Colony.hpp
 var colony_array = [];
 var number_of_colonies = 0;
-
-// React to clicks inside of drawArea
+let excluded_by_user = new Map(), included_by_user = new Map();
+let excluded_colonies = new Map(), included_colonies = new Map();
+let included_by_server;
+var algorithms;
+var changed_settings = {id:'', changed_algorithm: false, new_request: false, processed: true};
 
 // fit size of canvas to window (max: image-size)
 function resizeCanvas(img) {
@@ -40,10 +31,6 @@ function resizeCanvas(img) {
         down_scale = 1;
     }
 
-    // fix width
-    // TODO enable resizing?
-    $('#selection').css('min-width', width + document.getElementById('detection-settings-div').offsetWidth);
-
     console.log("Downscale factor: ", down_scale);
 
     layer0.canvas.width  = width; // in pixels
@@ -56,6 +43,10 @@ function resizeCanvas(img) {
     layer2.canvas.height = height; // in pixels
 
     layer0.context.drawImage(img, 0, 0, img.width, img.height, 0, 0, width, height);
+    
+    // fix width
+    // TODO enable resizing?
+    $('#selection').css('min-width', $('#layer_parent').width()+$('#detection-settings-div').width());
 }
 
 // colony detection
@@ -126,7 +117,6 @@ function selectionTabEnter()
     layer2.canvas.onmousedown = (e) =>
     {
         e.preventDefault();
-        // TODO include/exclude colonies
         for(let colony of included_colonies.values()){
             if(colony.mouseover){
                 colony.exclude();
@@ -163,23 +153,10 @@ function selectionTabEnter()
     document.getElementById('show-selected').onchange = function(){
         show_selected = this.checked;
         printPositions();
-        if(hide_colonies_button.checked){
-            $('#hide-colonies').click();
-            hide_colonies_button.checked = false;
-        }
     };
     document.getElementById('show-excluded').onchange = function(){
         show_excluded = this.checked;
         printPositions();
-        if(hide_colonies_button.checked){
-            $('#hide-colonies').click();
-            hide_colonies_button.checked = false;
-        }
-    };
-    hide_colonies_button.onchange = function(){
-        if(this.checked){
-            $('#layer1').hide();
-        } else $('#layer1').show();
     };
 }
 
@@ -193,21 +170,18 @@ function removeUnselectedColonies(indices)
         let colony = colony_array[parseInt(i)];
         let hash = colony.x+','+colony.y;
         included_colonies.set(hash, new Circle({
-                x: colony.x * layer1.canvas.width,
-                y: colony.y * layer1.canvas.height,
-                radius: colony.major_length * 1.25 * down_scale,
-                linecolor: 'white',
-                canvas: layer1.canvas,
-                hash: hash
-            }));
+            x: colony.x * layer1.canvas.width,
+            y: colony.y * layer1.canvas.height,
+            radius: colony.major_length * 1.25 * down_scale,
+            linecolor: 'white',
+            canvas: layer1.canvas,
+            hash: hash
+        }));
     });    
     show_selected = true;
     show_excluded = false;
     printPositions();
 }
-
-let excluded_by_user = new Map(), included_by_user = new Map();
-let excluded_colonies = new Map(), included_colonies = new Map();
 
 function updatePositions(coords)
 {
@@ -215,19 +189,16 @@ function updatePositions(coords)
     excluded_colonies = new Map();
     included_colonies = new Map();
     
-    colony_array.forEach((colony) =>
+    colony_array.forEach((colony, index) =>
     {
         let hash = colony.x+','+colony.y;
         
         let color = '#FFFFFF';
         if(colony.excluded_by != ""){
-            // TODO build lookup table
-            const found = algorithms["1"].settings.filter(s => (s.id == colony.excluded_by));
-            if (found && found.length)
-                color = found[0].color;
-            else
-                console.warn("Could not find setting ", colony.excluded_by);
+            if(excluded_colonies.has(hash)) console.log(colony);
+            color = settings_color[changed_settings.id][colony.excluded_by] || 'grey';
             excluded_colonies.set(hash, new Circle({
+                id: index,
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
@@ -235,11 +206,14 @@ function updatePositions(coords)
                 defaultLinecolor: color,
                 canvas: layer1.canvas,
                 excluded_by: colony.excluded_by,
+                area: colony.area,
                 hash: hash
             }));
         }
         else{
+            if(included_colonies.has(hash)) console.log(colony);
             included_colonies.set(hash, new Circle({
+                id: index,
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
@@ -247,14 +221,18 @@ function updatePositions(coords)
                 defaultLinecolor: color,
                 canvas: layer1.canvas,
                 excluded_by: "",
+                area: colony.area,
                 hash: hash
             }));
         }
     });
 
+    included_by_server = included_colonies.size;
+    if(changed_settings.changed_algorithm) SetColoniesToPick();
+
     excluded_by_user.forEach((value, key) => {
         included_colonies.delete(key);
-        excluded_colonies.set(key, value);
+        excluded_colonies.set(key, value);  
     });
     included_by_user.forEach((value, key) => {
         excluded_colonies.delete(key);
@@ -262,6 +240,15 @@ function updatePositions(coords)
     });
 
     printPositions();
+
+    clearTimeout(loading_timeout_id);
+    document.body.classList.remove('wait');
+    
+    changed_settings.processed = true;
+    if(changed_settings.new_request){
+        UpdateDetectionSettings(changed_settings.id);
+        changed_settings.new_request = false;
+    }
 }
 // Print colonies
 var show_excluded = false;
@@ -269,8 +256,7 @@ var show_selected = true;
 function printPositions(){
     layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
 
-    // TODO remove
-    number_of_colonies = included_colonies.size;
+    UpdateNumberOfColonies();
     
     // Print new positions
     if(show_excluded){
@@ -285,34 +271,66 @@ function printPositions(){
     }
 }
 
+function UpdateNumberOfColonies(){
+    number_of_colonies = included_colonies.size;
+    let number = $('#detected-colonies-number');
+    if(number.text() != number_of_colonies){
+        number.hide();
+        number.text(number_of_colonies);
+        number.fadeIn();
+    }
+    $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
+    return number_of_colonies;
+
+}
+
+function SetColoniesToPick(){
+    let excluded_user = [], included_user = [];
+    let included = new Map(), excluded = new Map();
+    colony_array.forEach((colony, index) => {
+        let hash = colony.x+','+colony.y;
+        if(colony.excluded_by == "" && excluded_by_user.has(hash)){
+            excluded_user.push(index);
+            excluded.set(hash, excluded_by_user.get(hash));
+        }
+        else if(included_by_user.has(hash) && colony.excluded_by != "" && !included.has(hash)){
+            included_user.push(index);
+            included.set(hash, included_by_user.get(hash));   
+        }
+    });
+    included_by_user = included;
+    excluded_by_user = excluded;
+    number_of_colonies = included_by_server - excluded_by_user.size /*TODO add colonies backend + included_by_user.size*/;
+    document.getElementById('enter-overview-button').onclick = function(){
+        api('setcoloniestopick',{'job': current_job.id, 'ex_user': excluded_user, 'in_user': included_user,'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
+    }
+    return number_of_colonies;
+}
+
 function drawTooltip(colony){
     layer2.context.clearRect(0, 0, layer1.canvas.width, layer1.canvas.height);
     layer2.context.font = "12px sans-serif";
     colony.draw(layer2.context, 3);
     const colony_pos = colony.getPosition();
-    let tooltip_pos = {x:colony_pos.x, y:colony_pos.y +colony.getRadius() *1.5, width: 10, height: 10};
+    let tooltip_pos = {x:colony_pos.x, y:colony_pos.y +colony.getRadius() *1.5, width: 10, height: 15};
 
-    let text = "Radius " + (Math.round(colony.getRadius() * 1000) / 1000);
+    let text = "Colony #"+colony.get('id')+"\nArea: " + (Math.round(colony.get('area') * 1000) / 1000);
     if(colony.get('excluded_by') != ""){
         text += "\nExcluded by " + colony.get('excluded_by');
     } 
     else if(colony.get('included_by')){ 
         text += "\nIncluded by " + colony.get('included_by');
-     }
+    }
 
     let lines = text.split("\n");
     lines.forEach(line =>{
-        console.log(line);
-        console.log(layer2.context.measureText(line));
         tooltip_pos.width = Math.max(tooltip_pos.width, layer2.context.measureText(line).width+20);
-        tooltip_pos.height += 20;
+        tooltip_pos.height += 16;
     });
     if(tooltip_pos.x + tooltip_pos.width > layer2.canvas.width) tooltip_pos.x -= tooltip_pos.x + tooltip_pos.width - layer2.canvas.width;  
     if(tooltip_pos.y + tooltip_pos.height > layer2.canvas.height) tooltip_pos.y = colony_pos.y - colony.getRadius()*1.5 - tooltip_pos.height;
     layer2.context.fillStyle = "white";
-    console.log("Width", tooltip_pos.width);
-    console.log("height", tooltip_pos.height);
-
+    
     layer2.context.fillRect(tooltip_pos.x, tooltip_pos.y, tooltip_pos.width, tooltip_pos.height);  
 
     layer2.context.fillStyle = "black";
@@ -320,8 +338,89 @@ function drawTooltip(colony){
     
     let y_offset = 10;
     lines.forEach(line =>{
-        console.log(line);
         layer2.context.fillText(line, tooltip_pos.x+10, tooltip_pos.y+y_offset);
         y_offset += 16; // line-height
     });
+}
+
+let settings_color = {};
+function GetDetectionAlgorithms(detection_algorithms){
+    algorithms = detection_algorithms;
+
+    const algorithm_selection = document.getElementById("select-algorithm");
+    while (algorithm_selection.firstChild) algorithm_selection.removeChild(algorithm_selection.firstChild);
+
+    for (let id in algorithms){
+        let algorithm = algorithms[id];
+        // create color lookup table
+        settings_color[id] = {};
+        for(let setting of algorithm.settings){
+            settings_color[id][setting.id] = setting.color;
+        }
+        let algorithm_option = document.createElement('option');
+        algorithm_option.value = id;
+        algorithm_option.text = `${algorithm.name} ${(algorithm.description&&algorithm.description!="")?`(${algorithm.description})`:``}`;
+        algorithm_option.title = algorithm.description;
+        algorithm_selection.appendChild(algorithm_option);
+        CreateDetectionAlgorithmSettings(id);
+    }
+    changed_settings.id = algorithm_selection.value;
+    algorithm_selection.onchange = function(){
+        $('#'+this.value+'-settings').collapse('show');
+        UpdateDetectionSettings(this.value)
+    };
+}
+
+function CreateDetectionAlgorithmSettings(id){
+    const detection_settings = document.getElementById("detection-settings");
+    
+    let html = `<div id="${id}-settings" class="collapse" data-parent="#detection-settings">
+    <form id="${id}-settings-form">
+    `;
+    let settings = new FormGroup(algorithms[id], id+"-settings-form");
+    html += settings.getHtml()+`<button type="reset" class="btn btn-primary btn-sm w-100 mt-1">Reset to Default Values</button></form></div>`;
+    detection_settings.insertAdjacentHTML("beforeend", html);
+    settings.AddInputEvents();
+    FormGroup.AddFormEvents(id+"-settings-form");
+    $('#'+id+'-settings-form').change(function(){
+        UpdateDetectionSettings(id);
+    });
+}
+var loading_timeout_id;
+var UpdateDetectionSettings = function (id){
+    // Send as:
+    // {
+    //  job_id: "222",
+    //  algorithm: "321",
+    //  settings:
+    //  {
+    //      "1234": 6,
+    //      "123": true
+    //  }
+    // }
+    if(changed_settings.processed){
+        document.body.classList.add('wait');
+        let form = document.getElementById(id+'-settings-form');
+        clearTimeout(loading_timeout_id);
+        loading_timeout_id = setTimeout(function(){
+            document.body.classList.remove('wait');
+            ShowAlert("Colony Detection Timeout", "danger");
+        }, 4000);
+        const form_data = new FormData(form);
+        const algorithm_id = document.getElementById('select-algorithm').value;
+        let new_settings = {
+            job_id : current_job.id,
+            algorithm: algorithm_id,
+            settings: FormGroup.ReadForm(algorithms[algorithm_id], form_data)
+        };
+        console.log("Update Settings:", new_settings);
+        api('updatedetectionsettings', new_settings);
+        changed_settings.processed = false;
+        changed_settings.changed_algorithm = changed_settings.id != id;
+        changed_settings.id = id;
+    }
+    else{
+        changed_settings.id = id;
+        changed_settings.new_request = true;
+    }
 }

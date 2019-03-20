@@ -12,6 +12,7 @@
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QMetaMethod>
+#include <QRandomGenerator64>
 
 using namespace c3picko::pi;
 namespace c3picko {
@@ -112,24 +113,55 @@ void APIController::DeleteJob(Job::ID id, QObject* client) {
   }
 }
 
-void APIController::UploadImage(Image& image, QObject* client) {
+void APIController::UploadImage(Image image, QObject* client) {
   // Is the user trying to upload an image twice?
   if (db_->images().exists(image.id())) {
     qDebug() << "Ignoring doubled image";
     // TODO inform client?
     emit OnImageCreateError("<cropped>", client);
-  } else if (!image.writeToFile()) {
-    emit OnImageCreateError(image.id(), client);
   } else {
-    db_->images().add(image.id(), image);
-    // image.write(response);
+    cv::Mat raw;
+    if (!image.readCvMat(raw)) {
+      emit OnImageCreateError("Could not read/find image", client);
+      return;
+    }
 
-    emit OnImageCreated(image, client);
+    Algorithm::ID aid("1");
+    AlgorithmJob::ID jid = db_->newResultJobId();
+    AlgorithmResult* result = new PlateResult(db_->newResultId());
+
+    AlgorithmJob* ajob =
+        plate_detector_->createJob(raw, aid, jid, result, QJsonObject());
+
+    if (!ajob)
+      emit OnImageCreateError(
+          "Internal Error: Algorithm not found (" + aid + ")", client);
+    else {
+      connect(ajob, &AlgorithmJob::OnAlgoSucceeded, client,
+              [this, client, image, ajob, result] {
+                Image cropped(*result->stack().back(), image.originalName(),
+                              image.description(), image.uploaded());
+
+                if (!cropped.writeToFile()) {
+                  emit OnImageCreateError(cropped.id(), client);
+                } else {
+                  db_->images().add(cropped.id(), cropped);
+
+                  emit this->OnImageCreated(cropped, client);
+                  qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
+                }
+              });
+      connect(ajob, &AlgorithmJob::OnAlgoFailed, client,
+              [this, result, client] {
+                emit OnImageCreateError(result->stageError(), client);
+              });
+
+      ajob->start(true, true);
+    }
   }
 }
 
-void APIController::cropImage(Image::ID id, int x, int y, int w, int h,
-                              QObject* client) {
+void APIController::cropImage(Image::ID id, QObject* client) {
   if (!db_->images().exists(id))
     return emit OnImageCropError(id, client);
   else {
@@ -188,14 +220,14 @@ void APIController::cropImage(Image::ID id, int x, int y, int w, int h,
     // Is the cropped image valid?
     if (!original.crop(x, y, w, h, cropped, error))
     {
-            emit OnImageCropError(id, client); // TODO inform client
-            return;
+                                    emit OnImageCropError(id, client); // TODO
+    inform client return;
     }
 
     if (!cropped.writeToFile()) // save cropped image to the hdd
     {
-            emit OnImageCreateError("<cropped>", client);
-            return;
+                                    emit OnImageCreateError("<cropped>",
+    client); return;
     }
 
     db_->images().add(cropped.id(), cropped);
@@ -311,7 +343,7 @@ void APIController::setColoniesToPick(Job::ID id, quint32 number,
       for (std::size_t i = 0; i < all_colonies.size(); ++i)
         if (!all_colonies[i].excluded()) included.push_back(i);
 
-      //QRandomGenerator ran(456);  // constant seed for determinism
+      QRandomGenerator64 ran(456);  // constant seed for determinism
       int max_good = number;
       Q_ASSERT(max_good);
 
@@ -322,11 +354,9 @@ void APIController::setColoniesToPick(Job::ID id, quint32 number,
       }
 
       while (max_good--) {
-//        int index = ran.bounded(quint32(included.size() - 1));
-int index = 10;
+        int index = ran.bounded(quint32(included.size() - 1));
 
         good_colonies.insert(all_colonies[included[index]].id());
-        qDebug() << "Inserting" << all_colonies[included[index]].id();
         included.erase(included.begin() + index);
       }
 

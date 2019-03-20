@@ -44,25 +44,23 @@
             <div class="nav flex-column nav-pills mb-2" id="steps">
               <h4 id ="headertag">Entwurf</h4>
               <div class="nav-link active" id="browse-tab" href="#browse">1. Choose Image</div>
-              <div class="nav-link" id="cut-tab" href="#cut">2. Cut Image</div>
-              <div class="nav-link" id="attributes-tab" href="#attributes">3. Set Attributes</div>
-              <!--<div class="nav-link" id="settings-tab" href="#settings" onclick="startImageProcessing()">Parameter anpassen</div>-->
-              <div class="nav-link" id="selection-tab" href="#selection">4. Detect Colonies</div>
-              <div class="nav-link" id="strategy-tab" href="#strategy">5. Choose Plates</div>
-              <div class="nav-link" id="overview-tab" href="#overview">6. Overview</div>
+              <div class="nav-link" id="attributes-tab" href="#attributes">2. Set Attributes</div>
+              <div class="nav-link" id="selection-tab" href="#selection">3. Detect Colonies</div>
+              <div class="nav-link" id="strategy-tab" href="#strategy">4. Choose Plates</div>
+              <div class="nav-link" id="overview-tab" href="#overview">5. Overview</div>
               <!-- <div class="nav-link" id="execute-tab" href="#execute">7. Start Picking</div> -->
             </div>
           </div>
           <div class="col p-0">
             <div class="tab-content mb-2" id="tabContent">
-              <div class="tab-pane fade show active col-12" id="browse">
+              <div class="tab-pane fade show active col" id="browse">
                 <div class="row mb-4">
-                  <div class="col-md-6 col-lg-5">
+                  <div class="col-md-4">
                     <h2 id="wiki-4-choose-image" class="wiki">Choose Image</h2>
                     <h6 id="img-name"></h6>
                     <form><input id="classicUpload" type="file" style="display: none;"/></form>
                     <div id="dropZone" class="empty"></div>
-                    <div id="chosen-image" style="display: none;"><div id="selectedimage-description" class="float-left"></div><button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="cutTab()">Continue</button></div>
+                    <div id="chosen-image" style="display: none;"><div id="selectedimage-description" class="float-left"></div><button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button></div>
                   </div>
                 </div>
                 <hr>
@@ -71,13 +69,6 @@
                     <div id="all-images" style="display: none;"></div>
                   </div>
                 </div>
-              </div>
-              <div class="tab-pane fade col-md-7 col-xl-5" id="cut">
-                <h2 id="wiki-5-cut-image" class="wiki">Align selection with all <strong>outer</strong> borders of plate.</h2>
-                <div>
-                  <img id="cutImg" src="" alt="Picture">
-                </div>
-                <button class="btn btn-success mt-2 next-step" onclick="attributesTab()">Continue</button>
               </div>
               <div class="tab-pane fade col-md-6 col-xl-4" id="attributes">
                 <h2 id="wiki-6-set-attributes" class="wiki">Pickjob Attributes</h2>
@@ -105,25 +96,21 @@
                   </div>
                   <div class="form-group">
                     <label for="description-input">Description</label>
-                    <textarea class="form-control" id="description-input" rows="3" placeholder="optional"></textarea>
+                    <textarea class="form-control" id="description-input" rows="5" placeholder="optional"></textarea>
                   </div>
                 </form>
-                <button class="btn btn-success next-step" onclick="selectionTab()">Continue</button>
+                <button id="enter-selection-button" class="btn btn-success next-step" onclick="selectionTab()">Continue</button>
               </div>
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
                   <div id="colony-layers">
                     <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span></h2>
-                    <div id="layer_parent" style="position: relative;">
+                    <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
-                        <h5 class="mr-2 mb-0">Toggle Layers:</h5>
-                        <div class="btn-group btn-group-toggle mr-1" data-toggle="buttons">
-                          <label id="show-selected-button" class="btn btn-secondary active btn-sm"><input type="checkbox" id="show-selected" autocomplete="off" checked">Selected</label>
-                          <label class="btn btn-secondary btn-sm"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
-                        </div>
+                        <h4 class="mr-2">Toggle Layers:</h4>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                          <label id="hide-colonies-button" class="btn btn-secondary btn-sm"><input id="hide-colonies" type="checkbox" autocomplete="off">Hide All</label>
-                          <!-- <button type="button" class="btn btn-secondary">8</button> -->
+                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked">Selected</label>
+                          <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
                         </div>
                       </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas>
@@ -148,7 +135,7 @@
               <div class="tab-pane fade col" id="strategy">
                 <div class="row">
                   <div class="col-md-4 col-lg-2" style="min-width: 300px;">
-                    <h2 id="wiki-8-choose-plate" class="wiki">Choose Goal Plate</h2>
+                    <h2 id="wiki-8-choose-plates" class="wiki">Choose Goal Plate</h2>
                     <form id="strategy-form" action="javascript:void(0);">
                       <div class="form-group">
                         <label for="select-plate-profile">Goal Plate:</label>
@@ -156,7 +143,7 @@
                       </div>
                       <div id="number-of-colonies-slider"></div>
                     </form>
-                    <button class="btn btn-success next-step" onclick="api('setcoloniestopick',{'job': current_job.id, 'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)})">Continue</button>
+                    <button id="enter-overview-button" class="btn btn-success next-step">Continue</button>
                   </div>
                   <div class="col">
                     <h2>Choose Starting Well</h2>

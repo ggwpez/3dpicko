@@ -37,23 +37,24 @@ cv::Mat& AlgorithmResult::newMat() {
 
 void AlgorithmResult::cleanup() {
   /*std::string name;
-  int			i = 0;
+int			i = 0;
 
-  for (void* stage : stack_)
-  {
-          cv::Mat&	mat  = *reinterpret_cast<cv::Mat*>(stage);
-          std::string name = "STAGE-" + std::to_string(i++);
-          if (!mat.cols || !mat.rows)
-                  continue;
+for (void* stage : stack_)
+{
+                    cv::Mat&	mat  = *reinterpret_cast<cv::Mat*>(stage);
+                    std::string name = "STAGE-" + std::to_string(i++);
+                    if (!mat.cols || !mat.rows)
+                                                    continue;
 
-          cv::namedWindow(name, cv::WINDOW_NORMAL);
-          cv::resizeWindow(name, 1920, 1080);
-          cv::imshow(name, mat);
-  }
+                    cv::namedWindow(name, cv::WINDOW_NORMAL);
+                    cv::resizeWindow(name, 1920, 1080);
+                    cv::imshow(name, mat);
+                    cv::imwrite("lel" + name + ".png", mat);
+}
 
-  while (cv::waitKey(0) != 'q')
-          ;
-  cv::destroyAllWindows();*/
+while (cv::waitKey(0) != 'q')
+                    ;
+cv::destroyAllWindows();*/
 
   // Dont delete them right now, otherwise we cant user them
   // colonies_.~vector();
