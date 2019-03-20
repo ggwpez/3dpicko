@@ -49,11 +49,7 @@ $(function Setup()
                 // $('#overlay').hide();
                 EnableDropzone();
                 // TODO
-                if('uploadimage' in data) ShowAlert("Upload failed.<br>Maybe Image already exists.", "danger");
-                else if('crop-image' in data){
-                    ShowAlert("Can't detect border.<br>Original image will be used.", "danger");
-                    document.getElementById('enter-selection-button').disabled = false;
-                }
+                if('uploadimage' in data) ShowAlert("Upload failed.<br>Maybe Plate can't be detected or Image already exists.", "danger");
                 else ShowAlert(JSON.stringify(data), "danger");
             }
             else if (type == "getimagelist")
@@ -168,11 +164,6 @@ $(function Setup()
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
                 GetDetectionAlgorithms(data);
-            }
-            else if (type == "crop-image"){
-                AddImageToList(data);
-                chosen_image = data;
-                document.getElementById('enter-selection-button').disabled = false;
             }
             else if (type == "setcoloniestopick"){
                 // job: id, indices: array 
@@ -391,9 +382,6 @@ function attributesTab(){
     tabEnter(2);
     document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
     document.getElementById('date-attribute').innerHTML = new Date().toLocaleDateString();
-    // detect frame
-    api('crop-image', { id: chosen_image.id });
-    document.getElementById('enter-selection-button').disabled = true;
 }
 $('#selection-tab').on('shown.bs.tab', function () {
     selectionTabEnter();
@@ -450,7 +438,7 @@ function strategyTab(){
                 }
                 ]
             }
-            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].help_text += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Not all detected colonies fit on this plate.</span>";
+            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].help_text += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Colonies will be chosen randomly.</span>";
             let form = new FormGroup(template, "strategy-form");
             document.getElementById("number-of-colonies-slider").innerHTML = form.getHtml();
             form.AddInputEvents();
