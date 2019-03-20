@@ -66,6 +66,11 @@ void ColonyCollision::test_case1() {
 
     qDebug().nospace() << "TEST #" << i
                        << "  (n=" << solutions_[i].colonies_.size() << ")";
-    QCOMPARE(result.size(), solutions_[i].min_num_);
+    if (result.size() !=
+        solutions_[i]
+            .min_num_)  // TODO build server does not link against QTest
+      throw QException("Algorithm removed more colonies than needed (" +
+                       QString::number(result.size()) + " vs " +
+                       QString::number(solutions_[i].min_num_));
   }
 }
