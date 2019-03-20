@@ -19,6 +19,7 @@ dependencies:linux:
     - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
     - git config --global user.email "gitlab@spam.tasty.limo"
     - git config --global user.name "Commitbot"
+    - export GIT_SSH_COMMAND="ssh -i ~/.ssh/gitlab"
   except:
     - /^.*-format$/
 
