@@ -35,7 +35,7 @@ build:linux:
 test:linux:
   stage: test
   script:
-    - mkdir build
+    - mkdir -p build
     - cd build
     - qmake -qt=qt5 ..
     - make -j6
