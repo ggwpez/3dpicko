@@ -1,8 +1,8 @@
 ﻿#include "minimumcutproblemsolver.hpp"
 
+#include <algorithm>
 #include <limits>
 #include <numeric>
-#include <random>
 
 c3picko::Node::Node(const std::unordered_map<int, Node*>& neighbours)
     : index_(neighbours.size()), neighbours_(neighbours) {}
@@ -14,6 +14,10 @@ std::unordered_map<int, c3picko::Node*> c3picko::Node::neighbours() {
 }
 
 int c3picko::Node::index() const { return index_; }
+
+bool c3picko::Node::operator<(const c3picko::Node& other) const {
+  return this->NumberOfCollisions() < other.NumberOfCollisions();
+}
 
 c3picko::MinimumCutProblemSolver::MinimumCutProblemSolver(
     const std::vector<Colony>& colonies)
@@ -44,7 +48,7 @@ std::vector<c3picko::Colony> c3picko::MinimumCutProblemSolver::Solve(
   amount_of_max_number_of_collisions = std::get<2>(solution_greedy_max);
 
   std::random_device rd;  // only used once to initialise (seed) engine
-  std::mt19937 rng(
+  std::mt19937_64 rng(
       rd());  // random-number engine used (Mersenne-Twister in this case)
 
   for (int i = 0; i < number_of_random_tries; ++i) {
@@ -100,7 +104,7 @@ std::tuple<int, std::vector<c3picko::Node>>
 c3picko::MinimumCutProblemSolver::SolveRandomBetweenMinAndMax(
     int h, std::vector<Node> binary_heap,
     const int amount_of_min_number_of_collisions,
-    const int amount_of_max_number_of_collisions, const std::mt19937& rng) {
+    const int amount_of_max_number_of_collisions, std::mt19937_64& rng) {
   int i = 0;
   while (h > 0) {
     ExpandCurrentState(binary_heap, [](const Node& node1, const Node& node2) {
@@ -146,7 +150,7 @@ int c3picko::MinimumCutProblemSolver::EvaluateGreedyMin(
 void c3picko::MinimumCutProblemSolver::EvaluateRandomBetweenMinAndMax(
     std::vector<c3picko::Node>& current_state, int& h,
     const int amount_of_min_number_of_collisions,
-    const int amount_of_max_number_of_collisions, const std::mt19937& rng) {
+    const int amount_of_max_number_of_collisions, std::mt19937_64& rng) {
   int range_min;
   int range_max;
   if (amount_of_min_number_of_collisions + amount_of_max_number_of_collisions >=
@@ -194,12 +198,14 @@ int c3picko::MinimumCutProblemSolver::GetAmountOfMaxOrMinNumberOfCollisions(
 std::vector<c3picko::Node> c3picko::MinimumCutProblemSolver::MapColoniesToNodes(
     const std::vector<c3picko::Colony>& colonies) {
   // TODO implement
+  throw std::runtime_error("Not implemented");
 }
 
 std::vector<c3picko::Colony>
 c3picko::MinimumCutProblemSolver::MapNodesToColonies(
     const std::vector<c3picko::Node>& nodes_solution) {
   // TODO implement
+  throw std::runtime_error("Not implemented");
 }
 
 void c3picko::MinimumCutProblemSolver::UpdateNodesNeighbours(
@@ -217,7 +223,9 @@ void c3picko::MinimumCutProblemSolver::UpdateNodesNeighbours(
 }
 
 int c3picko::MinimumCutProblemSolver::GenerateHeuristic() {
-  return std::accummulate(nodes_.begin(), nodes_.end(), 0);
+  return std::accumulate(
+      nodes_.begin(), nodes_.end(), 0,
+      [](int a, Node const& b) { return a + b.NumberOfCollisions(); });
 }
 
 void c3picko::MinimumCutProblemSolver::UpdateHeuristic(

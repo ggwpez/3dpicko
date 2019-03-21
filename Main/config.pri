@@ -1,5 +1,3 @@
-message(Using Qt version $$QT_VERSION)
-
 CONFIG += warn_on qt
 CONFIG -= c++11
 QT = network core websockets gui

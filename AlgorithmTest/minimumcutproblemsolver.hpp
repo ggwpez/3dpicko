@@ -1,10 +1,12 @@
 ﻿#ifndef MINIMUMCUTPROBLEMSOLVER_HPP
 #define MINIMUMCUTPROBLEMSOLVER_HPP
 
-#include <algorithm>
+#include <functional>
 #include <memory>
+#include <random>
 #include <unordered_map>
 #include <vector>
+#include "include/colony.hpp"
 
 namespace c3picko {
 class Colony;
@@ -15,9 +17,10 @@ class Node {
   int NumberOfCollisions() const;
   std::unordered_map<int, Node*> neighbours();
   int index() const;
+  bool operator<(Node const&) const;
 
  private:
-  const int index_;
+  int index_;
   std::unordered_map<int, Node*> neighbours_;
 };
 
@@ -38,7 +41,7 @@ class MinimumCutProblemSolver {
   std::tuple<int, std::vector<Node>> SolveRandomBetweenMinAndMax(
       int h, std::vector<Node> binary_heap,
       const int amount_of_min_number_of_collisions,
-      const int amount_of_max_number_of_collisions, const std::mt19937& rng);
+      const int amount_of_max_number_of_collisions, std::mt19937_64& rng);
 
   void ExpandCurrentState(
       std::vector<Node>& old_state,
@@ -48,7 +51,7 @@ class MinimumCutProblemSolver {
   void EvaluateRandomBetweenMinAndMax(
       std::vector<Node>& current_state, int& h,
       const int amount_of_min_number_of_collisions,
-      const int amount_of_max_number_of_collisions, const std::mt19937& rng);
+      const int amount_of_max_number_of_collisions, std::mt19937_64& rng);
   int GetAmountOfMaxOrMinNumberOfCollisions(
       const std::vector<int>& number_of_collisions);
   std::vector<Node> MapColoniesToNodes(const std::vector<Colony>& colonies);
