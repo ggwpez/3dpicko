@@ -21,8 +21,8 @@ struct ProgressInfo {
   qint32 print_time;
   qint32 print_time_left;
 };
-}  // namespace data
-}  // namespace pi
-}  // namespace c3picko
+} // namespace data
+} // namespace pi
+} // namespace c3picko
 
-#endif  // PROGRESS_INFO_H
+#endif // PROGRESS_INFO_H

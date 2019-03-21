@@ -4,13 +4,13 @@
 
 namespace c3picko {
 class DetectionResult : public AlgorithmResult {
- public:
+public:
   using AlgorithmResult::AlgorithmResult;
 
-  std::vector<Colony>& colonies();
+  std::vector<Colony> &colonies();
 
- private:
+private:
   std::vector<Colony> colonies_;
 };
 MAKE_MARSHALLABLE(DetectionResult);
-}  // namespace c3picko
+} // namespace c3picko

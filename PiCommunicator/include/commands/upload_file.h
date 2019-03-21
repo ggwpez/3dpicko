@@ -16,7 +16,7 @@ class UploadFile : public Command {
   UploadFile() = delete;
   using Command::Command;
 
- public:
+public:
   typedef responses::UploadResponse Response;
 
   /**
@@ -42,20 +42,20 @@ class UploadFile : public Command {
   static UploadFile *CreateFolder(QString folder_name, QString path,
                                   data::Location location);
 
- protected:
+protected:
   static QHttpMultiPart *BuildFileUploadPacket(QByteArray data,
                                                QString file_name, bool select,
                                                bool print);
   static QHttpMultiPart *BuildFolderCreatePacket(QString folder_name,
                                                  QString path);
 
- public slots:
+public slots:
   virtual void OnReplyFinished(QNetworkReply *reply) override;
 
- private:
+private:
 };
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko
 
-#endif  // UPLOAD_COMMAND_H_
+#endif // UPLOAD_COMMAND_H_

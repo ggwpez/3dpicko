@@ -45,14 +45,14 @@
 
 class QtUnixServerSocket : public QTcpServer {
   Q_OBJECT
- public:
+public:
   QtUnixServerSocket(const QString &path, QObject *parent = 0);
   QtUnixServerSocket(QObject *parent = 0);
 
   void setPath(const QString &path);
   void close();
 
- private:
+private:
   QString path_;
 };
 

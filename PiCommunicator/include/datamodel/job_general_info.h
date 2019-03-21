@@ -25,7 +25,7 @@ struct JobGeneralInfo {
     qreal volume;
   } filament;
 };
-}  // namespace data
-}  // namespace pi
-}  // namespace c3picko
-#endif  // JOBGENERALINFO_H
+} // namespace data
+} // namespace pi
+} // namespace c3picko
+#endif // JOBGENERALINFO_H

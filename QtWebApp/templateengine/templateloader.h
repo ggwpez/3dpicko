@@ -6,12 +6,12 @@
 #ifndef TEMPLATELOADER_H
 #define TEMPLATELOADER_H
 
+#include "template.h"
+#include "templateglobal.h"
 #include <QMutex>
 #include <QSettings>
 #include <QString>
 #include <QTextCodec>
-#include "template.h"
-#include "templateglobal.h"
 
 namespace stefanfrings {
 
@@ -41,7 +41,7 @@ namespace stefanfrings {
 class DECLSPEC TemplateLoader : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(TemplateLoader)
- public:
+public:
   /**
     Constructor.
     @param settings configurations settings
@@ -65,7 +65,7 @@ class DECLSPEC TemplateLoader : public QObject {
   */
   Template getTemplate(QString templateName, QString locales = QString());
 
- protected:
+protected:
   /**
     Try to get a file from cache or filesystem.
     @param localizedName Name of the template with locale to find
@@ -83,6 +83,6 @@ class DECLSPEC TemplateLoader : public QObject {
   QTextCodec *textCodec;
 };
 
-}  // namespace stefanfrings
+} // namespace stefanfrings
 
-#endif  // TEMPLATELOADER_H
+#endif // TEMPLATELOADER_H

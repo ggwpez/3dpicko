@@ -1,7 +1,7 @@
 #include "tst_colonycollision.h"
-#include <QtTest>
 #include "include/algorithms/helper.h"
 #include "include/colony.hpp"
+#include <QtTest>
 
 using namespace c3picko;
 
@@ -67,8 +67,7 @@ void ColonyCollision::test_case1() {
     qDebug().nospace() << "TEST #" << i
                        << "  (n=" << solutions_[i].colonies_.size() << ")";
     if (result.size() !=
-        solutions_[i]
-            .min_num_)  // TODO build server does not link against QTest
+        solutions_[i].min_num_) // TODO build server does not link against QTest
       throw QException();
   }
 }

@@ -19,8 +19,8 @@ struct JobInfo : public Response {
   data::JobGeneralInfo job;
   data::ProgressInfo progress;
 };
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko
 
-#endif  // JOB_INFO_H
+#endif // JOB_INFO_H

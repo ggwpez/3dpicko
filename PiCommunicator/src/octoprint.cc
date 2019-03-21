@@ -1,17 +1,16 @@
 #include "octoprint.h"
+#include "include/command.h"
 #include <QHostAddress>
 #include <QJsonArray>
 #include <QMetaEnum>
 #include <QUrlQuery>
 #include <functional>
 #include <utility>
-#include "include/command.h"
 
 namespace c3picko {
 namespace pi {
 OctoPrint::OctoPrint(OctoConfig const &config, QObject *_parent)
-    : QObject(_parent),
-      config_(config),
+    : QObject(_parent), config_(config),
       network_(new QNetworkAccessManager(this)),
       resolve_status_(ResolveStatus::UNRESOLVED) {
   /* QUrl url;
@@ -43,20 +42,20 @@ void OctoPrint::SendCommand(Command *cmd) {
 
   QNetworkReply *reply = nullptr;
   switch (cmd->type()) {
-    case Command::HTTPType::GET:
-      reply = network_->get(request);
-      break;
-    case Command::HTTPType::POST: {
-      if (cmd->IsQuery())
-        reply = network_->post(request, cmd->GetPostQuery());
-      else
-        reply = network_->post(request, cmd->GetPostData());
-    } break;
-    case Command::HTTPType::DELETE:
-      reply = network_->deleteResource(request);
-      break;
-    default:
-      Q_UNREACHABLE();
+  case Command::HTTPType::GET:
+    reply = network_->get(request);
+    break;
+  case Command::HTTPType::POST: {
+    if (cmd->IsQuery())
+      reply = network_->post(request, cmd->GetPostQuery());
+    else
+      reply = network_->post(request, cmd->GetPostData());
+  } break;
+  case Command::HTTPType::DELETE:
+    reply = network_->deleteResource(request);
+    break;
+  default:
+    Q_UNREACHABLE();
   }
 
   QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), cmd,
@@ -69,5 +68,5 @@ void OctoPrint::SendCommand(Command *cmd) {
 void OctoPrint::SendCommandTo(Command *cmd, QUrl to) {}
 
 void OctoPrint::Resolve() {}
-}  // namespace pi
-}  // namespace c3picko
+} // namespace pi
+} // namespace c3picko

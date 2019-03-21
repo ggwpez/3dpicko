@@ -63,4 +63,4 @@ Point PlateSocketProfile::originOfGoalPlate() const {
 GoalPlateOrientation PlateSocketProfile::orientationOfGoalPlate() const {
   return orientation_of_goal_plate_;
 }
-}  // namespace c3picko
+} // namespace c3picko

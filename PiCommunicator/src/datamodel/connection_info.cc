@@ -22,7 +22,7 @@ ConnectionInfo::ConnectionInfo(const QJsonObject &obj) : Response(obj) {
   for (auto profile : options_json["printerProfiles"].toArray())
     options.printer_profiles.insert(
         {profile.toObject()["name"].toString(),
-         profile.toObject()["id"].toString()});  // QtJson is dumb
+         profile.toObject()["id"].toString()}); // QtJson is dumb
 
   options.port_preference = options_json["portreference"].toString();
   options.baudrate_preference = options_json["baudratePreference"].toInt();
@@ -30,6 +30,6 @@ ConnectionInfo::ConnectionInfo(const QJsonObject &obj) : Response(obj) {
       options_json["printerProfilePreference"].toString();
   options.autoconnect = options_json["autoconnect"].toBool();
 }
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko

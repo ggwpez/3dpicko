@@ -13,10 +13,9 @@ quint16 OctoConfig::port() const { return port_; }
 ApiKey OctoConfig::key() const { return key_; }
 
 QString OctoConfig::protocol() const { return protocol_; }
-}  // namespace pi
+} // namespace pi
 
-template <>
-QJsonObject Marshalling::toJson(const pi::OctoConfig &value) {
+template <> QJsonObject Marshalling::toJson(const pi::OctoConfig &value) {
   QJsonObject obj;
 
   obj["address"] = value.address();
@@ -27,11 +26,10 @@ QJsonObject Marshalling::toJson(const pi::OctoConfig &value) {
   return obj;
 }
 
-template <>
-pi::OctoConfig Marshalling::fromJson(const QJsonObject &obj) {
+template <> pi::OctoConfig Marshalling::fromJson(const QJsonObject &obj) {
   return pi::OctoConfig(
       obj["address"].toString(),
       Marshalling::fromJson<pi::ApiKey>(obj["key"].toObject()),
       obj["protocol"].toString(), quint16(obj["port"].toInt()));
 }
-}  // namespace c3picko
+} // namespace c3picko

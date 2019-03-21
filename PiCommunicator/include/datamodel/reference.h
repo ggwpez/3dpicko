@@ -17,8 +17,8 @@ struct Reference {
 
   QUrl resource, download, model;
 };
-}  // namespace data
-}  // namespace pi
-}  // namespace c3picko
+} // namespace data
+} // namespace pi
+} // namespace c3picko
 
-#endif  // REFERENCE_H
+#endif // REFERENCE_H

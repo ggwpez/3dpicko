@@ -8,6 +8,6 @@ JobInfo::JobInfo(const QJsonObject &obj) : Response(obj) {
   job = data::JobGeneralInfo(obj["job"].toObject());
   progress = data::ProgressInfo(obj["progress"].toObject());
 }
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko

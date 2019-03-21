@@ -4,9 +4,9 @@
 */
 
 #include "httprequest.h"
+#include "httpcookie.h"
 #include <QDir>
 #include <QList>
-#include "httpcookie.h"
 
 using namespace stefanfrings;
 
@@ -24,7 +24,7 @@ void HttpRequest::readRequest(QTcpSocket *socket) {
   qDebug("HttpRequest: read request");
 #endif
   int toRead = maxSize - currentSize +
-               1;  // allow one byte more to be able to detect overflow
+               1; // allow one byte more to be able to detect overflow
   lineBuffer.append(socket->readLine(toRead));
   currentSize += lineBuffer.size();
   if (!lineBuffer.contains('\r') && !lineBuffer.contains('\n')) {
@@ -55,7 +55,7 @@ void HttpRequest::readHeader(QTcpSocket *socket) {
   qDebug("HttpRequest: read header");
 #endif
   int toRead = maxSize - currentSize +
-               1;  // allow one byte more to be able to detect overflow
+               1; // allow one byte more to be able to detect overflow
   lineBuffer.append(socket->readLine(toRead));
   currentSize += lineBuffer.size();
   if (!lineBuffer.contains('\r') && !lineBuffer.contains('\n')) {
@@ -225,7 +225,7 @@ void HttpRequest::extractCookies() {
     foreach (QByteArray part, list) {
 #ifdef SUPERVERBOSE
       qDebug("HttpRequest: found cookie %s", part.data());
-#endif  // Split the part into name and value
+#endif // Split the part into name and value
       QByteArray name;
       QByteArray value;
       int posi = part.indexOf('=');

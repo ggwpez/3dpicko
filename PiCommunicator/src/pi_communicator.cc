@@ -1,15 +1,12 @@
 #include "pi_communicator.h"
-#include <QString>
 #include "commands/all.h"
+#include <QString>
 
 namespace c3picko {
 namespace pi {
 PiCommunicator::PiCommunicator(OctoConfig const &config, QObject *_parent)
-    : QObject(_parent),
-      current_job_(nullptr),
-      state_(State::DISCONNECTED),
-      printer_(config, this),
-      ticker_(this) {
+    : QObject(_parent), current_job_(nullptr), state_(State::DISCONNECTED),
+      printer_(config, this), ticker_(this) {
   QObject::connect(&ticker_, SIGNAL(timeout()), this, SLOT(Tick()));
   ticker_.start(tick_time_ms_);
 }
@@ -98,7 +95,8 @@ void PiCommunicator::CancelJob(PrintJob *job) {
 
 QString PiCommunicator::GenerateFilename() const {
   QByteArray data(16, 0);
-  for (int i = 0; i < data.length(); ++i) data[i] = (qrand() % 26) + 'a';
+  for (int i = 0; i < data.length(); ++i)
+    data[i] = (qrand() % 26) + 'a';
 
   return "_3cpicko-" + QString(data.toHex()) + ".gcode";
 }
@@ -109,5 +107,5 @@ void PiCommunicator::Transition(State t) {
 
   emit OnTransition(old, state_);
 }
-}  // namespace pi
-}  // namespace c3picko
+} // namespace pi
+} // namespace c3picko

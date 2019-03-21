@@ -9,13 +9,13 @@
 #ifndef QT_NO_OPENSSL
 #include <QSslConfiguration>
 #endif
+#include "httpglobal.h"
+#include "httprequest.h"
+#include "httprequesthandler.h"
 #include <QSettings>
 #include <QTcpSocket>
 #include <QThread>
 #include <QTimer>
-#include "httpglobal.h"
-#include "httprequest.h"
-#include "httprequesthandler.h"
 
 namespace stefanfrings {
 
@@ -49,7 +49,7 @@ class DECLSPEC HttpConnectionHandler : public QThread {
   Q_OBJECT
   Q_DISABLE_COPY(HttpConnectionHandler)
 
- public:
+public:
   /**
     Constructor.
     @param settings Configuration settings of the HTTP webserver
@@ -68,7 +68,7 @@ class DECLSPEC HttpConnectionHandler : public QThread {
   /** Mark this handler as busy */
   void setBusy();
 
- private:
+private:
   /** Configuration settings */
   QSettings *settings;
 
@@ -96,7 +96,7 @@ class DECLSPEC HttpConnectionHandler : public QThread {
   /**  Create SSL or TCP socket */
   void createSocket();
 
- public slots:
+public slots:
 
   /**
     Received from from the listener, when the handler shall start processing a
@@ -105,7 +105,7 @@ class DECLSPEC HttpConnectionHandler : public QThread {
   */
   void handleConnection(tSocketDescriptor socketDescriptor);
 
- private slots:
+private slots:
 
   /** Received from the socket when a read-timeout occured */
   void readTimeout();
@@ -117,6 +117,6 @@ class DECLSPEC HttpConnectionHandler : public QThread {
   void disconnected();
 };
 
-}  // namespace stefanfrings
+} // namespace stefanfrings
 
-#endif  // HTTPCONNECTIONHANDLER_H
+#endif // HTTPCONNECTIONHANDLER_H

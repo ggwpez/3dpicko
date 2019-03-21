@@ -9,7 +9,7 @@ namespace c3picko {
 class ResourcePath {
   ResourcePath(QString system_absolute_path);
 
- public:
+public:
   /**
    * @brief Construct empty
    */
@@ -57,10 +57,10 @@ class ResourcePath {
 
   bool isEmpty() const;
   void clear();
-  ResourcePath operator+(QString const&) const;
+  ResourcePath operator+(QString const &) const;
 
- private:
+private:
   QString system_absolute_;
 };
 MAKE_MARSHALLABLE(ResourcePath);
-}  // namespace c3picko
+} // namespace c3picko

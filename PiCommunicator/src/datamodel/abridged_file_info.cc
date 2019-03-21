@@ -12,8 +12,9 @@ AbridgedFileInfo::AbridgedFileInfo(const QJsonObject &obj)
   path = obj["path"].toString();
   origin = data::LocationFromString(obj["origin"].toString());
 
-  if (obj.contains("refs")) ref = obj["refs"].toObject();
+  if (obj.contains("refs"))
+    ref = obj["refs"].toObject();
 }
-}  // namespace data
-}  // namespace pi
-}  // namespace c3picko
+} // namespace data
+} // namespace pi
+} // namespace c3picko

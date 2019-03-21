@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
 <h1> Advanced Settings </h1>
 <h2> Choose Colonies </h2>
 <h3> Detection Settings </h3>
@@ -12,7 +14,7 @@
 <div id="area">
   <p>
     With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles. <br>
-    <img src="./img/wiki/Area.jpg"  width="400">
+    <img src="./img/wiki/Area.jpg" width="400">
   </p>
 </div>
 
@@ -27,7 +29,7 @@
 <div id="aabb_ratio">
   <p>
     This option lets you choose what ratio of length and width the colony can have. A perfectly round colony would have the ration 1. In the example image refer to the green bounding box, the calculation is as follows: whatever side is shorter is divided by the longer side. <br>
-    <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+    <img src="./img/wiki/side_ratio.jpg" width="400"> <br>
     $`min(width, height) / max(width, height)`$ whereas _width_ and _height_ are side lengths of an Axix Aligned Bounding Box.
   </p>
 </div>
@@ -36,7 +38,7 @@
 <div id="bb_ratio">
   <p>
     This option is similar to the one above, the only difference is that the bounding box is rotated to be as small as possible and not aligned with the edges of the image. Refer to the red bounding box. <br>
-    <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+    <img src="./img/wiki/side_ratio.jpg" width="400"> <br>
     $`min(width, height) / max(width, height)`$ whereas _width_ and _height_ are side lengths of an Rotated Minimum Area Bounding Box.
   </p>
 </div>
@@ -45,7 +47,7 @@
 <div id="convexity">
   <p>
     This is option filters the convexity, it processes the outline of the colony and checks if the arc is evenly, the more evenly it is the higher the number becomes. <br>
-    <img src="./img/wiki/Convexity.jpg"  width="400"> <br>
+    <img src="./img/wiki/Convexity.jpg" width="400"> <br>
     $`area(contour) / area(hull)`$ whereas _contour_ is the polygon representing the edge and _hull_ is the an approximated convex hull polygon.
   </p>
 </div>
@@ -54,7 +56,7 @@
 <div id="circularity">
   <p>
     This option checks the roundness of the colonies The rounder the colony the higher the number. <br>
-    <img src="./img/wiki/Circularity.jpg"  width="400"> <br>
+    <img src="./img/wiki/Circularity.jpg" width="400"> <br>
     $`(4 * \pi * area) / {circumference(contour)}^2`$ whereas _area_ is the area of the Colony detected in pixel and _contour_ is the polygon representing the edge.
   </p>
 </div>
@@ -81,3 +83,4 @@
   </p>
 </div>
 -->
+</body></html>

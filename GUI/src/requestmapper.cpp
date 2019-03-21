@@ -1,10 +1,10 @@
 #include "include/requestmapper.h"
-#include <QCoreApplication>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include "httpsession.h"
 #include "include/api_input.h"
 #include "include/global.h"
+#include <QCoreApplication>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 namespace c3picko {
 
@@ -27,4 +27,4 @@ void RequestMapper::service(HttpRequest &request, HttpResponse &response) {
 
   qInfo("RequestMapper: finished request");
 }
-}  // namespace c3picko
+} // namespace c3picko

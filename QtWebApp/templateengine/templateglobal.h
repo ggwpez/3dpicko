@@ -20,4 +20,4 @@
 #define DECLSPEC
 #endif
 
-#endif  // TEMPLATEGLOBAL_H
+#endif // TEMPLATEGLOBAL_H

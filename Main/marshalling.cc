@@ -1,13 +1,12 @@
 #include "include/marshalling.hpp"
-#include <QJsonArray>
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
 #include "include/types/profile.hpp"
+#include <QJsonArray>
 
 namespace c3picko {
-template <>
-QJsonObject Marshalling::toJson(const PrinterProfile& value) {
+template <> QJsonObject Marshalling::toJson(const PrinterProfile &value) {
   QJsonObject obj;
 
   obj["movement_speed"] = (value.movementSpeed());
@@ -36,8 +35,7 @@ QJsonObject Marshalling::toJson(const PrinterProfile& value) {
   return obj;
 }
 
-template <>
-PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
+template <> PrinterProfile Marshalling::fromJson(const QJsonObject &obj) {
   return PrinterProfile(
       obj["movement_speed"].toInt(),
       Marshalling::fromJson<Point>(
@@ -56,8 +54,7 @@ PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
           .toDouble());
 }
 
-template <>
-QJsonObject Marshalling::toJson(const PlateSocketProfile& value) {
+template <> QJsonObject Marshalling::toJson(const PlateSocketProfile &value) {
   QJsonObject obj;
 
   obj["global_origin_of_source_plate"] =
@@ -80,13 +77,12 @@ QJsonObject Marshalling::toJson(const PlateSocketProfile& value) {
 
   obj["socket_origin_offset"] =
       Marshalling::toJson(Point(value.originOffsetX(), value.originOffsetY(),
-                                value.originOffsetZ()));  // TODO Dumb
+                                value.originOffsetZ())); // TODO Dumb
 
   return obj;
 }
 
-template <>
-PlateSocketProfile Marshalling::fromJson(const QJsonObject& obj) {
+template <> PlateSocketProfile Marshalling::fromJson(const QJsonObject &obj) {
   Point socket_origin_offset(
       Marshalling::fromJson<Point>(obj["socket_origin_offset"].toObject()));
 
@@ -108,8 +104,7 @@ PlateSocketProfile Marshalling::fromJson(const QJsonObject& obj) {
       socket_origin_offset.zCoordinate());
 }
 
-template <>
-QJsonObject Marshalling::toJson(const PlateProfile& value) {
+template <> QJsonObject Marshalling::toJson(const PlateProfile &value) {
   QJsonObject obj;
 
   obj["number_of_rows"] = value.numberOfRows();
@@ -129,8 +124,7 @@ QJsonObject Marshalling::toJson(const PlateProfile& value) {
   return obj;
 }
 
-template <>
-PlateProfile Marshalling::fromJson(const QJsonObject& obj) {
+template <> PlateProfile Marshalling::fromJson(const QJsonObject &obj) {
   return PlateProfile(
       obj["number_of_rows"].toInt(), obj["number_of_columns"].toInt(),
       obj["a1_row_offset"].toDouble(), obj["a1_column_offset"].toDouble(),
@@ -142,8 +136,7 @@ PlateProfile Marshalling::fromJson(const QJsonObject& obj) {
       obj["culture_medium_thickness_master_plate"].toDouble());
 }
 
-template <>
-QJsonObject Marshalling::toJson(const Point& value) {
+template <> QJsonObject Marshalling::toJson(const Point &value) {
   QJsonObject obj;
 
   obj["x"] = value.xCoordinate();
@@ -153,18 +146,15 @@ QJsonObject Marshalling::toJson(const Point& value) {
   return obj;
 }
 
-template <>
-Point Marshalling::fromJson(const QJsonObject& obj) {
+template <> Point Marshalling::fromJson(const QJsonObject &obj) {
   return Point(obj["x"].toDouble(), obj["y"].toDouble(), obj["z"].toDouble());
 }
 
-template <>
-QDateTime Marshalling::fromJson(const QJsonObject& obj) {
+template <> QDateTime Marshalling::fromJson(const QJsonObject &obj) {
   return QDateTime::fromMSecsSinceEpoch(obj["ms"].toVariant().toLongLong());
 }
 
-template <>
-QJsonObject Marshalling::toJson(const QDateTime& value) {
+template <> QJsonObject Marshalling::toJson(const QDateTime &value) {
   QJsonObject obj;
 
   obj["ms"] = value.toMSecsSinceEpoch();
@@ -173,18 +163,17 @@ QJsonObject Marshalling::toJson(const QDateTime& value) {
   return obj;
 }
 
-template <>
-std::set<qint32> Marshalling::fromJson(const QJsonObject& obj) {
+template <> std::set<qint32> Marshalling::fromJson(const QJsonObject &obj) {
   QJsonArray elements = obj["elements"].toArray();
   std::set<qint32> ret;
 
-  for (QJsonValueRef element : elements) ret.insert(element.toInt());
+  for (QJsonValueRef element : elements)
+    ret.insert(element.toInt());
 
   return ret;
 }
 
-template <>
-QJsonObject Marshalling::toJson(const std::set<qint32>& value) {
+template <> QJsonObject Marshalling::toJson(const std::set<qint32> &value) {
   QJsonObject obj;
   QJsonArray elements;
 
@@ -195,8 +184,7 @@ QJsonObject Marshalling::toJson(const std::set<qint32>& value) {
   return obj;
 }
 
-template <>
-std::set<QString> Marshalling::fromJson(const QJsonObject& obj) {
+template <> std::set<QString> Marshalling::fromJson(const QJsonObject &obj) {
   QJsonArray elements = obj["elements"].toArray();
   std::set<QString> ret;
 
@@ -206,8 +194,7 @@ std::set<QString> Marshalling::fromJson(const QJsonObject& obj) {
   return ret;
 }
 
-template <>
-QJsonObject Marshalling::toJson(const std::set<QString>& value) {
+template <> QJsonObject Marshalling::toJson(const std::set<QString> &value) {
   QJsonObject obj;
   QJsonArray elements;
 
@@ -217,4 +204,4 @@ QJsonObject Marshalling::toJson(const std::set<QString>& value) {
   obj["elements"] = elements;
   return obj;
 }
-}  // namespace c3picko
+} // namespace c3picko

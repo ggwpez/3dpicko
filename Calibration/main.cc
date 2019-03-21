@@ -19,7 +19,7 @@ using namespace cv;
 
 const std::string root = "/home/vados/src/bc_pics/calibration/";
 
-int usage(int argc, char** argv) {
+int usage(int argc, char **argv) {
   for (int i = 1; i < argc; ++i)
     qDebug().nospace() << "Arg " << i << ": " << argv[i];
 
@@ -30,8 +30,7 @@ int usage(int argc, char** argv) {
   return 0;
 }
 
-template <typename T>
-QJsonObject toJson(cv::Mat mat) {
+template <typename T> QJsonObject toJson(cv::Mat mat) {
   QJsonObject ret;
   ret["cols"] = mat.cols;
   ret["rows"] = mat.rows;
@@ -47,8 +46,7 @@ QJsonObject toJson(cv::Mat mat) {
   return ret;
 }
 
-template <typename T>
-cv::Mat matFromJson(QJsonObject obj) {
+template <typename T> cv::Mat matFromJson(QJsonObject obj) {
   cv::Mat ret(obj["rows"].toInt(), obj["cols"].toInt(), obj["type"].toInt());
 
   QJsonArray data = obj["data"].toArray();
@@ -71,7 +69,7 @@ int detect(QStringList images) {
   std::vector<Point3f> object_blueprint;
   for (int i = 0; i < pattern.height; ++i)
     for (int j = 0; j < pattern.width; ++j)
-      object_blueprint.emplace_back(i * 2.3, j * 2.3, 0);  // Size in cm
+      object_blueprint.emplace_back(i * 2.3, j * 2.3, 0); // Size in cm
 
   while (!images.empty() && ++used) {
     std::cerr << "Reading " << images.first().toStdString() << "\n";
@@ -94,8 +92,8 @@ int detect(QStringList images) {
       cornerSubPix(grey, corners, Size(11, 11), Size(-1, -1),
                    TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, .001));
 
-      std::vector<Mat> rvecs;  // translation
-      std::vector<Mat> tvecs;  // rotation
+      std::vector<Mat> rvecs; // translation
+      std::vector<Mat> tvecs; // rotation
 
       image_points.push_back(corners);
       object_points.push_back(object_blueprint);
@@ -118,7 +116,7 @@ int detect(QStringList images) {
       // while (waitKey() != 'q')
       //;
     } else
-      ;  // qWarning() << "Bad Image";
+      ; // qWarning() << "Bad Image";
   }
 
   QJsonObject ret;
@@ -143,8 +141,8 @@ int detect(QStringList images) {
 int transform(QStringList images) {
   QTextStream in(stdin);
   QJsonParseError error;
-  QJsonObject json = QJsonDocument::fromJson(qPrintable(in.readAll()), &error)
-                         .object();  // wtf
+  QJsonObject json =
+      QJsonDocument::fromJson(qPrintable(in.readAll()), &error).object(); // wtf
 
   if (error.error != QJsonParseError::NoError) {
     qFatal("Json: %s", qPrintable(error.errorString()));
@@ -174,8 +172,9 @@ int transform(QStringList images) {
   return 0;
 }
 
-int main(int argc, char** argv) {
-  if (argc != 3) return usage(argc, argv);
+int main(int argc, char **argv) {
+  if (argc != 3)
+    return usage(argc, argv);
   std::string mode(argv[1]);
 
   QStringList images;
@@ -186,11 +185,13 @@ int main(int argc, char** argv) {
     while (it.hasNext()) {
       QString path = it.next();
 
-      if (path.toLower().endsWith(".jpg")) images << path;
+      if (path.toLower().endsWith(".jpg"))
+        images << path;
     }
   }
 
-  if (mode == "--detect") return detect(images);
+  if (mode == "--detect")
+    return detect(images);
   if (mode == "--transform")
     return transform(images);
   else

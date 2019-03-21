@@ -1,11 +1,11 @@
 #include "include/algorithms/plate1.h"
+#include "include/algorithm_job.h"
+#include "include/algorithms/normal1.h"
+#include "include/plate_result.h"
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
-#include "include/algorithm_job.h"
-#include "include/algorithms/normal1.h"
-#include "include/plate_result.h"
 
 namespace c3picko {
 Plate1::Plate1()
@@ -14,15 +14,15 @@ Plate1::Plate1()
                  (AlgoStep)Plate1::detect},
                 {}, true, 5000) {}
 
-void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
-  cv::Mat& output = result->newMat();
+void Plate1::cvt(AlgorithmJob *base, PlateResult *result) {
+  cv::Mat &input = *reinterpret_cast<cv::Mat *>(base->input());
+  cv::Mat &output = result->newMat();
 
   cv::cvtColor(input, output, CV_BGR2GRAY);
 }
-void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
-  cv::Mat& input = result->oldMat();
-  cv::Mat& output = result->newMat();
+void Plate1::threshold(AlgorithmJob *, PlateResult *result) {
+  cv::Mat &input = result->oldMat();
+  cv::Mat &output = result->newMat();
 
   cv::Mat tmp, _;
   double otsu =
@@ -40,21 +40,22 @@ void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
 
 // Strict include, points on the edge are considered outside
 template <std::size_t s1, std::size_t s2>
-bool polyIncludesPoly(std::array<cv::Point, s1> const& poly1,
-                      std::array<cv::Point, s2> const& poly2) {
+bool polyIncludesPoly(std::array<cv::Point, s1> const &poly1,
+                      std::array<cv::Point, s2> const &poly2) {
   for (std::size_t i = 0; i < poly2.size(); ++i)
-    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
+    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0)
+      return false;
 
   return true;
 }
 
-void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input());
-  cv::Mat const& erroded = result->oldMat();
+void Plate1::detect(AlgorithmJob *base, PlateResult *result) {
+  cv::Mat const &original = *reinterpret_cast<cv::Mat *>(base->input());
+  cv::Mat const &erroded = result->oldMat();
 
   math::Range<int> area((original.rows * original.cols) / 32,
                         std::numeric_limits<int>::max());
-  cv::Mat& ret(result->newMat(original));
+  cv::Mat &ret(result->newMat(original));
   std::vector<math::OuterBorder> outer_edges;
   std::vector<math::InnerBorder> inner_edges;
   std::vector<std::vector<cv::Point>> contours;
@@ -76,7 +77,8 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
     cv::waitKey(0);
     cv::destroyAllWindows();*/
 
-    if (area.excludes(a)) continue;
+    if (area.excludes(a))
+      continue;
     // Filter out all curves with 4 or 6 points and size atleast 1/16 or the
     // image size
     if ((curve.size() == 6 || curve.size() == 4)) {
@@ -98,7 +100,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
     throw std::runtime_error("Could not approximate inner edge");
 
   double eps = .1;
-  double plate_ratio = 128. / 85.9;  // FIXME get data from plate profile
+  double plate_ratio = 128. / 85.9; // FIXME get data from plate profile
   double optimal = 1 / plate_ratio;
   math::Range<double> outer_bb_ratio(optimal - eps, optimal + eps);
 
@@ -109,7 +111,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
 
     double w = math::distance(edge[0].x, edge[0].y, edge[1].x, edge[1].y);
     double h = math::distance(edge[1].x, edge[1].y, edge[2].x,
-                              edge[2].y);  // TODO use cv::norm
+                              edge[2].y); // TODO use cv::norm
 
     double r(std::min(w, h) / double(std::max(w, h)));
     if (!outer_bb_ratio.contains(r))
@@ -140,9 +142,10 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
       // It would mean, that the 6p is outside the 4p, which is not how a plate
       // looks like NOTE if we kick out a correct 4p here, try to decrease the
       // eps for the approxPolyDP
-      if (!polyIncludesPoly(outer, inner)) continue;
+      if (!polyIncludesPoly(outer, inner))
+        continue;
 
-      for (std::size_t c = 0; c < outer.size(); ++c)  // 4 loops, RIP me
+      for (std::size_t c = 0; c < outer.size(); ++c) // 4 loops, RIP me
       {
         // Minimum distance between the two closest points from 4p and 6p
         double d_min = std::numeric_limits<double>::infinity();
@@ -178,4 +181,4 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   result->original_ = Plate(outer_edge, inner_edge);
   result->rotated_ = result->original_.normalized(ret, ret);
 }
-}  // namespace c3picko
+} // namespace c3picko

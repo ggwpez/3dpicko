@@ -7,7 +7,7 @@
 namespace c3picko {
 
 class Colony {
- public:
+public:
   typedef qint32 ID;
 
   Colony(double x, double y, double area, double circumference,
@@ -31,9 +31,9 @@ class Colony {
   bool excluded() const;
   AlgoSetting::ID excludedBy() const;
 
-  void setExcluded_by(const AlgoSetting::ID& excluded_by);
+  void setExcluded_by(const AlgoSetting::ID &excluded_by);
 
- private:
+private:
   /**
    * @brief Center X position relative to the image size. Value in interval
    * [0,1]
@@ -79,4 +79,4 @@ class Colony {
 };
 
 MAKE_MARSHALLABLE(Colony);
-}  // namespace c3picko
+} // namespace c3picko

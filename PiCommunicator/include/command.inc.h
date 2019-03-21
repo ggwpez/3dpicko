@@ -8,7 +8,7 @@
 namespace c3picko {
 namespace pi {
 template <typename T>
-inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply) {
+inline void Command::CheckStatusCodeAndResponse(QNetworkReply *reply) {
   QByteArray data = reply->readAll();
 
   if (data.size() == 0) {
@@ -24,10 +24,10 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply) {
     return;
   }
 
-  T* response = new T(doc.object());
+  T *response = new T(doc.object());
 
   CheckStatusCode(reply, response);
 }
-}  // namespace pi
-}  // namespace c3picko
-#endif  // COMMAND_INC_H_
+} // namespace pi
+} // namespace c3picko
+#endif // COMMAND_INC_H_

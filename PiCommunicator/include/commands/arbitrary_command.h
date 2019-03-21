@@ -18,12 +18,12 @@ class ArbitraryCommand : public Command {
   ArbitraryCommand() = delete;
   using Command::Command;
 
- public:
+public:
   static ArbitraryCommand *SingleCommand(QString command);
   static ArbitraryCommand *MultiCommand(QStringList commands);
 };
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko
 
-#endif  // ARBITRARY_COMMAND_H_
+#endif // ARBITRARY_COMMAND_H_

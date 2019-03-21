@@ -1,21 +1,21 @@
 #ifndef ALGO_SETTING_H
 #define ALGO_SETTING_H
 
+#include "include/algorithms/helper.h"
+#include "include/exception.h"
+#include "include/marshalling.hpp"
 #include <QColor>
 #include <QDebug>
 #include <QPair>
 #include <QString>
 #include <QVariant>
-#include "include/algorithms/helper.h"
-#include "include/exception.h"
-#include "include/marshalling.hpp"
 
 namespace c3picko {
 /**
  * @brief Represents a single option/threshold for an Algorithm.
  */
 class AlgoSetting {
- public:
+public:
   /**
    * @brief When setting color to this, the GUI decides.
    */
@@ -53,12 +53,12 @@ class AlgoSetting {
               QVariant default_value, QList<AlgoSetting> sub_settings = {},
               QColor color = DefaultColor, QVariant value = QVariant());
 
- public:
+public:
   ID id() const;
   ID type() const;
   QString name() const;
   QString description() const;
-  inline void setValue(QJsonValue const& value) {
+  inline void setValue(QJsonValue const &value) {
     if (type_ == "rangeslider") {
       QJsonObject range = value.toObject();
 
@@ -70,48 +70,42 @@ class AlgoSetting {
   // template <typename T> inline void setValue(T const& value) {
   // QVariant::fromValue(value); } // TODO check cast
 
-  template <typename T>
-  inline T value() const {
+  template <typename T> inline T value() const {
     if (!value_.canConvert<T>())
       return defaultValue<T>();
     else
       return qvariant_cast<T>(value_);
   }
 
-  template <typename T>
-  inline T min() const {
+  template <typename T> inline T min() const {
     if (!min_.canConvert<T>())
       throw Exception("Could not convert variant value");
     else
       return qvariant_cast<T>(min_);
   }
 
-  template <typename T>
-  inline T max() const {
+  template <typename T> inline T max() const {
     if (!max_.canConvert<T>())
       throw Exception("Could not convert variant value");
     else
       return qvariant_cast<T>(max_);
   }
 
-  template <typename T>
-  inline T step() const {
+  template <typename T> inline T step() const {
     if (!step_.canConvert<T>())
       throw Exception("Could not convert variant value");
     else
       return qvariant_cast<T>(step_);
   }
 
-  template <typename T>
-  inline T defaultValue() const {
+  template <typename T> inline T defaultValue() const {
     if (!default_value_.canConvert<T>())
       throw Exception("Could not convert variant value");
     else
       return qvariant_cast<T>(default_value_);
   }
 
-  template <typename T>
-  inline T option() const {
+  template <typename T> inline T option() const {
     if (!options_[value<QString>()].canConvert<T>())
       throw Exception("Could not convert variant value");
     else
@@ -124,13 +118,13 @@ class AlgoSetting {
   QVariant valueVariant() const;
   QVariant defaultValueVariant() const;
 
-  QVariantMap const& options() const;
+  QVariantMap const &options() const;
   QColor color() const;
-  void addSubSetting(AlgoSetting const& sub);
+  void addSubSetting(AlgoSetting const &sub);
 
   QList<AlgoSetting> subSettings() const;
 
- protected:
+protected:
   ID id_;
   QString name_, type_, description_;
   QVariant min_, max_, step_;
@@ -142,6 +136,6 @@ class AlgoSetting {
   QVariant value_;
 };
 MAKE_MARSHALLABLE(AlgoSetting);
-}  // namespace c3picko
+} // namespace c3picko
 
-#endif  // ALGO_SETTING_H
+#endif // ALGO_SETTING_H

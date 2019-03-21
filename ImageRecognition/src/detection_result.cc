@@ -3,12 +3,11 @@
 
 namespace c3picko {
 
-std::vector<Colony>& DetectionResult::colonies() { return colonies_; }
+std::vector<Colony> &DetectionResult::colonies() { return colonies_; }
 
-template <>
-QJsonObject Marshalling::toJson(const DetectionResult& value) {
+template <> QJsonObject Marshalling::toJson(const DetectionResult &value) {
   QJsonObject obj = Marshalling::toJson<AlgorithmResult>(
-      static_cast<AlgorithmResult const&>(value));
+      static_cast<AlgorithmResult const &>(value));
   QJsonArray colonies;
 
   /*for (Colony const& colony : value.colonies())
@@ -19,8 +18,7 @@ QJsonObject Marshalling::toJson(const DetectionResult& value) {
   return obj;
 }
 
-template <>
-DetectionResult Marshalling::fromJson(const QJsonObject& obj) {
+template <> DetectionResult Marshalling::fromJson(const QJsonObject &obj) {
   throw Exception("Not implemented");
 }
-}  // namespace c3picko
+} // namespace c3picko

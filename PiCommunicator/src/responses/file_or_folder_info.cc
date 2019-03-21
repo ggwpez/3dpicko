@@ -20,15 +20,19 @@ FileOrFolderInfo::FileOrFolderInfo(const QJsonObject &obj) : Response(obj) {
 }
 
 void FileOrFolderInfo::ReadFileMember(QJsonObject const &obj) {
-  if (obj.contains("hash")) hash = obj["hash"].toString();
+  if (obj.contains("hash"))
+    hash = obj["hash"].toString();
 
-  if (obj.contains("size")) size = obj["size"].toInt();
+  if (obj.contains("size"))
+    size = obj["size"].toInt();
 
-  if (obj.contains("date")) date = obj["date"].toInt();
+  if (obj.contains("date"))
+    date = obj["date"].toInt();
 
   origin = data::LocationFromString(obj["origin"].toString());
 
-  if (obj.contains("refs")) refs = data::Reference(obj["refs"].toObject());
+  if (obj.contains("refs"))
+    refs = data::Reference(obj["refs"].toObject());
 
   if (obj.contains("gcodeAnalysis"))
     gcode_analysis = obj["gcodeAnalysis"].toString();
@@ -41,8 +45,9 @@ void FileOrFolderInfo::ReadFolderMember(const QJsonObject &obj) {
     }
   }
 
-  if (obj.contains("size")) size = obj["size"].toInt();
+  if (obj.contains("size"))
+    size = obj["size"].toInt();
 }
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko

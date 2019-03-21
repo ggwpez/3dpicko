@@ -1,6 +1,6 @@
 #include "include/algo_setting.h"
-#include <QJsonArray>
 #include "include/exception.h"
+#include <QJsonArray>
 
 namespace c3picko {
 static QVariant empty_qv = QJsonValue();
@@ -51,18 +51,9 @@ AlgoSetting::AlgoSetting(AlgoSetting::ID id, QString name, QString type,
                          QVariant default_value,
                          QList<AlgoSetting> sub_settings, QColor color,
                          QVariant value)
-    : id_(id),
-      name_(name),
-      type_(type),
-      description_(description),
-      min_(min),
-      max_(max),
-      step_(step),
-      options_(options),
-      default_value_(default_value),
-      sub_settings_(sub_settings),
-      color_(color),
-      value_(value) {
+    : id_(id), name_(name), type_(type), description_(description), min_(min),
+      max_(max), step_(step), options_(options), default_value_(default_value),
+      sub_settings_(sub_settings), color_(color), value_(value) {
   if (type == "slider") {
     if (!min_.isValid() || !max_.isValid() || !default_value_.isValid())
       throw Exception("AlgoSetting: All passed values must be non-null");
@@ -98,18 +89,17 @@ QVariant AlgoSetting::valueVariant() const { return value_; }
 
 QVariant AlgoSetting::defaultValueVariant() const { return default_value_; }
 
-QVariantMap const& AlgoSetting::options() const { return options_; }
+QVariantMap const &AlgoSetting::options() const { return options_; }
 
 QColor AlgoSetting::color() const { return color_; }
 
-void AlgoSetting::addSubSetting(const AlgoSetting& sub) {
+void AlgoSetting::addSubSetting(const AlgoSetting &sub) {
   sub_settings_.push_back(sub);
 }
 
 QList<AlgoSetting> AlgoSetting::subSettings() const { return sub_settings_; }
 
-template <>
-QJsonObject Marshalling::toJson(const AlgoSetting& value) {
+template <> QJsonObject Marshalling::toJson(const AlgoSetting &value) {
   QJsonObject obj;
   QString link = "/wiki/index.html#" + value.name().toLower().replace(' ', '-');
   QString name = value.name();
@@ -120,8 +110,8 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
   obj["id"] = value.id();
   obj["type"] = value.type();
   obj["name"] = name;
-  obj["description"] = "";  // = "<a href=\"" + link + "\" target=\"_blank\"
-                            // rel=\"noopener\" >Wiki link</a>";
+  obj["description"] = ""; // = "<a href=\"" + link + "\" target=\"_blank\"
+                           // rel=\"noopener\" >Wiki link</a>";
   obj["color"] = value.color().name();
 
   if (value.type() == "slider") {
@@ -136,7 +126,7 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
 
     if (!value.subSettings().empty()) {
       QJsonArray subs;
-      for (AlgoSetting const& sub : value.subSettings())
+      for (AlgoSetting const &sub : value.subSettings())
         subs.push_back(Marshalling::toJson(sub));
 
       obj["conditional_settings"] = subs;
@@ -148,13 +138,15 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
     math::Range<double> def = value.defaultValue<math::Range<double>>();
 
     // TODO is this legit?
-    if (!def.lower_closed_) def.lower_ += value.step<double>();
-    if (!def.upper_closed_) def.upper_ -= value.step<double>();
+    if (!def.lower_closed_)
+      def.lower_ += value.step<double>();
+    if (!def.upper_closed_)
+      def.upper_ -= value.step<double>();
 
     obj["defaultValue"] = QJsonObject{{"min", def.lower_}, {"max", def.upper_}};
     obj["min"] = QJsonValue::fromVariant(value.minVariant());
     obj["max"] = QJsonValue::fromVariant(value.maxVariant());
-    obj["valueType"] = "double";  // FIXME
+    obj["valueType"] = "double"; // FIXME
     obj["step"] = QJsonValue::fromVariant(value.stepVariant());
   } else
     Q_UNREACHABLE();
@@ -163,8 +155,8 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
 }
 
 template <>
-Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
-  throw Exception("Marshalling::fromJson<AlgoSetting> not tested");  // TODO
+Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject &obj) {
+  throw Exception("Marshalling::fromJson<AlgoSetting> not tested"); // TODO
   AlgoSetting::ID id = Marshalling::fromJson<QString>(obj["id"]);
   QString type = Marshalling::fromJson<QString>(obj["type"]).toLower();
   QString name = Marshalling::fromJson<QString>(obj["name"]);
@@ -205,4 +197,4 @@ Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
 }
 
 const QColor AlgoSetting::DefaultColor = QColor::fromRgb(0, 0, 0, 0);
-}  // namespace c3picko
+} // namespace c3picko

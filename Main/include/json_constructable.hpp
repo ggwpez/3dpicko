@@ -1,12 +1,12 @@
 #pragma once
 
+#include "include/global.h"
 #include <QJsonObject>
 #include <QJsonValueRef>
-#include "include/global.h"
 
 namespace c3picko {
 class JsonConstructable {
- public:
+public:
   inline JsonConstructable(QJsonObject const &) {}
   inline virtual ~JsonConstructable() {}
 
@@ -18,4 +18,4 @@ class JsonConstructable {
 
   virtual void write(QJsonObject &) const = 0;
 };
-}  // namespace c3picko
+} // namespace c3picko

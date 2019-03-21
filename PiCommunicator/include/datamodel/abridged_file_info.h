@@ -1,10 +1,10 @@
 #ifndef ABRIDGED_FILE_INFORMATION_H_
 #define ABRIDGED_FILE_INFORMATION_H_
 
-#include <QString>
 #include "datamodel/location.h"
 #include "datamodel/reference.h"
 #include "response.h"
+#include <QString>
 
 class QJsonObject;
 
@@ -25,11 +25,11 @@ struct AbridgedFileInfo : public responses::Response {
   data::Location origin;
   data::Reference ref;
 };
-}  // namespace data
+} // namespace data
 namespace responses {
 typedef data::AbridgedFileInfo AbridgedFileInfo;
 }
-}  // namespace pi
-}  // namespace c3picko
+} // namespace pi
+} // namespace c3picko
 
-#endif  // ABRIDGED_FILE_INFORMATION_H_
+#endif // ABRIDGED_FILE_INFORMATION_H_

@@ -12,7 +12,7 @@ class QSslConfiguration;
 namespace c3picko {
 class ResourcePath;
 
-QSslConfiguration* LoadSslConfig(QSettings& settings);
+QSslConfiguration *LoadSslConfig(QSettings &settings);
 
 ResourcePath Root();
 ResourcePath Etc();
@@ -20,8 +20,8 @@ ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
 
-QString searchConfigFile(int argc, char** argv);
-void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings);
+QString searchConfigFile(int argc, char **argv);
+void Setup(QCoreApplication *app, QString ini_file_path, QSettings &settings);
 
 /**
  * @brief String format for formatting QDateTime.
@@ -36,5 +36,5 @@ QString dateTimeFormat();
  */
 int exitRestart();
 
-char const* defaultImageExtension();
-}  // namespace c3picko
+char const *defaultImageExtension();
+} // namespace c3picko

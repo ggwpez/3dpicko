@@ -65,7 +65,7 @@ class QtServiceControllerPrivate;
 
 class DECLSPEC QtServiceController {
   Q_DECLARE_PRIVATE(QtServiceController)
- public:
+public:
   enum StartupType { AutoStartup = 0, ManualStartup };
 
   QtServiceController(const QString &name);
@@ -91,7 +91,7 @@ class DECLSPEC QtServiceController {
   bool resume();
   bool sendCommand(int code);
 
- private:
+private:
   QtServiceControllerPrivate *d_ptr;
 };
 
@@ -99,7 +99,7 @@ class QtServiceBasePrivate;
 
 class DECLSPEC QtServiceBase {
   Q_DECLARE_PRIVATE(QtServiceBase)
- public:
+public:
   enum MessageType { Success = 0, Error, Warning, Information };
 
   enum ServiceFlag {
@@ -133,7 +133,7 @@ class DECLSPEC QtServiceBase {
 
   static QtServiceBase *instance();
 
- protected:
+protected:
   virtual void start() = 0;
   virtual void stop();
   virtual void pause();
@@ -144,19 +144,18 @@ class DECLSPEC QtServiceBase {
 
   virtual int executeApplication() = 0;
 
- private:
+private:
   friend class QtServiceSysPrivate;
   QtServiceBasePrivate *d_ptr;
 };
 
-template <typename Application>
-class QtService : public QtServiceBase {
- public:
+template <typename Application> class QtService : public QtServiceBase {
+public:
   QtService(int argc, char **argv, const QString &name)
       : QtServiceBase(argc, argv, name), app(0) {}
   ~QtService() {}
 
- protected:
+protected:
   Application *application() const { return app; }
 
   virtual void createApplication(int &argc, char **argv) {
@@ -167,10 +166,10 @@ class QtService : public QtServiceBase {
 
   virtual int executeApplication() { return Application::exec(); }
 
- private:
+private:
   Application *app;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QtServiceBase::ServiceFlags)
 
-#endif  // QTSERVICE_H
+#endif // QTSERVICE_H

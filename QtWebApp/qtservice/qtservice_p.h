@@ -41,19 +41,19 @@
 #ifndef QTSERVICE_P_H
 #define QTSERVICE_P_H
 
-#include <QStringList>
 #include "qtservice.h"
+#include <QStringList>
 
 class QtServiceControllerPrivate {
   Q_DECLARE_PUBLIC(QtServiceController)
- public:
+public:
   QString serviceName;
   QtServiceController *q_ptr;
 };
 
 class QtServiceBasePrivate {
   Q_DECLARE_PUBLIC(QtServiceBase)
- public:
+public:
   QtServiceBasePrivate(const QString &name);
   ~QtServiceBasePrivate();
 

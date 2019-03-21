@@ -10,7 +10,7 @@ namespace c3picko {
  *
  */
 class Point {
- public:
+public:
   /**
    * @brief Point
    * @param x_coordinate
@@ -24,7 +24,7 @@ class Point {
   float yCoordinate() const;
   float zCoordinate() const;
 
- private:
+private:
   const float x_coordinate_;
   const float y_coordinate_;
   const float z_coordinate_;
@@ -36,5 +36,5 @@ using LocalWellCoordinates = Point;
 using GlobalColonyCoordinates = Point;
 using GlobalMasterCoordinates = Point;
 using GlobalWellCoordinates = Point;
-}  // namespace c3picko
-#endif  // POINT_H
+} // namespace c3picko
+#endif // POINT_H

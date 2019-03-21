@@ -1,9 +1,9 @@
 #include "include/algorithm_result.h"
+#include "include/colony.hpp"
+#include "include/exception.h"
 #include <QJsonArray>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
-#include "include/colony.hpp"
-#include "include/exception.h"
 
 namespace c3picko {
 AlgorithmResult::AlgorithmResult(ID id)
@@ -11,8 +11,8 @@ AlgorithmResult::AlgorithmResult(ID id)
 
 AlgorithmResult::~AlgorithmResult() { cleanup(); }
 
-cv::Mat& AlgorithmResult::newMat(cv::Mat const& copy_from) {
-  cv::Mat* new_mat = new cv::Mat();
+cv::Mat &AlgorithmResult::newMat(cv::Mat const &copy_from) {
+  cv::Mat *new_mat = new cv::Mat();
 
   copy_from.copyTo(*new_mat);
 
@@ -20,7 +20,7 @@ cv::Mat& AlgorithmResult::newMat(cv::Mat const& copy_from) {
   return *new_mat;
 }
 
-cv::Mat& AlgorithmResult::oldMat() {
+cv::Mat &AlgorithmResult::oldMat() {
   if (!stack_.size() || !stack_.back())
     throw Exception("Assertion failure: Stack empty");
   return *stack_.back();
@@ -28,8 +28,8 @@ cv::Mat& AlgorithmResult::oldMat() {
 
 AlgorithmResult::ID AlgorithmResult::id() const { return id_; }
 
-cv::Mat& AlgorithmResult::newMat() {
-  cv::Mat* new_mat = new cv::Mat();
+cv::Mat &AlgorithmResult::newMat() {
+  cv::Mat *new_mat = new cv::Mat();
 
   stack_.push_back(new_mat);
 
@@ -65,7 +65,7 @@ cv::destroyAllWindows();*/
 
 QString AlgorithmResult::stageError() const { return stage_error_; }
 
-const std::list<cv::Mat*>& AlgorithmResult::stack() const { return stack_; }
+const std::list<cv::Mat *> &AlgorithmResult::stack() const { return stack_; }
 
 QString AlgorithmResult::cleanupError() const { return cleanup_error_; }
 
@@ -75,8 +75,7 @@ bool AlgorithmResult::cleanupSucceeded() const { return cleanup_succeeded_; }
 
 bool AlgorithmResult::stagesSucceeded() const { return stages_succeeded_; }
 
-template <>
-QJsonObject Marshalling::toJson(const AlgorithmResult& value) {
+template <> QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -89,8 +88,7 @@ QJsonObject Marshalling::toJson(const AlgorithmResult& value) {
   return obj;
 }
 
-template <>
-AlgorithmResult Marshalling::fromJson(const QJsonObject& obj) {
+template <> AlgorithmResult Marshalling::fromJson(const QJsonObject &obj) {
   throw Exception("Not implemented");
 }
-}  // namespace c3picko
+} // namespace c3picko

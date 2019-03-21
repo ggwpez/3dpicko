@@ -1,13 +1,13 @@
 #ifndef JSON_CONVERTABLE_H
 #define JSON_CONVERTABLE_H
 
+#include "include/global.h"
 #include <QJsonObject>
 #include <QJsonValueRef>
-#include "include/global.h"
 
 namespace c3picko {
 class JsonConvertable {
- public:
+public:
   inline virtual ~JsonConvertable() {}
 
   virtual inline explicit operator QJsonObject() const {
@@ -18,6 +18,6 @@ class JsonConvertable {
   virtual void read(const QJsonObject &) = 0;
   virtual void write(QJsonObject &) const = 0;
 };
-}  // namespace c3picko
+} // namespace c3picko
 
-#endif  // JSON_CONVERTABLE_H
+#endif // JSON_CONVERTABLE_H

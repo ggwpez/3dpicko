@@ -5,46 +5,37 @@
 namespace c3picko {
 namespace pi {
 Command::Command(QString api_url, QSet<int> status_ok, Command::HTTPType type)
-    : api_url_(api_url),
-      data_(QByteArray()),
-      status_ok_(status_ok),
-      type_(type),
-      content_type_("application/json; charset=utf-8") {
+    : api_url_(api_url), data_(QByteArray()), status_ok_(status_ok),
+      type_(type), content_type_("application/json; charset=utf-8") {
   SetupSlots();
 }
 
 Command::Command(QString api_url, QByteArray data, QSet<int> status_ok,
                  HTTPType type, QString content_type)
-    : api_url_(api_url),
-      data_(data),
-      status_ok_(status_ok),
-      type_(type),
+    : api_url_(api_url), data_(data), status_ok_(status_ok), type_(type),
       content_type_(content_type) {
   SetupSlots();
 }
 
 Command::Command(QString api_url, QHttpMultiPart *query, QSet<int> status_ok,
                  HTTPType type, QString content_type)
-    : api_url_(api_url),
-      query_(query),
-      status_ok_(status_ok),
-      type_(type),
+    : api_url_(api_url), query_(query), status_ok_(status_ok), type_(type),
       content_type_(content_type) {
   SetupSlots();
 }
 
 Command::~Command() {
-  if (query_) delete query_;
+  if (query_)
+    delete query_;
 }
 
 Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok,
                  HTTPType type, QString content_type)
-    : api_url_(api_url),
-      status_ok_(status_ok),
-      type_(type),
+    : api_url_(api_url), status_ok_(status_ok), type_(type),
       content_type_(content_type) {
   SetupSlots();
-  if (data.isEmpty()) return;
+  if (data.isEmpty())
+    return;
 
   QJsonDocument doc(data);
   data_ = doc.toJson();
@@ -99,5 +90,5 @@ void Command::OnReplyError(QNetworkReply::NetworkError error) {
 
   emit OnNetworkErr(menum.valueToKey(error));
 }
-}  // namespace pi
-}  // namespace c3picko
+} // namespace pi
+} // namespace c3picko

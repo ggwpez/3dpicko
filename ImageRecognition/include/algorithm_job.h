@@ -1,9 +1,9 @@
 #pragma once
 
-#include <QElapsedTimer>
-#include <QObject>
 #include "include/algo_setting.h"
 #include "include/algorithm_result.h"
+#include <QElapsedTimer>
+#include <QObject>
 
 class QThreadPool;
 namespace c3picko {
@@ -19,28 +19,28 @@ class AlgorithmJob : public QObject {
   Q_OBJECT
   friend class AlgorithmManager;
 
- public:
+public:
   typedef QString ID;
 
- private:
-  AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings, void* input,
-               AlgorithmResult* result, QThreadPool* pool, qint64 maxMs,
-               QObject* _parent);
+private:
+  AlgorithmJob(ID id, Algorithm *algo, QJsonObject settings, void *input,
+               AlgorithmResult *result, QThreadPool *pool, qint64 maxMs,
+               QObject *_parent);
 
- public:
+public:
   ~AlgorithmJob();
 
-  void* input();
-  AlgorithmResult* result() const;
+  void *input();
+  AlgorithmResult *result() const;
 
-  AlgoSetting const& settingById(AlgoSetting::ID id) const;
-  AlgoSetting const& settingByName(QString name) const;
+  AlgoSetting const &settingById(AlgoSetting::ID id) const;
+  AlgoSetting const &settingByName(QString name) const;
 
   void setSettingsValueByID(AlgoSetting::ID id, QJsonValue value);
   void setSettingsValueByName(QString name, QJsonValue value);
 
-  QList<AlgoSetting> const& settings() const;
-  void setSettings(QJsonObject const&);
+  QList<AlgoSetting> const &settings() const;
+  void setSettings(QJsonObject const &);
 
   ID id() const;
   AlgorithmResult::ID result_id() const;
@@ -50,7 +50,7 @@ class AlgorithmJob : public QObject {
 
   qint64 maxMs() const;
 
- signals:
+signals:
   void OnAlgoSucceeded();
   void OnAlgoFailed();
 
@@ -59,7 +59,7 @@ class AlgorithmJob : public QObject {
 
   void OnFinished();
 
- public slots:
+public slots:
   /**
    * @brief Starts the job
    * @param Indicates whether the job should be executed in another thread or
@@ -72,17 +72,17 @@ class AlgorithmJob : public QObject {
   void timeStart();
   void timeStop();
 
- private:
+private:
   ID id_;
-  Algorithm* algo_ = nullptr;
-  QThreadPool* pool_;
+  Algorithm *algo_ = nullptr;
+  QThreadPool *pool_;
   QList<AlgoSetting> settings_;
-  void* input_;
+  void *input_;
   /**
    * @brief This pointer is only valid during the call of start(...)
    * It will not be de/serialised. TODO
    */
-  AlgorithmResult* result_;
+  AlgorithmResult *result_;
   AlgorithmResult::ID result_id_;
   /**
    * @brief max_ms_ Soft limit for the maximal time, a job should take in ms.
@@ -93,4 +93,4 @@ class AlgorithmJob : public QObject {
   QElapsedTimer timer_;
 };
 MAKE_MARSHALLABLE(AlgorithmJob);
-}  // namespace c3picko
+} // namespace c3picko

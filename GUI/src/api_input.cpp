@@ -3,10 +3,10 @@
 
 namespace c3picko {
 
-APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
+APIInput::APIInput(APIController *parent) : QObject(parent), api(parent) {}
 
-void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
-                              QObject* client) {
+void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
+                              QObject *client) {
   QString path = Marshalling::fromJson<QString>(request["request"]).toLower();
   QJsonObject req_data = request["data"].toObject();
 
@@ -46,7 +46,7 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     // Get image data
     QByteArray img_data(
         QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
-                                   .toUtf8()));  // TODO ugly code
+                                   .toUtf8())); // TODO ugly code
     QString img_name =
         Marshalling::fromJson<QString>(req_data["original_filename"]);
     Image image =
@@ -93,7 +93,8 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     std::set_intersection(ex_user.begin(), ex_user.end(), in_user.begin(),
                           in_user.end(), std::back_inserter(intersection));
 
-    if (!intersection.empty()) qWarning() << L"EX_USER ∩ IN_USER != ∅";
+    if (!intersection.empty())
+      qWarning() << L"EX_USER ∩ IN_USER != ∅";
 #endif
 
     //
@@ -124,4 +125,4 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     // response = {{"error", "unknown request"}};
   }
 }
-}  // namespace c3picko
+} // namespace c3picko
