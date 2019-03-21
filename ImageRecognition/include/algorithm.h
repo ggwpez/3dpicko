@@ -1,11 +1,11 @@
 #pragma once
 
+#include "include/marshalling.hpp"
 #include <QObject>
 #include <QRunnable>
 #include <QVector>
 #include <functional>
 #include <stack>
-#include "include/marshalling.hpp"
 
 namespace c3picko {
 class AlgorithmResult;
@@ -20,10 +20,10 @@ class AlgorithmJob;
  */
 class Algorithm : public QObject, public QRunnable {
   Q_OBJECT
- public:
+public:
   typedef QString ID;
-  typedef void (*AlgoStep)(AlgorithmJob*, AlgorithmResult*);
-  typedef void (*AlgoCleanup)(Algorithm*);
+  typedef void (*AlgoStep)(AlgorithmJob *, AlgorithmResult *);
+  typedef void (*AlgoCleanup)(Algorithm *);
 
   Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps,
             QList<AlgoSetting> defaultSettings, bool isThreadable,
@@ -43,9 +43,9 @@ class Algorithm : public QObject, public QRunnable {
    * Used instead of a factory.
    * @return Pointer to instance.
    */
-  virtual Algorithm* cloneEmpty() const = 0;
+  virtual Algorithm *cloneEmpty() const = 0;
 
- public:
+public:
   ID id() const;
   QString name() const;
   QString description() const;
@@ -59,7 +59,7 @@ class Algorithm : public QObject, public QRunnable {
 
   qint64 maxMs() const;
 
- protected:
+protected:
   const ID id_;
   const QString name_, description_;
   /**
@@ -78,4 +78,4 @@ class Algorithm : public QObject, public QRunnable {
   qint64 max_ms_;
 };
 MAKE_SERIALIZABLE(Algorithm);
-}  // namespace c3picko
+} // namespace c3picko

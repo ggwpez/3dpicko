@@ -9,4 +9,4 @@
 #include "commands/job_operation.h"
 #include "commands/upload_file.h"
 
-#endif  // ALL_H
+#endif // ALL_H

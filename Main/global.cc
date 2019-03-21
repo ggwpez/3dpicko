@@ -1,9 +1,9 @@
+#include "include/exception.h"
+#include "include/resource_path.h"
 #include <QCoreApplication>
 #include <QSslConfiguration>
 #include <QSslKey>
 #include <QtDebug>
-#include "include/exception.h"
-#include "include/resource_path.h"
 
 #ifdef Q_OS_UNIX
 #include "include/signal_daemon.h"
@@ -11,7 +11,7 @@
 
 namespace c3picko {
 static ResourcePath root_path;
-QSslConfiguration* LoadSslConfig(QSettings& settings) {
+QSslConfiguration *LoadSslConfig(QSettings &settings) {
   QSslConfiguration ssl;
 
   QString cert(settings.value("certificate").toString());
@@ -33,7 +33,7 @@ QSslConfiguration* LoadSslConfig(QSettings& settings) {
   ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
   ssl.setLocalCertificate(certificate);
   ssl.setPrivateKey(sslKey);
-  ssl.setProtocol(QSsl::SecureProtocols);  // TODO
+  ssl.setProtocol(QSsl::SecureProtocols); // TODO
 
   return new QSslConfiguration(ssl);
 }
@@ -53,10 +53,11 @@ ResourcePath UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
  * Aborts the application if not found.
  * @return The valid filename
  */
-QString searchConfigFile(int argc, char** argv) {
+QString searchConfigFile(int argc, char **argv) {
   QFile file;
   QString path = QCoreApplication::applicationDirPath() + "/serverconfig.ini";
-  if (argc > 1) path = argv[1];
+  if (argc > 1)
+    path = argv[1];
   file.setFileName(path);
 
   QFileInfo info(file);
@@ -71,9 +72,9 @@ QString searchConfigFile(int argc, char** argv) {
   return "";
 }
 
-static void setupSignals(QCoreApplication* app) {
+static void setupSignals(QCoreApplication *app) {
 #ifdef Q_OS_UNIX
-  SignalDaemon* sigwatch = new SignalDaemon(app);
+  SignalDaemon *sigwatch = new SignalDaemon(app);
   sigwatch->registerSignals({SIGABRT, SIGALRM, SIGFPE, SIGHUP, SIGILL, SIGINT,
                              SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM, SIGUSR1,
                              SIGUSR2});
@@ -87,12 +88,13 @@ static void setupSignals(QCoreApplication* app) {
 #endif
 }
 
-void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings) {
+void Setup(QCoreApplication *app, QString ini_file_path, QSettings &settings) {
   setupSignals(app);
 
   QString path = QFileInfo(ini_file_path).absolutePath() + "/" +
                  settings.value("root").toString();
-  if (!path.endsWith('/')) path += '/';
+  if (!path.endsWith('/'))
+    path += '/';
   root_path = ResourcePath::fromSystemAbsolute(path);
 
   if (!Root().exists() || !Root().isDir())
@@ -111,6 +113,6 @@ QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
 
 int exitRestart() { return 123; }
 
-const char* defaultImageExtension() { return "jpg"; }
+const char *defaultImageExtension() { return "jpg"; }
 
-}  // namespace c3picko
+} // namespace c3picko

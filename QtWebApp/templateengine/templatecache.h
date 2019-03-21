@@ -1,9 +1,9 @@
 #ifndef TEMPLATECACHE_H
 #define TEMPLATECACHE_H
 
-#include <QCache>
 #include "templateglobal.h"
 #include "templateloader.h"
+#include <QCache>
 
 namespace stefanfrings {
 
@@ -43,7 +43,7 @@ namespace stefanfrings {
 class DECLSPEC TemplateCache : public TemplateLoader {
   Q_OBJECT
   Q_DISABLE_COPY(TemplateCache)
- public:
+public:
   /**
     Constructor.
     @param settings configurations settings
@@ -51,7 +51,7 @@ class DECLSPEC TemplateCache : public TemplateLoader {
   */
   TemplateCache(QSettings *settings, QObject *parent = 0);
 
- protected:
+protected:
   /**
     Try to get a file from cache or filesystem.
     @param localizedName Name of the template with locale to find
@@ -59,7 +59,7 @@ class DECLSPEC TemplateCache : public TemplateLoader {
   */
   virtual QString tryFile(QString localizedName);
 
- private:
+private:
   struct CacheEntry {
     QString document;
     qint64 created;
@@ -75,6 +75,6 @@ class DECLSPEC TemplateCache : public TemplateLoader {
   QMutex mutex;
 };
 
-}  // namespace stefanfrings
+} // namespace stefanfrings
 
-#endif  // TEMPLATECACHE_H
+#endif // TEMPLATECACHE_H

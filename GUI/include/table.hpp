@@ -1,5 +1,9 @@
 #pragma once
 
+#include "include/exception.h"
+#include "include/json_constructable.hpp"
+#include "include/json_convertable.h"
+#include "include/marshalling.hpp"
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QMap>
@@ -7,10 +11,6 @@
 #include <map>
 #include <type_traits>
 #include <utility>
-#include "include/exception.h"
-#include "include/json_constructable.hpp"
-#include "include/json_convertable.h"
-#include "include/marshalling.hpp"
 
 namespace c3picko {
 /**
@@ -18,16 +18,15 @@ namespace c3picko {
  *
  * TODO addAsJson and getAsJson are probably buggy with Value=QJsonObject
  */
-template <typename Value>
-class Table : public JsonConvertable {
+template <typename Value> class Table : public JsonConvertable {
   // static_assert(std::is_base_of<JsonConstructable, Value>(),
   //            "Value type must implement interface JsonConvertable");
 
- public:
+public:
   typedef QString Key;
   typedef QMap<Key, Value> MapType;
 
-  inline void add(Key const& key, Value const& value) {
+  inline void add(Key const &key, Value const &value) {
     auto it = entries_.find(key);
 
     if (it != entries_.end()) {
@@ -39,11 +38,11 @@ class Table : public JsonConvertable {
     }
   }
 
-  inline void addAsJson(Key const& key, QJsonObject const& json) {
+  inline void addAsJson(Key const &key, QJsonObject const &json) {
     add(key, Marshalling::fromJson<Value>(json));
   }
 
-  inline bool exists(Key const& key) const {
+  inline bool exists(Key const &key) const {
     return (entries_.find(key) != entries_.end());
   }
 
@@ -53,7 +52,7 @@ class Table : public JsonConvertable {
    *
    * We can return a reference here, since QMap also does that
    */
-  inline Value& get(Key const& key) {
+  inline Value &get(Key const &key) {
     auto it = entries_.find(key);
 
     if (it == entries_.end())
@@ -62,34 +61,34 @@ class Table : public JsonConvertable {
       return it.value();
   }
 
-  inline QJsonObject getAsJson(Key const& key) const {
-    Value const& value = get(key);
+  inline QJsonObject getAsJson(Key const &key) const {
+    Value const &value = get(key);
 
     QJsonObject json;
     value.write(json);
     return json;
   }
 
-  inline void remove(Key const& key) { entries_.remove(key); }
+  inline void remove(Key const &key) { entries_.remove(key); }
 
   // key_value_iterator was introduced in 5.10 but the CI-Server has 5.9.5
   inline typename MapType::iterator begin() { return entries_.begin(); }
   inline typename MapType::iterator end() { return entries_.end(); }
 
- public:
-  inline void read(QJsonObject const& obj) override {
+public:
+  inline void read(QJsonObject const &obj) override {
     for (auto it = obj.begin(); it != obj.end(); ++it)
       addAsJson(it.key(), it.value().toObject());
   }
 
-  inline void write(QJsonObject& obj) const override {
+  inline void write(QJsonObject &obj) const override {
     for (auto it = entries_.begin(); it != entries_.end(); ++it)
       obj[it.key()] = Marshalling::toJson(it.value());
   }
 
-  inline MapType const& entries() const { return entries_; }
+  inline MapType const &entries() const { return entries_; }
 
- private:
+private:
   MapType entries_;
 };
-}  // namespace c3picko
+} // namespace c3picko

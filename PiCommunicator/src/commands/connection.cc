@@ -28,9 +28,9 @@ Connection *Connection::FakeAck() {
 }
 
 void Connection::OnReplyFinished(QNetworkReply *reply) {
-  if (type_ == HTTPType::GET)  // Are we waiting for a response ?
+  if (type_ == HTTPType::GET) // Are we waiting for a response ?
     CheckStatusCodeAndResponse<Response>(reply);
-  else if (type_ == HTTPType::POST)  // No response in POST
+  else if (type_ == HTTPType::POST) // No response in POST
     CheckStatusCode(reply, nullptr);
   else
     Q_UNREACHABLE();
@@ -42,14 +42,19 @@ QJsonObject Connection::CreateConnectJson(QString port, qint32 baudrate,
   QJsonObject ret;
   ret["command"] = "connect";
 
-  if (port.length()) ret["port"] = port;
-  if (baudrate > 0) ret["baudrate"] = baudrate;
-  if (printer_profile.length()) ret["printerProfile"] = printer_profile;
-  if (save) ret["save"] = true;
-  if (autoconnect) ret["autoconnect"] = true;
+  if (port.length())
+    ret["port"] = port;
+  if (baudrate > 0)
+    ret["baudrate"] = baudrate;
+  if (printer_profile.length())
+    ret["printerProfile"] = printer_profile;
+  if (save)
+    ret["save"] = true;
+  if (autoconnect)
+    ret["autoconnect"] = true;
 
   return ret;
 }
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko

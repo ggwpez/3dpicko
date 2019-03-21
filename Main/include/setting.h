@@ -11,7 +11,7 @@ namespace c3picko {
  * ImageRecognition...
  */
 class Setting {
- public:
+public:
   typedef QString ID;
   enum class Type {
     TEXT,
@@ -38,11 +38,11 @@ class Setting {
           QVariant default_value, QString placeholder, QVariant min,
           QVariant max, QVariant step, ValueType value_type,
           QVariantMap options, int max_str_len, int min_str_len,
-          const std::vector<Setting>& sub_settings);
+          const std::vector<Setting> &sub_settings);
 
-  void setValue(QJsonValue const& value);
+  void setValue(QJsonValue const &value);
 
- protected:
+protected:
   // General attributes
   ID id_;
   QString name_;
@@ -79,4 +79,4 @@ class Setting {
    */
   std::vector<Setting> sub_settings_;
 };
-}  // namespace c3picko
+} // namespace c3picko

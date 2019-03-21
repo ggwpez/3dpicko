@@ -1,8 +1,8 @@
-#include <QTest>
 #include "tst_colonycollision.h"
 #include "tst_platedetection.h"
+#include <QTest>
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   int status = 0;
   {
       // ColonyCollision tc;

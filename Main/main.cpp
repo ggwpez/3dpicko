@@ -19,9 +19,9 @@
 using namespace stefanfrings;
 using namespace c3picko;
 
-static WsServer* ws_ptr = nullptr;
-static void msg_handler(QtMsgType type, const QMessageLogContext& context,
-                        const QString& msg) {
+static WsServer *ws_ptr = nullptr;
+static void msg_handler(QtMsgType type, const QMessageLogContext &context,
+                        const QString &msg) {
   QString formated = qFormatLogMessage(type, context, msg);
   QString now = QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
   formated = "[ " + now + " ] " + formated;
@@ -32,7 +32,7 @@ static void msg_handler(QtMsgType type, const QMessageLogContext& context,
   fprintf(stderr, "%s\n", qPrintable(formated));
 }
 
-static int start(int argc, char** argv) {
+static int start(int argc, char **argv) {
 #ifdef Q_OS_LINUX
   qInstallMessageHandler(msg_handler);
 #endif
@@ -42,28 +42,28 @@ static int start(int argc, char** argv) {
   QSettings settings(ini_file, QSettings::IniFormat);
   Setup(&app, ini_file, settings);
 
-  QThreadPool* algo_pool = new QThreadPool(&app);
+  QThreadPool *algo_pool = new QThreadPool(&app);
   algo_pool->setMaxThreadCount(qMin(1, QThread::idealThreadCount() / 2));
-  AlgorithmManager* colony_detector =
+  AlgorithmManager *colony_detector =
       new AlgorithmManager(algo_pool, {new Normal1(), new Fluro1()}, &app);
-  AlgorithmManager* plate_detector =
+  AlgorithmManager *plate_detector =
       new AlgorithmManager(algo_pool, {new Plate1()}, &app);
 
   settings.beginGroup("database");
-  Database* db = new Database(settings, &app);
-  APIController* api =
+  Database *db = new Database(settings, &app);
+  APIController *api =
       new APIController(colony_detector, plate_detector, db, &app);
 
   // Static file controller
   settings.beginGroup("files");
-  StaticFileController* staticFileController =
+  StaticFileController *staticFileController =
       new StaticFileController(settings, DocRoot().toSystemAbsolute(), &app);
   qDebug() << "DocRoot" << DocRoot().toSystemAbsolute();
 
   // SSL
   settings.beginGroup("ssl");
 
-  QSslConfiguration* ssl = nullptr;
+  QSslConfiguration *ssl = nullptr;
   if (settings.value("enabled", false).toBool()) {
     ssl = LoadSslConfig(settings);
     if (!ssl) {
@@ -75,14 +75,14 @@ static int start(int argc, char** argv) {
     qDebug() << "SSL disabled";
 
   // HTTP server
-  QSettings* http_settings =
+  QSettings *http_settings =
       new QSettings(ini_file, QSettings::IniFormat, &app);
   http_settings->beginGroup("http");
   new HttpListener(http_settings, ssl,
                    new RequestMapper(staticFileController, &app), &app);
   // WS server
   settings.beginGroup("websockets");
-  WsServer* ws_server = new WsServer(settings, ssl, &app);
+  WsServer *ws_server = new WsServer(settings, ssl, &app);
 
   QObject::connect(ws_server, &WsServer::OnRequest, api,
                    &APIController::request);
@@ -93,10 +93,10 @@ static int start(int argc, char** argv) {
                    &WsServer::ToAllExClient);
 
   QObject::connect(&app, &QCoreApplication::aboutToQuit, [db] {
-    db->saveToFile();                 // save database
-    qInstallMessageHandler(nullptr);  // reset message handlers
+    db->saveToFile();                // save database
+    qInstallMessageHandler(nullptr); // reset message handlers
     ws_ptr =
-        nullptr;  // also dont redirect the console output to WsServer anymore
+        nullptr; // also dont redirect the console output to WsServer anymore
   });
 
   if (!ws_server->StartListen())
@@ -107,7 +107,7 @@ static int start(int argc, char** argv) {
   return app.exec();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   int status;
 
   // Restarts the program when it exited with exitRestart()
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
     qDebug("Starting");
     try {
       status = start(argc, argv);
-    } catch (std::exception const& e) {
+    } catch (std::exception const &e) {
       qCritical("Exception: %s", e.what());
     } catch (...) {
       qCritical("Exception: %s", "unknown");

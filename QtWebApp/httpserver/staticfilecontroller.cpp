@@ -10,9 +10,9 @@
 
 using namespace stefanfrings;
 
-StaticFileController::StaticFileController(QSettings& settings,
+StaticFileController::StaticFileController(QSettings &settings,
                                            QString docroot_absolute,
-                                           QObject* parent)
+                                           QObject *parent)
     : HttpRequestHandler(parent) {
   maxAge = settings.value("maxAge", "60000").toInt();
   encoding = settings.value("encoding", "UTF-8").toString();
@@ -40,18 +40,18 @@ StaticFileController::StaticFileController(QSettings& settings,
         cache.maxCost());
 }
 
-void StaticFileController::service(HttpRequest& request,
-                                   HttpResponse& response) {
+void StaticFileController::service(HttpRequest &request,
+                                   HttpResponse &response) {
   QByteArray path = request.getPath();
   // Check if we have the file in cache
   qint64 now = QDateTime::currentMSecsSinceEpoch();
   mutex.lock();
-  CacheEntry* entry = cache.object(path);
+  CacheEntry *entry = cache.object(path);
   if (entry && (cacheTimeout == 0 || entry->created > (now - cacheTimeout))) {
     QByteArray document =
-        entry->document;  // copy the cached document, because other threads may
-                          // destroy the cached entry immediately after mutex
-                          // unlock.
+        entry->document; // copy the cached document, because other threads may
+                         // destroy the cached entry immediately after mutex
+                         // unlock.
     QByteArray filename = entry->filename;
     mutex.unlock();
     qInfo("StaticFileController: Cache hit for %s", path.data());
@@ -118,7 +118,7 @@ void StaticFileController::service(HttpRequest& request,
 }
 
 void StaticFileController::setContentType(QString fileName,
-                                          HttpResponse& response) const {
+                                          HttpResponse &response) const {
   if (fileName.endsWith(".png")) {
     response.setHeader("Content-Type", "image/png");
   } else if (fileName.endsWith(".jpg")) {

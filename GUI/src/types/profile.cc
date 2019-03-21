@@ -1,13 +1,13 @@
 #include "include/types/profile.hpp"
-#include <QDebug>
-#include <QJsonArray>
 #include "include/marshalling.hpp"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
+#include <QDebug>
+#include <QJsonArray>
 
 namespace c3picko {
-Profile::Profile(QString type, QString name, ID id, QJsonObject const& settings)
+Profile::Profile(QString type, QString name, ID id, QJsonObject const &settings)
     : type_(type), name_(name), id_(id) {
   if (type_ == "printer-profile") {
     printer_ = std::make_shared<PrinterProfile>(
@@ -260,14 +260,15 @@ QJsonObject Profile::plateTemplate() {
   return json;
 }
 
-c3picko::Profile::operator PlateProfile*() const { return plate_.get(); }
+c3picko::Profile::operator PlateProfile *() const { return plate_.get(); }
 
-c3picko::Profile::operator PlateSocketProfile*() const { return socket_.get(); }
+c3picko::Profile::operator PlateSocketProfile *() const {
+  return socket_.get();
+}
 
-c3picko::Profile::operator PrinterProfile*() const { return printer_.get(); }
+c3picko::Profile::operator PrinterProfile *() const { return printer_.get(); }
 
-template <>
-QJsonObject Marshalling::toJson(const Profile& value) {
+template <> QJsonObject Marshalling::toJson(const Profile &value) {
   QJsonObject obj;
 
   // TODO also dumb
@@ -289,12 +290,11 @@ QJsonObject Marshalling::toJson(const Profile& value) {
   return obj;
 }
 
-template <>
-Profile Marshalling::fromJson(const QJsonObject& obj) {
+template <> Profile Marshalling::fromJson(const QJsonObject &obj) {
   return Profile(Marshalling::fromJson<QString>(obj["type"]),
                  Marshalling::fromJson<QString>(obj["profile_name"]),
                  Marshalling::fromJson<QString>(obj["id"]),
                  obj["settings"].toObject());
 }
 
-}  // namespace c3picko
+} // namespace c3picko

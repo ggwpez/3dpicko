@@ -3,11 +3,9 @@
 #include <QJsonDocument>
 
 namespace c3picko {
-Database::Database(QSettings& settings, QObject* parent)
-    : QObject(parent),
-      file_path_(Root() + "/database.json"),
-      read_only_(!settings.value("saveChanges", true).toBool()),
-      job_id_(200),
+Database::Database(QSettings &settings, QObject *parent)
+    : QObject(parent), file_path_(Root() + "/database.json"),
+      read_only_(!settings.value("saveChanges", true).toBool()), job_id_(200),
       profile_id_(300) {
   const bool ignore_empty = settings.value("ignoreEmpty", true).toBool();
   QFile file(file_path_.toSystemAbsolute());
@@ -52,18 +50,18 @@ void Database::saveToFile() {
                 << file_path_.toSystemAbsolute();
 }
 
-Database::JobTable& Database::jobs() { return jobs_; }
+Database::JobTable &Database::jobs() { return jobs_; }
 
-Database::ImageTable& Database::images() { return images_; }
+Database::ImageTable &Database::images() { return images_; }
 
-Database::ImageTable& Database::deletedImages() { return deleted_images_; }
+Database::ImageTable &Database::deletedImages() { return deleted_images_; }
 
-Database::ProfileTable& Database::profiles() { return profiles_; }
+Database::ProfileTable &Database::profiles() { return profiles_; }
 
 // Database::DetectionJobTable& Database::detectionJobs() { return
 // detection_jobs_; }
 
-Database::DetectionResultTable& Database::detectionResults() {
+Database::DetectionResultTable &Database::detectionResults() {
   return detection_results_;
 }
 
@@ -85,9 +83,9 @@ Profile::ID Database::defaultSocket() const { return default_socket_; }
 
 Profile::ID Database::defaultPlate() const { return default_plate_; }
 
-Database::JobTable& Database::deletedJobs() { return deleted_jobs_; }
+Database::JobTable &Database::deletedJobs() { return deleted_jobs_; }
 
-void Database::read(QJsonObject const& obj) {
+void Database::read(QJsonObject const &obj) {
   jobs_.read(obj["jobs"].toObject());
   deleted_jobs_.read(obj["deleted_jobs"].toObject());
   images_.read(obj["images"].toObject());
@@ -106,7 +104,7 @@ void Database::read(QJsonObject const& obj) {
   default_plate_ = Marshalling::fromJson<QString>(obj["default_plate"]);
 }
 
-void Database::write(QJsonObject& obj) const {
+void Database::write(QJsonObject &obj) const {
   obj["jobs"] = (QJsonObject)jobs_;
   obj["deleted_jobs"] = (QJsonObject)deleted_jobs_;
   obj["images"] = (QJsonObject)images_;
@@ -128,15 +126,15 @@ void Database::write(QJsonObject& obj) const {
 
 bool Database::readOnly() const { return read_only_; }
 
-void Database::setdefaultPrinter(const Profile::ID& default_printer) {
+void Database::setdefaultPrinter(const Profile::ID &default_printer) {
   default_printer_ = default_printer;
 }
 
-void Database::setDefaultSocket(const Profile::ID& default_socket) {
+void Database::setDefaultSocket(const Profile::ID &default_socket) {
   default_socket_ = default_socket;
 }
 
-void Database::setDefaultPlate(const Profile::ID& default_plate) {
+void Database::setDefaultPlate(const Profile::ID &default_plate) {
   default_plate_ = default_plate;
 }
-}  // namespace c3picko
+} // namespace c3picko

@@ -4,4 +4,4 @@
 
 namespace c3picko {
 // STUB
-}  // namespace c3picko
+} // namespace c3picko

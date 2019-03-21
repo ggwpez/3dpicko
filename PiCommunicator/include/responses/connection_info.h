@@ -1,9 +1,9 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include "response.h"
 #include <QPair>
 #include <QSet>
-#include "response.h"
 
 namespace c3picko {
 namespace pi {
@@ -39,8 +39,8 @@ struct ConnectionInfo : public Response {
     bool autoconnect;
   } options;
 };
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko
 
-#endif  // CONNECTION_H
+#endif // CONNECTION_H

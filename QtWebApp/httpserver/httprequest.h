@@ -6,6 +6,7 @@
 #ifndef HTTPREQUEST_H
 #define HTTPREQUEST_H
 
+#include "httpglobal.h"
 #include <QByteArray>
 #include <QHostAddress>
 #include <QMap>
@@ -14,7 +15,6 @@
 #include <QTcpSocket>
 #include <QTemporaryFile>
 #include <QUuid>
-#include "httpglobal.h"
 
 namespace stefanfrings {
 
@@ -39,7 +39,7 @@ class DECLSPEC HttpRequest {
   Q_DISABLE_COPY(HttpRequest)
   friend class HttpSessionStore;
 
- public:
+public:
   /** Values for getStatus() */
   enum RequestStatus {
     waitForRequest,
@@ -161,7 +161,7 @@ class DECLSPEC HttpRequest {
    */
   QHostAddress getPeerAddress() const;
 
- private:
+private:
   /** Request headers */
   QMultiMap<QByteArray, QByteArray> headers;
 
@@ -239,6 +239,6 @@ class DECLSPEC HttpRequest {
   QByteArray lineBuffer;
 };
 
-}  // namespace stefanfrings
+} // namespace stefanfrings
 
-#endif  // HTTPREQUEST_H
+#endif // HTTPREQUEST_H

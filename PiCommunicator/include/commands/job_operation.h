@@ -18,7 +18,7 @@ class JobOperation : public Command {
   JobOperation() = delete;
   using Command::Command;
 
- public:
+public:
   typedef responses::JobInfo Response;
 
   static JobOperation *GetInfo();
@@ -30,11 +30,11 @@ class JobOperation : public Command {
   static JobOperation *Resume();
   static JobOperation *TogglePause();
 
- public slots:
+public slots:
   virtual void OnReplyFinished(QNetworkReply *reply) override;
 };
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko
 
-#endif  // JOB_OPERATION_H
+#endif // JOB_OPERATION_H

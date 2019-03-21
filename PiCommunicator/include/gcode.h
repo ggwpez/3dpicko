@@ -9,7 +9,7 @@ namespace pi {
  * @brief To be replaced with real representation of Gcode.
  */
 typedef QStringList GCode;
-}  // namespace pi
-}  // namespace c3picko
+} // namespace pi
+} // namespace c3picko
 
-#endif  // GCODE_H
+#endif // GCODE_H

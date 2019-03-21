@@ -18,6 +18,6 @@ bool ProgressInfo::operator!=(const ProgressInfo &other) {
   // Legit, since it is a POD type
   return std::memcmp(this, std::addressof(other), sizeof(ProgressInfo));
 }
-}  // namespace data
-}  // namespace pi
-}  // namespace c3picko
+} // namespace data
+} // namespace pi
+} // namespace c3picko

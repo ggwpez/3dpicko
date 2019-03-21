@@ -1,6 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -32,7 +33,7 @@
       <div class="container justify-content-start">
         <div class="row ">
           <div class="col-lg-8">
-            <h1>Intro …</h1>
+            <h1>Intro &hellip;</h1>
           </div>
         </div>
       </div>
@@ -42,7 +43,7 @@
         <div class="row">
           <div class="col-auto pr-0">
             <div class="nav flex-column nav-pills mb-2" id="steps">
-              <h4 id ="headertag">Entwurf</h4>
+              <h4 id="headertag">Entwurf</h4>
               <div class="nav-link active" id="browse-tab" href="#browse">1. Choose Image</div>
               <div class="nav-link" id="attributes-tab" href="#attributes">2. Set Attributes</div>
               <div class="nav-link" id="selection-tab" href="#selection">3. Detect Colonies</div>
@@ -58,14 +59,17 @@
                   <div class="col-md-4">
                     <h2 id="wiki-4-choose-image" class="wiki">Choose Image</h2>
                     <h6 id="img-name"></h6>
-                    <form><input id="classicUpload" type="file" style="display: none;"/></form>
+                    <form><input id="classicUpload" type="file" style="display: none;"></form>
                     <div id="dropZone" class="empty"></div>
-                    <div id="chosen-image" style="display: none;"><div id="selectedimage-description" class="float-left"></div><button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button></div>
+                    <div id="chosen-image" style="display: none;">
+<div id="selectedimage-description" class="float-left"></div>
+<button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button>
+</div>
                   </div>
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col" >
+                  <div class="col">
                     <div id="all-images" style="display: none;"></div>
                   </div>
                 </div>
@@ -104,12 +108,13 @@
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
                   <div id="colony-layers">
-                    <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span></h2>
+                    <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span>
+</h2>
                     <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
                         <h4 class="mr-2">Toggle Layers:</h4>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked">Selected</label>
+                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked>Selected</label>
                           <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
                         </div>
                       </div>
@@ -253,33 +258,33 @@
 	  <div class="container-fluid">
 		<div class="row">
 		  <div class="col-auto">
-			<h4 id ="headertag">Wiki</h4>
+			<h4 id="headertag">Wiki</h4>
             <div class="row">
 			  <button class="btn btn-default m-1" id="Introduction" onclick="loadWiki('./docs/Introduction.html')">Introduction</button>
 			</div>
-            <h5 id ="headertag">User Manual</h5>
+            <h5 id="headertag">User Manual</h5>
             <div class="row">
 			  <button class="btn btn-default m-1" id="User-Manual-First-Steps" onclick="loadWiki('./docs/User-Manual-First-Steps.html')">First Steps</button>
 			</div>
 			<div class="row">
-			  <button class="btn btn-default m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('./docs/User-Manual-Example-Picking-Process.html')" >Example Picking Process</button>
+			  <button class="btn btn-default m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('./docs/User-Manual-Example-Picking-Process.html')">Example Picking Process</button>
             </div>
             <div class="row">
-              <button class="btn btn-default m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('./docs/User-Manual-Advanced-Settings.html')" >Advanced Settings</button>
+              <button class="btn btn-default m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('./docs/User-Manual-Advanced-Settings.html')">Advanced Settings</button>
             </div>
-			<h5 id ="headertag">Configuration</h5>
+			<h5 id="headertag">Configuration</h5>
 			<div class="row">
-			  <button class="btn btn-default m-1" id="Configuration-Hardware" onclick="loadWiki('./docs/Configuration-Hardware.html')" >Hardware</button>
+			  <button class="btn btn-default m-1" id="Configuration-Hardware" onclick="loadWiki('./docs/Configuration-Hardware.html')">Hardware</button>
             </div>
             <div class="row">
-			  <button class="btn btn-default m-1" id="Configuration-Software" onclick="loadWiki('./docs/Configuration-Software.html')" >Software</button>
+			  <button class="btn btn-default m-1" id="Configuration-Software" onclick="loadWiki('./docs/Configuration-Software.html')">Software</button>
             </div>
-			<h5 id ="headertag">Administration</h5>
+			<h5 id="headertag">Administration</h5>
 			<div class="row">
-			  <button class="btn btn-default m-1" id="Administration-Hardware" onclick="loadWiki('./docs/Administration-Hardware.html')" >Hardware</button>
+			  <button class="btn btn-default m-1" id="Administration-Hardware" onclick="loadWiki('./docs/Administration-Hardware.html')">Hardware</button>
             </div>
             <div class="row">
-			  <button class="btn btn-default m-1" id="Administration-Software" onclick="loadWiki('./docs/Administration-Software.html')" >Software</button>
+			  <button class="btn btn-default m-1" id="Administration-Software" onclick="loadWiki('./docs/Administration-Software.html')">Software</button>
             </div>
 		  </div>
 		  <div class="col-5">
@@ -334,7 +339,7 @@
           <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
         </div>
         <div class="modal-body">
-          <p id=help-body>Error: Help not found </p>
+          <p id="help-body">Error: Help not found </p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

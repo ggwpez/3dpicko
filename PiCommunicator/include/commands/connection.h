@@ -19,7 +19,7 @@ class Connection : public Command {
   Connection() = delete;
   using Command::Command;
 
- public:
+public:
   typedef responses::ConnectionInfo Response;
 
   static Connection *GetInfo();
@@ -29,16 +29,16 @@ class Connection : public Command {
   static Connection *Disconnect();
   static Connection *FakeAck();
 
- public slots:
+public slots:
   virtual void OnReplyFinished(QNetworkReply *reply) override;
 
- private:
+private:
   static QJsonObject CreateConnectJson(QString port, qint32 baudrate,
                                        QString printer_profile, bool safe,
                                        bool autoconnect);
 };
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko
 
-#endif  // CONNECT_H
+#endif // CONNECT_H

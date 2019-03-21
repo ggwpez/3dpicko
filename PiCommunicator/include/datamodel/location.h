@@ -13,8 +13,8 @@ enum class Location : char { LOCAL, SD_CARD };
 
 Location LocationFromString(QString const &str);
 QString ToString(Location val);
-}  // namespace data
-}  // namespace pi
-}  // namespace c3picko
+} // namespace data
+} // namespace pi
+} // namespace c3picko
 
-#endif  // ORIGIN_H
+#endif // ORIGIN_H

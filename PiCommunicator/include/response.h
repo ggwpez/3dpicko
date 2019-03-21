@@ -13,11 +13,11 @@ struct Response {
 
   virtual inline ~Response() {}
 
- protected:
+protected:
   QJsonObject raw;
 };
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko
 
-#endif  // RESPONSE_H_
+#endif // RESPONSE_H_

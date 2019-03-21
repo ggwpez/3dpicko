@@ -17,7 +17,7 @@ class FileOperation : public Command {
   FileOperation() = delete;
   using Command::Command;
 
- public:
+public:
   typedef responses::AbridgedFileInfo Response;
 
   static FileOperation *select(data::Location location, QString path,
@@ -30,11 +30,11 @@ class FileOperation : public Command {
   static FileOperation *move(data::Location location, QString origin,
                              QString destination);
 
- public slots:
+public slots:
   virtual void OnReplyFinished(QNetworkReply *reply) override;
 };
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko
 
-#endif  // FILE_OPERATION_H
+#endif // FILE_OPERATION_H

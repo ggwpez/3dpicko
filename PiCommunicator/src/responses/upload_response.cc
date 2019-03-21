@@ -23,6 +23,6 @@ UploadResponse::UploadResponse(const QJsonObject &obj) : Response(obj) {
 
   done = obj["done"].toBool();
 }
-}  // namespace responses
-}  // namespace pi
-}  // namespace c3picko
+} // namespace responses
+} // namespace pi
+} // namespace c3picko

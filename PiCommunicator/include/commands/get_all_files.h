@@ -17,17 +17,17 @@ class GetAllFiles : public Command {
   GetAllFiles() = delete;
   using Command::Command;
 
- public:
+public:
   typedef responses::RetriveResponse Response;
 
   static GetAllFiles *AllFiles();
   static GetAllFiles *AllFilesRecursive();
 
- public slots:
+public slots:
   virtual void OnReplyFinished(QNetworkReply *reply) override;
 };
-}  // namespace commands
-}  // namespace pi
-}  // namespace c3picko
+} // namespace commands
+} // namespace pi
+} // namespace c3picko
 
-#endif  // GET_ALL_FILES_H_
+#endif // GET_ALL_FILES_H_
