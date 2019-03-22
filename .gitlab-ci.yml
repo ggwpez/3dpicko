@@ -3,7 +3,6 @@ stages:
   - build
   - test
   - check
-  #- format
   - document
 
 dependencies:linux:
