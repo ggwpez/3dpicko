@@ -125,6 +125,11 @@ a[href].textLink:hover, a[href].textLink:active, a[href].textLink:focus, a[href]
 	color: black;
 	border-color: black;
 }
+#dropZone .spinner-border{
+	border-left-color: transparent;
+	width: 3rem;
+	height: 3rem;
+}
 
 #overlay{
 	position: fixed;
@@ -179,13 +184,17 @@ img {
 .form-group{
 	margin-bottom: 0.5rem;
 }
+#selection{
+	min-width: 1000px;
+}
 #colony-layers{
+	min-width: 700px;
 	margin-left: auto;
 }
 #layer_parent{
 	position: relative;
 	cursor: pointer;
-	min-width: 700px;
+	line-height: 0px;
 }
 #layer-control{
 	display: none;
@@ -195,6 +204,14 @@ img {
 	/*transform: rotate(90deg);
 	top: 154px;
 	right: -192px;*/
+}
+#layer3{
+	width: 100%;
+	height: 100%;
+	border-color: black;
+	border-style: solid;
+	opacity: 0.3;
+	pointer-events: none;
 }
 #layer-control label{
 	margin: 0;
@@ -207,7 +224,6 @@ img {
 	box-shadow: none;
 }
 
-
 /* Strategy Tab */
 #strategy input[type=number]{
 	width: 2ch;
@@ -215,6 +231,10 @@ img {
 }
 #pickstrategy-canvas{
 	cursor: pointer;
+}
+/* best effect ever */
+.x-ray{
+	filter: invert(100%) grayscale(100%) contrast(10);
 }
 
 /* Profile Settings Page */
@@ -292,4 +312,10 @@ input[type="range"].multirange.ghost::-webkit-slider-runnable-track {
 input[type="range"].multirange.ghost::-moz-range-track {
 	background: var(--track-background);
 	cursor: inherit;
+}
+/* range track for single slider (only FF)*/
+input[type="range"]:not(.multirange)::-moz-range-progress {
+  background-color: var(--primary);
+  height: 8px;
+  border-radius: 4px; 
 }

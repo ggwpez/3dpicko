@@ -5,7 +5,7 @@ Größe Petrischale:
 1,5:1
 */
 //  Image        Colonies     Tooltips
-var layer0 = {}, layer1 = {}, layer2 = { };
+var layer0 = {}, layer1 = {}, layer2 = {};
 
 // Array of colonies. See ImageRecognition/include/Colony.hpp
 var colony_array = [];
@@ -49,13 +49,15 @@ function resizeCanvas(img) {
     $('#selection').css('min-width', $('#layer_parent').width()+$('#detection-settings-div').width());
 }
 
-// colony detection
-// function getPositions(){
-//     var image_id = chosen_image.id;
-//     console.log("colonies  from image " +image_id);
-//     // lade Ergebnisse der Kolonieerkennung
-//     api('getpositions', { id: image_id });
-// }
+function drawSafetyMargin(lt, rb){
+    let layer = document.getElementById('layer3').style;
+    let topWidth = layer0.canvas.height * lt;
+    let leftWidth = layer0.canvas.width * lt
+    layer.borderTopWidth = topWidth + "px";
+    layer.borderLeftWidth = leftWidth + "px";
+    layer.borderRightWidth = Math.min(layer0.canvas.width - leftWidth, layer0.canvas.width * (1-rb)) + "px";
+    layer.borderBottomWidth = Math.min(layer0.canvas.height - topWidth, layer0.canvas.height * (1-rb)) + "px";
+}
 
 let down_scale;
 function selectionTabEnter()
@@ -158,6 +160,10 @@ function selectionTabEnter()
         show_excluded = this.checked;
         printPositions();
     };
+    document.getElementById('x-ray').onchange = function(){
+        // TODO different settings if fluro is used...
+        $('#layer0').toggleClass('x-ray', this.checked);
+    };
 }
 
 // TODO
@@ -195,7 +201,6 @@ function updatePositions(coords)
         
         let color = '#FFFFFF';
         if(colony.excluded_by != ""){
-            if(excluded_colonies.has(hash)) console.log(colony);
             color = settings_color[changed_settings.id][colony.excluded_by] || 'grey';
             excluded_colonies.set(hash, new Circle({
                 id: index,
@@ -211,7 +216,6 @@ function updatePositions(coords)
             }));
         }
         else{
-            if(included_colonies.has(hash)) console.log(colony);
             included_colonies.set(hash, new Circle({
                 id: index,
                 x: colony.x * layer1.canvas.width,
@@ -281,7 +285,6 @@ function UpdateNumberOfColonies(){
     }
     $('#strategy-tab-button').prop("disabled", number_of_colonies <= 0);
     return number_of_colonies;
-
 }
 
 function SetColoniesToPick(){
@@ -405,6 +408,8 @@ var UpdateDetectionSettings = function (id){
         loading_timeout_id = setTimeout(function(){
             document.body.classList.remove('wait');
             ShowAlert("Colony Detection Timeout", "danger");
+            changed_settings.new_request = false;
+            changed_settings.processed = true;
         }, 4000);
         const form_data = new FormData(form);
         const algorithm_id = document.getElementById('select-algorithm').value;
@@ -418,6 +423,7 @@ var UpdateDetectionSettings = function (id){
         changed_settings.processed = false;
         changed_settings.changed_algorithm = changed_settings.id != id;
         changed_settings.id = id;
+        drawSafetyMargin(new_settings.settings.safety_margin_lt, new_settings.settings.safety_margin_rb);
     }
     else{
         changed_settings.id = id;
