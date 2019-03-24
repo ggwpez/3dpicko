@@ -33,18 +33,18 @@ build:linux:
   artifacts:
     paths:
       - build/
+    expire_in: 2 hour
 
 test:linux:
   stage: test
   script:
-    - mkdir -p build
     - cd build
-    - qmake -qt=qt5 ..
-    - make -j6
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   except:
     - /^.*-format$/
+  dependencies:
+    - build:linux
 
 check:linux:
   stage: check
