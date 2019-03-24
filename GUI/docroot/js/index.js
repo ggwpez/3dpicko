@@ -112,8 +112,12 @@ $(function Setup()
             }
             else if (type == "getjoblist")
             {
-                data.jobs.forEach(AddJobToList);
-                console.log("Jobs:\n" +data +"\ncount: " +data.jobs.length);
+                // TODO review
+                if(data.jobs){
+                    data.jobs.forEach(AddJobToList);    
+                } else AddJobToList(data);
+                
+                console.log("Jobs:\n" +data);
             }
             else if (type == "getgeneralsettings"){
                 // TODO
@@ -268,6 +272,26 @@ $(function(){
         }
     });
 
+    //Navigation
+    $('#steps').on('shown.bs.tab', function () {
+        // TODO disable/enable button, only execute if disabled
+        $('.next-step').html('Continue');
+    });
+    $('#nav-tab').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+    })
+
+    // handle back-button for main navigation
+    function HashChanged(){
+        let hash = window.location.hash;
+        if(hash){
+            $('.nav-tabs a[href="' + hash + '"]').tab('show');
+            window.scrollTo(0, 0);
+        }
+    }
+    window.onhashchange = HashChanged;
+    HashChanged();
+
     $('#delete-dialog').on('show.bs.modal', function (e) {
     // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
     const type = $(e.relatedTarget).data('type');
@@ -372,12 +396,6 @@ function tabEnter(tabId)
     $("#" +tabOrder[tabId] +"-tab").tab('show');
 }
 
-//Navigation
-$('#steps').on('shown.bs.tab', function () {
-    // TODO disable/enable button, only execute if disabled
-    $('.next-step').html('Continue');
-})
-
 function attributesTab(){
     tabEnter(2);
     document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
@@ -438,15 +456,19 @@ function strategyTab(){
                 }
                 ]
             }
-            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].help_text += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Colonies will be chosen randomly.</span>";
+            $('#number-of-colonies-warning').toggle(max_colonies < number_of_colonies);
+            // if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].help_text += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Colonies will be chosen randomly.</span>";
             let form = new FormGroup(template, "strategy-form");
             document.getElementById("number-of-colonies-slider").innerHTML = form.getHtml();
             form.AddInputEvents();
             document.getElementById('number-max_number_of_coloniesstrategy-form').insertAdjacentHTML('afterend', "/"+number_of_colonies);
             document.getElementById('number-max_number_of_coloniesstrategy-form').addEventListener('change', function(){
+                if(this.value < number_of_colonies) $('#number-of-colonies-warning').show();
+                $('#number-of-colonies-warning').toggle(this.value < number_of_colonies);
                 updateWells(this.value);
             });
             document.getElementById('slider-max_number_of_coloniesstrategy-form').addEventListener('input', function(){
+                $('#number-of-colonies-warning').toggle(this.value < number_of_colonies);
                 updateWells(this.value);
             });
             updateWells(max_colonies);

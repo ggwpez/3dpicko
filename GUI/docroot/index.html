@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,9 +23,9 @@
       <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">History</a>
       <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
       <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-settings" aria-selected="false">Admin</a>
-	  <!-- inserted Wiki -->
-	  <a class="nav-item nav-link" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-settings" aria-selected="false">Wiki</a>
-	  <!-- /inserted Wiki -->
+      <!-- inserted Wiki -->
+      <a class="nav-item nav-link" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-settings" aria-selected="false">Wiki</a>
+      <!-- /inserted Wiki -->
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -56,15 +56,15 @@
             <div class="tab-content mb-2" id="tabContent">
               <div class="tab-pane fade show active col" id="browse">
                 <div class="row mb-4">
-                  <div class="col-md-4">
+                  <div class="col-md-6 col-lg-4" style="min-width: 400px;">
                     <h2 id="wiki-4-choose-image" class="wiki">Choose Image</h2>
                     <h6 id="img-name"></h6>
                     <form><input id="classicUpload" type="file" style="display: none;"></form>
                     <div id="dropZone" class="empty"></div>
                     <div id="chosen-image" style="display: none;">
-<div id="selectedimage-description" class="float-left"></div>
-<button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button>
-</div>
+                      <div id="selectedimage-description" class="float-left"></div>
+                      <button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button>
+                    </div>
                   </div>
                 </div>
                 <hr>
@@ -76,7 +76,7 @@
               </div>
               <div class="tab-pane fade col-md-6 col-xl-4" id="attributes">
                 <h2 id="wiki-6-set-attributes" class="wiki">Pickjob Attributes</h2>
-                <form id="attributes-form" name="attributes-form">
+                <form id="attributes-form" name="attributes-form" action="javascript:void(0);">
                   <div class="form-group">
                     <label for="staticImgName">Image:</label><span id="staticImgName"></span>
                   </div>
@@ -109,21 +109,26 @@
                 <div class="row">
                   <div id="colony-layers">
                     <h2>Selected Colonies: <span id="detected-colonies-number" class="text-primary">0</span>
-</h2>
+                    </h2>
                     <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
                         <h4 class="mr-2">Toggle Layers:</h4>
-                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
                           <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked>Selected</label>
                           <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
                         </div>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray&trade;</label>
+                        </div>
+                        
                       </div>
-                      <canvas id="layer0" style="z-index: 0;"></canvas>
-                      <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+                      <canvas id="layer0" style="z-index: 0;"></canvas> <!-- For colony image -->
+                      <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas> <!-- For colony circles -->
                       <canvas id="layer2" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas> <!-- For tooltips -->
+                      <canvas id="layer3" style="position: absolute; left: 0; top: 0; z-index: 3;"></canvas> <!-- For safety-margin -->
                     </div>
                     <div id="buttons">
-                      <button id="strategy-tab-button" class="btn btn-success next-step" onclick="strategyTab()" disabled>Continue</button>
+                      <button id="strategy-tab-button" class="btn btn-success next-step mt-1" onclick="strategyTab()" disabled>Continue</button>
                     </div>
                     <div id="showCoordinates"></div>
                   </div>
@@ -147,6 +152,7 @@
                         <select class="form-control" id="select-plate-profile"></select>
                       </div>
                       <div id="number-of-colonies-slider"></div>
+                      <small id="number-of-colonies-warning" class="form-text text-muted mb-2" style="display: none;"><span class="text-danger">Note: Colonies will be chosen randomly.</span></small>
                     </form>
                     <button id="enter-overview-button" class="btn btn-success next-step">Continue</button>
                   </div>
@@ -253,118 +259,118 @@
       <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
       <div id="debug-output"></div>
     </div>
-	<!-- inserted Wiki -->
-    <div class="tab-pane fade" id="nav-wiki" role="tabpanel" aria-labelledby="nav-wiki-tab">
-	  <div class="container-fluid">
-		<div class="row">
-		  <div class="col-auto">
-			<h4 id="headertag">Wiki</h4>
-            <div class="row">
-			  <button class="btn btn-default m-1" id="Introduction" onclick="loadWiki('./docs/Introduction.html')">Introduction</button>
-			</div>
-            <h5 id="headertag">User Manual</h5>
-            <div class="row">
-			  <button class="btn btn-default m-1" id="User-Manual-First-Steps" onclick="loadWiki('./docs/User-Manual-First-Steps.html')">First Steps</button>
-			</div>
-			<div class="row">
-			  <button class="btn btn-default m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('./docs/User-Manual-Example-Picking-Process.html')">Example Picking Process</button>
-            </div>
-            <div class="row">
-              <button class="btn btn-default m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('./docs/User-Manual-Advanced-Settings.html')">Advanced Settings</button>
-            </div>
-			<h5 id="headertag">Configuration</h5>
-			<div class="row">
-			  <button class="btn btn-default m-1" id="Configuration-Hardware" onclick="loadWiki('./docs/Configuration-Hardware.html')">Hardware</button>
-            </div>
-            <div class="row">
-			  <button class="btn btn-default m-1" id="Configuration-Software" onclick="loadWiki('./docs/Configuration-Software.html')">Software</button>
-            </div>
-			<h5 id="headertag">Administration</h5>
-			<div class="row">
-			  <button class="btn btn-default m-1" id="Administration-Hardware" onclick="loadWiki('./docs/Administration-Hardware.html')">Hardware</button>
-            </div>
-            <div class="row">
-			  <button class="btn btn-default m-1" id="Administration-Software" onclick="loadWiki('./docs/Administration-Software.html')">Software</button>
-            </div>
-		  </div>
-		  <div class="col-5">
-            <p id="wiki-content">Error: Page not found</p>
-          </div>
-	    </div>
-	  </div>
-    </div>
-	<!-- /inserted Wiki -->
-  </div>
-  
-  <!-- Info-Dialog -->
-  <div class="modal fade" id="info-dialog" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="info-dialog-title"></h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Delete-Dialog -->
-  <div class="modal fade" id="delete-dialog" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="delete-dialog-title"></h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Global Alert: call ShowAlert(message, type) -->
-  <div id="alert-window">
-    <div id="global-alert" style="display: none;">Disconnected from server.</div>
-  </div>
     <!-- inserted Wiki -->
-  <!-- change aria-labelledby -->
-  <div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
+    <div class="tab-pane fade" id="nav-wiki" role="tabpanel" aria-labelledby="nav-wiki-tab">
+     <div class="container-fluid">
+      <div class="row">
+        <div class="col-auto">
+         <h4 id="headertag">Wiki</h4>
+         <div class="row">
+           <button class="btn btn-default m-1" id="Introduction" onclick="loadWiki('./docs/Introduction.html')">Introduction</button>
+         </div>
+         <h5 id="headertag">User Manual</h5>
+         <div class="row">
+           <button class="btn btn-default m-1" id="User-Manual-First-Steps" onclick="loadWiki('./docs/User-Manual-First-Steps.html')">First Steps</button>
+         </div>
+         <div class="row">
+           <button class="btn btn-default m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('./docs/User-Manual-Example-Picking-Process.html')">Example Picking Process</button>
+         </div>
+         <div class="row">
+          <button class="btn btn-default m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('./docs/User-Manual-Advanced-Settings.html')">Advanced Settings</button>
         </div>
-        <div class="modal-body">
-          <p id="help-body">Error: Help not found </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
+        <h5 id="headertag">Configuration</h5>
+        <div class="row">
+         <button class="btn btn-default m-1" id="Configuration-Hardware" onclick="loadWiki('./docs/Configuration-Hardware.html')">Hardware</button>
+       </div>
+       <div class="row">
+         <button class="btn btn-default m-1" id="Configuration-Software" onclick="loadWiki('./docs/Configuration-Software.html')">Software</button>
+       </div>
+       <h5 id="headertag">Administration</h5>
+       <div class="row">
+         <button class="btn btn-default m-1" id="Administration-Hardware" onclick="loadWiki('./docs/Administration-Hardware.html')">Hardware</button>
+       </div>
+       <div class="row">
+         <button class="btn btn-default m-1" id="Administration-Software" onclick="loadWiki('./docs/Administration-Software.html')">Software</button>
+       </div>
+     </div>
+     <div class="col-5">
+      <p id="wiki-content">Error: Page not found</p>
+    </div>
+  </div>
+</div>
+</div>
+<!-- /inserted Wiki -->
+</div>
+
+<!-- Info-Dialog -->
+<div class="modal fade" id="info-dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="info-dialog-title"></h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
       </div>
     </div>
   </div>
-  <!-- /inserted Wiki -->
-  
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Bootstrap JS -->
-  <script src="js/jquery-3.3.1.js"></script>
-  <script src="js/bootstrap.bundle.js"></script>
-  <script type="text/javascript" src="js/multirange.js"></script>
-  <script type="text/javascript" src="js/formgroup.js"></script>
-  <script type="text/javascript" src="js/dropzone.js"></script>
-  <script type="text/javascript" src="js/cropper.js"></script>
-  <script type="text/javascript" src="js/colonydetection.js"></script>
-  <script type="text/javascript" src="js/pickstrategie.js"></script>
-  <script type="text/javascript" src="js/circle.js"></script>
-  <script type="text/javascript" src="js/api.js"></script>
-  <script type="text/javascript" src="js/config.js"></script>
-  <script type="text/javascript" src="js/index.js"></script>
-  <!-- /inserted Wiki -->
-  <script type="text/javascript" src="js/wiki.js"></script>
-  <!-- /inserted Wiki -->
+</div>
+<!-- Delete-Dialog -->
+<div class="modal fade" id="delete-dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delete-dialog-title"></h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Global Alert: call ShowAlert(message, type) -->
+<div id="alert-window">
+  <div id="global-alert" style="display: none;">Disconnected from server.</div>
+</div>
+<!-- inserted Wiki -->
+<!-- change aria-labelledby -->
+<div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
+      </div>
+      <div class="modal-body">
+        <p id="help-body">Error: Help not found </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /inserted Wiki -->
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Bootstrap JS -->
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap.bundle.js"></script>
+<script type="text/javascript" src="js/multirange.js"></script>
+<script type="text/javascript" src="js/formgroup.js"></script>
+<script type="text/javascript" src="js/dropzone.js"></script>
+<script type="text/javascript" src="js/cropper.js"></script>
+<script type="text/javascript" src="js/colonydetection.js"></script>
+<script type="text/javascript" src="js/pickstrategie.js"></script>
+<script type="text/javascript" src="js/circle.js"></script>
+<script type="text/javascript" src="js/api.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<!-- /inserted Wiki -->
+<script type="text/javascript" src="js/wiki.js"></script>
+<!-- /inserted Wiki -->
 </body>
 </html>
