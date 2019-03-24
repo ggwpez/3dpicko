@@ -9,8 +9,6 @@
   <link rel="stylesheet" href="css/bootstrap.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/custom.css">
-  <link rel="stylesheet" href="css/cropper.css">
-  <!-- <script src="js/modernizr.min.js" type="text/javascript"></script> -->
   <title>3CPickO</title>
 </head>
 <body>
@@ -57,7 +55,7 @@
               <div class="tab-pane fade show active col" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-4" style="min-width: 400px;">
-                    <h2 id="wiki-4-choose-image" class="wiki">Choose Image</h2>
+                    <h2>Choose Image</h2>
                     <h6 id="img-name"></h6>
                     <form><input id="classicUpload" type="file" style="display: none;"></form>
                     <div id="dropZone" class="empty"></div>
@@ -75,7 +73,7 @@
                 </div>
               </div>
               <div class="tab-pane fade col-md-6 col-xl-4" id="attributes">
-                <h2 id="wiki-6-set-attributes" class="wiki">Pickjob Attributes</h2>
+                <h2>Pickjob Attributes</h2>
                 <form id="attributes-form" name="attributes-form" action="javascript:void(0);">
                   <div class="form-group">
                     <label for="staticImgName">Image:</label><span id="staticImgName"></span>
@@ -135,7 +133,7 @@
                   <div id="detection-settings-div">
                     <h2>Detection Settings</h2>
                     <div class="form-group">
-                      <label id="wiki-algorithm" class="wiki">Algorithm:</label>
+                      <label>Algorithm:</label>
                       <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
                     </div>
                     <div id="detection-settings"></div>
@@ -145,7 +143,7 @@
               <div class="tab-pane fade col" id="strategy">
                 <div class="row">
                   <div class="col-md-4 col-lg-2" style="min-width: 300px;">
-                    <h2 id="wiki-8-choose-plates" class="wiki">Choose Goal Plate</h2>
+                    <h2>Choose Goal Plate</h2>
                     <form id="strategy-form" action="javascript:void(0);">
                       <div class="form-group">
                         <label for="select-plate-profile">Goal Plate:</label>
@@ -164,7 +162,7 @@
                 </div>
               </div>
               <div class="tab-pane fade col-xl-10" id="overview">
-                <h2 id="wiki-9-overview" class="wiki">Overview</h2>
+                <h2>Overview</h2>
                 <div class="row">
                   <div class="col-md-8">
                     <div id="overview-image" style="position: relative;">
@@ -233,20 +231,20 @@
     <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
       <div class="container-fluid">
         <div class="row mb-2" id="group">
-          <div class="col">
-            <h2>General Settings</h2>
-            <div class="accordion" id="general-settings"></div>
+          <div class="col-md-6 col-xl-3">
+            <h2>Octoprint Profiles</h2>
+            <div class="accordion" id="octoprint-profiles"></div>
           </div>
-          <div class="col">
-            <h2 id="wiki-printer-profiles" class="wiki">Printer Profiles</h2>
+          <div class="col-md-6 col-xl-3">
+            <h2>Printer Profiles</h2>
             <div class="accordion" id="printer-profiles"></div>
           </div>
-          <div class="col">
-            <h2 id="wiki-socket-profiles" class="wiki">Socket Profiles</h2>
+          <div class="col-md-6 col-xl-3">
+            <h2>Socket Profiles</h2>
             <div class="accordion" id="socket-profiles"></div>
           </div>
-          <div class="col">
-            <h2 id="wiki-plate-profiles" class="wiki">Plate Profiles</h2>
+          <div class="col-md-6 col-xl-3">
+            <h2>Plate Profiles</h2>
             <div class="accordion" id="plate-profiles"></div>
           </div>
         </div>
@@ -362,7 +360,6 @@
 <script type="text/javascript" src="js/multirange.js"></script>
 <script type="text/javascript" src="js/formgroup.js"></script>
 <script type="text/javascript" src="js/dropzone.js"></script>
-<script type="text/javascript" src="js/cropper.js"></script>
 <script type="text/javascript" src="js/colonydetection.js"></script>
 <script type="text/javascript" src="js/pickstrategie.js"></script>
 <script type="text/javascript" src="js/circle.js"></script>
