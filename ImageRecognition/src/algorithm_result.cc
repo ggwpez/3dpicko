@@ -30,7 +30,7 @@ cv::Mat& AlgorithmResult::oldMat() {
 }
 
 void AlgorithmResult::finalize() {
-  if (!is_finalized_) throw Exception("Cant finalize twice");
+  if (is_finalized_) throw Exception("Cant finalize twice");
   is_finalized_ = true;
 }
 
@@ -50,18 +50,18 @@ int			i = 0;
 
 for (void* stage : stack_)
 {
-                                    cv::Mat&	mat  =
-*reinterpret_cast<cv::Mat*>(stage); std::string name = "STAGE-" +
+                                                                    cv::Mat&
+mat  = *reinterpret_cast<cv::Mat*>(stage); std::string name = "STAGE-" +
 std::to_string(i++); if (!mat.cols || !mat.rows) continue;
 
-                                    cv::namedWindow(name, cv::WINDOW_NORMAL);
-                                    cv::resizeWindow(name, 1920, 1080);
-                                    cv::imshow(name, mat);
-                                    cv::imwrite("lel" + name + ".png", mat);
+                                                                    cv::namedWindow(name,
+cv::WINDOW_NORMAL); cv::resizeWindow(name, 1920, 1080); cv::imshow(name, mat);
+                                                                    cv::imwrite("lel"
++ name + ".png", mat);
 }
 
 while (cv::waitKey(0) != 'q')
-                                    ;
+                                                                    ;
 cv::destroyAllWindows();*/
 
   // Dont delete them right now, otherwise we cant user them
