@@ -38,9 +38,6 @@ class FormGroup{
         }).trigger('input');
         // select value on focus
         // $(form).on('focus', 'input', function(){this.select();});
-        // enable tooltips
-        $('[data-toggle="tooltip"]').tooltip();
-        $('[data-toggle="popover"]').popover();
     }
 
     // applies necessary events to a form
@@ -56,6 +53,7 @@ class FormGroup{
                 sliders.forEach(input => {input.value = input.defaultValue;});
                 checkboxes.forEach(input => {input.onchange();});
                 $(form).change();
+                delete unsaved_elements[form.getAttribute('id')];
             });
         });
         // set as unsaved on change, set as saved on submit/reset
@@ -117,7 +115,7 @@ class FormGroup{
         return `<option value=${option_id} ${(value==option_id)?`selected`:``}>${option}</option>`;
     }
 
-    CreateFormGroupHtml({id, name, type, defaultValue = "", value = "", description, help_text, min, max, step=1, unit, options={}, placeholder = 0, required = true, conditional_settings = []}, new_value = ""){
+    CreateFormGroupHtml({id, name, type, defaultValue = "", value = "", description, min, max, step=1, unit, options={}, placeholder = 0, required = true, conditional_settings = []}, new_value = ""){
         // console.log("Input-Field:",{id, name, type, defaultValue, value, description, min , max, step, unit, options, placeholder, required, new_value});
         /*
 		let wiki_description;
@@ -198,29 +196,8 @@ class FormGroup{
             html += `<input type="text" id="${id}" class="form-control" name="${id}" placeholder="${placeholder}" ${(min!="")?`minlength=${min}`:``} ${(max!="")?`maxlength=${max}`:``} value="${value}" ${required?`required="required"`:``}>`;
         }
 
-        if (help_text) html += `<small class="form-text text-muted">${help_text}</small>`;
+        if (description) html += `<small class="form-text text-muted">${description}</small>`;
 
         return html += `</div>`;
-    }
-}
-
-// Load Wiki
-var wiki;
-$.get("wiki/index.html", function(data){
-    let doc = document.implementation.createHTMLDocument('wiki').createElement('div');
-    doc.innerHTML = data;
-    wiki = $(doc).find('#documentation-container');
-    AddWikiLinks();
-});
-
-function AddWikiLinks(){
-    if(wiki){
-        $('.wiki').each(function(){
-            let id = this.id.slice(5);
-            let link = '/wiki/index.html';
-            if(wiki.find('#'+id).length > 0) link+='#'+id;
-            this.innerHTML = `<a href="${link}" class="textLink" target="_blank" title="open documentation">${this.innerHTML}</a>`;
-            this.classList.remove("wiki");
-        })
     }
 }

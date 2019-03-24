@@ -1,7 +1,18 @@
 /* global unsaved_elements, $, api, all_profiles, default_profiles, ShowAlert, FormGroup */
+// id => profile-object
+var all_profiles = {};
+// *-profile => *-profile-template
+var profile_templates = {};
+var default_profiles = {
+    "printer-profile": "",
+    "socket-profile": "",
+    "plate-profile": "",
+    "octoprint-profile": ""
+};
 
 var UpdateSettingsProfile = function (e){
-    // var send = {
+    // sends:
+    // json_object = {
     //   id: "XYZ",
     //   type: "printer-profile",
     //   profile_name: "Example Printer",
@@ -23,13 +34,35 @@ var UpdateSettingsProfile = function (e){
         };
         json_object.settings = FormGroup.ReadForm(profile_templates[type], form_data);
         console.log({json_object});
-        if (id == "new-printer-profile" || id == "new-socket-profile" || id == "new-plate-profile"){
+        if(form_data.get('new_profile')=="true"){
             $('#form-new-'+type)[0].reset();
             api("createsettingsprofile", json_object);
         }
         else api("updatesettingsprofile", json_object);
     }
     $('#collapse-'+id).collapse('hide');
+}
+
+// add profil-list sent by server
+function AddProfiles(data){
+    default_profiles["printer-profile"] = data.defaultPrinter;
+    default_profiles["socket-profile"] = data.defaultSocket;
+    default_profiles["plate-profile"] = data.defaultPlate;
+    profile_templates["printer-profile"] = data.printerTemplate;
+    profile_templates["socket-profile"] = data.socketTemplate;
+    profile_templates["plate-profile"] = data.plateTemplate;
+    profile_templates["octoprint-profile"] = data.octoprintTemplate;
+    profile_templates["printer-profile"].type = "printer-profile";
+    profile_templates["socket-profile"].type = "socket-profile";
+    profile_templates["plate-profile"].type = "plate-profile";
+    profile_templates["octoprint-profile"].type = "octoprint-profile";
+    // add empty "new-profiles"
+    AddProfileToList(profile_templates["printer-profile"]);
+    AddProfileToList(profile_templates["socket-profile"]);
+    AddProfileToList(profile_templates["plate-profile"]);
+    AddProfileToList(profile_templates["octoprint-profile"]);
+    // add Profiles
+    data.profiles.forEach(AddProfileToList);
 }
 
 function AddProfileToList(profile){
@@ -58,7 +91,8 @@ function AddProfileToList(profile){
     </div>
     <div id="collapse-${profile.id}" class="collapse" data-parent="#group">
     <div class="card-body">
-    <form id="form-${profile.id}" name="form-${profile.id}" data-description="${profile.profile_name}">
+    <form id="form-${profile.id}" name="form-${profile.id}" data-description="${(new_profile)?profile.id:profile.profile_name}" style="overflow-x: auto;">
+    <input type="hidden" id="new_profile" name="new_profile" value=${(new_profile)?true:false}>
     <input type="hidden" id="id" name="id" value="${profile.id}">
     <input type="hidden" id="type" name="type" value="${profile.type}">
     <div class="form-group">
@@ -85,6 +119,7 @@ function AddProfileToList(profile){
     profile_form.AddInputEvents();
     FormGroup.AddFormEvents('form-'+profile.id, UpdateSettingsProfile, unsaved_elements);
 
+    // add profile as option in "pickjob attributes" (if enabled)
     if(!(new_profile) && (profile.type == "printer-profile" || profile.type == "socket-profile")){
         if(profile.id == default_profiles[profile.type]){
             document.getElementById("select-"+profile.type).add(new Option(profile.profile_name,  profile.id, true, true), 0);
@@ -93,37 +128,10 @@ function AddProfileToList(profile){
     }
 }
 
-function AddGeneralSetting(template){
-    let html = `
-    <div class="card" id="card-${template.id}">
-    <div class="card-header" data-toggle="collapse" data-target="#collapse-${template.id}">
-    <h4 class="btn btn-link">
-    ${template.name}
-    </h4>
-    </div>
-    <div id="collapse-${template.id}" class="collapse" data-parent="#group">
-    <div class="card-body">
-    <form id="form-${template.id}" name="form-${template.id}" data-description="${template.name}">
-    `;
-    let form;
-    if(Array.isArray(template.settings)){
-        form = new FormGroup(template, 'form-'+template.id);
-    }
-    html += form.getHtml();
-
-    html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button>`;
-    html += `</form></div></div></div>`;
-    document.getElementById('general-settings').insertAdjacentHTML('beforeend',html);
-    form.AddInputEvents();
-    // TODO FormGroup.AddFormEvents('form-'+template.id, /*TODO*/, unsaved_elements);
-}
-
 function SetDefaultProfile(id){
-    // TODO Default Plate Profile
     if(id in all_profiles){
         let profile = all_profiles[id];
         default_profiles[profile.type] = id;
-        console.log(default_profiles);
         $(`#${profile.type}s .card-header .badge`).hide();
         $(`#${profile.type}s #card-${id} .badge`).show();
         document.getElementById("select-"+profile.type).value = id;
@@ -135,7 +143,9 @@ function DeleteProfile(id){
     if(id in all_profiles){
         $('#card-'+id).remove();
         const profile = all_profiles[id];
-        switch(profile.type){
+        const type = profile.type;
+        // delete profile in options
+        switch(type){
             case "printer-profile":
             $('#select-printer-profile option[value='+id+']').remove();
             break;
