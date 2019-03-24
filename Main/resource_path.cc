@@ -11,15 +11,14 @@ ResourcePath ResourcePath::fromSystemAbsolute(QString path) { return path; }
 
 ResourcePath ResourcePath::fromServerAbsolute(QString path) {
   return Root() + path;
-} // We have two // now, but the operator+ manages that
+}  // We have two // now, but the operator+ manages that
 
 ResourcePath ResourcePath::fromDocRootAbsolute(QString path) {
   return DocRoot() + path;
 }
 
 const QString ResourcePath::toSystemAbsolute() const {
-  if (system_absolute_.isEmpty())
-    throw Exception("Empty path");
+  if (system_absolute_.isEmpty()) throw Exception("Empty path");
   return system_absolute_;
 }
 
@@ -37,8 +36,9 @@ const QString ResourcePath::toDocRootAbsolute() const {
   QString droot_abs = DocRoot().toSystemAbsolute();
 
   if (!system_absolute_.startsWith(droot_abs))
-    throw Exception("System path outside of DocRoot can not be converted to "
-                    "'DocRootAbsolute'");
+    throw Exception(
+        "System path outside of DocRoot can not be converted to "
+        "'DocRootAbsolute'");
 
   return system_absolute_.mid(droot_abs.size() - 1);
 }
@@ -61,15 +61,17 @@ ResourcePath ResourcePath::operator+(const QString &obj) const {
   return QString(system_absolute_ + obj).replace("//", "/");
 }
 
-template <> ResourcePath Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+ResourcePath Marshalling::fromJson(const QJsonObject &obj) {
   return ResourcePath::fromServerAbsolute(obj["server_absolute"].toString());
 }
 
-template <> QJsonObject Marshalling::toJson(const ResourcePath &value) {
+template <>
+QJsonObject Marshalling::toJson(const ResourcePath &value) {
   QJsonObject obj;
 
   obj["server_absolute"] = value.toServerAbsolute();
 
   return obj;
 }
-} // namespace c3picko
+}  // namespace c3picko

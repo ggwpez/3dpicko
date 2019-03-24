@@ -6,9 +6,16 @@ Job::Job(ID id, Image::ID img_id, QString name, QString description,
          QDateTime job_created, QStack<AlgorithmResult::ID> results,
          Profile::ID printer, Profile::ID socket, int starting_row,
          int starting_col, int step)
-    : id_(id), img_id_(img_id), name_(name), description_(description),
-      job_created_(job_created), result_ids_(results), printer_(printer),
-      socket_(socket), starting_row_(starting_row), starting_col_(starting_col),
+    : id_(id),
+      img_id_(img_id),
+      name_(name),
+      description_(description),
+      job_created_(job_created),
+      result_ids_(results),
+      printer_(printer),
+      socket_(socket),
+      starting_row_(starting_row),
+      starting_col_(starting_col),
       step_(step) {}
 
 Job::ID Job::id() const { return id_; }
@@ -25,6 +32,8 @@ Profile::ID Job::printer() const { return printer_; }
 
 Profile::ID Job::plate() const { return plate_; }
 
+Profile::ID Job::octoprint() const { return octoprint_; }
+
 AlgorithmResult::ID Job::resultID() const {
   if (result_ids_.empty())
     return AlgorithmResult::ID();
@@ -34,7 +43,7 @@ AlgorithmResult::ID Job::resultID() const {
 
 QStack<AlgorithmResult::ID> Job::resultIDs() const { return result_ids_; }
 
-void Job::setResultID(const AlgorithmResult::ID &result_id) {
+void Job::setResultID(const AlgorithmResult::ID& result_id) {
   result_ids_.push(result_id);
 }
 
@@ -46,20 +55,14 @@ int Job::startingRow() const { return starting_row_; }
 
 void Job::setStartingRow(int starting_row) { starting_row_ = starting_row; }
 
-void Job::setPlate(const Profile::ID &plate) { plate_ = plate; }
+void Job::setPlate(const Profile::ID& plate) { plate_ = plate; }
 
-int Job::coloniesToPick() const { return colonies_to_pick_; }
+void Job::setOctoprint(const Profile::ID& octoprint) { octoprint_ = octoprint; }
 
-void Job::setcoloniesToPick(int colonies_to_pick) {
+QSet<Colony::ID> Job::coloniesToPick() const { return colonies_to_pick_; }
+
+void Job::setcoloniesToPick(const QSet<Colony::ID>& colonies_to_pick) {
   colonies_to_pick_ = colonies_to_pick;
-}
-
-const std::set<std::size_t> &Job::selectedToPick() const {
-  return selected_to_pick_;
-}
-
-void Job::setselectedToPick(const std::set<std::size_t> &selected_to_pick) {
-  selected_to_pick_ = selected_to_pick;
 }
 
 qint32 Job::step() const { return step_; }
@@ -70,7 +73,8 @@ QString Job::name() const { return name_; }
 
 QString Job::description() const { return description_; }
 
-template <> QJsonObject Marshalling::toJson(const Job &value) {
+template <>
+QJsonObject Marshalling::toJson(const Job& value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -85,7 +89,7 @@ template <> QJsonObject Marshalling::toJson(const Job &value) {
   obj["starting_col"] = value.startingCol();
 
   QJsonArray detections;
-  for (auto const &detection : value.resultIDs())
+  for (auto const& detection : value.resultIDs())
     detections.push_back(detection);
 
   obj["detections"] = detections;
@@ -93,12 +97,12 @@ template <> QJsonObject Marshalling::toJson(const Job &value) {
   return obj;
 }
 
-template <> Job Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+Job Marshalling::fromJson(const QJsonObject& obj) {
   QJsonArray json_detections = obj["detections"].toArray();
   QStack<AlgorithmResult::ID> detections;
 
-  for (auto detection : json_detections)
-    detections.push(detection.toString());
+  for (auto detection : json_detections) detections.push(detection.toString());
 
   return Job(Marshalling::fromJson<QString>(obj["id"]),
              Marshalling::fromJson<QString>(obj["img_id"]),
@@ -110,4 +114,4 @@ template <> Job Marshalling::fromJson(const QJsonObject &obj) {
              obj["starting_row"].toInt(), obj["starting_col"].toInt(),
              obj["step"].toInt());
 }
-} // namespace c3picko
+}  // namespace c3picko

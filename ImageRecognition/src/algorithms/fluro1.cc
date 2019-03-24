@@ -1,7 +1,7 @@
 #include "include/algorithms/fluro1.h"
+#include <opencv2/opencv.hpp>
 #include "include/algorithm_result.h"
 #include "include/algorithms/normal1.h"
-#include <opencv2/opencv.hpp>
 
 namespace c3picko {
 Fluro1::Fluro1()
@@ -48,6 +48,6 @@ void Fluro1::threshold(AlgorithmJob *base, DetectionResult *result) {
   // Filter by brightest pixels
   cv::meanStdDev(input, mean, stddev);
   cv::threshold(input, output, mean[0] + 1.5 * stddev[0], 255,
-                cv::THRESH_BINARY); // flour TODO tryp Otsu's method
+                cv::THRESH_BINARY);  // flour TODO tryp Otsu's method
 }
-} // namespace c3picko
+}  // namespace c3picko

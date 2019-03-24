@@ -12,25 +12,25 @@
 namespace c3picko {
 class Database : public QObject, JsonConvertable {
   Q_OBJECT
-public:
+ public:
   typedef Table<Job> JobTable;
   typedef Table<Image> ImageTable;
   typedef Table<Profile> ProfileTable;
   typedef Table<DetectionResult> DetectionResultTable;
   // typedef Table<AlgorithmJob> DetectionJobTable;
 
-  Database(QSettings &settings, QObject *parent);
+  Database(QSettings& settings, QObject* parent);
 
   void saveToFile();
   bool readOnly() const;
 
-  JobTable &jobs();
-  JobTable &deletedJobs(); // Tracks deleted jobs TODO neeeded?
-  ImageTable &images();
-  ImageTable &deletedImages(); // "
-  ProfileTable &profiles();
+  JobTable& jobs();
+  JobTable& deletedJobs();  // Tracks deleted jobs TODO neeeded?
+  ImageTable& images();
+  ImageTable& deletedImages();  // "
+  ProfileTable& profiles();
   // DetectionJobTable &detectionJobs();
-  DetectionResultTable &detectionResults();
+  DetectionResultTable& detectionResults();
 
   Job::ID newJobId();
   Profile::ID newProfileId();
@@ -40,15 +40,16 @@ public:
   Profile::ID defaultPrinter() const;
   Profile::ID defaultSocket() const;
   Profile::ID defaultPlate() const;
+  Profile::ID defaultOctoconfig() const;
 
-  void setdefaultPrinter(const Profile::ID &default_printer);
-  void setDefaultSocket(const Profile::ID &default_socket);
-  void setDefaultPlate(const Profile::ID &default_plate);
+  void setdefaultPrinter(const Profile::ID& default_printer);
+  void setDefaultSocket(const Profile::ID& default_socket);
+  void setDefaultPlate(const Profile::ID& default_plate);
 
-  void read(const QJsonObject &) override;
-  void write(QJsonObject &) const override;
+  void read(const QJsonObject&) override;
+  void write(QJsonObject&) const override;
 
-private:
+ private:
   ResourcePath file_path_;
   bool read_only_;
 
@@ -73,4 +74,4 @@ private:
   Profile::ID default_socket_;
   Profile::ID default_plate_;
 };
-} // namespace c3picko
+}  // namespace c3picko

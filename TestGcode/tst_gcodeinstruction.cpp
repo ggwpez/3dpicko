@@ -7,11 +7,11 @@
 class TestGcodeInstruction : public QObject {
   Q_OBJECT
 
-public:
+ public:
   TestGcodeInstruction();
   ~TestGcodeInstruction();
 
-private slots:
+ private slots:
   void test_case1();
 };
 

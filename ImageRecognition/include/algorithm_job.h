@@ -1,9 +1,9 @@
 #pragma once
 
-#include "include/algo_setting.h"
-#include "include/algorithm_result.h"
 #include <QElapsedTimer>
 #include <QObject>
+#include "include/algo_setting.h"
+#include "include/algorithm_result.h"
 
 class QThreadPool;
 namespace c3picko {
@@ -19,15 +19,15 @@ class AlgorithmJob : public QObject {
   Q_OBJECT
   friend class AlgorithmManager;
 
-public:
+ public:
   typedef QString ID;
 
-private:
+ private:
   AlgorithmJob(ID id, Algorithm *algo, QJsonObject settings, void *input,
                AlgorithmResult *result, QThreadPool *pool, qint64 maxMs,
                QObject *_parent);
 
-public:
+ public:
   ~AlgorithmJob();
 
   void *input();
@@ -50,7 +50,7 @@ public:
 
   qint64 maxMs() const;
 
-signals:
+ signals:
   void OnAlgoSucceeded();
   void OnAlgoFailed();
 
@@ -59,7 +59,7 @@ signals:
 
   void OnFinished();
 
-public slots:
+ public slots:
   /**
    * @brief Starts the job
    * @param Indicates whether the job should be executed in another thread or
@@ -72,7 +72,7 @@ public slots:
   void timeStart();
   void timeStop();
 
-private:
+ private:
   ID id_;
   Algorithm *algo_ = nullptr;
   QThreadPool *pool_;
@@ -93,4 +93,4 @@ private:
   QElapsedTimer timer_;
 };
 MAKE_MARSHALLABLE(AlgorithmJob);
-} // namespace c3picko
+}  // namespace c3picko

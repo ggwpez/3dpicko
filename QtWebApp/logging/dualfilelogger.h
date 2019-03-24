@@ -6,12 +6,12 @@
 #ifndef DUALFILELOGGER_H
 #define DUALFILELOGGER_H
 
-#include "filelogger.h"
-#include "logger.h"
-#include "logglobal.h"
 #include <QSettings>
 #include <QString>
 #include <QtGlobal>
+#include "filelogger.h"
+#include "logger.h"
+#include "logglobal.h"
 
 namespace stefanfrings {
 
@@ -24,7 +24,7 @@ namespace stefanfrings {
 class DECLSPEC DualFileLogger : public Logger {
   Q_OBJECT
   Q_DISABLE_COPY(DualFileLogger)
-public:
+ public:
   /**
     Constructor.
     @param firstSettings Configuration settings for the first log file, usually
@@ -66,7 +66,7 @@ public:
   */
   virtual void clear(const bool buffer = true, const bool variables = true);
 
-private:
+ private:
   /** First logger */
   FileLogger *firstLogger;
 
@@ -74,6 +74,6 @@ private:
   FileLogger *secondLogger;
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // DUALFILELOGGER_H
+#endif  // DUALFILELOGGER_H

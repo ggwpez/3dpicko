@@ -1,13 +1,12 @@
 #include "datamodel/location.h"
-#include "include/exception.h"
 #include <QString>
+#include "include/exception.h"
 
 namespace c3picko {
 namespace pi {
 namespace data {
 Location LocationFromString(const QString &str) {
-  if (str == "local")
-    return Location::LOCAL;
+  if (str == "local") return Location::LOCAL;
   if (str == "sdcard")
     return Location::SD_CARD;
   else
@@ -21,6 +20,6 @@ QString ToString(Location val) {
     return "sdcard";
 }
 
-} // namespace data
-} // namespace pi
-} // namespace c3picko
+}  // namespace data
+}  // namespace pi
+}  // namespace c3picko

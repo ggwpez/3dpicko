@@ -4,7 +4,7 @@
 
 namespace c3picko {
 class Plate {
-public:
+ public:
   Plate() = default;
   Plate(math::OuterBorder const &outerBorder,
         math::InnerBorder const &inner_border);
@@ -25,7 +25,7 @@ public:
 
   math::OuterBorder outerBorder() const;
 
-private:
+ private:
   math::OuterBorder outer_border_;
   math::InnerBorder inner_border_;
   int a1_, h1_;
@@ -58,4 +58,4 @@ private:
   static double calculateOuterRotation(const math::OuterBorder &cont, int a1,
                                        int h1);
 };
-} // namespace c3picko
+}  // namespace c3picko

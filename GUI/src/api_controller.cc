@@ -16,11 +16,14 @@
 #include <random>
 using namespace c3picko::pi;
 namespace c3picko {
-APIController::APIController(AlgorithmManager *colony_detector,
-                             AlgorithmManager *plate_detector, Database *db,
-                             QObject *parent)
-    : QObject(parent), colony_detector_(colony_detector),
-      plate_detector_(plate_detector), db_(db), input_(new APIInput(this)),
+APIController::APIController(AlgorithmManager* colony_detector,
+                             AlgorithmManager* plate_detector, Database* db,
+                             QObject* parent)
+    : QObject(parent),
+      colony_detector_(colony_detector),
+      plate_detector_(plate_detector),
+      db_(db),
+      input_(new APIInput(this)),
       output_(new APIOutput(this)) {
   /**
    * The following connects all SIGNALS from APIController (this) prefixed with
@@ -32,7 +35,7 @@ APIController::APIController(AlgorithmManager *colony_detector,
    *     &APIOutput    ::  ImageListRequested
    */
 
-  QMetaObject const *meta = this->metaObject();
+  QMetaObject const* meta = this->metaObject();
   QMetaMethod default_handler =
       meta->method(meta->indexOfSlot(qPrintable("defaultSignalHandler()")));
 
@@ -42,8 +45,7 @@ APIController::APIController(AlgorithmManager *colony_detector,
         QMetaObject::normalizedSignature(qPrintable(signal.methodSignature()));
 
     if (signal.methodType() == QMetaMethod::Signal) {
-      if (!slot_name.startsWith("On"))
-        continue;
+      if (!slot_name.startsWith("On")) continue;
       slot_name = slot_name.mid(2);
       QObject::connect(this, signal, this, default_handler);
 
@@ -51,7 +53,7 @@ APIController::APIController(AlgorithmManager *colony_detector,
           output_->metaObject()->indexOfSlot(qPrintable(slot_name));
       if (slot_index == -1)
         qDebug("Could not find slot APIOutput::%s", qPrintable(slot_name));
-      {
+      else {
         QMetaMethod slot = output_->metaObject()->method(slot_index);
 
         QObject::connect(this, signal, output_, slot);
@@ -62,22 +64,21 @@ APIController::APIController(AlgorithmManager *colony_detector,
 }
 
 void APIController::defaultSignalHandler() {
-  QMetaObject const *meta_sender = QObject::sender()->metaObject();
+  QMetaObject const* meta_sender = QObject::sender()->metaObject();
   QString signal_name = QMetaObject::normalizedSignature(
       meta_sender->method(QObject::senderSignalIndex()).name());
-
   qDebug("Event %s::%s", qPrintable(meta_sender->className()),
          qPrintable(signal_name));
 }
 
-void APIController::DeleteImage(Image::ID id, QObject *client) {
+void APIController::DeleteImage(Image::ID id, QObject* client) {
   // Does the image exist?
   if (!db_->images().exists(id)) {
     emit OnImageDeleteError(id, client);
     return;
   }
   // Is the image	used by a job?
-  for (auto const &job : db_->jobs()) {
+  for (auto const& job : db_->jobs()) {
     if (job.imgID() == id) {
       emit OnImageDeleteError(id, client);
       return;
@@ -90,7 +91,7 @@ void APIController::DeleteImage(Image::ID id, QObject *client) {
   if (image.deleteFile()) {
     db_->deletedImages().add(id, image);
     db_->images().remove(
-        id); // Carefull here, if we use a reference to image instead, it will
+        id);  // Carefull here, if we use a reference to image instead, it will
     // go out of scope after deletion
     emit OnImageDeleted(image, client);
   } else {
@@ -98,7 +99,7 @@ void APIController::DeleteImage(Image::ID id, QObject *client) {
   }
 }
 
-void APIController::DeleteJob(Job::ID id, QObject *client) {
+void APIController::DeleteJob(Job::ID id, QObject* client) {
   // Does the job exist?
   if (!db_->jobs().exists(id)) {
     emit OnJobDeleteError(id, client);
@@ -111,7 +112,7 @@ void APIController::DeleteJob(Job::ID id, QObject *client) {
   }
 }
 
-void APIController::UploadImage(Image image, QObject *client) {
+void APIController::UploadImage(Image image, QObject* client) {
   // Is the user trying to upload an image twice?
   if (db_->images().exists(image.id())) {
     qDebug() << "Ignoring doubled image";
@@ -126,35 +127,35 @@ void APIController::UploadImage(Image image, QObject *client) {
 
     Algorithm::ID aid("1");
     AlgorithmJob::ID jid = db_->newResultJobId();
-    AlgorithmResult *result = new PlateResult(db_->newResultId());
+    AlgorithmResult* result = new PlateResult(db_->newResultId());
 
-    AlgorithmJob *ajob =
+    AlgorithmJob* ajob =
         plate_detector_->createJob(raw, aid, jid, result, QJsonObject());
 
     if (!ajob)
       emit OnImageCreateError(
           "Internal Error: Algorithm not found (" + aid + ")", client);
     else {
-      connect(ajob, &AlgorithmJob::OnAlgoSucceeded, client,
-              [this, client, image, ajob, result] {
-                cv::Mat *mat;
-                if (result->stack().empty() ||
-                    !(mat = result->stack().back())) {
-                  emit OnImageCreateError("Assertion failure", client);
-                  return;
-                }
-                Image cropped(*mat, image.originalName(), image.description(),
-                              image.uploaded());
+      connect(
+          ajob, &AlgorithmJob::OnAlgoSucceeded, client,
+          [this, client, image, ajob, result] {
+            cv::Mat* mat;
+            if (result->stack().empty() || !(mat = result->stack().back())) {
+              emit OnImageCreateError("Assertion failure", client);
+              return;
+            }
+            Image cropped(*mat, image.originalName(), image.description(),
+                          image.uploaded());
 
-                if (!cropped.writeToFile()) {
-                  emit OnImageCreateError(cropped.id(), client);
-                } else {
-                  db_->images().add(cropped.id(), cropped);
+            if (!cropped.writeToFile()) {
+              emit OnImageCreateError(cropped.id(), client);
+            } else {
+              db_->images().add(cropped.id(), cropped);
 
-                  emit this->OnImageCreated(cropped, client);
-                  qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
-                }
-              });
+              emit this->OnImageCreated(cropped, client);
+              qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
+            }
+          });
       connect(ajob, &AlgorithmJob::OnAlgoFailed, client,
               [this, result, client] {
                 emit OnImageCreateError(result->stageError(), client);
@@ -165,12 +166,12 @@ void APIController::UploadImage(Image image, QObject *client) {
   }
 }
 
-void APIController::cropImage(Image::ID id, QObject *client) {
+void APIController::cropImage(Image::ID id, QObject* client) {
   if (!db_->images().exists(id))
     return emit OnImageCropError(id, client);
   else {
     QString error;
-    Image &original = db_->images().get(id);
+    Image& original = db_->images().get(id);
 
     // FIXME cheat, normally we should cut the image to the crop box, but now we
     // just autodetect the frame
@@ -182,8 +183,8 @@ void APIController::cropImage(Image::ID id, QObject *client) {
       }
 
       AlgorithmJob::ID result_job_id = db_->newResultJobId();
-      PlateResult *result = new PlateResult(db_->newResultId());
-      AlgorithmJob *algo_job = plate_detector_->createJob(
+      PlateResult* result = new PlateResult(db_->newResultId());
+      AlgorithmJob* algo_job = plate_detector_->createJob(
           mat, "1", result_job_id, result, QJsonObject());
 
       if (!algo_job) {
@@ -198,10 +199,10 @@ void APIController::cropImage(Image::ID id, QObject *client) {
                   cv::Mat cropped_mat(result->oldMat());
                   Image cropped =
                       Image(cropped_mat, new_name,
-                            "Autodetected frame"); // TODO description
+                            "Autodetected frame");  // TODO description
                   qDebug() << "Detected Frame in" << algo_job->tookMs() << "ms";
 
-                  if (!cropped.writeToFile()) // save cropped image to the hdd
+                  if (!cropped.writeToFile())  // save cropped image to the hdd
                   {
                     emit OnImageCreateError("<cropped>", client);
                     return;
@@ -224,13 +225,13 @@ void APIController::cropImage(Image::ID id, QObject *client) {
     // Is the cropped image valid?
     if (!original.crop(x, y, w, h, cropped, error))
     {
-                                                                    emit
+                                                                                                                                    emit
     OnImageCropError(id, client); // TODO inform client return;
     }
 
     if (!cropped.writeToFile()) // save cropped image to the hdd
     {
-                                                                    emit
+                                                                                                                                    emit
     OnImageCreateError("<cropped>", client); return;
     }
 
@@ -240,8 +241,8 @@ void APIController::cropImage(Image::ID id, QObject *client) {
   }
 }
 
-void APIController::createSettingsProfile(Profile &profile_wo_id,
-                                          QObject *client) {
+void APIController::createSettingsProfile(Profile& profile_wo_id,
+                                          QObject* client) {
   Profile::ID id = db_->newProfileId();
   profile_wo_id.setId(id);
 
@@ -250,7 +251,7 @@ void APIController::createSettingsProfile(Profile &profile_wo_id,
   emit OnProfileCreated(profile_wo_id, client);
 }
 
-void APIController::updateSettingsProfile(Profile &profile, QObject *client) {
+void APIController::updateSettingsProfile(Profile& profile, QObject* client) {
   if (!db_->profiles().exists(profile.id())) {
     // response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
     emit OnProfileUpdateError(profile.id(), client);
@@ -261,7 +262,7 @@ void APIController::updateSettingsProfile(Profile &profile, QObject *client) {
   }
 }
 
-void APIController::deleteSettingsProfile(Profile::ID id, QObject *client) {
+void APIController::deleteSettingsProfile(Profile::ID id, QObject* client) {
   if (!db_->profiles().exists(id)) {
     emit OnProfileDeleteError(id, client);
   } else {
@@ -271,12 +272,12 @@ void APIController::deleteSettingsProfile(Profile::ID id, QObject *client) {
   }
 }
 
-void APIController::setDefaultSettingsProfile(Profile::ID id, QObject *client) {
+void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
   if (!db_->profiles().exists(id)) {
     emit OnDefaultSettingsProfileSetError("Profile " + id + " not found",
                                           client);
   } else {
-    Profile &profile = db_->profiles().get(id);
+    Profile& profile = db_->profiles().get(id);
 
     if (profile.type() == "printer-profile")
       db_->setdefaultPrinter(id);
@@ -296,7 +297,7 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject *client) {
 }
 
 void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
-                                    int col, QObject *client) {
+                                    int col, QObject* client) {
   if (!db_->jobs().exists(id)) {
     emit OnSetStartingWellError("Job " + id + " not found", client);
   } else if (!db_->profiles().exists(plate_id)) {
@@ -316,7 +317,7 @@ void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
                                       " for plate profile: " + plate_id,
                                   client);
     else {
-      Job &job = db_->jobs().get(id);
+      Job& job = db_->jobs().get(id);
 
       job.setStartingRow(row);
       job.setStartingCol(col);
@@ -327,51 +328,62 @@ void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
   }
 }
 
-void APIController::setColoniesToPick(Job::ID id, quint32 number,
-                                      QObject *client) {
+void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
+                                      QSet<Colony::ID> in_user, quint32 number,
+                                      QObject* client) {
   if (!db_->jobs().exists(id)) {
     emit OnSetColoniesToPickError("Job " + id + " not found", client);
   } else {
-    Job &job = db_->jobs().get(id);
-    job.setcoloniesToPick(number);
+    Job& job = db_->jobs().get(id);
     if (!db_->detectionResults().exists(job.resultID())) {
       emit OnSetColoniesToPickError(
           "Job " + id + " has no detected colonies attatched to it", client);
     } else {
-      DetectionResult &result = db_->detectionResults().get(job.resultID());
-      std::vector<Colony> all_colonies = result.colonies();
-      std::vector<std::size_t> included;
-      std::set<std::size_t> good_colonies; // index
-
-      // filter out all that are excluded by a setting
-      for (std::size_t i = 0; i < all_colonies.size(); ++i)
-        if (!all_colonies[i].excluded())
-          included.push_back(i);
-
-      std::mt19937_64 mt(123); // constant seed for determinism
-      int max_good = number;
-      Q_ASSERT(max_good);
-
-      if (max_good > included.size()) {
-        emit OnSetColoniesToPickError("Cant pick more colonies than available",
-                                      client);
-        return;
+      DetectionResult& result = db_->detectionResults().get(job.resultID());
+      QSet<Colony::ID> selected;
+      QSet<Colony::ID> in_algo, ex_algo;
+      {
+        for (auto it = result.includedBegin(); it != result.includedBegin();
+             ++it)
+          in_algo.insert(it->id());
+        for (auto it = result.excludedBegin(); it != result.excludedBegin();
+             ++it)
+          ex_algo.insert(it->id());
       }
 
-      while (max_good--) {
-        int index = std::uniform_int_distribution<>(0, included.size() - 1)(mt);
-
-        good_colonies.insert(all_colonies[included[index]].id());
-        included.erase(included.begin() + index);
+      // Input validation
+      {
+        if (!(ex_user & ex_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant exclude colonies that are already excluded by the "
+              "algorithm",
+              client);
+        if (!(ex_user - in_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant exclude colonies that are not included by the algorithm",
+              client);
+        if (!(in_user & in_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant include colonies that are already included by the "
+              "algorithm",
+              client);
+        if (!(in_user - ex_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant include colonies that are not excluded by the algorithm",
+              client);
+        if (!(in_user & ex_user).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant include and exclude a colony at the same time", client);
       }
 
-      job.setselectedToPick(good_colonies);
-      emit OnSetColoniesToPick(id, good_colonies, client);
+      selected = (in_algo - ex_user) + (ex_algo - in_user);
+      job.setcoloniesToPick(selected);
+      emit OnSetColoniesToPick(id, selected, client);
     }
   }
 }
 
-void APIController::createJob(Job &job, QObject *client) {
+void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
 
@@ -386,22 +398,22 @@ void APIController::createJob(Job &job, QObject *client) {
   //}
 }
 
-void APIController::getPositions(Image::ID id, QObject *client) {
+void APIController::getPositions(Image::ID id, QObject* client) {
   // AlgorithmJob* job = detectColonies(job_id, defaultAlgo(), {}, client);
 
   // if (job)
   // job->start(true, true);
 }
 
-AlgorithmJob *APIController::detectColonies(Job::ID job_id, QString algo_id,
+AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id,
                                             QJsonObject settings,
-                                            QObject *client) {
+                                            QObject* client) {
   if (!db_->jobs().exists(job_id)) {
     qWarning() << "Client requested colony detection for unknown job, id="
                << job_id;
     emit OnColonyDetectionError("Job not found", client);
   } else {
-    Job &job = db_->jobs().get(job_id);
+    Job& job = db_->jobs().get(job_id);
     Image::ID img_id = job.imgID();
 
     if (!db_->images().exists(img_id)) {
@@ -409,8 +421,8 @@ AlgorithmJob *APIController::detectColonies(Job::ID job_id, QString algo_id,
                  << ")";
       emit OnColonyDetectionError("Image not found", client);
     } else {
-      Image &img = db_->images().get(
-          img_id); // Non const& bc readCvMat() can set the cache
+      Image& img = db_->images().get(
+          img_id);  // Non const& bc readCvMat() can set the cache
       cv::Mat image;
 
       if (!img.readCvMat(image)) {
@@ -419,9 +431,9 @@ AlgorithmJob *APIController::detectColonies(Job::ID job_id, QString algo_id,
         emit OnColonyDetectionError("Image not readable or empty", client);
       } else {
         AlgorithmJob::ID result_job_id = db_->newResultJobId();
-        DetectionResult *result = new DetectionResult(db_->newResultId());
+        DetectionResult* result = new DetectionResult(db_->newResultId());
         job.setResultID(result->id());
-        AlgorithmJob *algo_job = colony_detector_->createJob(
+        AlgorithmJob* algo_job = colony_detector_->createJob(
             image, algo_id, result_job_id, result, settings);
 
         if (!algo_job) {
@@ -430,7 +442,7 @@ AlgorithmJob *APIController::detectColonies(Job::ID job_id, QString algo_id,
           connect(algo_job, &AlgorithmJob::OnAlgoSucceeded, client,
                   [this, client, algo_job, result] {
                     db_->detectionResults().add(result->id(),
-                                                *result); // TODO not too cool
+                                                *result);  // TODO not too cool
                     emit this->OnColonyDetected(&result->colonies(), client);
                     qDebug() << "Detected" << result->colonies().size() << "in"
                              << algo_job->tookMs() << "ms";
@@ -450,79 +462,93 @@ AlgorithmJob *APIController::detectColonies(Job::ID job_id, QString algo_id,
 
 void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
                                             QJsonObject settings,
-                                            QObject *client) {
-  AlgorithmJob *job = detectColonies(job_id, algo_id, settings, client);
+                                            QObject* client) {
+  AlgorithmJob* job = detectColonies(job_id, algo_id, settings, client);
 
-  if (job)
-    job->start(true, true);
+  if (job) job->start(true, true);
 }
 
-void APIController::startJob(Job::ID id, QObject *client) {
-  static OctoConfig config("10.14.0.150", "F866D6261972458CACAE9CB56E484758");
-  static OctoPrint *printer = new OctoPrint(config, this);
+void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
+                             QObject* client) {
+  if (!db_->jobs().exists(id))
+    return emit OnJobStartError("Job '" + id + "' job found", client);
+  Job& job = db_->jobs().get(id);
 
-  if (!db_->jobs().exists(id)) {
-    emit OnColonyDetectionError("Job '" + id + "' job found",
-                                client); // FIXME OnJobStartError
-    return;
-  }
-  Job &job = db_->jobs().get(id);
-
-  if (!db_->detectionResults().exists(job.resultID())) {
-    emit OnColonyDetectionError("Job " + id +
-                                    " could not find its detection results: " +
-                                    job.resultID(),
-                                client);
-    return;
-  }
-
-  DetectionResult &result = static_cast<DetectionResult &>(
+  if (!db_->detectionResults().exists(job.resultID()))
+    return emit OnJobStartError(
+        "Job " + id +
+            " could not find its detection results: " + job.resultID(),
+        client);
+  DetectionResult& result = static_cast<DetectionResult&>(
       db_->detectionResults().get(job.resultID()));
-  // FIXME check
-  PrinterProfile *printerp =
-      (PrinterProfile *)(db_->profiles().get(job.printer()));
-  PlateSocketProfile *socket =
-      (PlateSocketProfile *)(db_->profiles().get(job.socket()));
-  PlateProfile *plate = (PlateProfile *)(db_->profiles().get(job.plate()));
+
+  if (!db_->profiles().exists(job.printer()) ||
+      !db_->profiles().exists(job.socket()) ||
+      !db_->profiles().exists(job.plate()) ||
+      !db_->profiles().exists(octoprint_id))
+    return emit OnJobStartError(
+        "Internal error: Cant find printer, socket, plate or octoprint profile",
+        client);
+  job.setOctoprint(octoprint_id);
+
+  PrinterProfile* printerp =
+      db_->profiles().get(job.printer()).operator c3picko::PrinterProfile*();
+  PlateSocketProfile* socket =
+      db_->profiles().get(job.socket()).operator c3picko::PlateSocketProfile*();
+  PlateProfile* plate =
+      db_->profiles().get(job.plate()).operator c3picko::PlateProfile*();
+  OctoConfig* octoprint =
+      db_->profiles().get(job.octoprint()).operator c3picko::pi::OctoConfig*();
+
+  // static OctoConfig config("10.14.0.150",
+  // pi::ApiKey("F866D6261972458CACAE9CB56E484758"));
+  OctoPrint* printer = new OctoPrint(*octoprint, this);
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 
-  std::vector<Colony> all_colonies = result.colonies();
-  std::set<std::size_t> good_colonies = job.selectedToPick();
+  QSet<Colony::ID> selected = job.coloniesToPick();
   std::vector<LocalColonyCoordinates> coords;
 
-  for (auto it = good_colonies.begin(); it != good_colonies.end(); ++it)
-    coords.push_back(Point(all_colonies[*it].x() * 128,
-                           (1.0 - all_colonies[*it].y()) * 85.9));
+  // Convert the colony coordinates to real world coordinates
+  for (QSet<Colony::ID>::iterator it = selected.begin(); it != selected.end();
+       ++it) {
+    auto f = std::find_if(result.includedBegin(), result.includedEnd(),
+                          [&it](Colony const& c) { return c.id() == *it; });
+
+    if (f == result.includedEnd())
+      return emit OnJobStartError("Internal error: Cant find selected colonie",
+                                  client);
+
+    // Invert the y-axis. FIXME get the frame size from the plate profile
+    coords.push_back(Point(f->x() * 128, (1.0 - f->y()) * 85.9));
+  }
 
   std::vector<GcodeInstruction> code =
       gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
                                                 job.startingCol(), coords);
 
   QFile file("out.gcode");
-  if (!file.open(QIODevice::WriteOnly))
-    throw Exception("Could not save gcode");
+  if (!file.open(QIODevice::WriteOnly)) qWarning() << "Could not save gcode";
   QTextStream ts(&file);
 
   QStringList gcode_list;
-  for (auto const &c : code) {
+  for (auto const& c : code) {
     ts << QString::fromStdString(c.ToString()) << endl;
     gcode_list << QString::fromStdString(c.ToString());
   }
 
-  Command *cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-
-  printer->SendCommand(cmd);
+  Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
+  printer->SendCommand(cmd);  // TODO inform client
 }
 
-void APIController::shutdown(QObject *) {
+void APIController::shutdown(QObject*) {
   qDebug() << "Shutdown";
   qApp->exit(EXIT_SUCCESS);
 }
 
-void APIController::restart(QObject *) {
+void APIController::restart(QObject*) {
   qDebug() << "Restart";
-  qApp->exit(exitRestart());
+  qApp->exit(exitCodeRestart());
 }
 
 QJsonObject APIController::createImageList() const {
@@ -554,7 +580,7 @@ QJsonObject APIController::createImageList(Image img) {
 QJsonObject APIController::createJobList() {
   QJsonArray json_jobs;
 
-  for (auto const &job : db_->jobs())
+  for (auto const& job : db_->jobs())
     json_jobs.append(Marshalling::toJson(job));
 
   return {{"jobs", json_jobs}};
@@ -572,19 +598,20 @@ QJsonObject APIController::createProfileList() {
   QJsonObject json;
   QJsonArray json_profiles;
 
-  for (auto const &profile : db_->profiles())
+  for (auto const& profile : db_->profiles())
     json_profiles.append(Marshalling::toJson(profile));
 
   json["defaultPrinter"] = db_->defaultPrinter();
   json["defaultSocket"] = db_->defaultSocket();
   json["defaultPlate"] = db_->defaultPlate();
+  json["defaultOctoprint"] = db_->defaultPlate();
 
   json["profiles"] = json_profiles;
 
   json["printerTemplate"] = Profile::printerTemplate();
   json["socketTemplate"] = Profile::socketTemplate();
   json["plateTemplate"] = Profile::plateTemplate();
-  // json["octoprintTemplate"] = ;
+  json["octoprintTemplate"] = Profile::octoprintTemplate();
 
   return json;
 }
@@ -592,7 +619,7 @@ QJsonObject APIController::createProfileList() {
 QJsonObject APIController::CreateAlgorithmList() {
   QJsonObject json;
 
-  for (Algorithm *algo : colony_detector_->algos())
+  for (Algorithm* algo : colony_detector_->algos())
     json[algo->id()] = Marshalling::toJson(*algo);
 
   return json;
@@ -607,13 +634,13 @@ QJsonObject APIController::createDeleteJob(Job job) {
 }
 
 void APIController::request(QJsonObject request, QString raw_request,
-                            QObject *client) {
+                            QObject* client) {
   try {
     input_->serviceRequest(request, raw_request, client);
-  } catch (Exception const &e) {
+  } catch (Exception const& e) {
     output_->Error(e.what(), e.what(), client);
     qWarning("std::exception %s", e.what());
-  } catch (std::exception const &e) {
+  } catch (std::exception const& e) {
     output_->Error("Exception", e.what(), client);
     qWarning("std::exception %s", e.what());
   } catch (...) {
@@ -622,5 +649,5 @@ void APIController::request(QJsonObject request, QString raw_request,
   }
 }
 
-Database &APIController::db() const { return *db_; }
-} // namespace c3picko
+Database& APIController::db() const { return *db_; }
+}  // namespace c3picko

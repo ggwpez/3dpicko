@@ -5,10 +5,10 @@
 
 namespace c3picko {
 class PlateResult : public AlgorithmResult {
-public:
+ public:
   using AlgorithmResult::AlgorithmResult;
 
   Plate original_, rotated_;
 };
 MAKE_MARSHALLABLE(PlateResult);
-} // namespace c3picko
+}  // namespace c3picko

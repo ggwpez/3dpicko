@@ -5,7 +5,8 @@
 namespace c3picko {
 Plate::Plate(const math::OuterBorder &outer_border,
              const math::InnerBorder &inner_border)
-    : outer_border_(outer_border), inner_border_(inner_border),
+    : outer_border_(outer_border),
+      inner_border_(inner_border),
       inner_center_(math::gravityCenter(inner_border_)),
       outer_center_(math::gravityCenter(outer_border_)),
       center_((outer_center_ + inner_center_) / 2) {
@@ -24,13 +25,19 @@ Plate::Plate(const math::OuterBorder &outer_border,
              cv::Point2d inner_center, cv::Point2d outer_center,
              cv::Point2d center, math::UnitValue center_error, double angle,
              cv::Mat rotation_matrix)
-    : outer_border_(outer_border), inner_border_(inner_border), a1_(a1),
-      h1_(h1), inner_center_(inner_center), outer_center_(outer_center),
-      center_(center), center_error_(center_error), angle_(angle),
+    : outer_border_(outer_border),
+      inner_border_(inner_border),
+      a1_(a1),
+      h1_(h1),
+      inner_center_(inner_center),
+      outer_center_(outer_center),
+      center_(center),
+      center_error_(center_error),
+      angle_(angle),
       rotation_matrix_(rotation_matrix) {}
 
 Plate Plate::normalized(const cv::Mat &in, cv::Mat &out) const {
-  if (angle_ == 0) // ok
+  if (angle_ == 0)  // ok
     return *this;
 
   math::OuterBorder new_outer_border;
@@ -44,7 +51,7 @@ Plate Plate::normalized(const cv::Mat &in, cv::Mat &out) const {
   cv::Rect aabb = cv::boundingRect(new_outer_border);
   cv::Point2d left_top(aabb.x, aabb.y);
   cv::warpAffine(in, out, rotation_matrix_,
-                 cv::Size(in.cols, in.rows)); // TODO try cv::transform
+                 cv::Size(in.cols, in.rows));  // TODO try cv::transform
   out = out(aabb);
 
   // After rotation, the angle of the plate should be nealy zero
@@ -138,8 +145,7 @@ std::pair<int, int> Plate::findA1(const math::OuterBorder &outer_border,
   }
 
   // swap a1 and h1 such that h1 is counter clockwise of a1
-  if ((h1 + 1) % outer_border.size() != a1)
-    std::swap(a1, h1);
+  if ((h1 + 1) % outer_border.size() != a1) std::swap(a1, h1);
   Q_ASSERT((h1 + 1) % outer_border.size() == a1);
 
   if (a1 == -1 || h1 == -1 || a1 == h1)
@@ -153,4 +159,4 @@ int Plate::a1() const { return a1_; }
 int Plate::h1() const { return h1_; }
 
 math::OuterBorder Plate::outerBorder() const { return outer_border_; }
-} // namespace c3picko
+}  // namespace c3picko

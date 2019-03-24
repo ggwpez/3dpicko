@@ -20,4 +20,4 @@
 #define DECLSPEC
 #endif
 
-#endif // LOGGLOBAL_H
+#endif  // LOGGLOBAL_H

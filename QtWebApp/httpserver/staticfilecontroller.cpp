@@ -49,9 +49,9 @@ void StaticFileController::service(HttpRequest &request,
   CacheEntry *entry = cache.object(path);
   if (entry && (cacheTimeout == 0 || entry->created > (now - cacheTimeout))) {
     QByteArray document =
-        entry->document; // copy the cached document, because other threads may
-                         // destroy the cached entry immediately after mutex
-                         // unlock.
+        entry->document;  // copy the cached document, because other threads may
+                          // destroy the cached entry immediately after mutex
+                          // unlock.
     QByteArray filename = entry->filename;
     mutex.unlock();
     qInfo("StaticFileController: Cache hit for %s", path.data());

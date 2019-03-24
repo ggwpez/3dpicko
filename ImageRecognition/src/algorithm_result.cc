@@ -1,18 +1,21 @@
 #include "include/algorithm_result.h"
-#include "include/colony.hpp"
-#include "include/exception.h"
 #include <QJsonArray>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
+#include "include/colony.hpp"
+#include "include/exception.h"
 
 namespace c3picko {
 AlgorithmResult::AlgorithmResult(ID id)
-    : id_(id), stages_succeeded_(false), cleanup_succeeded_(false) {}
+    : id_(id),
+      stages_succeeded_(false),
+      cleanup_succeeded_(false),
+      is_finalized_(false) {}
 
 AlgorithmResult::~AlgorithmResult() { cleanup(); }
 
-cv::Mat &AlgorithmResult::newMat(cv::Mat const &copy_from) {
-  cv::Mat *new_mat = new cv::Mat();
+cv::Mat& AlgorithmResult::newMat(cv::Mat const& copy_from) {
+  cv::Mat* new_mat = new cv::Mat();
 
   copy_from.copyTo(*new_mat);
 
@@ -20,16 +23,21 @@ cv::Mat &AlgorithmResult::newMat(cv::Mat const &copy_from) {
   return *new_mat;
 }
 
-cv::Mat &AlgorithmResult::oldMat() {
+cv::Mat& AlgorithmResult::oldMat() {
   if (!stack_.size() || !stack_.back())
     throw Exception("Assertion failure: Stack empty");
   return *stack_.back();
 }
 
+void AlgorithmResult::finalize() {
+  if (!is_finalized_) throw Exception("Cant finalize twice");
+  is_finalized_ = true;
+}
+
 AlgorithmResult::ID AlgorithmResult::id() const { return id_; }
 
-cv::Mat &AlgorithmResult::newMat() {
-  cv::Mat *new_mat = new cv::Mat();
+cv::Mat& AlgorithmResult::newMat() {
+  cv::Mat* new_mat = new cv::Mat();
 
   stack_.push_back(new_mat);
 
@@ -42,19 +50,18 @@ int			i = 0;
 
 for (void* stage : stack_)
 {
-                    cv::Mat&	mat  = *reinterpret_cast<cv::Mat*>(stage);
-                    std::string name = "STAGE-" + std::to_string(i++);
-                    if (!mat.cols || !mat.rows)
-                                                    continue;
+                                    cv::Mat&	mat  =
+*reinterpret_cast<cv::Mat*>(stage); std::string name = "STAGE-" +
+std::to_string(i++); if (!mat.cols || !mat.rows) continue;
 
-                    cv::namedWindow(name, cv::WINDOW_NORMAL);
-                    cv::resizeWindow(name, 1920, 1080);
-                    cv::imshow(name, mat);
-                    cv::imwrite("lel" + name + ".png", mat);
+                                    cv::namedWindow(name, cv::WINDOW_NORMAL);
+                                    cv::resizeWindow(name, 1920, 1080);
+                                    cv::imshow(name, mat);
+                                    cv::imwrite("lel" + name + ".png", mat);
 }
 
 while (cv::waitKey(0) != 'q')
-                    ;
+                                    ;
 cv::destroyAllWindows();*/
 
   // Dont delete them right now, otherwise we cant user them
@@ -65,7 +72,7 @@ cv::destroyAllWindows();*/
 
 QString AlgorithmResult::stageError() const { return stage_error_; }
 
-const std::list<cv::Mat *> &AlgorithmResult::stack() const { return stack_; }
+const std::list<cv::Mat*>& AlgorithmResult::stack() const { return stack_; }
 
 QString AlgorithmResult::cleanupError() const { return cleanup_error_; }
 
@@ -75,7 +82,8 @@ bool AlgorithmResult::cleanupSucceeded() const { return cleanup_succeeded_; }
 
 bool AlgorithmResult::stagesSucceeded() const { return stages_succeeded_; }
 
-template <> QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
+template <>
+QJsonObject Marshalling::toJson(const AlgorithmResult& value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -88,7 +96,8 @@ template <> QJsonObject Marshalling::toJson(const AlgorithmResult &value) {
   return obj;
 }
 
-template <> AlgorithmResult Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+AlgorithmResult Marshalling::fromJson(const QJsonObject& obj) {
   throw Exception("Not implemented");
 }
-} // namespace c3picko
+}  // namespace c3picko

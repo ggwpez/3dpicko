@@ -1,11 +1,11 @@
 #ifndef WS_SERVER_HPP
 #define WS_SERVER_HPP
 
-#include "include/api_input.h"
+#include <qwebsocketprotocol.h>
 #include <QObject>
 #include <QSslConfiguration>
 #include <QSslError>
-#include <qwebsocketprotocol.h>
+#include "include/api_input.h"
 
 using namespace stefanfrings;
 
@@ -15,12 +15,12 @@ namespace c3picko {
 
 class WsServer : public QObject {
   Q_OBJECT
-public:
+ public:
   WsServer(QSettings &settings, QSslConfiguration *ssl,
            QObject *_parent = nullptr);
   ~WsServer();
 
-public slots:
+ public slots:
   void NewDebugLine(QString line);
 
   // From API
@@ -28,7 +28,7 @@ public slots:
   void ToAll(QString type, QJsonObject data);
   void ToAllExClient(QObject *excluded, QString type, QJsonObject data);
 
-private slots:
+ private slots:
   // From QWebSocketServer
   void NewConnection();
   void acceptError(QAbstractSocket::SocketError);
@@ -42,7 +42,7 @@ private slots:
   void ConnectionClosed();
   void clientError(QAbstractSocket::SocketError ec);
 
-public:
+ public:
   bool StartListen();
   void SendToClient(QWebSocket *client, QString type, QJsonObject packet);
   void ServiceRequestForClient(QJsonObject request, QWebSocket *socket);
@@ -50,18 +50,18 @@ public:
   static QString defaultHost();
   static quint16 defaultPort();
 
-signals:
+ signals:
   void OnStarted();
   void OnStopped();
   void OnRequest(QJsonObject request, QString raw_request, QObject *client);
 
-private:
+ private:
   QWebSocketServer *server_;
   QList<QWebSocket *> clients_;
   QString host_;
   quint16 port_;
 };
 
-} // namespace c3picko
+}  // namespace c3picko
 
-#endif // WS_SERVER_HPP
+#endif  // WS_SERVER_HPP

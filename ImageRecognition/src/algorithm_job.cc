@@ -1,8 +1,8 @@
 #include "include/algorithm_job.h"
-#include "include/algorithm.h"
-#include "include/algorithm_result.h"
 #include <QThreadPool>
 #include <QVariantMap>
+#include "include/algorithm.h"
+#include "include/algorithm_result.h"
 
 namespace c3picko {
 
@@ -10,8 +10,15 @@ AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm *algo,
                            QJsonObject settings, void *input,
                            AlgorithmResult *result, QThreadPool *pool,
                            qint64 max_ms, QObject *_parent)
-    : QObject(_parent), id_(id), algo_(algo), pool_(pool), input_(input),
-      result_(result), result_id_(result->id()), max_ms_(max_ms), took_ms_(0) {
+    : QObject(_parent),
+      id_(id),
+      algo_(algo),
+      pool_(pool),
+      input_(input),
+      result_(result),
+      result_id_(result->id()),
+      max_ms_(max_ms),
+      took_ms_(0) {
   algo_->setParent(this);
   algo_->setAutoDelete(false);
 
@@ -61,8 +68,7 @@ const QList<AlgoSetting> &AlgorithmJob::settings() const { return settings_; }
 
 const AlgoSetting &AlgorithmJob::settingById(AlgoSetting::ID id) const {
   for (AlgoSetting const &setting : settings_) {
-    if (setting.id() == id)
-      return setting;
+    if (setting.id() == id) return setting;
   }
 
   throw Exception("Could not find AlgoSetting (id=" + id + ")");
@@ -70,8 +76,7 @@ const AlgoSetting &AlgorithmJob::settingById(AlgoSetting::ID id) const {
 
 const AlgoSetting &AlgorithmJob::settingByName(QString name) const {
   for (AlgoSetting const &setting : settings_) {
-    if (setting.name() == name)
-      return setting;
+    if (setting.name() == name) return setting;
   }
 
   throw Exception("Could not find AlgoSetting (name=" + name + ")");
@@ -100,13 +105,13 @@ void AlgorithmJob::setSettingsValueByName(QString name, QJsonValue value) {
 }
 
 void AlgorithmJob::setSettings(const QJsonObject &sett) {
-  for (auto key : sett.keys())
-    setSettingsValueByID(key, sett[key]);
+  for (auto key : sett.keys()) setSettingsValueByID(key, sett[key]);
 }
 
 AlgorithmResult *AlgorithmJob::result() const { return result_; }
 
-template <> QJsonObject Marshalling::toJson(const AlgorithmJob &value) {
+template <>
+QJsonObject Marshalling::toJson(const AlgorithmJob &value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -116,4 +121,4 @@ template <> QJsonObject Marshalling::toJson(const AlgorithmJob &value) {
 
 // template <>
 // AlgorithmJob Marshalling::fromJson(const QJsonObject &obj) {}
-} // namespace c3picko
+}  // namespace c3picko

@@ -28,6 +28,6 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply *reply) {
 
   CheckStatusCode(reply, response);
 }
-} // namespace pi
-} // namespace c3picko
-#endif // COMMAND_INC_H_
+}  // namespace pi
+}  // namespace c3picko
+#endif  // COMMAND_INC_H_

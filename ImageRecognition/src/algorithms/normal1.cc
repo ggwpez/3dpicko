@@ -1,11 +1,11 @@
 #include "include/algorithms/normal1.h"
+#include <opencv2/highgui.hpp>
+#include <opencv2/opencv.hpp>
 #include "include/algo_setting.h"
 #include "include/algorithm_job.h"
 #include "include/algorithm_result.h"
 #include "include/algorithms/helper.h"
 #include "include/colony.hpp"
-#include <opencv2/highgui.hpp>
-#include <opencv2/opencv.hpp>
 
 namespace c3picko {
 
@@ -17,9 +17,9 @@ Normal1::Normal1()
            (AlgoStep)Normal1::safetyMargin /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
           {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
-                                                                                                                                                                                                                                                                          by
-                          algorithm", "", true, {}, Qt::red),*/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          by
+                                          algorithm", "", true, {}, Qt::red),*/
            AlgoSetting::make_rangeslider_double("area", "Area", "lel", 50, 2000,
                                                 1, {120, 1000}),
            AlgoSetting::make_slider_double("safety_margin_lt",
@@ -57,23 +57,22 @@ Normal1::Normal1()
 
 Normal1::~Normal1() {}
 
-void Normal1::render_rrect(cv::Mat &out, cv::RotatedRect rect) {
+void Normal1::render_rrect(cv::Mat& out, cv::RotatedRect rect) {
   cv::Point2f vertices2f[4];
   rect.points(vertices2f);
 
   cv::Point vertices[4];
-  for (int i = 0; i < 4; ++i)
-    vertices[i] = vertices2f[i];
+  for (int i = 0; i < 4; ++i) vertices[i] = vertices2f[i];
   cv::fillConvexPoly(out, vertices, 4, cv::Vec3b(255, 255, 255));
 }
 
-void Normal1::drawText(cv::Mat &img, cv::Mat &output,
-                       std::vector<cv::Vec3f> &colonies) {
+void Normal1::drawText(cv::Mat& img, cv::Mat& output,
+                       std::vector<cv::Vec3f>& colonies) {
   cv::Point2i img_center{img.cols / 2, img.rows / 2};
 
   // Sort the colonies by ascending distance from the center
   std::sort(colonies.begin(), colonies.end(),
-            [&img_center](cv::Vec3f const &a, cv::Vec3f const &b) {
+            [&img_center](cv::Vec3f const& a, cv::Vec3f const& b) {
               return (std::pow(img_center.x - a[0], 2) +
                       std::pow(img_center.y - a[1], 2)) <
                      (std::pow(img_center.x - b[0], 2) +
@@ -102,14 +101,15 @@ void Normal1::drawText(cv::Mat &img, cv::Mat &output,
  * @return ID of a setting that leaded to the exclusion of the colony
  * or empty.
  */
-static AlgoSetting::ID
-roundness(int area, int w, int h, std::vector<cv::Point> const &contour,
-          math::Range<double> aabb_ratio, math::Range<double> bb_ratio,
-          math::Range<double> circularity, math::Range<double> convexity) {
+static AlgoSetting::ID roundness(int area, int w, int h,
+                                 std::vector<cv::Point> const& contour,
+                                 math::Range<double> aabb_ratio,
+                                 math::Range<double> bb_ratio,
+                                 math::Range<double> circularity,
+                                 math::Range<double> convexity) {
   double ratio = (std::min(w, h) / double(std::max(w, h)));
 
-  if (aabb_ratio.excludes(ratio))
-    return "aabb_ratio";
+  if (aabb_ratio.excludes(ratio)) return "aabb_ratio";
 
   // TODO try watershed algorithm
 
@@ -117,11 +117,10 @@ roundness(int area, int w, int h, std::vector<cv::Point> const &contour,
 
   ratio = (std::min(rrect.size.width, rrect.size.height) /
            double(std::max(rrect.size.width, rrect.size.height)));
-  if (bb_ratio.excludes(ratio))
-    return "bb_ratio";
+  if (bb_ratio.excludes(ratio)) return "bb_ratio";
 
   double circ((4 * M_PI * area) / std::pow(cv::arcLength(contour, true), 2));
-  if (circularity.excludes(circ)) // flouro .8
+  if (circularity.excludes(circ))  // flouro .8
   {
     return "circularity";
   }
@@ -132,29 +131,29 @@ roundness(int area, int w, int h, std::vector<cv::Point> const &contour,
 
   double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-  return convexity.contains(convex) ? "" : "convexity"; // flouro .91
+  return convexity.contains(convex) ? "" : "convexity";  // flouro .91
 }
 
-void Normal1::cvt(AlgorithmJob *base, DetectionResult *result) {
+void Normal1::cvt(AlgorithmJob* base, DetectionResult* result) {
   result->newMat();
 
-  cv::Mat *input = reinterpret_cast<cv::Mat *>(base->input());
+  cv::Mat* input = reinterpret_cast<cv::Mat*>(base->input());
   cv::cvtColor(*input, result->newMat(), CV_BGR2GRAY);
 }
 
-void Normal1::threshold(AlgorithmJob *base, DetectionResult *result) {
+void Normal1::threshold(AlgorithmJob* base, DetectionResult* result) {
   // Calculate mean and standart deviation
-  cv::Mat &input = result->oldMat();
-  cv::Mat &output = result->newMat();
+  cv::Mat& input = result->oldMat();
+  cv::Mat& output = result->newMat();
 
   cv::Scalar mean, stddev;
   cv::adaptiveThreshold(input, output, 255, cv::ADAPTIVE_THRESH_MEAN_C,
-                        cv::THRESH_BINARY_INV, 51, 1); // non flour
+                        cv::THRESH_BINARY_INV, 51, 1);  // non flour
 }
 
-void Normal1::erodeAndDilate(AlgorithmJob *base, DetectionResult *result) {
-  cv::Mat &input = result->oldMat();
-  cv::Mat &output = result->newMat();
+void Normal1::erodeAndDilate(AlgorithmJob* base, DetectionResult* result) {
+  cv::Mat& input = result->oldMat();
+  cv::Mat& output = result->newMat();
 
   int erosion_type = cv::MORPH_ELLIPSE;
   int erosion_size = 2;
@@ -166,9 +165,9 @@ void Normal1::erodeAndDilate(AlgorithmJob *base, DetectionResult *result) {
   cv::dilate(output, output, kernel);
 }
 
-void Normal1::label(AlgorithmJob *base, DetectionResult *result) {
-  cv::Mat &input = result->oldMat();
-  auto &colonies = result->colonies();
+void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
+  cv::Mat& input = result->oldMat();
+  std::vector<Colony>& colonies = result->colonies();
 
   Colony::ID id = 0;
   math::Range<double> _area =
@@ -182,7 +181,7 @@ void Normal1::label(AlgorithmJob *base, DetectionResult *result) {
   math::Range<double> _convexity =
       base->settingById("convexity").value<math::Range<double>>();
   bool show_excluded =
-      false; // base->settingById("show_excluded_by_algo").value<bool>();
+      false;  // base->settingById("show_excluded_by_algo").value<bool>();
 
   cv::Mat stats, labeled, centers;
 
@@ -226,7 +225,7 @@ void Normal1::label(AlgorithmJob *base, DetectionResult *result) {
       // We check the AABB_RATIO twice for speed NOTE look into this in
       // benchmark phase
       if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h)))) {
-        colonies.push_back(
+        colonies.emplace_back(
             Colony(center.x / double(input.cols), center.y / double(input.rows),
                    area, 0, std::sqrt(area / M_PI), 0, id++, "aabb_ratio"));
       }
@@ -240,7 +239,7 @@ void Normal1::label(AlgorithmJob *base, DetectionResult *result) {
                     _circularity, _convexity);
 
       if (!excluded_by.isEmpty())
-        colonies.push_back(
+        colonies.emplace_back(
             Colony(center.x / double(input.cols), center.y / double(input.rows),
                    area, 0, std::sqrt(area / M_PI), 0, id++, excluded_by));
       else {
@@ -249,35 +248,26 @@ void Normal1::label(AlgorithmJob *base, DetectionResult *result) {
         // NOTE Brightness only works on unmasked original image contours,
         // otherwise they need conversion
         double br = math::brightness(
-            contours[0], *reinterpret_cast<cv::Mat *>(base->input()));
-        Colony detected(center.x / double(input.cols),
-                        center.y / double(input.rows), area, circ,
-                        circ / (2 * M_PI), br, id++, "");
-        colonies.push_back(detected);
+            contours[0], *reinterpret_cast<cv::Mat*>(base->input()));
+        colonies.emplace_back(center.x / double(input.cols),
+                              center.y / double(input.rows), area, circ,
+                              circ / (2 * M_PI), br, id++, "");
       }
     }
   }
 }
 
-bool greater(cv::Point2d a, cv::Point2d b) {
-  return ((a.x > b.x) || (a.y > b.y));
-}
-bool smaller(cv::Point2d a, cv::Point2d b) {
-  return ((a.x < b.x) || (a.y < b.y));
-}
-
-void Normal1::safetyMargin(AlgorithmJob *base, DetectionResult *result) {
-  std::vector<Colony> *input = &result->colonies();
+void Normal1::safetyMargin(AlgorithmJob* base, DetectionResult* result) {
+  std::vector<Colony>& input = result->colonies();
   double margin_lt = base->settingById("safety_margin_lt").value<double>();
   double margin_rb = base->settingById("safety_margin_rb").value<double>();
   cv::Point2d lt(margin_lt, margin_lt), rb(margin_rb, margin_rb);
 
-  for (auto it = input->begin(); it != input->end(); ++it) {
-    Colony const &c = *it;
+  for (auto it = input.begin(); it != input.end(); ++it) {
+    Colony const& c = *it;
     cv::Point2d cp(c.x(), c.y());
 
-    if (c.excluded())
-      continue;
+    if (!c.included()) continue;
 
     if (cp.y < lt.y || cp.x < lt.x)
       it->setExcluded_by("safety_margin_lt");
@@ -286,12 +276,11 @@ void Normal1::safetyMargin(AlgorithmJob *base, DetectionResult *result) {
   }
 }
 
-void Normal1::relativeFiltering(AlgorithmJob *base, DetectionResult *result) {
-  std::vector<Colony> *input = &result->colonies();
+void Normal1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
+  std::vector<Colony>* input = &result->colonies();
 
   // Should we skip the step?
-  if (!base->settingById("filter_relative").value<bool>())
-    return;
+  if (!base->settingById("filter_relative").value<bool>()) return;
   QString option =
       base->settingById("relative_filter").option<QString>().toLower();
 
@@ -319,7 +308,7 @@ void Normal1::relativeFiltering(AlgorithmJob *base, DetectionResult *result) {
   double meand = cv::sum(mean)[0];
   double stddefd = cv::sum(stddev)[0];
 
-  double rel_min = meand + _rel.lower_ * stddefd; // TODO
+  double rel_min = meand + _rel.lower_ * stddefd;  // TODO
   double rel_max = meand + _rel.upper_ * stddefd;
 
   for (auto it = input->begin(); it != input->end();) {
@@ -330,4 +319,4 @@ void Normal1::relativeFiltering(AlgorithmJob *base, DetectionResult *result) {
   }
 }
 
-} // namespace c3picko
+}  // namespace c3picko

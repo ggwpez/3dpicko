@@ -1,13 +1,14 @@
 #include "include/types/profile.hpp"
+#include <QDebug>
+#include <QJsonArray>
 #include "include/marshalling.hpp"
+#include "include/octoconfig.h"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
-#include <QDebug>
-#include <QJsonArray>
 
 namespace c3picko {
-Profile::Profile(QString type, QString name, ID id, QJsonObject const &settings)
+Profile::Profile(QString type, QString name, ID id, QJsonObject const& settings)
     : type_(type), name_(name), id_(id) {
   if (type_ == "printer-profile") {
     printer_ = std::make_shared<PrinterProfile>(
@@ -18,6 +19,9 @@ Profile::Profile(QString type, QString name, ID id, QJsonObject const &settings)
   } else if (type_ == "plate-profile") {
     plate_ = std::make_shared<PlateProfile>(
         Marshalling::fromJson<PlateProfile>(settings));
+  } else if (type_ == "octoprint-profile") {
+    octoprint_ = std::make_shared<pi::OctoConfig>(
+        Marshalling::fromJson<pi::OctoConfig>(settings));
   } else {
     plate_ = nullptr;
     qWarning() << "Unknown profile type" << type_;
@@ -37,6 +41,10 @@ std::shared_ptr<PlateProfile> Profile::plate() const { return plate_; }
 std::shared_ptr<PlateSocketProfile> Profile::socket() const { return socket_; }
 
 std::shared_ptr<PrinterProfile> Profile::printer() const { return printer_; }
+
+std::shared_ptr<pi::OctoConfig> Profile::octoprint() const {
+  return octoprint_;
+}
 
 QJsonObject Profile::makeTextField(Profile::ID id, QString name,
                                    QString description, QString placeholder,
@@ -260,15 +268,33 @@ QJsonObject Profile::plateTemplate() {
   return json;
 }
 
-c3picko::Profile::operator PlateProfile *() const { return plate_.get(); }
+QJsonObject Profile::octoprintTemplate() {
+  QJsonObject json;
 
-c3picko::Profile::operator PlateSocketProfile *() const {
-  return socket_.get();
+  json["settings"] = {
+      {makeTextField("address", "Hostname",
+                     "IPv4/IPv6/Hostname of the OctoPrint server. Probably a "
+                     "Raspberry Pi.",
+                     "", ""),
+       makeTextField("api_key", "ApiKey", "ApiKey of the OctoPrint", "", "", 32,
+                     32),
+       makeTextField("protocol", "Protocol", "", "http", "http", 3, 12),
+       makeNumberField("port", "Port", "Port of the OctoPrint", 0, 65535, 1, 80,
+                       80, "")}};
+
+  return json;
 }
 
-c3picko::Profile::operator PrinterProfile *() const { return printer_.get(); }
+c3picko::Profile::operator PlateProfile*() const { return plate_.get(); }
 
-template <> QJsonObject Marshalling::toJson(const Profile &value) {
+c3picko::Profile::operator PlateSocketProfile*() const { return socket_.get(); }
+
+c3picko::Profile::operator PrinterProfile*() const { return printer_.get(); }
+
+c3picko::Profile::operator pi::OctoConfig*() const { return octoprint_.get(); }
+
+template <>
+QJsonObject Marshalling::toJson(const Profile& value) {
   QJsonObject obj;
 
   // TODO also dumb
@@ -290,11 +316,12 @@ template <> QJsonObject Marshalling::toJson(const Profile &value) {
   return obj;
 }
 
-template <> Profile Marshalling::fromJson(const QJsonObject &obj) {
+template <>
+Profile Marshalling::fromJson(const QJsonObject& obj) {
   return Profile(Marshalling::fromJson<QString>(obj["type"]),
                  Marshalling::fromJson<QString>(obj["profile_name"]),
                  Marshalling::fromJson<QString>(obj["id"]),
                  obj["settings"].toObject());
 }
 
-} // namespace c3picko
+}  // namespace c3picko

@@ -80,4 +80,4 @@ float PrinterProfile::
   return safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 }
 
-} // namespace c3picko
+}  // namespace c3picko

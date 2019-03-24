@@ -6,10 +6,10 @@
 #ifndef LOGMESSAGE_H
 #define LOGMESSAGE_H
 
-#include "logglobal.h"
 #include <QDateTime>
 #include <QHash>
 #include <QtGlobal>
+#include "logglobal.h"
 
 namespace stefanfrings {
 
@@ -36,7 +36,7 @@ namespace stefanfrings {
 
 class DECLSPEC LogMessage {
   Q_DISABLE_COPY(LogMessage)
-public:
+ public:
   /**
     Constructor. All parameters are copied, so that later changes to them do not
     affect this object.
@@ -67,7 +67,7 @@ public:
   */
   QtMsgType getType() const;
 
-private:
+ private:
   /** Logger variables */
   QHash<QString, QString> logVars;
 
@@ -93,6 +93,6 @@ private:
   int line;
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // LOGMESSAGE_H
+#endif  // LOGMESSAGE_H

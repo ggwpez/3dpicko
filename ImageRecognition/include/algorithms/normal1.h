@@ -1,7 +1,7 @@
 #pragma once
 
-#include "include/colony.hpp"
 #include <opencv2/core.hpp>
+#include "include/colony.hpp"
 
 #include "include/algorithm.h"
 #include "include/detection_result.h"
@@ -9,7 +9,7 @@
 namespace c3picko {
 class Normal1 : public Algorithm {
   Q_OBJECT
-public:
+ public:
   Normal1();
   virtual ~Normal1() override;
 
@@ -29,6 +29,6 @@ public:
 
   static void safetyMargin(AlgorithmJob *base, DetectionResult *result);
 
-private:
+ private:
 };
-} // namespace c3picko
+}  // namespace c3picko

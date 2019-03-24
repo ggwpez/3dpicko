@@ -7,7 +7,7 @@ namespace c3picko {
 class PlateResult;
 class Plate1 : public Algorithm {
   Q_OBJECT
-public:
+ public:
   Plate1();
 
   static void cvt(AlgorithmJob *base, PlateResult *result);
@@ -16,6 +16,6 @@ public:
 
   virtual inline Algorithm *cloneEmpty() const override { return new Plate1(); }
 
-private:
+ private:
 };
-} // namespace c3picko
+}  // namespace c3picko

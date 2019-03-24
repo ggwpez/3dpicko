@@ -6,16 +6,16 @@
 class PlateDetection : public QObject {
   Q_OBJECT
 
-public:
+ public:
   PlateDetection();
   ~PlateDetection();
 
-private slots:
+ private slots:
   void initTestCase();
   void cleanupTestCase();
   void test_case1();
 
-private:
+ private:
   QString const dir_path_ = "/home/vados/src/bc_pics/mit rahmen/undist/";
   // original, preprocessed
   std::vector<std::pair<cv::Mat, cv::Mat>> images_;

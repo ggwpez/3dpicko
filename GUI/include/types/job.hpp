@@ -1,16 +1,16 @@
 #pragma once
 
+#include <QDateTime>
+#include <QStack>
+#include <QString>
 #include "include/algorithm_result.h"
 #include "include/marshalling.hpp"
 #include "include/types/image.hpp"
 #include "include/types/profile.hpp"
-#include <QDateTime>
-#include <QStack>
-#include <QString>
 
 namespace c3picko {
 class Job {
-public:
+ public:
   typedef QString ID;
   Job() = default;
   Job(ID id, Image::ID img_id, QString name, QString description,
@@ -18,7 +18,7 @@ public:
       Profile::ID printer, Profile::ID socket, int starting_row,
       int starting_col, int step);
 
-public:
+ public:
   Image::ID imgID() const;
   ID id() const;
   qint32 step() const;
@@ -32,10 +32,11 @@ public:
   Profile::ID socket() const;
   Profile::ID printer() const;
   Profile::ID plate() const;
+  Profile::ID octoprint() const;
 
   AlgorithmResult::ID resultID() const;
   QStack<AlgorithmResult::ID> resultIDs() const;
-  void setResultID(const AlgorithmResult::ID &resultID);
+  void setResultID(const AlgorithmResult::ID& resultID);
 
   int startingCol() const;
   void setStartingCol(int startingCol);
@@ -43,15 +44,13 @@ public:
   int startingRow() const;
   void setStartingRow(int startingRow);
 
-  void setPlate(const Profile::ID &plate);
+  void setPlate(const Profile::ID& plate);
+  void setOctoprint(const Profile::ID& octoprint);
 
-  int coloniesToPick() const;
-  void setcoloniesToPick(int coloniesToPick);
+  QSet<Colony::ID> coloniesToPick() const;
+  void setcoloniesToPick(const QSet<Colony::ID>& coloniesToPick);
 
-  std::set<std::size_t> const &selectedToPick() const;
-  void setselectedToPick(const std::set<std::size_t> &selectedToPick);
-
-private:
+ private:
   ID id_;
   Image::ID img_id_;
   /**
@@ -61,11 +60,9 @@ private:
   QStack<AlgorithmResult::ID> result_ids_;
   QString name_, description_;
   QDateTime job_created_;
-  Profile::ID plate_, printer_, socket_;
+  Profile::ID plate_, printer_, socket_, octoprint_;
   int starting_row_, starting_col_;
-  int colonies_to_pick_;
-  std::set<std::size_t>
-      selected_to_pick_; // TODO set it when colonies_to_pick is set
+  QSet<Colony::ID> colonies_to_pick_;
 
   /**
    * @brief How far is the configuration of this Job?
@@ -73,4 +70,4 @@ private:
   qint32 step_ = 0;
 };
 MAKE_MARSHALLABLE(Job);
-} // namespace c3picko
+}  // namespace c3picko

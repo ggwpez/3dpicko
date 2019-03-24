@@ -14,7 +14,7 @@ namespace c3picko {
  *
  */
 class GcodeInstruction {
-public:
+ public:
   /**
    * @brief Home Creates a gcode instruction for homing all axes
    * @return a gcode instruction of the form "G28"
@@ -87,8 +87,8 @@ public:
    * @return a gcode instruction of the form "G1 Ee_filament_extrusion_length",
    * e_filament_extrusion_length standing for the actual value
    */
-  static GcodeInstruction
-  ExtrudeFilament(const float e_filament_extrusion_length);
+  static GcodeInstruction ExtrudeFilament(
+      const float e_filament_extrusion_length);
 
   /**
    * @brief Creates a gcode instruction for changing the movement speed
@@ -123,8 +123,8 @@ public:
    * @param current_extrusion_length the current length of the extruded filament
    * @return a gcode instruction of the form "G92 E0"
    */
-  static GcodeInstruction
-  GaugeFilamentExtrusionLength(const float current_extrusion_length);
+  static GcodeInstruction GaugeFilamentExtrusionLength(
+      const float current_extrusion_length);
 
   /**
    * Returns a string representation of
@@ -133,13 +133,13 @@ public:
    */
   std::string ToString() const;
 
-private:
+ private:
   /**
    * @brief Class representing single g-code field in RepRap style.
    * A field is in most cases a command or a parameter.
    */
   class GcodeField {
-  public:
+   public:
     /**
      * @brief Class for creating g-code command fields in RepRap style.
      */
@@ -157,7 +157,7 @@ private:
      */
     std::string ToString() const;
 
-  private:
+   private:
     explicit GcodeField(char letter, float number);
     /**
      * @brief letter_ the letter of this field
@@ -185,5 +185,5 @@ private:
    */
   std::vector<GcodeField> fields_;
 };
-} // namespace c3picko
-#endif // GCODEINSTRUCTION_H
+}  // namespace c3picko
+#endif  // GCODEINSTRUCTION_H

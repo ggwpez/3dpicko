@@ -16,20 +16,20 @@ class Command;
 class OctoPrint : public QObject {
   Q_OBJECT
 
-public:
+ public:
   OctoPrint(const OctoConfig &config, QObject *_parent = nullptr);
 
-signals:
+ signals:
   void OnResolved();
 
-public slots:
+ public slots:
   void SendCommand(Command *cmd);
 
-private slots:
+ private slots:
   void SendCommandTo(Command *cmd, QUrl to);
   void Resolve();
 
-private:
+ private:
   OctoConfig config_;
   QNetworkAccessManager *network_;
   enum class ResolveStatus {
@@ -40,8 +40,8 @@ private:
   } resolve_status_;
   QUrl resolved_address_;
 };
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko
 
 // TODO QNetworkAccessManager::networkAccessibleChanged()
-#endif // OCTOPRINT_H_
+#endif  // OCTOPRINT_H_

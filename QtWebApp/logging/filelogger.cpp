@@ -4,6 +4,7 @@
 */
 
 #include "filelogger.h"
+#include <stdio.h>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -12,7 +13,6 @@
 #include <QTime>
 #include <QTimerEvent>
 #include <QtGlobal>
-#include <stdio.h>
 
 using namespace stefanfrings;
 

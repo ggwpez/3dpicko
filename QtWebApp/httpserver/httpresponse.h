@@ -6,11 +6,11 @@
 #ifndef HTTPRESPONSE_H
 #define HTTPRESPONSE_H
 
-#include "httpcookie.h"
-#include "httpglobal.h"
 #include <QMap>
 #include <QString>
 #include <QTcpSocket>
+#include "httpcookie.h"
+#include "httpglobal.h"
 
 namespace stefanfrings {
 
@@ -35,7 +35,7 @@ namespace stefanfrings {
 
 class DECLSPEC HttpResponse {
   Q_DISABLE_COPY(HttpResponse)
-public:
+ public:
   /**
     Constructor.
     @param socket used to write the response
@@ -120,7 +120,7 @@ public:
    */
   bool isConnected() const;
 
-private:
+ private:
   /** Request headers */
   QMap<QByteArray, QByteArray> headers;
 
@@ -157,6 +157,6 @@ private:
   void writeHeaders();
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // HTTPRESPONSE_H
+#endif  // HTTPRESPONSE_H

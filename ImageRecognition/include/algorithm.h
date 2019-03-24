@@ -1,11 +1,11 @@
 #pragma once
 
-#include "include/marshalling.hpp"
 #include <QObject>
 #include <QRunnable>
 #include <QVector>
 #include <functional>
 #include <stack>
+#include "include/marshalling.hpp"
 
 namespace c3picko {
 class AlgorithmResult;
@@ -20,7 +20,7 @@ class AlgorithmJob;
  */
 class Algorithm : public QObject, public QRunnable {
   Q_OBJECT
-public:
+ public:
   typedef QString ID;
   typedef void (*AlgoStep)(AlgorithmJob *, AlgorithmResult *);
   typedef void (*AlgoCleanup)(Algorithm *);
@@ -45,7 +45,7 @@ public:
    */
   virtual Algorithm *cloneEmpty() const = 0;
 
-public:
+ public:
   ID id() const;
   QString name() const;
   QString description() const;
@@ -59,7 +59,7 @@ public:
 
   qint64 maxMs() const;
 
-protected:
+ protected:
   const ID id_;
   const QString name_, description_;
   /**
@@ -78,4 +78,4 @@ protected:
   qint64 max_ms_;
 };
 MAKE_SERIALIZABLE(Algorithm);
-} // namespace c3picko
+}  // namespace c3picko

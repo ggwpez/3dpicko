@@ -3,10 +3,10 @@
 #include <QDebug>
 #include <QSocketNotifier>
 
-#include <iostream>
 #include <signal.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <iostream>
 
 namespace c3picko {
 SignalDaemon::SignalDaemon(QObject *_parent) : QObject(_parent) {
@@ -15,7 +15,7 @@ SignalDaemon::SignalDaemon(QObject *_parent) : QObject(_parent) {
 
   notifier_ = new QSocketNotifier(socketpair_[1], QSocketNotifier::Read, this);
   connect(notifier_, SIGNAL(activated(int)), this, SLOT(socketNotify(int)));
-  notifier_->setEnabled(true); // dont forget this…
+  notifier_->setEnabled(true);  // dont forget this…
 }
 
 int SignalDaemon::registerSignal(int signal) {
@@ -42,8 +42,7 @@ int SignalDaemon::registerSignal(int signal) {
 
 int SignalDaemon::registerSignals(QVector<int> signal) {
   for (int sig : signal) {
-    if (registerSignal(sig))
-      return 1;
+    if (registerSignal(sig)) return 1;
   }
 
   return 0;
@@ -62,4 +61,4 @@ void SignalDaemon::socketNotify(int socket_fd) {
 }
 
 int SignalDaemon::socketpair_[2];
-} // namespace c3picko
+}  // namespace c3picko

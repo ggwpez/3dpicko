@@ -1,8 +1,8 @@
 #pragma once
 
-#include "include/colony.hpp"
 #include <QString>
 #include <vector>
+#include "include/colony.hpp"
 
 namespace cv {
 class Mat;
@@ -13,18 +13,23 @@ class Colony;
  * @brief Represents a failed or succeeded AlgorithmJob.
  */
 class AlgorithmResult {
-public:
+ public:
   typedef QString ID;
 
   AlgorithmResult(ID id);
   ~AlgorithmResult();
 
-  cv::Mat &newMat();
-  cv::Mat &newMat(cv::Mat const &copy_from);
+  cv::Mat& newMat();
+  cv::Mat& newMat(cv::Mat const& copy_from);
 
-  cv::Mat &oldMat();
+  cv::Mat& oldMat();
 
-public:
+  /**
+   * @brief Will be called after the last step of the algorithm succeeded
+   */
+  virtual void finalize();
+
+ public:
   ID id_;
   /**
    * @brief Explicit cleanup for debugging
@@ -42,6 +47,7 @@ public:
    */
   int last_stage_;
   QString stage_error_, cleanup_error_;
+  bool is_finalized_;
 
   ID id() const;
   bool stagesSucceeded() const;
@@ -51,10 +57,10 @@ public:
   QString cleanupError() const;
   QString stageError() const;
 
-  std::list<cv::Mat *> const &stack() const;
+  std::list<cv::Mat*> const& stack() const;
 
-private:
-  std::list<cv::Mat *> stack_;
+ private:
+  std::list<cv::Mat*> stack_;
 };
 MAKE_MARSHALLABLE(AlgorithmResult);
-} // namespace c3picko
+}  // namespace c3picko

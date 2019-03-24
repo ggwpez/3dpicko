@@ -3,10 +3,10 @@
 
 namespace c3picko {
 
-APIInput::APIInput(APIController *parent) : QObject(parent), api(parent) {}
+APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
 
-void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
-                              QObject *client) {
+void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
+                              QObject* client) {
   QString path = Marshalling::fromJson<QString>(request["request"]).toLower();
   QJsonObject req_data = request["data"].toObject();
 
@@ -40,13 +40,15 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     api->DeleteJob(id, client);
   } else if (path == "startjob") {
     Job::ID job = Marshalling::fromJson<QString>(req_data["id"]);
+    Profile::ID profile =
+        Marshalling::fromJson<Profile::ID>(req_data["octoprint_profile"]);
 
-    api->startJob(job, client);
+    api->startJob(job, profile, client);
   } else if (path == "uploadimage") {
     // Get image data
     QByteArray img_data(
         QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
-                                   .toUtf8())); // TODO ugly code
+                                   .toUtf8()));  // TODO ugly code
     QString img_name =
         Marshalling::fromJson<QString>(req_data["original_filename"]);
     Image image =
@@ -83,19 +85,10 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
   } else if (path == "setcoloniestopick") {
     Job::ID job = Marshalling::fromJson<Job::ID>(req_data["job"]);
     quint32 number = req_data["number"].toInt();
-    std::set<Colony::ID> ex_user = Marshalling::fromJson<std::set<Colony::ID>>(
-                             req_data["ex_user"]),
-                         in_user = Marshalling::fromJson<std::set<Colony::ID>>(
-                             req_data["in_user"]);
-
-#ifdef QT_DEBUG
-    std::vector<Colony::ID> intersection;
-    std::set_intersection(ex_user.begin(), ex_user.end(), in_user.begin(),
-                          in_user.end(), std::back_inserter(intersection));
-
-    if (!intersection.empty())
-      qWarning() << L"EX_USER ∩ IN_USER != ∅";
-#endif
+    QSet<Colony::ID> ex_user = Marshalling::fromJson<QSet<Colony::ID>>(
+                         req_data["ex_user"]),
+                     in_user = Marshalling::fromJson<QSet<Colony::ID>>(
+                         req_data["in_user"]);
 
     //
     // EXLUDED, INCLUDED
@@ -105,7 +98,7 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     // (INCLUDED U IN_USER) \ EX_USER
     //
 
-    api->setColoniesToPick(job, number, client);
+    api->setColoniesToPick(job, ex_user, in_user, number, client);
   } else if (path == "updatedetectionsettings") {
     Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);
     QString algo_id = Marshalling::fromJson<QString>(req_data["algorithm"]);
@@ -125,4 +118,4 @@ void APIInput::serviceRequest(QJsonObject &request, QString const &raw_request,
     // response = {{"error", "unknown request"}};
   }
 }
-} // namespace c3picko
+}  // namespace c3picko

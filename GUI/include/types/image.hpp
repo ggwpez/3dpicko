@@ -1,14 +1,14 @@
 #pragma once
 
-#include "include/global.h"
-#include "include/resource_path.h"
 #include <QDateTime>
 #include <QImage>
 #include <opencv2/opencv.hpp>
+#include "include/global.h"
+#include "include/resource_path.h"
 
 namespace c3picko {
 class Image {
-public:
+ public:
   typedef QString ID;
   Image() = default;
   Image(ID id, QString original_name, QString description, ResourcePath path,
@@ -67,7 +67,7 @@ public:
   QString description() const;
   QDateTime uploaded() const;
 
-private:
+ private:
   QString original_name_;
   QString description_;
   // TODO we can add meta data here
@@ -84,4 +84,4 @@ private:
   ID id_;
 };
 MAKE_MARSHALLABLE(Image);
-} // namespace c3picko
+}  // namespace c3picko

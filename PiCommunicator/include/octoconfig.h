@@ -10,7 +10,7 @@ namespace pi {
  * @brief Saves the configuration for class OctoPrint
  */
 class OctoConfig {
-public:
+ public:
   /**
    * @brief OctoProfile
    * @param address Domain or IP address of octoprint.
@@ -25,7 +25,7 @@ public:
   QString protocol() const;
   quint16 port() const;
 
-private:
+ private:
   /**
    * @brief Unresolved doman or ip.
    */
@@ -34,8 +34,8 @@ private:
   QString protocol_;
   quint16 port_;
 };
-} // namespace pi
+}  // namespace pi
 MAKE_MARSHALLABLE(pi::OctoConfig);
-} // namespace c3picko
+}  // namespace c3picko
 
-#endif // OCTO_PROFILE_H
+#endif  // OCTO_PROFILE_H

@@ -1,12 +1,12 @@
 #ifndef APICONTROLLER_HPP
 #define APICONTROLLER_HPP
 
+#include <QList>
+#include <QString>
 #include "database.hpp"
 #include "httprequesthandler.h"
 #include "include/global.h"
 #include "include/types/job.hpp"
-#include <QList>
-#include <QString>
 
 using namespace stefanfrings;
 
@@ -18,14 +18,14 @@ class APIController;
  */
 class APIInput : public QObject {
   Q_OBJECT
-public:
+ public:
   APIInput(APIController *parent);
 
   // WS Version
   void serviceRequest(QJsonObject &request, const QString &raw_request,
                       QObject *client);
 
-signals:
+ signals:
   /**
    * @brief SendToClient Should send data to the client
    * @param data
@@ -40,9 +40,9 @@ signals:
    */
   void SendToClients(QJsonObject data, QObject *except);
 
-private:
+ private:
   // TODO change name
   APIController *api;
 };
-} // namespace c3picko
-#endif // APICONTROLLER_HPP
+}  // namespace c3picko
+#endif  // APICONTROLLER_HPP

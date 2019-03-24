@@ -4,13 +4,23 @@
 
 namespace c3picko {
 class DetectionResult : public AlgorithmResult {
-public:
+ public:
   using AlgorithmResult::AlgorithmResult;
+  virtual ~DetectionResult() = default;
 
-  std::vector<Colony> &colonies();
+  virtual void finalize() override;
 
-private:
+  std::vector<Colony>::iterator includedBegin();
+  std::vector<Colony>::iterator includedEnd();
+
+  std::vector<Colony>::iterator excludedBegin();
+  std::vector<Colony>::iterator excludedEnd();
+
+  std::vector<Colony>& colonies();
+
+ private:
   std::vector<Colony> colonies_;
+  std::vector<Colony>::iterator included_end_;
 };
 MAKE_MARSHALLABLE(DetectionResult);
-} // namespace c3picko
+}  // namespace c3picko

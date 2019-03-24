@@ -1,10 +1,10 @@
 #include "tst_platedetection.h"
-#include "include/algorithms/helper.h"
-#include "include/colony.hpp"
 #include <QtTest>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+#include "include/algorithms/helper.h"
+#include "include/colony.hpp"
 
 using namespace c3picko;
 
@@ -16,15 +16,14 @@ void PlateDetection::initTestCase() {
   QDirIterator it(dir_path_);
   while (it.hasNext()) {
     QString file_name(it.next());
-    if (!file_name.toLower().contains(".jpg", Qt::CaseInsensitive))
-      continue;
+    if (!file_name.toLower().contains(".jpg", Qt::CaseInsensitive)) continue;
 
     cv::Mat original = cv::imread(file_name.toStdString()), preprocessed;
 
     cv::cvtColor(original, preprocessed, CV_BGR2GRAY);
     cv::adaptiveThreshold(preprocessed, preprocessed, 255,
                           cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51,
-                          1); // non flour
+                          1);  // non flour
 
     images_.emplace_back(original, preprocessed);
   }

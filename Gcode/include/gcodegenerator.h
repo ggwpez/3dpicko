@@ -18,7 +18,7 @@ namespace c3picko {
  *
  */
 class GcodeGenerator {
-public:
+ public:
   explicit GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
                           const PrinterProfile &printer_profile,
                           const PlateProfile &master_and_goal_plate_profile);
@@ -39,7 +39,7 @@ public:
       int starting_row, int starting_column,
       std::vector<LocalColonyCoordinates> local_colony_coordinates);
 
-private:
+ private:
   /**
    * @brief Creates a gcode instruction for initializing the printer.
    * This includes setting the positioning of nozzle and extrusion
@@ -55,8 +55,8 @@ private:
    * a coordinate of the used socket's coordinate system
    * @return the colony coordinate in the socket's coordinate system
    */
-  GlobalColonyCoordinates
-  MapLocalColonyCoordinateToGlobal(LocalColonyCoordinates &local_colony);
+  GlobalColonyCoordinates MapLocalColonyCoordinateToGlobal(
+      LocalColonyCoordinates &local_colony);
 
   GcodeInstruction CreateGcodeLowerFilamentOntoColony();
   GcodeInstruction CreateGcodeLowerFilamentOntoMaster();
@@ -96,8 +96,8 @@ private:
    * ComputeGlobalWellCoordinates() and ComputeGlobalMasterCoordinates()
    * call this function providing the necessary arguments.
    */
-  std::vector<Point>
-  ComputeGlobalWellAndMasterCoordinates(const Point &origin_of_plate);
+  std::vector<Point> ComputeGlobalWellAndMasterCoordinates(
+      const Point &origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
@@ -261,5 +261,5 @@ private:
    */
   std::vector<GlobalMasterCoordinates> global_master_xy_coordinates_;
 };
-} // namespace c3picko
-#endif // GCODEGENERATOR_H
+}  // namespace c3picko
+#endif  // GCODEGENERATOR_H

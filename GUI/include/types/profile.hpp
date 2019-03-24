@@ -1,25 +1,29 @@
 #ifndef PROFILE_HPP
 #define PROFILE_HPP
 
-#include "include/marshalling.hpp"
 #include <memory>
+#include "include/marshalling.hpp"
 
 namespace c3picko {
 class PrinterProfile;
 class PlateSocketProfile;
 class PlateProfile;
+namespace pi {
+class OctoConfig;
+}
 
 /**
  * @brief Encapsulator for the 3 GCode profile classes.
  */
 class Profile {
-public:
+ public:
   typedef QString ID;
-  Profile(QString type, QString name, ID id, QJsonObject const &settings);
+  Profile(QString type, QString name, ID id, QJsonObject const& settings);
 
-  explicit operator PrinterProfile *() const;
-  explicit operator PlateSocketProfile *() const;
-  explicit operator PlateProfile *() const;
+  explicit operator PrinterProfile*() const;
+  explicit operator PlateSocketProfile*() const;
+  explicit operator PlateProfile*() const;
+  explicit operator pi::OctoConfig*() const;
 
   ID id() const;
   void setId(ID id);
@@ -29,6 +33,7 @@ public:
   std::shared_ptr<PlateProfile> plate() const;
   std::shared_ptr<PlateSocketProfile> socket() const;
   std::shared_ptr<PrinterProfile> printer() const;
+  std::shared_ptr<pi::OctoConfig> octoprint() const;
 
   /**
    * @brief Creates a correctly formated settings entry for the profile
@@ -75,16 +80,18 @@ public:
   static QJsonObject printerTemplate();
   static QJsonObject socketTemplate();
   static QJsonObject plateTemplate();
+  static QJsonObject octoprintTemplate();
 
-private:
+ private:
   QString type_;
   QString name_;
   QString id_;
   std::shared_ptr<PlateProfile> plate_;
   std::shared_ptr<PlateSocketProfile> socket_;
   std::shared_ptr<PrinterProfile> printer_;
+  std::shared_ptr<pi::OctoConfig> octoprint_;
 };
 MAKE_MARSHALLABLE(Profile);
-} // namespace c3picko
+}  // namespace c3picko
 
-#endif // PROFILE_HPP
+#endif  // PROFILE_HPP

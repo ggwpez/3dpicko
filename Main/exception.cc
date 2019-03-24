@@ -7,4 +7,4 @@ Exception::Exception(const QString &what)
 
 Exception::Exception(const QString &where, const QString &what)
     : std::runtime_error(qPrintable(where + ": " + what)) {}
-} // namespace c3picko
+}  // namespace c3picko

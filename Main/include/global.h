@@ -11,8 +11,10 @@ class QCoreApplication;
 class QSslConfiguration;
 namespace c3picko {
 class ResourcePath;
-
-QSslConfiguration *LoadSslConfig(QSettings &settings);
+/**
+ * @return Throws on error.
+ */
+QSslConfiguration* LoadSslConfig(QSettings& settings);
 
 ResourcePath Root();
 ResourcePath Etc();
@@ -20,8 +22,8 @@ ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
 
-QString searchConfigFile(int argc, char **argv);
-void Setup(QCoreApplication *app, QString ini_file_path, QSettings &settings);
+QString searchConfigFile(int argc, char** argv);
+void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings);
 
 /**
  * @brief String format for formatting QDateTime.
@@ -34,7 +36,7 @@ QString dateTimeFormat();
  * I would use a macro aka EXIT_RESTART but no macros since google style
  * guide...
  */
-int exitRestart();
+int exitCodeRestart();
 
-char const *defaultImageExtension();
-} // namespace c3picko
+char const* defaultImageExtension();
+}  // namespace c3picko

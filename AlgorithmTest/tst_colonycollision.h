@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "include/colony.hpp"
 #include <QObject>
+#include "include/colony.hpp"
 
 struct TestData {
   std::vector<c3picko::Colony> colonies_;
@@ -15,15 +15,15 @@ struct TestData {
 class ColonyCollision : public QObject {
   Q_OBJECT
 
-public:
+ public:
   ColonyCollision();
   ~ColonyCollision();
 
-private slots:
+ private slots:
   void initTestCase();
   void cleanupTestCase();
   void test_case1();
 
-private:
+ private:
   std::vector<TestData> solutions_;
 };

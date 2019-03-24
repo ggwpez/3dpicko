@@ -1,13 +1,13 @@
 #ifndef FILE_INFORMATION_H_
 #define FILE_INFORMATION_H_
 
+#include <QStringList>
+#include <QVector>
 #include "datamodel/file_type.h"
 #include "datamodel/gcode_analysis.h"
 #include "datamodel/location.h"
 #include "datamodel/reference.h"
 #include "response.h"
-#include <QStringList>
-#include <QVector>
 
 namespace c3picko {
 namespace pi {
@@ -38,12 +38,12 @@ struct FileOrFolderInfo : public Response {
   // Shared
   qint64 size;
 
-private:
+ private:
   void ReadFileMember(QJsonObject const &obj);
   void ReadFolderMember(QJsonObject const &obj);
 };
-} // namespace responses
-} // namespace pi
-} // namespace c3picko
+}  // namespace responses
+}  // namespace pi
+}  // namespace c3picko
 
-#endif // FILE_INFORMATION_H_
+#endif  // FILE_INFORMATION_H_

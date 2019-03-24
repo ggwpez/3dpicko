@@ -1,16 +1,16 @@
 #ifndef PRINT_JOB_H
 #define PRINT_JOB_H
 
+#include <QObject>
 #include "include/datamodel/progress_info.h"
 #include "include/gcode.h"
-#include <QObject>
 
 namespace c3picko {
 namespace pi {
 class PrintJob : public QObject {
   Q_OBJECT
 
-public:
+ public:
   enum class State {
     // Start state
     NEW,
@@ -27,10 +27,10 @@ public:
 
   PrintJob(GCode gcode);
 
-public slots:
+ public slots:
   void UpdateProgress(data::ProgressInfo new_info);
 
-signals:
+ signals:
   void OnError(QString);
   /**
    * @brief Job was successfully send to the printer,
@@ -48,12 +48,12 @@ signals:
   void OnToggled();
   void OnProgressUpdate(data::ProgressInfo);
 
-public:
+ public:
   State state;
   GCode const gcode;
   data::ProgressInfo progress;
 };
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko
 
-#endif // PRINT_JOB_H
+#endif  // PRINT_JOB_H

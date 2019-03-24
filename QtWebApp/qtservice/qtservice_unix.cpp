@@ -38,18 +38,6 @@
 **
 ****************************************************************************/
 
-#include "qtservice.h"
-#include "qtservice_p.h"
-#include "qtunixserversocket.h"
-#include "qtunixsocket.h"
-#include <QCoreApplication>
-#include <QDir>
-#include <QFile>
-#include <QMap>
-#include <QProcess>
-#include <QSettings>
-#include <QStringList>
-#include <QTimer>
 #include <fcntl.h>
 #include <pwd.h>
 #include <signal.h>
@@ -58,6 +46,18 @@
 #include <sys/stat.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QMap>
+#include <QProcess>
+#include <QSettings>
+#include <QStringList>
+#include <QTimer>
+#include "qtservice.h"
+#include "qtservice_p.h"
+#include "qtunixserversocket.h"
+#include "qtunixsocket.h"
 
 /** Alias type definition, for compatibility to different Qt versions */
 #if QT_VERSION >= 0x050000
@@ -69,8 +69,7 @@ typedef int tSocketDescriptor;
 static QString encodeName(const QString &name, bool allowUpper = false) {
   QString n = name.toLower();
   QString legal = QLatin1String("abcdefghijklmnopqrstuvwxyz1234567890");
-  if (allowUpper)
-    legal += QLatin1String("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  if (allowUpper) legal += QLatin1String("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   int pos = 0;
   while (pos < n.size()) {
     if (legal.indexOf(n[pos]) == -1)
@@ -85,8 +84,7 @@ static QString login() {
   QString l;
   uid_t uid = getuid();
   passwd *pw = getpwuid(uid);
-  if (pw)
-    l = QString(pw->pw_name);
+  if (pw) l = QString(pw->pw_name);
   return l;
 }
 
@@ -104,8 +102,7 @@ static bool sendCmd(const QString &serviceName, const QString &cmd) {
     sock.flush();
     sock.waitForReadyRead(-1);
     QString reply = sock.readAll();
-    if (reply == QLatin1String("true"))
-      retValue = true;
+    if (reply == QLatin1String("true")) retValue = true;
     sock.close();
   }
   return retValue;
@@ -113,13 +110,13 @@ static bool sendCmd(const QString &serviceName, const QString &cmd) {
 
 static QString absPath(const QString &path) {
   QString ret;
-  if (path[0] != QChar('/')) { // Not an absolute path
+  if (path[0] != QChar('/')) {  // Not an absolute path
     int slashpos;
-    if ((slashpos = path.lastIndexOf('/')) != -1) { // Relative path
+    if ((slashpos = path.lastIndexOf('/')) != -1) {  // Relative path
       QDir dir = QDir::current();
       dir.cd(path.left(slashpos));
       ret = dir.absolutePath();
-    } else { // Need to search $PATH
+    } else {  // Need to search $PATH
       char *envPath = ::getenv("PATH");
       if (envPath) {
         QStringList envPaths = QString::fromLocal8Bit(envPath).split(':');
@@ -142,8 +139,7 @@ static QString absPath(const QString &path) {
 
 QString QtServiceBasePrivate::filePath() const {
   QString ret;
-  if (args.isEmpty())
-    return ret;
+  if (args.isEmpty()) return ret;
   QFileInfo fi(args[0]);
   QDir dir(absPath(args[0]));
   return dir.absoluteFilePath(fi.fileName());
@@ -209,10 +205,8 @@ bool QtServiceController::uninstall() {
 }
 
 bool QtServiceController::start(const QStringList &arguments) {
-  if (!isInstalled())
-    return false;
-  if (isRunning())
-    return false;
+  if (!isInstalled()) return false;
+  if (isRunning()) return false;
   return QProcess::startDetached(serviceFilePath(), arguments);
 }
 
@@ -243,8 +237,7 @@ bool QtServiceController::isInstalled() const {
 
   QStringListIterator it(list);
   while (it.hasNext()) {
-    if (it.next() == serviceName())
-      return true;
+    if (it.next() == serviceName()) return true;
   }
 
   return false;
@@ -252,8 +245,7 @@ bool QtServiceController::isInstalled() const {
 
 bool QtServiceController::isRunning() const {
   QtUnixSocket sock;
-  if (sock.connectTo(socketPath(serviceName())))
-    return true;
+  if (sock.connectTo(socketPath(serviceName()))) return true;
   return false;
 }
 
@@ -261,7 +253,7 @@ bool QtServiceController::isRunning() const {
 
 class QtServiceSysPrivate : public QtUnixServerSocket {
   Q_OBJECT
-public:
+ public:
   QtServiceSysPrivate();
   ~QtServiceSysPrivate();
 
@@ -269,14 +261,14 @@ public:
 
   QtServiceBase::ServiceFlags serviceFlags;
 
-protected:
+ protected:
   void incomingConnection(tSocketDescriptor socketDescriptor) Q_DECL_OVERRIDE;
 
-private slots:
+ private slots:
   void slotReady();
   void slotClosed();
 
-private:
+ private:
   QString getCommand(const QTcpSocket *socket);
   QMap<const QTcpSocket *, QString> cache;
 };
@@ -285,8 +277,7 @@ QtServiceSysPrivate::QtServiceSysPrivate()
     : QtUnixServerSocket(), ident(0), serviceFlags(0) {}
 
 QtServiceSysPrivate::~QtServiceSysPrivate() {
-  if (ident)
-    delete[] ident;
+  if (ident) delete[] ident;
 }
 
 void QtServiceSysPrivate::incomingConnection(
@@ -364,8 +355,7 @@ bool QtServiceBasePrivate::sysInit() {
 }
 
 void QtServiceBasePrivate::sysSetPath() {
-  if (sysd)
-    sysd->setPath(socketPath(controller.serviceName()));
+  if (sysd) sysd->setPath(socketPath(controller.serviceName()));
 }
 
 void QtServiceBasePrivate::sysCleanup() {
@@ -383,7 +373,7 @@ bool QtServiceBasePrivate::start() {
   }
   // Could just call controller.start() here, but that would fail if
   // we're not installed. We do not want to strictly require installation.
-  ::setenv("QTSERVICE_RUN", "1", 1); // Tell the detached process it's it
+  ::setenv("QTSERVICE_RUN", "1", 1);  // Tell the detached process it's it
   return QProcess::startDetached(filePath(), args.mid(1), "/");
 }
 
@@ -417,18 +407,17 @@ bool QtServiceBasePrivate::install(const QString &account,
 void QtServiceBase::logMessage(const QString &message,
                                QtServiceBase::MessageType type, int, uint,
                                const QByteArray &) {
-  if (!d_ptr->sysd)
-    return;
+  if (!d_ptr->sysd) return;
   int st;
   switch (type) {
-  case QtServiceBase::Error:
-    st = LOG_ERR;
-    break;
-  case QtServiceBase::Warning:
-    st = LOG_WARNING;
-    break;
-  default:
-    st = LOG_INFO;
+    case QtServiceBase::Error:
+      st = LOG_ERR;
+      break;
+    case QtServiceBase::Warning:
+      st = LOG_WARNING;
+      break;
+    default:
+      st = LOG_INFO;
   }
   if (!d_ptr->sysd->ident) {
     QString tmp = encodeName(serviceName(), true);
@@ -444,9 +433,7 @@ void QtServiceBase::logMessage(const QString &message,
 }
 
 void QtServiceBase::setServiceFlags(QtServiceBase::ServiceFlags flags) {
-  if (d_ptr->serviceFlags == flags)
-    return;
+  if (d_ptr->serviceFlags == flags) return;
   d_ptr->serviceFlags = flags;
-  if (d_ptr->sysd)
-    d_ptr->sysd->serviceFlags = flags;
+  if (d_ptr->sysd) d_ptr->sysd->serviceFlags = flags;
 }
