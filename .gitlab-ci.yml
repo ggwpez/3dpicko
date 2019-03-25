@@ -50,7 +50,7 @@ test:linux:
 check:linux:
   stage: check
   script:
-    - grep -ril ">>>>>>>" . && (echo "Found at least one Merge Marker, abort" && exit 1)
+    - grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
     - cppcheck --error-exitcode=1 . > /dev/null
   except:
     - /^.*-format$/
