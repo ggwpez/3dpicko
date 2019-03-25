@@ -1,0 +1,661 @@
+<!-- TODO:
+replace pics with new ones:
+colony picker
+algorithmns
+part 1 with frame
+scissors id="configuration_hardware"
+
+Convert to List with proper line break, why is it not working by default?
+use fixed withd independent of browser size
+Add installation from scratch with images
+make sure:
+a1 row offset: yellow,
+a1 column offset: green, 
+is correct
+
+Feedback
+BUG :Remove home
+Auswahl der KAtegorien nicht sichtbar
+zurück button gedrückt
+Einstellungen nicht überprüft?
+-->
+<div id="introduction">
+  <h1> Introduction </h1>
+  <h2> Contents: </h2>
+  <b>User Manual</b>
+  <ul>
+  <li> First Steps </li>
+  <li> Exemplary Picking Process </li>
+  <li> Advanced settings </li>
+  </ul>
+  <b>Configuration</b>
+  <ul>
+  <li> Hardware </li>
+  <li> Software </li>
+  </ul>
+  <b>Administration</b>
+  <ul>
+  <li> Hardware </li>
+  <li> Software </li>
+  </ul>
+  
+  <h2> About </h2>
+    <p> This is the manual belonging to the colony picker C3PickO it consist of three parts: "User Manual", "Configuration" and "Administration", while the "User Manual" is directed towards students and employees who will be operating it "Configuration" is more targeted to administrators. Lastly "Administration" is intended only for administrators. For better understanding the device it is recommended to read both the "User Manual" and "Configuration". All necessary information for successfully picking colonies and configuring the device will be given in the "User Manual" part. This document is intended as an introduction as well as a reference book. The chapter "First Steps" explains what precondition have to be met for operating the device. The chapter "Example Picking Process" demonstrates how a successful colony picking process is done. In the last chapter "Advanced Settings" all further setting are explained. The contact person is <a href="mailto:kabisch@bio.tu-darmstadt.de">Prof. Dr. Johannes Kabisch</a>. </p>
+
+  <h2> Parts - Nomenclature </h2>
+  <p> Here you can find pictures of the different parts which are referenced in the manual by name. </p>
+  
+  <h3> colony picker </h3>
+  <p>
+    <img src="./img/wiki/colony_picker.jpg"  width="400">
+  </p>
+  
+  <h3> web interface </h3>
+  <p>
+    <img src="./img/wiki/webinterface.jpg"  width="400">
+  </p>
+  
+  <h3> Petri dish holder </h3>
+  <p>
+    <img src="./img/wiki/Socket.jpg"  width="400">
+  </p>
+  
+  <h3> pneumatic scissors </h3>
+  <p>
+  <img src="./img/wiki/pneumatic_scissors.jpg"  width="400">
+  </p>
+  
+  <h3> waste bin </h3>
+  <p>
+    <img src="./img/wiki/waste_bin.jpg"  width="400">
+  </p>
+  
+  <h2> Where to find more? </h2>
+  <p> Here you find the Open Source Web-page of the device: </p>
+</div>
+<div id="user_manual_first_steps">
+  <h1> First Steps </h1>
+  <p> Before starting any picking process please make sure all preconditions are met, these steps are very important since not complying them can not only destroy your experiment but also damage the device. </p>
+  - For safety reasons the colony picker has to be located on a plane non-flammable surface in a well ventilated room. <br>
+  - There must be enough filament for processing the colony pick (for each colony about 1 cm filament is needed). <br>
+  - The filament has to be extruded up to the end of the nozzle. Please refer to the chapter manual extrusion in "Configuration Hardware" for more information on that topic. <br>
+  - The waste bin needs to have enough space to not overflow while picking. <br>
+  - There must be air pressure available, you can test this with manually activating the pneumatic scissors, for more information see "Configuration Hardware" <br>
+  - The picker must be connected to power and the red power button on the right has to be switched on (the display is no indication since it can also be lit when the picker is turned off). <br>
+  - The picker needs a working network connection. <br>
+</div>
+<div id="user_manual_example_picking_process">
+  <h1> Guide through the picking process </h1>
+  <p>
+    This guide will bring you through the picking process, you should already have done all preparation in "First Steps". Since this is intended to make the start into the picking process as easy as possible most functions are not mentioned here. To get a better understanding for those please refer to "Advanced Settings". </p>
+  
+  <h2> 1. Taking the picture </h2>
+  <p>
+    This step has great impact on how easy and exact the picket process will be. Therefore this step should not be rushed and done with great diligence. This are the recommended condition under which the photo should be taken: <br>
+    <b>Camera settings:</b>
+	<ul>
+      <li>aspect ratio: 16:9 (13 MP)</li>
+      <li>brightness: 0</li>
+      <li>ISO: 100</li>
+      <li>light source: bottom (add top if necessary)</li>
+      <li>light colour: white</li>
+    </ul>
+	<b>Petri dish:</b>
+	<ul>
+	  <li>Make sure the surface on which you put the Petri dish is clean.</li>
+      <li>Put the red frame onto the Petri dish.</li>
+	  <li>Put the Petri dish inside of the camera module.</li>
+	  <li>Turn the Petri dish so that the angled side are to the left.</li>
+      <li><u>Centre the Petri dish as good as possible.</u></li>
+      <li>Zoom in until there is about 2 cm space left to each side.</li>
+	  <li>Check for correct camera rotation.</li>
+    </ul>
+	Now take the picture and check if the picture has good contrast. After you are satisfied with the result copy the picture to the pc you intend to start the picking process with.
+    Here is an example of a good image: <br>
+    <img src="./img/wiki/Colony_Dish.jpg"  width="400"> <br>
+	Best practice is to have the angled side on the left.
+    Afterwards you can carefully remove the red frame.
+  </p>
+  
+  <h2> 2. Inserting the Petri dishes into the colony picker </h2>
+  <p>
+    Insert the Petri dishes into the colony picker, the orientation and placement are written into the frame. It is crucial that you comply with it, otherwise the picking process will fail and the colony picker can get damaged.
+    It should look like this: <br>
+    <img src="./img/wiki/Orientation_Dish.jpg"  width="400"> <br>
+    Note the correct orientation!
+    </p>
+  
+  <h2> 3. Open Web interface </h2>
+  <p>
+    Now enter the following URL into your browser: <a href="https://c3picko.bio.tu-darmstadt.de">c3picko.bio.tu-darmstadt.de</a> you will be welcomed with the following page: <br>
+    <img src="./img/wiki/webinterface.jpg"  width="400">
+  </p>
+  
+  <h2> 4. Choose Image </h2>
+  <p>
+    There are two options to upload a picture. It can be either uploaded via a click on "Drop Image" and selected in the file explorer or drag and dropped in the dedicated area. If the image was uploaded beforehand it can be select below the photo upload within "All Images".
+  </p>
+  
+  <!--
+  <h2> 5. Cut Image </h2>
+  <p>
+    In this step you have to cut the picture to the right size in order for the image recognition to be able to recognize the colonies and also to get the right offsets from all Petri dish walls for the picker (you don't want it to pick beside the colonies). For this you use your mouse to move the rectangle to correct position of the Petri dish. You can adjust the size when grabbing the edges. After you have cropped the image to the right size, you can click on "Next Step".
+    This is an example: <br>
+    <img src="./img/wiki/Cropped_Dish.jpg"  width="400">
+  </p>
+  -->
+  
+  <h2> 5. Set Attributes </h2>
+  <p> Insert here Information about the pick-job, the date will automatically inserted. This information will be displayed in the "History". </p>
+  
+  <h2> 6. Detect Colonies </h2>
+  <p>
+    The colony detection runs automatically when this step is reached. After changing any settings the colony detection will automatically be redone. Besides changing the settings on the right hand side the colonies can also be clicked upon in the picture. This shows more information about them and toggles the inclusion. For more information about the filter click the name of the desired one. The "Excluded" button above the image of the Petri dish will display all detected colonies. The colour of the "X" on-top the colonies correlates with the filter which excludes them. <br>
+    <img src="./img/wiki/Detection_Settings.jpg"  width="400">
+  </p>
+  
+  <h2> 7. Choose Plates </h2>
+  <p>
+    Here the selection of the PCR dish takes place, the drop down menu offers all available PCR dishes. Below the PCR dish selection the number of colonies which will be picked can be selected. To the right the starting well can be chosen with a click on the desired well. All chosen wells are shown in green. If more colonies are selected than available wells the excess colonies will be discarded.
+    This is an example of a 96 well PCR dish: <br>
+    <img src="./img/wiki/PCR_Dish_Site.jpg"  width="400">
+  </p>
+  
+  <h2> 8. Overview </h2>
+  <p>
+    This site shows you all the configuration you have done before and is intended as a mean to exclude any errors before starting the picking process
+  </p>
+  
+  <h2> 9. Start Picking </h2>
+  <p> Here you can finally start the picking process. </p>
+  
+  <h2> 10. Finishing </h2>
+  <p>
+    After the picking process is complete you can remove the Petri dishes from the colony picker and start your experiments. Please<b> don't turn the printer off via the power switch</b>, first the integrated pc needs to be turned off. Best leave this to the administrators ;)
+  </p>
+ </div>
+<div id="user_manual_advanced_settings">
+  <h1> Advanced Settings </h1>
+  <h2> Choose Colonies </h2>
+  <h3> Detection Settings </h3>
+  
+  <h4 id="algorithm-h"> Algorithm </h4>
+  <div id="algorithm">
+    <p>
+      Here you can select the Algorithm which will be used for the colony detection. There are two choices either "Normal" or "Fluro". Normal is for any kind of colonies while Fluro is only intended for fluorescent. </p>
+  </div>
+  
+  <h4 id="area-h"> Area </h4>
+  <div id="area">
+    <p>
+      With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles. <br>
+      <img src="./img/wiki/Area.jpg"  width="400">
+    </p>
+  </div>
+  
+  <h4 id="safty_margin-h"> Safety Margin </h4>
+  <div id="safty_margin">
+    <p>
+      This setting is used to exclude all colonies which are to close to the Petri dish wall to be picked
+    </p>
+  </div>
+  
+  <h4 id="aabb_ratio-h"> AABB Side Ratio </h4>
+  <div id="aabb_ratio">
+    <p>
+      This option lets you choose what ratio of length and width the colony can have. A perfectly round colony would have the ration 1. In the example image refer to the green bounding box, the calculation is as follows: whatever side is shorter is divided by the longer side. <br>
+      <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+	  <b>Calculation:</b><br>
+	  The shorter side of the bounding box is taken and divided by the longer side.
+    </p>
+  </div>
+  
+  <h4 id="bb_ratio-h"> BB Side Ratio </h4>
+  <div id="bb_ratio">
+    <p>
+      This option is similar to the one above, the only difference is that the bounding box is rotated to be as small as possible and not aligned with the edges of the image. Refer to the red bounding box. <br>
+      <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+	  <b>Calculation:</b><br>
+	  The shorter side of the rotated bounding box is taken and divided by the longer side.
+    </p>
+  </div>
+    
+  <h4 id="convexity-h"> Convexity </h4>
+  <div id="convexity">
+    <p>
+      This is option filters the convexity, it processes the outline of the colony and checks if the arc is evenly, the more evenly it is the higher the number becomes. <br>
+      <img src="./img/wiki/Convexity.jpg"  width="400"> <br>
+	  <b>Calculation:</b><br>
+	  First the convex hull of the colony is approximated. Afterwards the area of the recognized hull is divided by the area of the approximated hull.
+    </p>
+  </div>
+  
+  <h4 id="circularity-h"> Circularity </h4>
+  <div id="circularity">
+    <p>
+      This option checks the roundness of the colonies The rounder the colony the higher the number. <br>
+      <img src="./img/wiki/Circularity.jpg"  width="400"> <br>
+	  <b>Calculation:</b><br>
+	  This calculates the perfect circumference<sup>2</sup> of the colonies area and divides it by the recognized circumference<sup>2</sup>.
+    </p>
+  </div>
+  
+  <h4 id="max_number_of_colonies-h"> Number of colonies </h4>
+  <div id="max_number_of_colonies">
+    <p>
+      Here is defined how many colonies are being picked. If less colonies are selected than recognized the excess is discarded.
+    </p>
+  </div>
+  
+  <!--
+  <h4 id="filter-h"> Filter Colonies </h4>
+  <div id="filter">
+    <p>
+      This setting is similar to the Area setting, but instead of setting the limits directly you define a deviation from the calculated average colony. You have three options to choose from: <br>
+  	<p>
+	    <b>Area</b> <br>
+        How much smaller or bigger the colonies can be from the average.
+	  </p>
+  	<p>
+        <b>Brightness</b> <br>
+  	  This is for selecting the brightness. It is possible to choose colonies with different colours or fluorescent ones. Note that different colours can have the same brightness. You might want to change the colour of the lightning while photographing to improve results.
+	  </p>
+  	<p>
+	    <b>Circumference</b> <br>
+  	  How much smaller or bigger the circumference of colonies can be from the average, this setting is interesting if you have non-round colonies.
+	  </p>
+  	With mean you select the actual deviation for filtering, in this example image, the area of colony two is larger than the area of colony one but the circumference of colony one is actually greater than the one of colony two. It is possible to use either area or circumference to select the colonies intended for the pick. <br>
+      <img src="./img/wiki/filter.jpg"  width="400"> <br>
+    </p>
+  </div>
+  -->
+</div>
+<div id="configuration_software">
+  <h1> Configuration - Software </h1>
+  <p> In the settings section you can change various settings about your Hardware namely your printer, your socket which is basically the printing bed and the PCR dishes </p>
+  
+  <h2> Web interface Settings </h2>
+  <h3> Printer Profiles </h3>
+  <div id="printer_profiles">
+    <p> If you use more than one printer use this to select the printer parameter. </p>
+    
+	<div id="printer_profiles_identifier-h">
+      <b>Profile Identifier: </b>
+    </div>
+    <div id="printer_profiles_identifier">
+      This is the name by which the profile will be referenced by<br>
+    </div>
+	
+	<div id="movement_speed-h">
+      <b> Movement speed: </b>
+    </div>
+    <div id="movement_speed">
+      The speed at which the printer is capable to move on the x and y axis.<br>
+    </div>
+  
+  	<div id="cut_filament_position_above_trigger-h">
+      <b>Cut position: </b>
+    </div>
+    <div id="cut_filament_position_above_trigger">
+      This is the position in x, y and z axis to which the colony picker moves to cut the filament <br>
+    </div>
+	
+	<div id="z_coordinate_pushing_the_trigger-h">
+      <b>Push trigger at:</b>
+    </div>
+    <div id="z_coordinate_pushing_the_trigger">
+      This is the hight at which the cutting mechanism is triggered and thus how low the colony pickers head has to lower. <br>
+	</div>
+
+  	<div id="filament_extrusion_length_on_move_cut_to_pick-h">
+      <b> filament_extrusion_length_on_move_cut_to_pick:</b>
+    </div>
+    <div id="filament_extrusion_length_on_move_cut_to_pick">
+      This setting is used to define how long the filament should stick out on its the way from the scissors to the source plate.<br>
+    </div>
+
+  	<div id="filament_extrusion_length_on_move_pick_to_master-h">
+      <b>filament_extrusion_length_on_move_pick_to_master:</b>
+    </div>
+    <div id="filament_extrusion_length_on_move_pick_to_master">
+      This setting is used to define how long the filament should stick out on its the way from the source to the master dish.<br>
+    </div>
+
+  	<div id="filament_extrusion_length_on_move_master_to_goal-h">
+      <b>filament_extrusion_length_on_move_master_to_goal:</b>
+    </div>
+    <div id="filament_extrusion_length_on_move_master_to_goal">
+       This setting is used to define how long the filament should stick out on its the way from the master to the target plate.<br>
+    </div>
+	
+  	<div id="filament_extrusion_length_on_move_goal_to_cut-h">
+      <b> filament_extrusion_length_on_move_goal_to_cut: </b>
+    </div>
+    <div id="filament_extrusion_length_on_move_goal_to_cut">
+      This setting is used to define how long the filament should stick out on its the way from the target plate to the scissors. <br>
+    </div>
+
+  	<div id="filament_extrusion_length_on_pick-h">
+      <b>Filament offset (pick): </b>
+    </div>
+    <div id="filament_extrusion_length_on_pick">
+      This defines how much the filament should move out for picking the source dish.<br>
+    </div>
+
+  	<div id="filament_extrusion_length_on_put_onto_master-h">
+      <b> filament_extrusion_length_on_put_onto_master: </b>
+    </div>
+    <div id="filament_extrusion_length_on_put_onto_master">
+      This defines how much the filament should move out for picking the master dish.<br>
+    </div>
+
+  	<div id="filament_extrusion_length_after_cut-h">
+      <b> filament_extrusion_length_after_cut: </b>
+    </div>
+    <div id="filament_extrusion_length_after_cut">
+      Defines how much the filament has to be extruded after being cut<br>
+    </div>
+	
+  	<div id="length_of_removed_filament-h">
+      <b> length_of_removed_filament: </b>
+    </div>
+    <div id="length_of_removed_filament">
+      Enter in here how much filament should be cut off by the scissors.<br>
+    </div>
+	
+  	<div id="safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move-h">
+      <b> safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move: </b>
+    </div>
+    <div id="safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move">
+      It is crucial that the colonies pickers head does not touch the walls of any Petri dish, however moving in z axis is slow. For this setting find a balance between safety and speed.<br>
+    </div>
+  </div>
+  
+  <h3> Socket Profiles </h3>
+  <div id="socket_profiles">
+  <p></p>
+    <img src="./img/wiki/Socket2.jpg"  width="400"> <br>
+    <p>The origin location are marked in red. <br>
+	The rotated orientation is marked in blue.
+	</p>
+	<div id="socket_profile_identifier-h">
+      <b>Profile identifier: </b>
+    </div>
+    <div id="socket_profile_identifier">
+      Give the profile a name. <br>
+    </div>
+	
+    <div id="global_origin_of_source_plate-h">
+      <b> Source plate cut-out origin: </b>
+    </div>
+    <div id="global_origin_of_source_plate">
+      This defines the position of A1 in x and y axis. It is assumed that the short side of the Petri dish extends to the y axis and the longer side to the x axis. <br>
+    </div>
+    
+    <div id="global_origin_of_master_plate-h">
+      <b> Master plate cut-out origin:: </b><br>
+    </div>
+    <div id="global_origin_of_master_plate">
+      This defines the position of A1 in x and y axis. It is assumed that the short side of the Petri dish extends to the x axis and the longer side to the y axis, this can be changed in the following setting. <br>
+    </div>
+    
+    <div id="global_origin_of_goal_plate-h">
+      <b> Goal plate cut-out origin: </b><br>
+    </div>
+    <div id="global_origin_of_goal_plate">
+      This defines the position of A1 in x and y axis. It is assumed that the short side of the Petri dish extends to the x axis. and the longer side to the y axis, this can be changed in the following setting. <br>
+    </div>
+    
+    <div id="orientation_of_goal_plate-h">
+      <b> Goal and master plate orientation: </b><br>
+    </div>
+    <div id="orientation_of_goal_plate">
+      This changes the orientation of the goal and master plate, so that the short side of the Petri dish extends along the y axis and the long side along the x axis.<br>
+    </div>
+    
+    <div id="depth_of_cutout_the_source_plate_lies_in-h">
+      <b> Source plate cut-out depth: </b><br>
+    </div>
+    <div id="depth_of_cutout_the_source_plate_lies_in">
+      This is the depth of the source plates socket which holds it in place. <br>
+    </div>
+    
+    <div id="depth_of_cutout_the_master_plate_lies_in-h">
+      <b> Master plate cut-out depth: </b><br>
+    </div>
+    <div id="depth_of_cutout_the_master_plate_lies_in">
+      This is the depth of the master plates socket which holds it in place. <br>
+    </div>
+    
+    <div id="depth_of_cutout_the_goal_plate_lies_in-h">
+      <b> Goal plate cut-out depth: </b><br>
+    </div>
+    <div id="depth_of_cutout_the_goal_plate_lies_in">
+      This is the depth of the target plates socket which holds it in place. <br>
+    </div>
+    
+    <div id="socket_origin_offset-h">
+      <b> Socket origin offset: </b><br>
+    </div>
+    <div id="socket_origin_offset_x">
+      This is the offset in x, y and z axis from the sockets origin to the origin of the printer. <br>
+    </div>
+  </div>
+
+  <h3> Plate Profiles </h3>
+    <div id="plate_profiles">
+    <p>This option is intended to great new PCR dishes in different sizes. <br></p>
+    <img src="./img/wiki/PCR_Dish2.jpg"  width="400"> <br>
+    <p>
+	Row: red, <br>
+	Column: orange, <br>
+	a1 row offset: yellow, <br>
+	a1 column offset: green, <br>
+	well spacing: blue, <br>
+	</p>
+    <div id="profile_identifier-h">
+      <b>Profile identifier: </b>
+    </div>
+    <div id="profile_identifier">
+      Give the Profile you are creating a meaningful name. <br>
+    </div>
+    
+    <div id="number_of_rows-h">
+      <b>Number of rows: </b><br>
+    </div>
+    <div id="number_of_rows">
+      This is the number of wells in one row (e.g. row 1: 8 wells). <br>
+    </div>
+    
+    <div id="number_of_columns-h">
+      <b>Number of columns: </b><br>
+    </div>
+    <div id="number_of_columns">
+      This is the number of wells in one column (e.g. row A: 12 wells). <br>
+    </div>
+    
+    <div id="a1_row_offset-h">
+      <b>A1 row offset: </b><br>
+    </div>
+    <div id="a1_row_offset">
+      This is the offset from well A1 to the edge in row direction (from the left edge to well). <br>
+    </div>
+    
+    <div id="a1_column_offset-h">
+      <b>A1 column offset: </b><br>
+    </div>
+    <div id="a1_column_offset">
+      This is the offset from well A1 to the edge in column direction (from the top edge to well).<br>
+    </div>
+    
+    <div id="well_spacing_center_to_center-h">
+      <b>Well spacing centre to centre: </b><br>
+    </div>
+    <div id="well_spacing_center_to_center">
+      This is the space between the centre of two wells side by side. <br>
+    </div>
+    
+    <div id="height_source_plate-h">
+      <b>Source plate height: </b><br>
+    </div>
+    <div id="height_source_plate">
+      Height of the source plate (the brim). <br>
+    </div>
+    
+    <div id="height_master_plate-h">
+      <b>Master plate height: </b><br>
+    </div>
+    <div id="height_master_plate">
+      Height of the master plate (the brim). <br>
+    </div>
+    
+    <div id="height_goal_plate-h">
+      <b>Goal plate height: </b><br>
+    </div>
+    <div id="height_goal_plate">
+      Height of the target plate (the brim). <br>
+    </div>
+    
+    <div id="well_depth-h">
+      <b> Well depth: </b><br>
+    </div>
+    <div id="well_depth">
+      The deepness of the well (in the centre).<br>
+    </div>
+	
+	<div id="culture_medium_thickness_source_plate-h">
+      <b>Source medium thickness:</b><br>
+    </div>
+    <div id="culture_medium_thickness_source_plate">
+      The thickness of your medium. <br>
+    </div>
+	
+	<div id="culture_medium_thickness_master_plate-h">
+      <b> Master medium thickness:</b><br>
+    </div>
+    <div id="culture_medium_thickness_master_plate">
+      The thickness of your medium. <br>
+    </div>
+  </div>
+</div>
+<div id="configuration_hardware">
+  <h1> Configuration - Hardware </h1>
+  <h2> Refilling the filament </h2>
+  <p> For replacing the filament operate the handle at the stepper motor. <br>
+    <img src="./img/wiki/fillament_handle.jpg"  width="400"> <br>
+     Now the stepper motor lost grip and the present filament can be pulled out. Afterwards the new filament can be inserted in the handles hole and pushed past the stepper motor into the tube. Push the filament until it reaches the nozzle, sometimes it tangles with the brass tube connection. To fix this the tube connection can be unscrewed and the filament manually placed into the brass adapter and screwed on again. When finished make sure the filament is located at the tip of the nozzle. <br>
+    <img src="./img/wiki/fillament_nozzle.jpg"  width="400"> <br>
+    Only if this is met the printer can determine the filament exact location and pick correctly.
+  </p>
+  
+  <h2> Testing pneumatic scissors </h2>
+  <p>
+    Manually press the switch right sided to the scissors to activate them. They should close automatically and open after releasing the switch. <br>
+    <img src="./img/wiki/pneumatic_scissors_switch.jpg"  width="400">
+  </p>
+</div>
+<div id="administration_software">
+  <h1> Setup - Software </h1>
+  
+  <h2> Install Software </h2>
+  <p>There are two options available for installing the software, either use the "Ready to use VM" or the "Manual installation </p>
+  <h3> Ready to use VM </h3>
+  <p>
+    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users as well as the 3d printer. The user's pc does not necessarily need a direct connection to the printer, however for trouble shooting purposes it is recommended.
+  </p>
+  <h3> Manual installation </h3>
+  <p>
+    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the commands in the script and type them in by hand.
+  </p>
+  <h2> Running the Software </h2>
+  <p>
+    The configuration for the web server is saved in the "serverconfig.ini" it is located in 3cpicko/GUI/. By default it is in working condition but for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the Main program and give it as parameter the serverconfig.ini.
+  </p>
+</div>
+<div id="administration_hardware">
+  <h1> Administration - Hardware </h1>
+  <p>
+    For the commissioning of the device following steps should be performed. It is presumed that the printer is already transformed into a colony picker.
+  </p> 
+  
+  <h2> Overview </h2>
+  <p>
+    The colony picker consist of a 3d printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operate able. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
+  </p>
+  
+  <h2> Additional Parts </h2>
+  <p> Here are additional items listed needed to assemble the device. </p>
+  
+  <h3> 3d printer </h3>
+  <p></p>
+  <h3> Raspberry Pi </h3>
+  <p>
+    <img src="./img/wiki/Raspberry_Pi.jpg"  width="400">
+  </p>
+  
+  <h4> power supply unit </h4>
+  <p>
+    <!-- <img src="./img/wiki/power_supply_unit.jpg"  width="400"> -->
+  </p>
+  
+  <h3> magnetic valve </h3>
+  <p>
+    <img src="./img/wiki/magnetic_valve.jpg"  width="400">
+  </p>
+  
+  <h2> Step by Initial Step </h2>
+  <p>
+    This step by Step guide will bring you through the assembly of the colony picker, it is assumed that all parts are already on hand.
+  </p>
+  
+  <h3> 1. Assembly </h3>
+  <p>
+    Assemble the printer according to the manufactures instruction. Now screw the pneumatic scissors into the Petri dish holder. Afterwards place the Petri dish holder onto the heating bed. Now the Petri dish holder can be mounted onto the printer to do this first place the screws heads up inside the frame and fixated it with a nut (This nut will now hold the Petri dish bed onto the heating element). A further nut has to be placed on top of the last on, for later high adjustment. Afterwards put the screws through the dedicated holes of 3d printer's heating bed holder and fixated it with another nut. Now assemble the switch for the pneumatic scissors to do this glue it into the switch holder and position it into the Petri dish holder. <br>
+    Heating-bed holder: <br>
+    <img src="./img/wiki/Heatingbed_Holder.jpg"  width="400"> <br>
+    switch holder with attached switch: <br>
+    <img src="./img/wiki/Switch.jpg"  width="400">
+  </p>
+  
+  <h3> 2. Positioning </h3>
+  <p>
+    Position the colony picker on a plane surface, make sure it has enough space to all sides. Also check the 3d printer’s manual for further instruction.
+  </p>
+  
+  <h3> 3. Wiring </h3>
+  <h4> Raspberry </h4>
+  <p>
+    Connect the raspberry pi to the printer with mini usb cable and with a network cable to the network. Lastly connect it to the printers power supply. <br>
+    3D printers USB connection: <br>
+    <img src="./img/wiki/USB_Connection.jpg"  width="400">
+  </p>
+  
+  <h4> pneumatic scissors </h4>
+  <p>
+    The pneumatic scissors have to be connected to the magnetic valve. Please check the image for the correct orientation. <br>
+    <img src="./img/wiki/pneumatic_scissors.jpg"  width="400">
+  </p>
+  
+  <h4> magnetic valve </h4>
+  <p>
+    The magnetic valve has to be connected to the contact switch mounted on the Petri dish holder and to air pressure check the attached images for the correct orientation.
+  </p>
+  
+  <h4> 3d printer </h4>
+  <p>
+    Finally plug the 3d printer into the main power-line, as soon as you turn it on, also the attached Raspberry Pi will start.
+  </p>
+  
+  <h3> 4. Calibration </h3>
+  <p>
+    Now slowly move the printers head to the front left corner of the Petri dish holder. After you reached that location slowly move it to the back and adjust the nuts, so that the distance between nozzle and Petri dish holder stay the same. After you reached the back do the same moving right.
+  </p> 
+  
+  <h3> 5. Filament </h3>
+  <p>
+    Insert the filament, check "Refilling the filament" in the chapter "Configuration Hardware" for this step.
+  </p>
+  
+  <h2> Known Errors </h2>
+  <p></p>
+</div>

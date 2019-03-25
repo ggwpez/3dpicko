@@ -133,12 +133,8 @@ class FormGroup{
 		WORKING:
 		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('${id}','./docs/User-Manual-Advanced-Settings.html #${id}')">${name}</a></span>:</label>`;
 		*/
-        var testa = './docs/Configuration-Software.html #${id}-h','./docs/Configuration-Software.html #${id}');
-        var testb = './docs/Configuration-Software.html #${id}-h','./docs/Configuration-Software.html #${id}');
-        
-        
-		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="'./docs/User-Manual-Advanced-Settings.html #${id}-h','./docs/User-Manual-Advanced-Settings.html #${id}'))">${name}</a></span>:</label>`;
-
+		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #${id}-h','./docs/wiki.html #${id}')">${name}</a></span>:</label>`;
+		
         //else html += `${name}:</label>`;
 
         if (type == "number"){

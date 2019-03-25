@@ -2,7 +2,7 @@
 
 //loads front page#
 $(function(){
-  $("#wiki-content").load("./docs/Introduction.html"); 
+  $("#wiki-content").load("./docs/wiki.html #introduction"); 
 });
 
 function loadWiki(site){
