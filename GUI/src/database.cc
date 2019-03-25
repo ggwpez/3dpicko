@@ -85,6 +85,8 @@ Profile::ID Database::defaultSocket() const { return default_socket_; }
 
 Profile::ID Database::defaultPlate() const { return default_plate_; }
 
+Profile::ID Database::defaultOctoconfig() const { return default_octoprint_; }
+
 Database::JobTable& Database::deletedJobs() { return deleted_jobs_; }
 
 void Database::read(QJsonObject const& obj) {
@@ -104,6 +106,7 @@ void Database::read(QJsonObject const& obj) {
   default_printer_ = Marshalling::fromJson<QString>(obj["default_printer"]);
   default_socket_ = Marshalling::fromJson<QString>(obj["default_socket"]);
   default_plate_ = Marshalling::fromJson<QString>(obj["default_plate"]);
+  default_octoprint_ = Marshalling::fromJson<QString>(obj["default_octoprint"]);
 }
 
 void Database::write(QJsonObject& obj) const {
@@ -124,6 +127,7 @@ void Database::write(QJsonObject& obj) const {
   obj["default_printer"] = default_printer_;
   obj["default_socket"] = default_socket_;
   obj["default_plate"] = default_plate_;
+  obj["default_octoprint"] = default_octoprint_;
 }
 
 bool Database::readOnly() const { return read_only_; }

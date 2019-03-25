@@ -77,5 +77,6 @@ class Database : public QObject, JsonConvertable {
   Profile::ID default_printer_;
   Profile::ID default_socket_;
   Profile::ID default_plate_;
+  Profile::ID default_octoprint_;
 };
 }  // namespace c3picko

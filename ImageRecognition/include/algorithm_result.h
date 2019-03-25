@@ -50,7 +50,7 @@ class AlgorithmResult {
    */
   int last_stage_;
   QString stage_error_, cleanup_error_;
-  bool is_finalized_;
+  bool is_finalized_ = false;
 
   ID id() const;
   bool stagesSucceeded() const;

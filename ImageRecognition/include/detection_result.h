@@ -31,8 +31,10 @@ class DetectionResult : public AlgorithmResult {
   std::vector<Colony> colonies_;
   /**
    * @brief Separates the partitions between included and excluded colonies.
+   * NOTE i used to save these as iterator, but moving or copying the iterator
+   * seemed to break it.
    */
-  std::vector<Colony>::iterator included_end_;
+  std::size_t included_end_;
 };
 MAKE_MARSHALLABLE(DetectionResult);
 }  // namespace c3picko
