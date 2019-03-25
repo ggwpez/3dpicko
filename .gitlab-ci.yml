@@ -45,11 +45,12 @@ test:linux:
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   except:
-    - /^.*-format$/
+    - /^.*$/ # -format
     
 check:linux:
   stage: check
   script:
+    - grep -ril ">>>>>>>" . && (echo "Found at least one Merge Marker, abort" && exit 1)
     - cppcheck --error-exitcode=1 . > /dev/null
   except:
     - /^.*-format$/
