@@ -12,17 +12,17 @@ Plate1::Plate1()
     : Algorithm("1", "Plate1", "Detects a plate with red frame attached",
                 {(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
                  (AlgoStep)Plate1::detect},
-                {}, true, 5000) {}
+                {}, false, 5000) {}
 
-void Plate1::cvt(AlgorithmJob *base, PlateResult *result) {
-  cv::Mat &input = *reinterpret_cast<cv::Mat *>(base->input());
-  cv::Mat &output = result->newMat();
+void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
+  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
+  cv::Mat& output = result->newMat();
 
   cv::cvtColor(input, output, CV_BGR2GRAY);
 }
-void Plate1::threshold(AlgorithmJob *, PlateResult *result) {
-  cv::Mat &input = result->oldMat();
-  cv::Mat &output = result->newMat();
+void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
+  cv::Mat& input = result->oldMat();
+  cv::Mat& output = result->newMat();
 
   cv::Mat tmp, _;
   double otsu =
@@ -40,25 +40,26 @@ void Plate1::threshold(AlgorithmJob *, PlateResult *result) {
 
 // Strict include, points on the edge are considered outside
 template <std::size_t s1, std::size_t s2>
-bool polyIncludesPoly(std::array<cv::Point, s1> const &poly1,
-                      std::array<cv::Point, s2> const &poly2) {
+bool polyIncludesPoly(std::array<cv::Point, s1> const& poly1,
+                      std::array<cv::Point, s2> const& poly2) {
   for (std::size_t i = 0; i < poly2.size(); ++i)
     if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
 
   return true;
 }
 
-void Plate1::detect(AlgorithmJob *base, PlateResult *result) {
-  cv::Mat const &original = *reinterpret_cast<cv::Mat *>(base->input());
-  cv::Mat const &erroded = result->oldMat();
+void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
+  cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input());
+  cv::Mat const& erroded = result->oldMat();
 
   math::Range<int> area((original.rows * original.cols) / 32,
                         std::numeric_limits<int>::max());
-  cv::Mat &ret(result->newMat(original));
+  cv::Mat& ret(result->newMat(original));
   std::vector<math::OuterBorder> outer_edges;
   std::vector<math::InnerBorder> inner_edges;
   std::vector<std::vector<cv::Point>> contours;
 
+  cv::Mat tmp(ret);
   math::findConnectedComponentEdges(erroded, contours, area);
   qDebug() << "Found" << contours.size() << "contours";
 
@@ -88,9 +89,16 @@ void Plate1::detect(AlgorithmJob *base, PlateResult *result) {
         math::OuterBorder edge;
         std::copy(curve.begin(), curve.begin() + 4, edge.begin());
         outer_edges.push_back(edge);
+
+        cv::drawContours(tmp, contours, i, cv::Scalar::all(255), 2);
       }
     }
   }
+
+  /*cv::resize(tmp, tmp, cv::Size(ret.size().width / 3, ret.size().height / 3));
+  cv::imshow("tmp", tmp);
+  while (cv::waitKey(0))
+          ;*/
 
   if (!outer_edges.size())
     throw std::runtime_error("Could not approximate outer edge");
@@ -125,7 +133,8 @@ void Plate1::detect(AlgorithmJob *base, PlateResult *result) {
   // Distances between the 4p's and 6p's to find the two, that are closest
   // together and where the 4p strictly includes the 6p first int is the
   // inner_edge index second one the outer
-  std::vector<std::tuple<int, int, double>> corner_distances;
+  std::vector<std::tuple<std::size_t /*inner*/, std::size_t /*outer*/, double>>
+      corner_distances;
   for (std::size_t i = 0; i < inner_edges.size(); ++i) {
     auto inner(inner_edges[i]);
 
@@ -167,12 +176,18 @@ void Plate1::detect(AlgorithmJob *base, PlateResult *result) {
   }
 
   // Now filter for the best match by the Sum of Squared Error
-  auto it = std::min_element(corner_distances.begin(), corner_distances.end());
+  auto it = std::min_element(
+      corner_distances.begin(), corner_distances.end(),
+      [](std::tuple<std::size_t, std::size_t, double> const& a,
+         std::tuple<std::size_t, std::size_t, double> const& b) {
+        return std::get<2>(a) < std::get<2>(b);
+      });
   if (it == corner_distances.end())
     throw std::runtime_error("Could detect rotation of inner edges");
 
-  auto outer_edge = outer_edges[std::get<0>(*it)];
-  auto inner_edge = inner_edges[std::get<1>(*it)];
+  int i = std::get<0>(*it), j = std::get<1>(*it);
+  auto inner_edge = inner_edges[std::get<0>(*it)];
+  auto outer_edge = outer_edges[std::get<1>(*it)];
   double best_dist = std::get<2>(*it);
 
   result->original_ = Plate(outer_edge, inner_edge);

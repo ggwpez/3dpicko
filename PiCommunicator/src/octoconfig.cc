@@ -29,9 +29,9 @@ QJsonObject Marshalling::toJson(const pi::OctoConfig& value) {
 
 template <>
 pi::OctoConfig Marshalling::fromJson(const QJsonObject& obj) {
-  return pi::OctoConfig(
-      Marshalling::fromJson<QString>(obj["address"]),
-      Marshalling::fromJson<pi::ApiKey>(obj["api_key"].toObject()),
-      Marshalling::fromJson<QString>(obj["protocol"]), obj["port"].toInt());
+  return pi::OctoConfig(Marshalling::fromJson<QString>(obj["address"]),
+                        Marshalling::fromJson<pi::ApiKey>(obj["api_key"]),
+                        Marshalling::fromJson<QString>(obj["protocol"]),
+                        obj["port"].toInt());
 }
 }  // namespace c3picko
