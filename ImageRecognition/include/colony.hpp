@@ -28,7 +28,7 @@ class Colony {
   double brightness() const;
   ID id() const;
 
-  bool excluded() const;
+  bool included() const;
   AlgoSetting::ID excludedBy() const;
 
   void setExcluded_by(const AlgoSetting::ID& excluded_by);

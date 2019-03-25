@@ -18,6 +18,14 @@ class AlgorithmJob;
 namespace pi {
 class Command;
 }
+/**
+ * @brief Contains the logic for the API.
+ * Works together with APIInput and APIOutput.
+ * The public functions are called by APIInput which then process the input and
+ * emit the neccecary SIGNALS that are connected to the matching SLOTS from
+ * APIOutput. APIOutput then informs the clients of the result from these
+ * functions.
+ */
 class APIController : public QObject {
   Q_OBJECT
   friend class APIInput;
@@ -64,7 +72,9 @@ class APIController : public QObject {
   void setDefaultSettingsProfile(Profile::ID id, QObject* client);
   void setStartingWell(Job::ID id, Profile::ID plate_id, int row, int col,
                        QObject* client);
-  void setColoniesToPick(Job::ID id, quint32 number, QObject* client);
+  void setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
+                         QSet<Colony::ID> in_user, quint32 number,
+                         QObject* client);
 
   /**
    * @brief createJob
@@ -83,7 +93,7 @@ class APIController : public QObject {
    */
   void updateDetectionSettings(Job::ID job, QString algo_id,
                                QJsonObject settings, QObject* client);
-  void startJob(Job::ID id, QObject* client);
+  void startJob(Job::ID id, Profile::ID octoprint, QObject* client);
 
   void shutdown(QObject* client);
   void restart(QObject* client);
@@ -102,7 +112,10 @@ class APIController : public QObject {
   void OnJobCreated(Job, QObject* client);
   void OnJobCreateError(QString, QObject*);
   void OnJobDeleted(Job, QObject* client);
-  void OnJobDeleteError(QString path, QObject* client);
+  void OnJobDeleteError(Job::ID id, QObject* client);
+
+  void OnJobStarted(Job::ID, QObject* client);
+  void OnJobStartError(QString error, QObject* client);
 
   void OnImageCreated(Image, QObject* client);
   void OnImageCreateError(QString path, QObject* client);
@@ -125,7 +138,7 @@ class APIController : public QObject {
                          QObject* client);
   void OnSetStartingWellError(QString error, QObject* client);
 
-  void OnSetColoniesToPick(Job::ID job, std::set<std::size_t> colonies,
+  void OnSetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
                            QObject* client);
   void OnSetColoniesToPickError(QString error, QObject* client);
 

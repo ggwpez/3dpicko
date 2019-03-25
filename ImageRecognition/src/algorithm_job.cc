@@ -6,10 +6,10 @@
 
 namespace c3picko {
 
-AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
-                           QJsonObject settings, void* input,
-                           AlgorithmResult* result, QThreadPool* pool,
-                           qint64 max_ms, QObject* _parent)
+AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm *algo,
+                           QJsonObject settings, void *input,
+                           AlgorithmResult *result, QThreadPool *pool,
+                           qint64 max_ms, QObject *_parent)
     : QObject(_parent),
       id_(id),
       algo_(algo),
@@ -38,7 +38,7 @@ AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
 AlgorithmJob::~AlgorithmJob() { /* algo_ deleted as child element */
 }
 
-void* AlgorithmJob::input() { return input_; }
+void *AlgorithmJob::input() { return input_; }
 
 void AlgorithmJob::start(bool threaded, bool delete_when_done) {
   if (delete_when_done)
@@ -64,18 +64,18 @@ AlgorithmResult::ID AlgorithmJob::result_id() const { return result_id_; }
 
 AlgorithmJob::ID AlgorithmJob::id() const { return id_; }
 
-const QList<AlgoSetting>& AlgorithmJob::settings() const { return settings_; }
+const QList<AlgoSetting> &AlgorithmJob::settings() const { return settings_; }
 
-const AlgoSetting& AlgorithmJob::settingById(AlgoSetting::ID id) const {
-  for (AlgoSetting const& setting : settings_) {
+const AlgoSetting &AlgorithmJob::settingById(AlgoSetting::ID id) const {
+  for (AlgoSetting const &setting : settings_) {
     if (setting.id() == id) return setting;
   }
 
   throw Exception("Could not find AlgoSetting (id=" + id + ")");
 }
 
-const AlgoSetting& AlgorithmJob::settingByName(QString name) const {
-  for (AlgoSetting const& setting : settings_) {
+const AlgoSetting &AlgorithmJob::settingByName(QString name) const {
+  for (AlgoSetting const &setting : settings_) {
     if (setting.name() == name) return setting;
   }
 
@@ -83,7 +83,7 @@ const AlgoSetting& AlgorithmJob::settingByName(QString name) const {
 }
 
 void AlgorithmJob::setSettingsValueByID(AlgoSetting::ID id, QJsonValue value) {
-  for (AlgoSetting& setting : settings_) {
+  for (AlgoSetting &setting : settings_) {
     if (setting.id() == id) {
       setting.setValue(value);
       return;
@@ -94,7 +94,7 @@ void AlgorithmJob::setSettingsValueByID(AlgoSetting::ID id, QJsonValue value) {
 }
 
 void AlgorithmJob::setSettingsValueByName(QString name, QJsonValue value) {
-  for (AlgoSetting& setting : settings_) {
+  for (AlgoSetting &setting : settings_) {
     if (setting.name() == name) {
       setting.setValue(value);
       return;
@@ -104,14 +104,14 @@ void AlgorithmJob::setSettingsValueByName(QString name, QJsonValue value) {
   qWarning() << "Ignoring AlgoSetting name=" << name;
 }
 
-void AlgorithmJob::setSettings(const QJsonObject& sett) {
+void AlgorithmJob::setSettings(const QJsonObject &sett) {
   for (auto key : sett.keys()) setSettingsValueByID(key, sett[key]);
 }
 
-AlgorithmResult* AlgorithmJob::result() const { return result_; }
+AlgorithmResult *AlgorithmJob::result() const { return result_; }
 
 template <>
-QJsonObject Marshalling::toJson(const AlgorithmJob& value) {
+QJsonObject Marshalling::toJson(const AlgorithmJob &value) {
   QJsonObject obj;
 
   obj["id"] = value.id();

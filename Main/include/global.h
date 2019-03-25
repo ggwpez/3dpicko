@@ -11,7 +11,9 @@ class QCoreApplication;
 class QSslConfiguration;
 namespace c3picko {
 class ResourcePath;
-
+/**
+ * @return Throws on error.
+ */
 QSslConfiguration* LoadSslConfig(QSettings& settings);
 
 ResourcePath Root();
@@ -34,7 +36,7 @@ QString dateTimeFormat();
  * I would use a macro aka EXIT_RESTART but no macros since google style
  * guide...
  */
-int exitRestart();
+int exitCodeRestart();
 
 char const* defaultImageExtension();
 }  // namespace c3picko

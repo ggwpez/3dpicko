@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QJsonObject>
-#include <set>
+#include <QSet>
 #include "include/global.h"
 
 #if __cplusplus <= 201703L
@@ -73,8 +73,8 @@ MAKE_MARSHALLABLE_CLASS(PlateProfile);
 
 // not good style, but partial specialization of template member functions is
 // not allowed
-MAKE_MARSHALLABLE(std::set<QString>);
-MAKE_MARSHALLABLE(std::set<qint32>);
+MAKE_MARSHALLABLE(QSet<QString>);
+MAKE_MARSHALLABLE(QSet<qint32>);
 
 template <>
 /**

@@ -16,14 +16,29 @@ WsServer::WsServer(QSettings& settings, QSslConfiguration* ssl,
                                    (ssl ? QWebSocketServer::SecureMode
                                         : QWebSocketServer::NonSecureMode),
                                    this)) {
-  if (ssl) server_->setSslConfiguration(*ssl);
+  if (ssl) {
+    Q_ASSERT(ssl);
+    server_->setSslConfiguration(*ssl);
+  }
 
-  host_ = settings.value("host", defaultHost()).toString();
-  int port = settings.value("port", defaultPort()).toInt();
+  if (!settings.contains("host")) {
+    qWarning().nospace() << "WsServer: hostname not set, using default value (="
+                         << defaultHost() << ")";
+    host_ = defaultHost();
+  } else
+    host_ = settings.value("host", defaultHost()).toString();
+
+  int port;
+  if (!settings.contains("port")) {
+    qWarning().nospace() << "WsServer: port not set, using default (="
+                         << defaultPort() << ")";
+    port = defaultPort();
+  } else
+    port = settings.value("port").toInt();
 
   if (port >= (1 << 16) || port < 0) {
     port_ = defaultPort();
-    qWarning() << "Port invalid (" << port << "), defaulted to" << port_;
+    qWarning() << "Port invalid (" << port << "), defaulting to" << port_;
   } else
     port_ = quint16(port);
 }
@@ -86,7 +101,7 @@ void WsServer::clientError(QAbstractSocket::SocketError ec) {
 
 bool WsServer::StartListen() {
   if (server_->listen(QHostAddress(host_), port_)) {
-    qDebug("WebSocket server up at %s:%d", qPrintable(host_), port_);
+    qDebug("WebSocket server at %s:%d", qPrintable(host_), port_);
 
     connect(server_, &QWebSocketServer::acceptError, this,
             &WsServer::acceptError);
@@ -100,7 +115,7 @@ bool WsServer::StartListen() {
     emit OnStarted();
     return true;
   } else {
-    qCritical("WebSocket %s", qPrintable(server_->errorString()));
+    qCritical("WebSocket: %s", qPrintable(server_->errorString()));
     return false;
   }
 }
@@ -123,7 +138,7 @@ void WsServer::serverError(QWebSocketProtocol::CloseCode ec) {
 
 void WsServer::sslErrors(const QList<QSslError>& errors) {
   for (QSslError error : errors)
-    qWarning() << "Ssl error:" << error.errorString();
+    qWarning() << "SSL error:" << error.errorString();
 }
 
 void WsServer::ToClient(QObject* client, QString type, QJsonObject data) {

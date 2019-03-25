@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QJsonArray>
 #include "include/marshalling.hpp"
+#include "include/octoconfig.h"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
@@ -18,6 +19,9 @@ Profile::Profile(QString type, QString name, ID id, QJsonObject const& settings)
   } else if (type_ == "plate-profile") {
     plate_ = std::make_shared<PlateProfile>(
         Marshalling::fromJson<PlateProfile>(settings));
+  } else if (type_ == "octoprint-profile") {
+    octoprint_ = std::make_shared<pi::OctoConfig>(
+        Marshalling::fromJson<pi::OctoConfig>(settings));
   } else {
     plate_ = nullptr;
     qWarning() << "Unknown profile type" << type_;
@@ -37,6 +41,10 @@ std::shared_ptr<PlateProfile> Profile::plate() const { return plate_; }
 std::shared_ptr<PlateSocketProfile> Profile::socket() const { return socket_; }
 
 std::shared_ptr<PrinterProfile> Profile::printer() const { return printer_; }
+
+std::shared_ptr<pi::OctoConfig> Profile::octoprint() const {
+  return octoprint_;
+}
 
 QJsonObject Profile::makeTextField(Profile::ID id, QString name,
                                    QString description, QString placeholder,
@@ -260,11 +268,30 @@ QJsonObject Profile::plateTemplate() {
   return json;
 }
 
+QJsonObject Profile::octoprintTemplate() {
+  QJsonObject json;
+
+  json["settings"] = {
+      {makeTextField("address", "Hostname",
+                     "IPv4/IPv6/Hostname of the OctoPrint server. Probably a "
+                     "Raspberry Pi.",
+                     "", ""),
+       makeTextField("api_key", "ApiKey", "ApiKey of the OctoPrint", "", "", 32,
+                     32),
+       makeTextField("protocol", "Protocol", "", "http", "http", 3, 12),
+       makeNumberField("port", "Port", "Port of the OctoPrint", 0, 65535, 1, 80,
+                       80, "")}};
+
+  return json;
+}
+
 c3picko::Profile::operator PlateProfile*() const { return plate_.get(); }
 
 c3picko::Profile::operator PlateSocketProfile*() const { return socket_.get(); }
 
 c3picko::Profile::operator PrinterProfile*() const { return printer_.get(); }
+
+c3picko::Profile::operator pi::OctoConfig*() const { return octoprint_.get(); }
 
 template <>
 QJsonObject Marshalling::toJson(const Profile& value) {

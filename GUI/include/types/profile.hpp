@@ -8,9 +8,13 @@ namespace c3picko {
 class PrinterProfile;
 class PlateSocketProfile;
 class PlateProfile;
+namespace pi {
+class OctoConfig;
+}
 
 /**
- * @brief Encapsulator for the 3 GCode profile classes.
+ * @brief Encapsulator for the 3 GCode profile classes and the OctoPrint
+ * profile.
  */
 class Profile {
  public:
@@ -20,6 +24,7 @@ class Profile {
   explicit operator PrinterProfile*() const;
   explicit operator PlateSocketProfile*() const;
   explicit operator PlateProfile*() const;
+  explicit operator pi::OctoConfig*() const;
 
   ID id() const;
   void setId(ID id);
@@ -29,6 +34,7 @@ class Profile {
   std::shared_ptr<PlateProfile> plate() const;
   std::shared_ptr<PlateSocketProfile> socket() const;
   std::shared_ptr<PrinterProfile> printer() const;
+  std::shared_ptr<pi::OctoConfig> octoprint() const;
 
   /**
    * @brief Creates a correctly formated settings entry for the profile
@@ -75,6 +81,7 @@ class Profile {
   static QJsonObject printerTemplate();
   static QJsonObject socketTemplate();
   static QJsonObject plateTemplate();
+  static QJsonObject octoprintTemplate();
 
  private:
   QString type_;
@@ -83,6 +90,7 @@ class Profile {
   std::shared_ptr<PlateProfile> plate_;
   std::shared_ptr<PlateSocketProfile> socket_;
   std::shared_ptr<PrinterProfile> printer_;
+  std::shared_ptr<pi::OctoConfig> octoprint_;
 };
 MAKE_MARSHALLABLE(Profile);
 }  // namespace c3picko

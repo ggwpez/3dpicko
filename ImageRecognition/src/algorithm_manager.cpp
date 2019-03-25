@@ -9,7 +9,17 @@ namespace c3picko {
 AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
                                    QObject* _parent)
     : QObject(_parent), pool_(pool), algos_(algos) {
-  for (Algorithm* algo : algos_) algo->setParent(this);
+  for (Algorithm* algo : algos_) {
+    algo->setParent(this);
+
+#ifdef QT_NO_DEBUG
+    for (auto it = algos.begin(); it != algos.end(); ++it)
+      if (!(*it)->isThreadable())
+        qWarning().nospace()
+            << "All algorithms should be threadable in a release build (name="
+            << (*it)->name() << ")";
+#endif
+  }
 }
 
 AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,

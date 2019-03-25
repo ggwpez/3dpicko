@@ -15,7 +15,8 @@ SOURCES += \
 	src/types/profile.cc \
 	src/api_input.cpp \
 	src/api_controller.cc \
-	src/api_output.cc
+	src/api_output.cc \
+    src/api_commands.cc
 
 HEADERS += \
 	include/requestmapper.h \
@@ -27,9 +28,9 @@ HEADERS += \
 	include/types/profile.hpp \
 	include/api_output.h \
 	include/api_input.h \
-	include/api_controller.h
+	include/api_controller.h \
+    include/api_commands.h
 
-DEFINES += QT_NO_INFO_OUTPUT
 OTHER_FILES += serverconfig.ini
 
 include(../QtWebApp/httpserver/httpserver.pri)

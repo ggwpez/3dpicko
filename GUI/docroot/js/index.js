@@ -6,13 +6,6 @@ var chosen_image = {};
 var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
-var all_profiles = {};
-var default_profiles = {
-    "printer-profile": "",
-    "socket-profile": "",
-    "plate-profile": ""
-};
-var profile_templates ={};
 // TODO delete "new_job" if job saved or executed
 var unsaved_elements = {};
 
@@ -49,7 +42,7 @@ $(function Setup()
                 // $('#overlay').hide();
                 EnableDropzone();
                 // TODO
-                if('uploadimage' in data) ShowAlert("Upload failed.<br>Maybe Plate can't be detected or Image already exists.", "danger");
+                if('uploadimage' in data) ShowAlert("Upload failed.<br>Maybe Plate can't be detected.", "danger");
                 else ShowAlert(JSON.stringify(data), "danger");
             }
             else if (type == "getimagelist")
@@ -112,31 +105,16 @@ $(function Setup()
             }
             else if (type == "getjoblist")
             {
-                data.jobs.forEach(AddJobToList);
-                console.log("Jobs:\n" +data +"\ncount: " +data.jobs.length);
-            }
-            else if (type == "getgeneralsettings"){
-                // TODO
-                data.settings.forEach(AddGeneralSetting);
+                // TODO review
+                if(data.jobs){
+                    data.jobs.forEach(AddJobToList);    
+                } else AddJobToList(data);
+                
+                console.log("Jobs:\n" +data);
             }
             else if (type == "getprofilelist")
             {
-                console.log("Profiles:\n" +data +"\ncount: " +data.profiles.length);
-                default_profiles["printer-profile"] = data.defaultPrinter;
-                default_profiles["socket-profile"] = data.defaultSocket;
-                default_profiles["plate-profile"] = data.defaultPlate;
-                profile_templates["printer-profile"] = data["printerTemplate"];
-                profile_templates["socket-profile"] = data["socketTemplate"];
-                profile_templates["plate-profile"] = data["plateTemplate"];
-                // TOOO add type in Backend?
-                profile_templates["printer-profile"].type = "printer-profile";
-                profile_templates["socket-profile"].type = "socket-profile";
-                profile_templates["plate-profile"].type = "plate-profile";
-                // empty "new-profiles"
-                AddProfileToList(profile_templates["printer-profile"]);
-                AddProfileToList(profile_templates["socket-profile"]);
-                AddProfileToList(profile_templates["plate-profile"]);
-                data.profiles.forEach(AddProfileToList);
+                AddProfiles(data)
             }
             else if (type == "setdefaultsettingsprofile"){
                 SetDefaultProfile(data.id);
@@ -166,9 +144,9 @@ $(function Setup()
                 GetDetectionAlgorithms(data);
             }
             else if (type == "setcoloniestopick"){
-                // job: id, indices: array 
+                // job: id, ids: array 
                 if(current_job.id == data.job){
-                    overviewTab(data.indices);
+                    overviewTab(data.ids);
                 }
             }
             else
@@ -267,6 +245,26 @@ $(function(){
             return false;
         }
     });
+
+    //Navigation
+    $('#steps').on('shown.bs.tab', function () {
+        // TODO disable/enable button, only execute if disabled
+        $('.next-step').html('Continue');
+    });
+    $('#nav-tab').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+    })
+
+    // handle back-button for main navigation
+    function HashChanged(){
+        let hash = window.location.hash;
+        if(hash){
+            $('.nav-tabs a[href="' + hash + '"]').tab('show');
+            window.scrollTo(0, 0);
+        }
+    }
+    window.onhashchange = HashChanged;
+    HashChanged();
 
     $('#delete-dialog').on('show.bs.modal', function (e) {
     // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
@@ -372,12 +370,6 @@ function tabEnter(tabId)
     $("#" +tabOrder[tabId] +"-tab").tab('show');
 }
 
-//Navigation
-$('#steps').on('shown.bs.tab', function () {
-    // TODO disable/enable button, only execute if disabled
-    $('.next-step').html('Continue');
-})
-
 function attributesTab(){
     tabEnter(2);
     document.getElementById('staticImgName').innerHTML = chosen_image.original_name;
@@ -433,20 +425,23 @@ function strategyTab(){
                     min: 1,
                     max: max_colonies,
                     step: 1,
-                    help_text: "Choose number of detected colonies that will be transferred to Goal Plate.",
+                    description: "Choose number of detected colonies that will be transferred to Goal Plate.",
                     defaultValue: max_colonies
                 }
                 ]
             }
-            if(plate.settings.number_of_columns*plate.settings.number_of_rows < number_of_colonies) template.settings[0].help_text += "<br><span class='text-danger'>Please note that number of colonies is greater than plate size. Colonies will be chosen randomly.</span>";
+            $('#number-of-colonies-warning').toggle(max_colonies < number_of_colonies);
             let form = new FormGroup(template, "strategy-form");
             document.getElementById("number-of-colonies-slider").innerHTML = form.getHtml();
             form.AddInputEvents();
             document.getElementById('number-max_number_of_coloniesstrategy-form').insertAdjacentHTML('afterend', "/"+number_of_colonies);
             document.getElementById('number-max_number_of_coloniesstrategy-form').addEventListener('change', function(){
+                if(this.value < number_of_colonies) $('#number-of-colonies-warning').show();
+                $('#number-of-colonies-warning').toggle(this.value < number_of_colonies);
                 updateWells(this.value);
             });
             document.getElementById('slider-max_number_of_coloniesstrategy-form').addEventListener('input', function(){
+                $('#number-of-colonies-warning').toggle(this.value < number_of_colonies);
                 updateWells(this.value);
             });
             updateWells(max_colonies);
@@ -494,7 +489,7 @@ function executeTab(){
         $('#check-preconditions').hide();
         $('#execute-button').hide();
         $('#pickjob-running').show();
-        api('startjob', {id: current_job.id});
+        api('startjob', {id: current_job.id, octoprint_profile: default_profiles['octoprint-profile']});
     }
     form.classList.add('was-validated');
 }

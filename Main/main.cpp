@@ -20,16 +20,42 @@ using namespace stefanfrings;
 using namespace c3picko;
 
 static WsServer* ws_ptr = nullptr;
+
+static QString textColor(QtMsgType type) {
+  switch (type) {
+    case QtMsgType::QtInfoMsg:
+      return "";
+    case QtMsgType::QtDebugMsg:
+      return "";
+    case QtMsgType::QtWarningMsg:
+      return "\x1B[33m";  // Orange
+    case QtMsgType::QtCriticalMsg:
+      return "\x1B[31m";         // Red
+    case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
+      return "\x1B[31;1m";       // Red, Fat
+    default:
+      Q_UNREACHABLE();
+  }
+}
 static void msg_handler(QtMsgType type, const QMessageLogContext& context,
                         const QString& msg) {
-  QString formated = qFormatLogMessage(type, context, msg);
-  QString now = QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
-  formated = "[ " + now + " ] " + formated;
+  QString message = qFormatLogMessage(type, context, msg);
+  QString time =
+      "[ " + QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate) +
+      " ] ";
+  QString color_begin = textColor(type), color_end = "\033[0m";
 
   if (ws_ptr)
-    QMetaObject::invokeMethod(ws_ptr, "NewDebugLine", Q_ARG(QString, formated));
+    QMetaObject::invokeMethod(ws_ptr, "NewDebugLine",
+                              Q_ARG(QString, time + message));
 
-  fprintf(stderr, "%s\n", qPrintable(formated));
+    // TODO bad style to write everything to stderr
+#ifdef Q_OS_LINUX
+  fprintf(stderr, "%s%s%s%s\n", qPrintable(time), qPrintable(color_begin),
+          qPrintable(message), qPrintable(color_end));
+#else
+  fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));
+#endif
 }
 
 static int start(int argc, char** argv) {
@@ -37,7 +63,6 @@ static int start(int argc, char** argv) {
   qInstallMessageHandler(msg_handler);
 #endif
   QCoreApplication app(argc, argv);
-  // FIXME memory managment
   QString ini_file = searchConfigFile(argc, argv);
   QSettings settings(ini_file, QSettings::IniFormat);
   Setup(&app, ini_file, settings);
@@ -58,21 +83,11 @@ static int start(int argc, char** argv) {
   settings.beginGroup("files");
   StaticFileController* staticFileController =
       new StaticFileController(settings, DocRoot().toSystemAbsolute(), &app);
-  qDebug() << "DocRoot" << DocRoot().toSystemAbsolute();
+  qInfo() << "DocRoot is" << DocRoot().toSystemAbsolute();
 
   // SSL
   settings.beginGroup("ssl");
-
-  QSslConfiguration* ssl = nullptr;
-  if (settings.value("enabled", false).toBool()) {
-    ssl = LoadSslConfig(settings);
-    if (!ssl) {
-      qCritical() << "SSL setup failed";
-      return 1;
-    }
-    qDebug() << "SSL setup completed";
-  } else
-    qDebug() << "SSL disabled";
+  QSslConfiguration* ssl = LoadSslConfig(settings);
 
   // HTTP server
   QSettings* http_settings =
@@ -80,9 +95,11 @@ static int start(int argc, char** argv) {
   http_settings->beginGroup("http");
   new HttpListener(http_settings, ssl,
                    new RequestMapper(staticFileController, &app), &app);
+
   // WS server
-  settings.beginGroup("websockets");
-  WsServer* ws_server = new WsServer(settings, ssl, &app);
+  QSettings* ws_settings = new QSettings(ini_file, QSettings::IniFormat, &app);
+  ws_settings->beginGroup("websockets");
+  WsServer* ws_server = new WsServer(*ws_settings, ssl, &app);
 
   QObject::connect(ws_server, &WsServer::OnRequest, api,
                    &APIController::request);
@@ -110,9 +127,9 @@ static int start(int argc, char** argv) {
 int main(int argc, char** argv) {
   int status;
 
-  // Restarts the program when it exited with exitRestart()
+  // Restarts the program when it exited with exitCodeRestart()
   while (true) {
-    qDebug("Starting");
+    qInfo("Starting");
     try {
       status = start(argc, argv);
     } catch (std::exception const& e) {
@@ -121,8 +138,8 @@ int main(int argc, char** argv) {
       qCritical("Exception: %s", "unknown");
     }
 
-    if (status == exitRestart())
-      qDebug() << "Awaiting restart...";
+    if (status == exitCodeRestart())
+      qInfo() << "Awaiting restart...";
     else
       break;
   };

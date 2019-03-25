@@ -57,17 +57,17 @@ bool ResourcePath::isEmpty() const { return system_absolute_.isEmpty(); }
 
 void ResourcePath::clear() { system_absolute_ = ""; }
 
-ResourcePath ResourcePath::operator+(const QString& obj) const {
+ResourcePath ResourcePath::operator+(const QString &obj) const {
   return QString(system_absolute_ + obj).replace("//", "/");
 }
 
 template <>
-ResourcePath Marshalling::fromJson(const QJsonObject& obj) {
+ResourcePath Marshalling::fromJson(const QJsonObject &obj) {
   return ResourcePath::fromServerAbsolute(obj["server_absolute"].toString());
 }
 
 template <>
-QJsonObject Marshalling::toJson(const ResourcePath& value) {
+QJsonObject Marshalling::toJson(const ResourcePath &value) {
   QJsonObject obj;
 
   obj["server_absolute"] = value.toServerAbsolute();

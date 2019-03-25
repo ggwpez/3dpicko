@@ -19,7 +19,7 @@ using namespace cv;
 
 const std::string root = "/home/vados/src/bc_pics/calibration/";
 
-int usage(int argc, char** argv) {
+int usage(int argc, char **argv) {
   for (int i = 1; i < argc; ++i)
     qDebug().nospace() << "Arg " << i << ": " << argv[i];
 
@@ -174,7 +174,7 @@ int transform(QStringList images) {
   return 0;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   if (argc != 3) return usage(argc, argv);
   std::string mode(argv[1]);
 

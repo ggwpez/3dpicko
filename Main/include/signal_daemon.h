@@ -14,7 +14,7 @@ class SignalDaemon : public QObject {
   Q_OBJECT
 
  public:
-  SignalDaemon(QObject* _parent = nullptr);
+  SignalDaemon(QObject *_parent = nullptr);
 
   // Unix signal handler
   int registerSignal(int signal);
@@ -31,7 +31,7 @@ class SignalDaemon : public QObject {
  private:
   static int socketpair_[2];
 
-  QSocketNotifier* notifier_;
+  QSocketNotifier *notifier_;
   QSet<int> registered_;
 };
 }  // namespace c3picko

@@ -24,6 +24,11 @@ class AlgorithmResult {
 
   cv::Mat& oldMat();
 
+  /**
+   * @brief Will be called after the last step of the algorithm succeeded
+   */
+  virtual void finalize();
+
  public:
   ID id_;
   /**
@@ -35,6 +40,9 @@ class AlgorithmResult {
    * @brief The job succeeded
    */
   bool stages_succeeded_;
+  /**
+   * @brief The cleanup stage succeeded
+   */
   bool cleanup_succeeded_;
 
   /**
@@ -42,6 +50,7 @@ class AlgorithmResult {
    */
   int last_stage_;
   QString stage_error_, cleanup_error_;
+  bool is_finalized_;
 
   ID id() const;
   bool stagesSucceeded() const;

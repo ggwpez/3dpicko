@@ -2,6 +2,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QVariant>
+#include "include/api_commands.h"
 #include "include/api_controller.h"
 #include "include/colony.hpp"
 
@@ -14,129 +15,138 @@ void APIOutput::UnknownRequest(QString request, QObject* client) {
 }
 
 void APIOutput::ImageListRequested(QObject* client) {
-  emit op->toClient(client, "getimagelist", op->createImageList());
+  emit op->toClient(client, APICommands::GET_IMAGE_LIST, op->createImageList());
 }
 
 void APIOutput::JobListRequested(QObject* client) {
-  emit op->toClient(client, "getjoblist", op->createJobList());
+  emit op->toClient(client, APICommands::GET_JOB_LIST, op->createJobList());
 }
 
 void APIOutput::ProfileListRequested(QObject* client) {
-  emit op->toClient(client, "getprofilelist", op->createProfileList());
+  emit op->toClient(client, APICommands::GET_PROFILE_LIST,
+                    op->createProfileList());
 }
 
 void APIOutput::AlgorithmListRequested(QObject* client) {
-  emit op->toClient(client, "getdetectionalgorithms",
+  emit op->toClient(client, APICommands::GET_DETECTION_ALGORITHMS,
                     op->CreateAlgorithmList());
 }
 
 void APIOutput::JobCreated(Job job, QObject* client) {
   QJsonObject json(Marshalling::toJson(job));
 
-  emit op->toClient(client, "createjob", json);
-  emit op->toAllExClient(client, "getjoblist", json);  // TODO lazy
+  emit op->toClient(client, APICommands::CREATE_JOB, json);
+  emit op->toAllExClient(client, APICommands::GET_JOB_LIST, json);  // TODO lazy
 }
 
 void APIOutput::JobCreateError(QString id, QObject* client) {
-  Error("jobcreate", id, client);
-  qDebug("JobCreateError %s", qPrintable(id));
+  Error(APICommands::CREATE_JOB, id, client);
 }
 
-void APIOutput::JobDeleted(Job job, QObject* client) {
-  emit op->toAll("deletejob", {{"id", job.id()}});
+void APIOutput::JobDeleted(Job job, QObject*) {
+  emit op->toAll(APICommands::DELETE_JOB, {{"id", job.id()}});
 }
 
-void APIOutput::JobDeleteError(QString path, QObject* client) {
-  Error("jobdelete", "", client);
+void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
+  Error(APICommands::DELETE_JOB, "id=" + id, client);
 }
 
-void APIOutput::ImageCreated(Image image, QObject* client) {
-  emit op->toAll("uploadimage", Marshalling::toJson(image));
+void APIOutput::JobStarted(Job::ID id, QObject*) {
+  emit op->toAll(APICommands::START_JOB, {{"id", id}});
+}
+
+void APIOutput::JobStartError(QString error, QObject* client) {
+  Error(APICommands::START_JOB, error, client);
+}
+
+void APIOutput::ImageCreated(Image image, QObject*) {
+  emit op->toAll(APICommands::UPLOAD_IMAGE, Marshalling::toJson(image));
 }
 
 void APIOutput::ImageCreateError(QString path, QObject* client) {
-  Error("uploadimage", "", client);
+  Error(APICommands::UPLOAD_IMAGE, "path=" + path, client);
 }
 
-void APIOutput::ImageDeleted(Image image, QObject* client) {
-  emit op->toAll("deleteimage", {{"id", image.id()}});
+void APIOutput::ImageDeleted(Image image, QObject*) {
+  emit op->toAll(APICommands::DELETE_IMAGE, {{"id", image.id()}});
 }
 
 void APIOutput::ImageDeleteError(QString path, QObject* client) {
-  Error("deleteimage", "", client);
+  Error(APICommands::DELETE_IMAGE, "path=" + path, client);
 }
 
 void APIOutput::ImageCropped(Image image, QObject* client) {
   QJsonObject json(Marshalling::toJson(image));
 
-  emit op->toClient(client, "crop-image", json);
-  emit op->toAllExClient(client, "getimagelist", json);
+  emit op->toClient(client, APICommands::CROP_IMAGE, json);
+  emit op->toAllExClient(client, APICommands::GET_IMAGE_LIST, json);
 }
 
 void APIOutput::ImageCropError(QString id, QObject* client) {
-  Error("crop-image", "", client);
+  Error(APICommands::CROP_IMAGE, "id=" + id, client);
 }
 
-void APIOutput::ProfileCreated(Profile profile, QObject* client) {
-  emit op->toAll("createsettingsprofile", Marshalling::toJson(profile));
+void APIOutput::ProfileCreated(Profile profile, QObject*) {
+  emit op->toAll(APICommands::CREATE_SETTINGS_PROFILE,
+                 Marshalling::toJson(profile));
 }
 
-void APIOutput::ProfileUpdated(Profile profile, QObject* client) {
-  emit op->toAll("updatesettingsprofile", Marshalling::toJson(profile));
+void APIOutput::ProfileUpdated(Profile profile, QObject*) {
+  emit op->toAll(APICommands::UPDATE_SETTINGS_PROFILE,
+                 Marshalling::toJson(profile));
 }
 
-void APIOutput::ProfileUpdateError(Profile::ID profile, QObject* client) {
-  Error("updatesettingsprofile", "", client);
+void APIOutput::ProfileUpdateError(Profile::ID id, QObject* client) {
+  Error("updatesettingsprofile", "id=" + id, client);
 }
 
-void APIOutput::ProfileDeleted(Profile::ID profile, QObject* client) {
-  emit op->toAll("deletesettingsprofile", {{"id", profile}});
+void APIOutput::ProfileDeleted(Profile::ID profile, QObject*) {
+  emit op->toAll(APICommands::DELETE_SETTINGS_PROFILE, {{"id", profile}});
 }
 
 void APIOutput::ProfileDeleteError(Profile::ID profile, QObject* client) {
-  Error("deletesettingsprofile", "Could not delete profile #" + profile,
-        client);
+  Error(APICommands::DELETE_SETTINGS_PROFILE,
+        "Could not delete profile #" + profile, client);
 }
 
-void APIOutput::DefaultSettingsProfileSet(Profile::ID profile,
-                                          QObject* client) {
-  emit op->toAll("setdefaultsettingsprofile", {{"id", profile}});
+void APIOutput::DefaultSettingsProfileSet(Profile::ID profile, QObject*) {
+  emit op->toAll(APICommands::SET_DEFAULT_SETTINGS_PROFILE, {{"id", profile}});
 }
 
 void APIOutput::DefaultSettingsProfileSetError(QString error, QObject* client) {
-  Error("setdefaultsettingsprofile",
+  Error(APICommands::SET_DEFAULT_SETTINGS_PROFILE,
         "Could not set profile as default: " + error, client);
 }
 
 void APIOutput::SetStartingWell(Job::ID job, Profile::ID plate, int row,
-                                int col, QObject* client) {
+                                int col, QObject*) {
   emit op->toAll(
-      "setstartingwell",
+      APICommands::SET_STARTING_WELL,
       {{"job_id", job}, {"plate_id", plate}, {"row", row}, {"col", col}});
 }
 
 void APIOutput::SetStartingWellError(QString error, QObject* client) {
-  Error("setstartingwell", error, client);
+  Error(APICommands::SET_STARTING_WELL, error, client);
 }
 
-void APIOutput::SetColoniesToPick(Job::ID job, std::set<std::size_t> colonies,
+void APIOutput::SetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
                                   QObject* client) {
   // TODO send to all
   QJsonArray cols;
+
   for (auto it = colonies.begin(); it != colonies.end(); ++it)
     cols << QJsonValue::fromVariant(QVariant::fromValue(*it));  // Qt pls
 
-  emit op->toClient(client, "setcoloniestopick",
-                    {{"job", job}, {"indices", cols}});
+  emit op->toClient(client, APICommands::SET_COLONIES_TO_PICK,
+                    {{"job", job}, {"ids", cols}});
 }
 
 void APIOutput::SetColoniesToPickError(QString error, QObject* client) {
-  Error("setColoniesToPick", error, client);
+  Error(APICommands::SET_COLONIES_TO_PICK, error, client);
 }
 
 void APIOutput::ColonyDetectionStarted(
-    Job::ID,
-    QObject* client) { /* TODO inform client, maybe add a loading animtion */
+    Job::ID, QObject*) { /* TODO inform client, maybe add a loading animtion */
 }
 
 void APIOutput::ColonyDetected(const std::vector<Colony>* colonies,
@@ -146,16 +156,17 @@ void APIOutput::ColonyDetected(const std::vector<Colony>* colonies,
   for (Colony const& colony : *colonies)
     json_coords.push_back(Marshalling::toJson(colony));
 
-  emit op->toClient(client, "getpositions", {{"colonies", json_coords}});
+  emit op->toClient(client, APICommands::GET_POSITIONS,
+                    {{"colonies", json_coords}});
   //	delete colonies;
 }
 
 void APIOutput::ColonyDetectionError(QString error, QObject* client) {
-  Error("getpositions", error, client);
+  Error(APICommands::GET_POSITIONS, error, client);
 }
 
 void APIOutput::Error(QString where, QString what, QObject* client) {
   qCritical("Error %s: %s", qPrintable(where), qPrintable(what));
-  emit op->toClient(client, "error", {{where, what}});
+  emit op->toClient(client, "error", {{"where", where}, {"what", what}});
 }
 }  // namespace c3picko

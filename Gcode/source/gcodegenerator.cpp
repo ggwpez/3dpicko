@@ -4,9 +4,9 @@
 
 namespace c3picko {
 
-GcodeGenerator::GcodeGenerator(const PlateSocketProfile& plate_socket_profile,
-                               const PrinterProfile& printer_profile,
-                               const PlateProfile& plate_profile)
+GcodeGenerator::GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
+                               const PrinterProfile &printer_profile,
+                               const PlateProfile &plate_profile)
     : plate_socket_profile_(plate_socket_profile),
       printer_profile_(printer_profile),
       plate_profile_(plate_profile),
@@ -58,9 +58,9 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
   for (size_t i = 0; i < local_colony_coordinates.size(); ++i) {
     const GlobalColonyCoordinates global_colony_coordinate =
         MapLocalColonyCoordinateToGlobal(local_colony_coordinates.at(i));
-    const GlobalWellCoordinates& global_well_coordinate =
+    const GlobalWellCoordinates &global_well_coordinate =
         global_well_xy_coordinates_.at(starting_well + i);
-    const GlobalMasterCoordinates& global_master_coordinate =
+    const GlobalMasterCoordinates &global_master_coordinate =
         global_master_xy_coordinates_.at(starting_well + i);
 
     gcodes.push_back(gcode_extrusion_length_on_move_cut_to_pick_);
@@ -112,7 +112,7 @@ std::vector<GcodeInstruction> GcodeGenerator::Init() {
 }
 
 GlobalColonyCoordinates GcodeGenerator::MapLocalColonyCoordinateToGlobal(
-    LocalColonyCoordinates& local_colony) {
+    LocalColonyCoordinates &local_colony) {
   return GlobalColonyCoordinates(
       local_colony.xCoordinate() +
           plate_socket_profile_.originOfSourcePlate().xCoordinate() +
@@ -262,7 +262,7 @@ GcodeGenerator::ComputeGlobalMasterCoordinates() {
 }
 
 std::vector<Point> GcodeGenerator::ComputeGlobalWellAndMasterCoordinates(
-    const Point& origin_of_plate) {
+    const Point &origin_of_plate) {
   std::vector<GlobalWellCoordinates> global_well_coordinates;
   global_well_coordinates.reserve(plate_profile_.numberOfWells());
 
@@ -281,7 +281,7 @@ std::vector<Point> GcodeGenerator::ComputeGlobalWellAndMasterCoordinates(
 }
 
 void GcodeGenerator::ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
-    std::vector<Point>& global_well_coordintes, const Point& origin_of_plate) {
+    std::vector<Point> &global_well_coordintes, const Point &origin_of_plate) {
   for (int i = 0; i < plate_profile_.numberOfColumns(); ++i) {
     for (int j = 0; j < plate_profile_.numberOfRows(); ++j) {
       global_well_coordintes.push_back(
@@ -298,7 +298,7 @@ void GcodeGenerator::ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
 }
 
 void GcodeGenerator::ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
-    std::vector<Point>& global_well_coordintes, const Point& origin_of_plate) {
+    std::vector<Point> &global_well_coordintes, const Point &origin_of_plate) {
   for (int i = 0; i < plate_profile_.numberOfRows(); ++i) {
     for (int j = plate_profile_.numberOfColumns() - 1; j >= 0; --j) {
       global_well_coordintes.push_back(

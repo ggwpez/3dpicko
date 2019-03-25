@@ -14,6 +14,7 @@
 
 namespace c3picko {
 /**
+ * A Database Table in the ordinary sense.
  * Sadly this is not a QObject since templates do not work with it.
  *
  * TODO addAsJson and getAsJson are probably buggy with Value=QJsonObject

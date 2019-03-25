@@ -10,6 +10,10 @@
 #include "include/types/profile.hpp"
 
 namespace c3picko {
+/**
+ * @brief A Database. Can be saved and loaded into/from a file.
+ * Consists of multiple Tables.
+ */
 class Database : public QObject, JsonConvertable {
   Q_OBJECT
  public:
@@ -40,6 +44,7 @@ class Database : public QObject, JsonConvertable {
   Profile::ID defaultPrinter() const;
   Profile::ID defaultSocket() const;
   Profile::ID defaultPlate() const;
+  Profile::ID defaultOctoconfig() const;
 
   void setdefaultPrinter(const Profile::ID& default_printer);
   void setDefaultSocket(const Profile::ID& default_socket);

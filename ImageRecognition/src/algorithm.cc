@@ -36,6 +36,7 @@ void Algorithm::run() {
       steps_[i](job, result);  // TODO only pass job
       result->stages_succeeded_ = true;
     }
+    result->finalize();
   } catch (std::exception const& e) {
     error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
              << e.what();
@@ -104,7 +105,6 @@ qint64 Algorithm::maxMs() const { return max_ms_; }
 template <>
 QJsonObject Marshalling::toJson(const Algorithm& value) {
   QJsonObject obj;
-
   obj["name"] = value.name();
   obj["description"] = value.description();
 

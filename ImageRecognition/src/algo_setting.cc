@@ -98,18 +98,18 @@ QVariant AlgoSetting::valueVariant() const { return value_; }
 
 QVariant AlgoSetting::defaultValueVariant() const { return default_value_; }
 
-QVariantMap const& AlgoSetting::options() const { return options_; }
+QVariantMap const &AlgoSetting::options() const { return options_; }
 
 QColor AlgoSetting::color() const { return color_; }
 
-void AlgoSetting::addSubSetting(const AlgoSetting& sub) {
+void AlgoSetting::addSubSetting(const AlgoSetting &sub) {
   sub_settings_.push_back(sub);
 }
 
 QList<AlgoSetting> AlgoSetting::subSettings() const { return sub_settings_; }
 
 template <>
-QJsonObject Marshalling::toJson(const AlgoSetting& value) {
+QJsonObject Marshalling::toJson(const AlgoSetting &value) {
   QJsonObject obj;
   QString link = "/wiki/index.html#" + value.name().toLower().replace(' ', '-');
   QString name = value.name();
@@ -136,7 +136,7 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
 
     if (!value.subSettings().empty()) {
       QJsonArray subs;
-      for (AlgoSetting const& sub : value.subSettings())
+      for (AlgoSetting const &sub : value.subSettings())
         subs.push_back(Marshalling::toJson(sub));
 
       obj["conditional_settings"] = subs;
@@ -163,7 +163,7 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
 }
 
 template <>
-Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
+Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject &obj) {
   throw Exception("Marshalling::fromJson<AlgoSetting> not tested");  // TODO
   AlgoSetting::ID id = Marshalling::fromJson<QString>(obj["id"]);
   QString type = Marshalling::fromJson<QString>(obj["type"]).toLower();

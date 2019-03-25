@@ -10,8 +10,8 @@
 
 using namespace stefanfrings;
 
-HttpListener::HttpListener(QSettings *settings, QSslConfiguration *ssl,
-                           HttpRequestHandler *requestHandler, QObject *parent)
+HttpListener::HttpListener(QSettings* settings, QSslConfiguration* ssl,
+                           HttpRequestHandler* requestHandler, QObject* parent)
     : QTcpServer(parent), ssl_(ssl) {
   Q_ASSERT(settings != 0);
   Q_ASSERT(requestHandler != 0);
@@ -41,7 +41,7 @@ void HttpListener::listen() {
     qCritical("HttpListener: Cannot bind on port %i: %s", port,
               qPrintable(errorString()));
   } else {
-    qDebug("HttpListener up at %s:%i", qPrintable(host), port);
+    qDebug("HttpListener at     %s:%i", qPrintable(host), port);
   }
 }
 
@@ -59,7 +59,7 @@ void HttpListener::incomingConnection(tSocketDescriptor socketDescriptor) {
   qInfo("HttpListener: New connection");
 #endif
 
-  HttpConnectionHandler *freeHandler = NULL;
+  HttpConnectionHandler* freeHandler = NULL;
   if (pool) {
     freeHandler = pool->getConnectionHandler();
   }
@@ -74,7 +74,7 @@ void HttpListener::incomingConnection(tSocketDescriptor socketDescriptor) {
   } else {
     // Reject the connection
     qInfo("HttpListener: Too many incoming connections");
-    QTcpSocket *socket = new QTcpSocket(this);
+    QTcpSocket* socket = new QTcpSocket(this);
     socket->setSocketDescriptor(socketDescriptor);
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
     socket->write(

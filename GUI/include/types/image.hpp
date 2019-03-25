@@ -7,6 +7,9 @@
 #include "include/resource_path.h"
 
 namespace c3picko {
+/**
+ * @brief Represents a cached image. Internal format is cv::Mat.
+ */
 class Image {
  public:
   typedef QString ID;

@@ -14,15 +14,15 @@ Plate1::Plate1()
                  (AlgoStep)Plate1::detect},
                 {}, true, 5000) {}
 
-void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
-  cv::Mat& output = result->newMat();
+void Plate1::cvt(AlgorithmJob *base, PlateResult *result) {
+  cv::Mat &input = *reinterpret_cast<cv::Mat *>(base->input());
+  cv::Mat &output = result->newMat();
 
   cv::cvtColor(input, output, CV_BGR2GRAY);
 }
-void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
-  cv::Mat& input = result->oldMat();
-  cv::Mat& output = result->newMat();
+void Plate1::threshold(AlgorithmJob *, PlateResult *result) {
+  cv::Mat &input = result->oldMat();
+  cv::Mat &output = result->newMat();
 
   cv::Mat tmp, _;
   double otsu =
@@ -40,21 +40,21 @@ void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
 
 // Strict include, points on the edge are considered outside
 template <std::size_t s1, std::size_t s2>
-bool polyIncludesPoly(std::array<cv::Point, s1> const& poly1,
-                      std::array<cv::Point, s2> const& poly2) {
+bool polyIncludesPoly(std::array<cv::Point, s1> const &poly1,
+                      std::array<cv::Point, s2> const &poly2) {
   for (std::size_t i = 0; i < poly2.size(); ++i)
     if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
 
   return true;
 }
 
-void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input());
-  cv::Mat const& erroded = result->oldMat();
+void Plate1::detect(AlgorithmJob *base, PlateResult *result) {
+  cv::Mat const &original = *reinterpret_cast<cv::Mat *>(base->input());
+  cv::Mat const &erroded = result->oldMat();
 
   math::Range<int> area((original.rows * original.cols) / 32,
                         std::numeric_limits<int>::max());
-  cv::Mat& ret(result->newMat(original));
+  cv::Mat &ret(result->newMat(original));
   std::vector<math::OuterBorder> outer_edges;
   std::vector<math::InnerBorder> inner_edges;
   std::vector<std::vector<cv::Point>> contours;

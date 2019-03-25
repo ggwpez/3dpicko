@@ -33,7 +33,7 @@ void PlateDetection::cleanupTestCase() {}
 
 void PlateDetection::test_case1() {
   int i = 0;
-  for (auto const& it : images_) {
+  for (auto const &it : images_) {
     try {
       /*cv::Mat out = math::detectPlate2(it.first, it.second);
       cv::imwrite("out_" + std::to_string(i++) + ".png", out);
@@ -43,7 +43,7 @@ void PlateDetection::test_case1() {
       while (cv::waitKey(0) != 'q')
               ;
       cv::destroyAllWindows();*/
-    } catch (std::exception const& e) {
+    } catch (std::exception const &e) {
       qCritical() << e.what();
       continue;
     }

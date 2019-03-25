@@ -12,6 +12,12 @@ class Colony;
 class AlgorithmManager;
 class APIInput;
 class APIController;
+
+/**
+ * @brief Creates the messages that should be send to the client(s) as response
+ * for the given event. All these SLOTS map to the according SIGNALS from the
+ * APIController op_. Emits the to* SIGNALS from the APIController member op_.
+ */
 class APIOutput : public QObject {
   Q_OBJECT
 
@@ -31,7 +37,9 @@ class APIOutput : public QObject {
   void JobCreated(Job, QObject* client);
   void JobCreateError(QString, QObject*);
   void JobDeleted(Job, QObject* client);
-  void JobDeleteError(QString path, QObject* client);
+  void JobDeleteError(Job::ID id, QObject* client);
+  void JobStarted(Job::ID, QObject* client);
+  void JobStartError(QString error, QObject* client);
 
   void ImageCreated(Image, QObject* client);
   void ImageCreateError(QString path, QObject* client);
@@ -50,7 +58,7 @@ class APIOutput : public QObject {
   void SetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
                        QObject* client);
   void SetStartingWellError(QString error, QObject* client);
-  void SetColoniesToPick(Job::ID job, std::set<std::size_t> colonies,
+  void SetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
                          QObject* client);
   void SetColoniesToPickError(QString error, QObject* client);
 

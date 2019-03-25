@@ -6,8 +6,15 @@
 
 namespace c3picko {
 namespace pi {
-typedef QString ApiKey;
-}
+struct ApiKey {
+  ApiKey(QString const& key);
+
+  QString key() const;
+
+ private:
+  QString key_;
+};
+}  // namespace pi
 MAKE_MARSHALLABLE(pi::ApiKey);
 }  // namespace c3picko
 

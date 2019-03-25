@@ -13,16 +13,16 @@ Plate::Plate(const math::OuterBorder& outer_border,
   center_error_ = std::abs(1 - outer_center_.x / inner_center_.x) +
                   std::abs(1 - outer_center_.y / inner_center_.y);
 
-  std::tie(a1_, h1_) = findA1(outer_border_, inner_border_);
-  angle_ = calculateOuterRotation(outer_border_, a1_, h1_);
+  std::tie(a1_, h1_) = findA1H1(outer_border_, inner_border_);
+  angle_ = calculateRotation(outer_border_, a1_, h1_);
   rotation_matrix_ = cv::getRotationMatrix2D(center_, angle_, 1);
 
   qDebug() << "Plate Angle" << angle_;
 }
 
 Plate::Plate(const math::OuterBorder& outer_border,
-             const math::InnerBorder& inner_border, int a1, int h1,
-             cv::Point2d inner_center, cv::Point2d outer_center,
+             const math::InnerBorder& inner_border, std::size_t a1,
+             std::size_t h1, cv::Point2d inner_center, cv::Point2d outer_center,
              cv::Point2d center, math::UnitValue center_error, double angle,
              cv::Mat rotation_matrix)
     : outer_border_(outer_border),
@@ -55,7 +55,7 @@ Plate Plate::normalized(const cv::Mat& in, cv::Mat& out) const {
   out = out(aabb);
 
   // After rotation, the angle of the plate should be nealy zero
-  double new_angle = calculateOuterRotation(new_outer_border, a1_, h1_);
+  double new_angle = calculateRotation(new_outer_border, a1_, h1_);
   // if (std::abs(new_angle) > .01 ^ std::abs(new_angle - 360) > .01)
   // qCritical() << "NewAngle was" << new_angle;
 
@@ -66,9 +66,8 @@ Plate Plate::normalized(const cv::Mat& in, cv::Mat& out) const {
                cv::Mat::eye(2, 3, CV_32F));
 }
 
-// Calculates the rotation of a quasi rectangle, only works counter clockwise
-double Plate::calculateOuterRotation(const math::OuterBorder& cont, int a1,
-                                     int h1) {
+double Plate::calculateRotation(const math::OuterBorder& cont, std::size_t a1,
+                                std::size_t h1) {
   // There sure is an easier way but for now:
   // Convert all angles to polarcoordinates with magnitude = 1, average them and
   // take the resulting phase angle
@@ -81,13 +80,14 @@ double Plate::calculateOuterRotation(const math::OuterBorder& cont, int a1,
   // FIXME
   /*auto c2 = std::polar(1., std::atan2(cont[(a1 + 2) % 4].y - cont[(a1 + 1) %
   4].y, cont[(a1 + 2) % 4].x - cont[(a1 + 1) % 4].x)
-                                                                                                                                                                                                                                   + M_PI_2);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                   + M_PI_2);
   auto c3
-                                  = std::polar(1., std::atan2(cont[(a1 + 3) %
-  4].y - cont[(a1 + 2) % 4].y, cont[(a1 + 3) % 4].x - cont[(a1 + 2) % 4].x) +
-  M_PI); auto c4 = std::polar(1., std::atan2(cont[(a1 + 4) % 4].y - cont[(a1 +
-  3) % 4].y, cont[(a1 + 4) % 4].x - cont[(a1 + 3) % 4].x)
-                                                                                                                                                                                                                                   - M_PI_2);
+                                                                  =
+  std::polar(1., std::atan2(cont[(a1 + 3) % 4].y - cont[(a1 + 2) % 4].y,
+  cont[(a1 + 3) % 4].x - cont[(a1 + 2) % 4].x) + M_PI); auto c4 = std::polar(1.,
+  std::atan2(cont[(a1 + 4) % 4].y - cont[(a1 + 3) % 4].y, cont[(a1 + 4) % 4].x -
+  cont[(a1 + 3) % 4].x)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                   - M_PI_2);
 
   auto sum = (c1 + c2 + c3 + c4);
 
@@ -95,10 +95,9 @@ double Plate::calculateOuterRotation(const math::OuterBorder& cont, int a1,
   return ret < 0 ? ret + 360 : ret;*/
 }
 
-// this function assumes, that OpenCV creates contours counter clockwise
-// and that the image was not mirrored
-std::pair<int, int> Plate::findA1(const math::OuterBorder& outer_border,
-                                  const math::InnerBorder& inner_border) {
+std::pair<std::size_t, std::size_t> Plate::findA1H1(
+    const math::OuterBorder& outer_border,
+    const math::InnerBorder& inner_border) {
   // index of the outer_border points
   int ia1 = -1, ih1 = -1;
   // the length of the two diagonal edges
@@ -154,9 +153,9 @@ std::pair<int, int> Plate::findA1(const math::OuterBorder& outer_border,
   return {a1, h1};
 }
 
-int Plate::a1() const { return a1_; }
+std::size_t Plate::a1() const { return a1_; }
 
-int Plate::h1() const { return h1_; }
+std::size_t Plate::h1() const { return h1_; }
 
 math::OuterBorder Plate::outerBorder() const { return outer_border_; }
 }  // namespace c3picko

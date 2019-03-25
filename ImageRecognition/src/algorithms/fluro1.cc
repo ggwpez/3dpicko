@@ -40,9 +40,9 @@ Fluro1::Fluro1()
 			   Qt::red)*/},
           true, 3000) {}
 
-void Fluro1::threshold(AlgorithmJob* base, DetectionResult* result) {
-  cv::Mat& input = result->oldMat();
-  cv::Mat& output = result->newMat();
+void Fluro1::threshold(AlgorithmJob *base, DetectionResult *result) {
+  cv::Mat &input = result->oldMat();
+  cv::Mat &output = result->newMat();
 
   cv::Scalar mean, stddev;
   // Filter by brightest pixels

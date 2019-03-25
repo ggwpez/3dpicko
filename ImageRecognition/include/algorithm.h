@@ -12,7 +12,7 @@ class AlgorithmResult;
 class AlgoSetting;
 class AlgorithmJob;
 /**
- * @brief Performs calculations stepwise.
+ * @brief Performs calculations stepwise in a pipeline way of excution.
  * Operations from other Algorithms can be reused.
  * Needs AlgorithmJob as parent QObject before calling run().
  * @tparam Input data type

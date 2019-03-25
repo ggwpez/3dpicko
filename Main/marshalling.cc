@@ -1,5 +1,6 @@
 #include "include/marshalling.hpp"
 #include <QJsonArray>
+#include "include/octoconfig.h"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
@@ -174,9 +175,9 @@ QJsonObject Marshalling::toJson(const QDateTime& value) {
 }
 
 template <>
-std::set<qint32> Marshalling::fromJson(const QJsonObject& obj) {
+QSet<qint32> Marshalling::fromJson(const QJsonObject& obj) {
   QJsonArray elements = obj["elements"].toArray();
-  std::set<qint32> ret;
+  QSet<qint32> ret;
 
   for (QJsonValueRef element : elements) ret.insert(element.toInt());
 
@@ -184,7 +185,7 @@ std::set<qint32> Marshalling::fromJson(const QJsonObject& obj) {
 }
 
 template <>
-QJsonObject Marshalling::toJson(const std::set<qint32>& value) {
+QJsonObject Marshalling::toJson(const QSet<qint32>& value) {
   QJsonObject obj;
   QJsonArray elements;
 
@@ -196,9 +197,9 @@ QJsonObject Marshalling::toJson(const std::set<qint32>& value) {
 }
 
 template <>
-std::set<QString> Marshalling::fromJson(const QJsonObject& obj) {
+QSet<QString> Marshalling::fromJson(const QJsonObject& obj) {
   QJsonArray elements = obj["elements"].toArray();
-  std::set<QString> ret;
+  QSet<QString> ret;
 
   for (QJsonValueRef element : elements)
     ret.insert(Marshalling::fromJson<QString>(element));
@@ -207,7 +208,7 @@ std::set<QString> Marshalling::fromJson(const QJsonObject& obj) {
 }
 
 template <>
-QJsonObject Marshalling::toJson(const std::set<QString>& value) {
+QJsonObject Marshalling::toJson(const QSet<QString>& value) {
   QJsonObject obj;
   QJsonArray elements;
 

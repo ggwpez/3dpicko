@@ -31,3 +31,6 @@ SOURCES += $$PWD/httpglobal.cpp \
 		   $$PWD/httpsession.cpp \
 		   $$PWD/httpsessionstore.cpp \
 		   $$PWD/staticfilecontroller.cpp
+
+# QtWebApp likes to spam the console
+DEFINES += QT_NO_INFO_OUTPUT

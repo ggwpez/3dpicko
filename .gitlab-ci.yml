@@ -12,11 +12,11 @@ dependencies:linux:
     - whoami
     - uname -a
     - lsb_release -a
-    - sudo apt update -qq
-    - sudo apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config
-    - sudo bash opencv.sh
+    #- sudo apt update -qq
+    #- sudo apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config
+    #- sudo bash opencv.sh
     - mkdir -p ~/.ssh/
-    - sudo ssh-keyscan gitlab.com > ~/.ssh/known_hosts
+    - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
     - git config --global user.email "gitlab@spam.tasty.limo"
     - git config --global user.name "Commitbot"
   except:
@@ -33,6 +33,7 @@ build:linux:
   artifacts:
     paths:
       - build/
+    expire_in: 2 hour
 
 test:linux:
   stage: test
@@ -45,7 +46,7 @@ test:linux:
     - make check
   except:
     - /^.*-format$/
-
+    
 check:linux:
   stage: check
   script:
@@ -56,18 +57,18 @@ check:linux:
 format:linux:
   stage: format
   script:
+    - clang-format --version
     - git remote set-url origin git@gitlab.com:ggwpez/3cpicko.git
+    - export GIT_SSH_COMMAND="ssh -i ~/.ssh/gitlab"
     - git branch -D `echo $CI_COMMIT_REF_NAME-format` || true
     - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
     - find . -regex '.*\.\(cc\|h\|hpp\|cpp\)' -exec clang-format -style=file -i {} \;
     - find . -name '*\.html' -type f -exec xmllint --html --output '{}' --format '{}' \;
     - git diff --quiet --exit-code || (git add -u && git commit -m"=Auto formatting=" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
   except:
-    - /^.*-format$/
+    - /^.*$/
 
 document:linux:
   stage: document
   script:
     - doxygen Doxyfile
-  except:
-    - /^.*-format$/

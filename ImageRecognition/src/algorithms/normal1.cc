@@ -10,32 +10,37 @@
 namespace c3picko {
 
 Normal1::Normal1()
-	: Algorithm(
-		  "1", "Normal1", "Detects colonies with standard illumination",
-		  {(AlgoStep)Normal1::cvt, (AlgoStep)Normal1::threshold,
-		   (AlgoStep)Normal1::erodeAndDilate, (AlgoStep)Normal1::label, (AlgoStep)Normal1::safetyMargin /*,
+    : Algorithm(
+          "1", "Normal1", "Detects colonies with standard illumination",
+          {(AlgoStep)Normal1::cvt, (AlgoStep)Normal1::threshold,
+           (AlgoStep)Normal1::erodeAndDilate, (AlgoStep)Normal1::label,
+           (AlgoStep)Normal1::safetyMargin /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
-		  {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																		  "Show ignored
-																																		  by
-				  algorithm", "", true, {}, Qt::red),*/
-		   AlgoSetting::make_rangeslider_double("area", "Area", "lel", 50, 2000,
-												1, {120, 1000}),
-		  AlgoSetting::make_slider_double("safety_margin_lt", "Safety Margin LeftTop", "", 0, 1, .01, .1, Qt::gray),
-		 AlgoSetting::make_slider_double("safety_margin_rb", "Safety Margin RightBot", "",0, .9, .01, .9, Qt::gray),
-		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
-												"", 0, 1, .001, {.7, 1},
-												Qt::cyan),
-		   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
-												0, 1, .001, {.7, 1},
-												Qt::magenta),
-		   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
-												1, .001, {.8, 1}, Qt::green),
-		   AlgoSetting::make_rangeslider_double(
-			   "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-		   //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
-		   // plate", "", true),
-		   /*AlgoSetting::make_checkbox(
+          {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "Show ignored
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          by
+                                          algorithm", "", true, {}, Qt::red),*/
+           AlgoSetting::make_rangeslider_double("area", "Area", "lel", 50, 2000,
+                                                1, {120, 1000}),
+           AlgoSetting::make_slider_double("safety_margin_lt",
+                                           "Safety Margin LeftTop", "", 0, 1,
+                                           .01, .1, Qt::gray),
+           AlgoSetting::make_slider_double("safety_margin_rb",
+                                           "Safety Margin RightBot", "", 0, .9,
+                                           .01, .9, Qt::gray),
+           AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+                                                "", 0, 1, .001, {.7, 1},
+                                                Qt::cyan),
+           AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+                                                0, 1, .001, {.7, 1},
+                                                Qt::magenta),
+           AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+                                                1, .001, {.8, 1}, Qt::green),
+           AlgoSetting::make_rangeslider_double(
+               "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+           //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
+           // plate", "", true),
+           /*AlgoSetting::make_checkbox(
 			   "filter_relative", "Filter detected colonies", "", false,
 			   {AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
 										   "Select an attribute to filter",
@@ -48,9 +53,7 @@ Normal1::Normal1()
 					"rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01,
 					{-5, 5})},
 			   Qt::red)*/},
-		  false, 3000)
-{
-}
+          false, 3000) {}
 
 Normal1::~Normal1() {}
 
@@ -164,7 +167,7 @@ void Normal1::erodeAndDilate(AlgorithmJob* base, DetectionResult* result) {
 
 void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
   cv::Mat& input = result->oldMat();
-  auto& colonies = result->colonies();
+  std::vector<Colony>& colonies = result->colonies();
 
   Colony::ID id = 0;
   math::Range<double> _area =
@@ -222,7 +225,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
       // We check the AABB_RATIO twice for speed NOTE look into this in
       // benchmark phase
       if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h)))) {
-        colonies.push_back(
+        colonies.emplace_back(
             Colony(center.x / double(input.cols), center.y / double(input.rows),
                    area, 0, std::sqrt(area / M_PI), 0, id++, "aabb_ratio"));
       }
@@ -236,7 +239,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
                     _circularity, _convexity);
 
       if (!excluded_by.isEmpty())
-        colonies.push_back(
+        colonies.emplace_back(
             Colony(center.x / double(input.cols), center.y / double(input.rows),
                    area, 0, std::sqrt(area / M_PI), 0, id++, excluded_by));
       else {
@@ -246,33 +249,25 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
         // otherwise they need conversion
         double br = math::brightness(
             contours[0], *reinterpret_cast<cv::Mat*>(base->input()));
-        Colony detected(center.x / double(input.cols),
-                        center.y / double(input.rows), area, circ,
-                        circ / (2 * M_PI), br, id++, "");
-        colonies.push_back(detected);
+        colonies.emplace_back(center.x / double(input.cols),
+                              center.y / double(input.rows), area, circ,
+                              circ / (2 * M_PI), br, id++, "");
       }
     }
   }
 }
 
-bool greater(cv::Point2d a, cv::Point2d b) {
-  return ((a.x > b.x) || (a.y > b.y));
-}
-bool smaller(cv::Point2d a, cv::Point2d b) {
-  return ((a.x < b.x) || (a.y < b.y));
-}
-
 void Normal1::safetyMargin(AlgorithmJob* base, DetectionResult* result) {
-  std::vector<Colony>* input = &result->colonies();
+  std::vector<Colony>& input = result->colonies();
   double margin_lt = base->settingById("safety_margin_lt").value<double>();
   double margin_rb = base->settingById("safety_margin_rb").value<double>();
   cv::Point2d lt(margin_lt, margin_lt), rb(margin_rb, margin_rb);
 
-  for (auto it = input->begin(); it != input->end(); ++it) {
+  for (auto it = input.begin(); it != input.end(); ++it) {
     Colony const& c = *it;
     cv::Point2d cp(c.x(), c.y());
 
-    if (c.excluded()) continue;
+    if (!c.included()) continue;
 
     if (cp.y < lt.y || cp.x < lt.x)
       it->setExcluded_by("safety_margin_lt");

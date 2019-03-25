@@ -32,6 +32,8 @@ Profile::ID Job::printer() const { return printer_; }
 
 Profile::ID Job::plate() const { return plate_; }
 
+Profile::ID Job::octoprint() const { return octoprint_; }
+
 AlgorithmResult::ID Job::resultID() const {
   if (result_ids_.empty())
     return AlgorithmResult::ID();
@@ -55,18 +57,12 @@ void Job::setStartingRow(int starting_row) { starting_row_ = starting_row; }
 
 void Job::setPlate(const Profile::ID& plate) { plate_ = plate; }
 
-int Job::coloniesToPick() const { return colonies_to_pick_; }
+void Job::setOctoprint(const Profile::ID& octoprint) { octoprint_ = octoprint; }
 
-void Job::setcoloniesToPick(int colonies_to_pick) {
+QSet<Colony::ID> Job::coloniesToPick() const { return colonies_to_pick_; }
+
+void Job::setcoloniesToPick(const QSet<Colony::ID>& colonies_to_pick) {
   colonies_to_pick_ = colonies_to_pick;
-}
-
-const std::set<std::size_t>& Job::selectedToPick() const {
-  return selected_to_pick_;
-}
-
-void Job::setselectedToPick(const std::set<std::size_t>& selected_to_pick) {
-  selected_to_pick_ = selected_to_pick;
 }
 
 qint32 Job::step() const { return step_; }

@@ -13,6 +13,10 @@ class QWebSocket;
 class QWebSocketServer;
 namespace c3picko {
 
+/**
+ * @brief Websocket Server. Handles websocket connections and API requests for
+ * all clients. Configured via config.ini [websockets]
+ */
 class WsServer : public QObject {
   Q_OBJECT
  public:

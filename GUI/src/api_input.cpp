@@ -1,4 +1,5 @@
 #include "include/api_input.h"
+#include "include/api_commands.h"
 #include "include/api_controller.h"
 
 namespace c3picko {
@@ -13,36 +14,38 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
   // All no-brainer requests are directly emittet as signals, indicating
   // success.
   // Complex request are parsed and forwarded to the api_controller.
-  if (path == "getimagelist") {
+  if (path == APICommands::GET_IMAGE_LIST) {
     emit api->OnImageListRequested(client);
-  } else if (path == "getprofilelist") {
+  } else if (path == APICommands::GET_PROFILE_LIST) {
     emit api->OnProfileListRequested(client);
-  } else if (path == "getjoblist") {
+  } else if (path == APICommands::GET_JOB_LIST) {
     emit api->OnJobListRequested(client);
-  } else if (path == "getdetectionalgorithms") {
+  } else if (path == APICommands::GET_DETECTION_ALGORITHMS) {
     emit api->OnAlgorithmListRequested(client);
-  } else if (path == "setdefaultsettingsprofile") {
+  } else if (path == APICommands::SET_DEFAULT_SETTINGS_PROFILE) {
     Profile::ID id = Marshalling::fromJson<QString>(req_data["id"]);
     api->setDefaultSettingsProfile(id, client);
-  } else if (path == "setstartingwell") {
+  } else if (path == APICommands::SET_STARTING_WELL) {
     Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);
     Profile::ID plate_id = Marshalling::fromJson<QString>(req_data["plate_id"]);
     int row = req_data["row"].toInt();
     int col = req_data["column"].toInt();
 
     api->setStartingWell(job_id, plate_id, row, col, client);
-  } else if (path == "deleteimage") {
+  } else if (path == APICommands::DELETE_IMAGE) {
     Image::ID id = Marshalling::fromJson<QString>(req_data["id"]);
 
     api->DeleteImage(id, client);
-  } else if (path == "deletejob") {
+  } else if (path == APICommands::DELETE_JOB) {
     QString id = Marshalling::fromJson<QString>(req_data["id"]);
     api->DeleteJob(id, client);
-  } else if (path == "startjob") {
+  } else if (path == APICommands::START_JOB) {
     Job::ID job = Marshalling::fromJson<QString>(req_data["id"]);
+    Profile::ID profile =
+        Marshalling::fromJson<Profile::ID>(req_data["octoprint_profile"]);
 
-    api->startJob(job, client);
-  } else if (path == "uploadimage") {
+    api->startJob(job, profile, client);
+  } else if (path == APICommands::UPLOAD_IMAGE) {
     // Get image data
     QByteArray img_data(
         QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
@@ -54,47 +57,39 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     qDebug() << "Hash" << image.id();
 
     api->UploadImage(image, client);
-  } else if (path == "crop-image") {
+  } else if (path == APICommands::CROP_IMAGE) {
     QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
 
     api->cropImage(img_id, client);
-  } else if (path == "createsettingsprofile") {
+  } else if (path == APICommands::CREATE_SETTINGS_PROFILE) {
     // Profile::ID newId		 = api->db().newProfileId();
 
     // json_profile["id"] = newId; // TODO  hack
     Profile profile_wo_id(Marshalling::fromJson<Profile>(req_data));
 
     api->createSettingsProfile(profile_wo_id, client);
-  } else if (path == "updatesettingsprofile") {
+  } else if (path == APICommands::UPDATE_SETTINGS_PROFILE) {
     Profile profile(Marshalling::fromJson<Profile>(req_data));
 
     api->updateSettingsProfile(profile, client);
-  } else if (path == "deletesettingsprofile") {
+  } else if (path == APICommands::DELETE_SETTINGS_PROFILE) {
     Profile::ID id = Marshalling::fromJson<QString>(req_data["id"]);
 
     api->deleteSettingsProfile(id, client);
-  } else if (path == "createjob") {
+  } else if (path == APICommands::CREATE_JOB) {
     Job job_wo_id(Marshalling::fromJson<Job>(req_data));
 
     api->createJob(job_wo_id, client);
-  } else if (path == "getpositions") {
+  } else if (path == APICommands::GET_POSITIONS) {
     QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
     api->getPositions(img_id, client);
-  } else if (path == "setcoloniestopick") {
+  } else if (path == APICommands::SET_COLONIES_TO_PICK) {
     Job::ID job = Marshalling::fromJson<Job::ID>(req_data["job"]);
     quint32 number = req_data["number"].toInt();
-    std::set<Colony::ID> ex_user = Marshalling::fromJson<std::set<Colony::ID>>(
-                             req_data["ex_user"]),
-                         in_user = Marshalling::fromJson<std::set<Colony::ID>>(
-                             req_data["in_user"]);
-
-#ifdef QT_DEBUG
-    std::vector<Colony::ID> intersection;
-    std::set_intersection(ex_user.begin(), ex_user.end(), in_user.begin(),
-                          in_user.end(), std::back_inserter(intersection));
-
-    if (!intersection.empty()) qWarning() << L"EX_USER ∩ IN_USER != ∅";
-#endif
+    QSet<Colony::ID> ex_user = Marshalling::fromJson<QSet<Colony::ID>>(
+                         req_data["ex_user"]),
+                     in_user = Marshalling::fromJson<QSet<Colony::ID>>(
+                         req_data["in_user"]);
 
     //
     // EXLUDED, INCLUDED
@@ -104,19 +99,19 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     // (INCLUDED U IN_USER) \ EX_USER
     //
 
-    api->setColoniesToPick(job, number, client);
-  } else if (path == "updatedetectionsettings") {
+    api->setColoniesToPick(job, ex_user, in_user, number, client);
+  } else if (path == APICommands::UPDATE_DETECTION_SETTINGS) {
     Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);
     QString algo_id = Marshalling::fromJson<QString>(req_data["algorithm"]);
     QJsonObject settings = req_data["settings"].toObject();
 
     emit api->OnColonyDetectionStarted(job_id, client);
     api->updateDetectionSettings(job_id, algo_id, settings, client);
-  } else if (path == "shutdown") {
+  } else if (path == APICommands::SHUTDOWN) {
     api->shutdown(client);
-  } else if (path == "restart") {
+  } else if (path == APICommands::RESTART) {
     api->restart(client);
-  } else if (path == "backup") {
+  } else if (path == APICommands::BACKUP) {
     api->db().saveToFile();
   } else {
     qWarning() << "Unknown request" << raw_request;

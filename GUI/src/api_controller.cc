@@ -53,7 +53,7 @@ APIController::APIController(AlgorithmManager* colony_detector,
           output_->metaObject()->indexOfSlot(qPrintable(slot_name));
       if (slot_index == -1)
         qDebug("Could not find slot APIOutput::%s", qPrintable(slot_name));
-      {
+      else {
         QMetaMethod slot = output_->metaObject()->method(slot_index);
 
         QObject::connect(this, signal, output_, slot);
@@ -67,7 +67,6 @@ void APIController::defaultSignalHandler() {
   QMetaObject const* meta_sender = QObject::sender()->metaObject();
   QString signal_name = QMetaObject::normalizedSignature(
       meta_sender->method(QObject::senderSignalIndex()).name());
-
   qDebug("Event %s::%s", qPrintable(meta_sender->className()),
          qPrintable(signal_name));
 }
@@ -226,13 +225,13 @@ void APIController::cropImage(Image::ID id, QObject* client) {
     // Is the cropped image valid?
     if (!original.crop(x, y, w, h, cropped, error))
     {
-                                                                    emit
+                                                                                                                                    emit
     OnImageCropError(id, client); // TODO inform client return;
     }
 
     if (!cropped.writeToFile()) // save cropped image to the hdd
     {
-                                                                    emit
+                                                                                                                                    emit
     OnImageCreateError("<cropped>", client); return;
     }
 
@@ -329,45 +328,57 @@ void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
   }
 }
 
-void APIController::setColoniesToPick(Job::ID id, quint32 number,
+void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
+                                      QSet<Colony::ID> in_user, quint32 number,
                                       QObject* client) {
   if (!db_->jobs().exists(id)) {
     emit OnSetColoniesToPickError("Job " + id + " not found", client);
   } else {
     Job& job = db_->jobs().get(id);
-    job.setcoloniesToPick(number);
     if (!db_->detectionResults().exists(job.resultID())) {
       emit OnSetColoniesToPickError(
           "Job " + id + " has no detected colonies attatched to it", client);
     } else {
       DetectionResult& result = db_->detectionResults().get(job.resultID());
-      std::vector<Colony> all_colonies = result.colonies();
-      std::vector<std::size_t> included;
-      std::set<std::size_t> good_colonies;  // index
-
-      // filter out all that are excluded by a setting
-      for (std::size_t i = 0; i < all_colonies.size(); ++i)
-        if (!all_colonies[i].excluded()) included.push_back(i);
-
-      std::mt19937_64 mt(123);  // constant seed for determinism
-      int max_good = number;
-      Q_ASSERT(max_good);
-
-      if (max_good > included.size()) {
-        emit OnSetColoniesToPickError("Cant pick more colonies than available",
-                                      client);
-        return;
+      QSet<Colony::ID> selected;
+      QSet<Colony::ID> in_algo, ex_algo;
+      {
+        for (auto it = result.includedBegin(); it != result.includedBegin();
+             ++it)
+          in_algo.insert(it->id());
+        for (auto it = result.excludedBegin(); it != result.excludedBegin();
+             ++it)
+          ex_algo.insert(it->id());
       }
 
-      while (max_good--) {
-        int index = std::uniform_int_distribution<>(0, included.size() - 1)(mt);
-
-        good_colonies.insert(all_colonies[included[index]].id());
-        included.erase(included.begin() + index);
+      // Input validation
+      {
+        if (!(ex_user & ex_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant exclude colonies that are already excluded by the "
+              "algorithm",
+              client);
+        if (!(ex_user - in_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant exclude colonies that are not included by the algorithm",
+              client);
+        if (!(in_user & in_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant include colonies that are already included by the "
+              "algorithm",
+              client);
+        if (!(in_user - ex_algo).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant include colonies that are not excluded by the algorithm",
+              client);
+        if (!(in_user & ex_user).empty())
+          return emit OnSetColoniesToPickError(
+              "Cant include and exclude a colony at the same time", client);
       }
 
-      job.setselectedToPick(good_colonies);
-      emit OnSetColoniesToPick(id, good_colonies, client);
+      selected = (in_algo - ex_user) + (ex_algo - in_user);
+      job.setcoloniesToPick(selected);
+      emit OnSetColoniesToPick(id, selected, client);
     }
   }
 }
@@ -457,50 +468,67 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
   if (job) job->start(true, true);
 }
 
-void APIController::startJob(Job::ID id, QObject* client) {
-  static OctoConfig config("10.14.0.150", "F866D6261972458CACAE9CB56E484758");
-  static OctoPrint* printer = new OctoPrint(config, this);
-
-  if (!db_->jobs().exists(id)) {
-    emit OnColonyDetectionError("Job '" + id + "' job found",
-                                client);  // FIXME OnJobStartError
-    return;
-  }
+void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
+                             QObject* client) {
+  if (!db_->jobs().exists(id))
+    return emit OnJobStartError("Job '" + id + "' job found", client);
   Job& job = db_->jobs().get(id);
 
-  if (!db_->detectionResults().exists(job.resultID())) {
-    emit OnColonyDetectionError(
+  if (!db_->detectionResults().exists(job.resultID()))
+    return emit OnJobStartError(
         "Job " + id +
             " could not find its detection results: " + job.resultID(),
         client);
-    return;
-  }
-
   DetectionResult& result = static_cast<DetectionResult&>(
       db_->detectionResults().get(job.resultID()));
-  // FIXME check
+
+  if (!db_->profiles().exists(job.printer()) ||
+      !db_->profiles().exists(job.socket()) ||
+      !db_->profiles().exists(job.plate()) ||
+      !db_->profiles().exists(octoprint_id))
+    return emit OnJobStartError(
+        "Internal error: Cant find printer, socket, plate or octoprint profile",
+        client);
+  job.setOctoprint(octoprint_id);
+
   PrinterProfile* printerp =
-      (PrinterProfile*)(db_->profiles().get(job.printer()));
+      db_->profiles().get(job.printer()).operator c3picko::PrinterProfile*();
   PlateSocketProfile* socket =
-      (PlateSocketProfile*)(db_->profiles().get(job.socket()));
-  PlateProfile* plate = (PlateProfile*)(db_->profiles().get(job.plate()));
+      db_->profiles().get(job.socket()).operator c3picko::PlateSocketProfile*();
+  PlateProfile* plate =
+      db_->profiles().get(job.plate()).operator c3picko::PlateProfile*();
+  OctoConfig* octoprint =
+      db_->profiles().get(job.octoprint()).operator c3picko::pi::OctoConfig*();
+
+  // static OctoConfig config("10.14.0.150",
+  // pi::ApiKey("F866D6261972458CACAE9CB56E484758"));
+  OctoPrint* printer = new OctoPrint(*octoprint, this);
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 
-  std::vector<Colony> all_colonies = result.colonies();
-  std::set<std::size_t> good_colonies = job.selectedToPick();
+  QSet<Colony::ID> selected = job.coloniesToPick();
   std::vector<LocalColonyCoordinates> coords;
 
-  for (auto it = good_colonies.begin(); it != good_colonies.end(); ++it)
-    coords.push_back(Point(all_colonies[*it].x() * 128,
-                           (1.0 - all_colonies[*it].y()) * 85.9));
+  // Convert the colony coordinates to real world coordinates
+  for (QSet<Colony::ID>::iterator it = selected.begin(); it != selected.end();
+       ++it) {
+    auto f = std::find_if(result.includedBegin(), result.includedEnd(),
+                          [&it](Colony const& c) { return c.id() == *it; });
+
+    if (f == result.includedEnd())
+      return emit OnJobStartError("Internal error: Cant find selected colonie",
+                                  client);
+
+    // Invert the y-axis. FIXME get the frame size from the plate profile
+    coords.push_back(Point(f->x() * 128, (1.0 - f->y()) * 85.9));
+  }
 
   std::vector<GcodeInstruction> code =
       gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
                                                 job.startingCol(), coords);
 
   QFile file("out.gcode");
-  if (!file.open(QIODevice::WriteOnly)) throw Exception("Could not save gcode");
+  if (!file.open(QIODevice::WriteOnly)) qWarning() << "Could not save gcode";
   QTextStream ts(&file);
 
   QStringList gcode_list;
@@ -510,8 +538,7 @@ void APIController::startJob(Job::ID id, QObject* client) {
   }
 
   Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-
-  printer->SendCommand(cmd);
+  printer->SendCommand(cmd);  // TODO inform client
 }
 
 void APIController::shutdown(QObject*) {
@@ -521,7 +548,7 @@ void APIController::shutdown(QObject*) {
 
 void APIController::restart(QObject*) {
   qDebug() << "Restart";
-  qApp->exit(exitRestart());
+  qApp->exit(exitCodeRestart());
 }
 
 QJsonObject APIController::createImageList() const {
@@ -577,13 +604,14 @@ QJsonObject APIController::createProfileList() {
   json["defaultPrinter"] = db_->defaultPrinter();
   json["defaultSocket"] = db_->defaultSocket();
   json["defaultPlate"] = db_->defaultPlate();
+  json["defaultOctoprint"] = db_->defaultPlate();
 
   json["profiles"] = json_profiles;
 
   json["printerTemplate"] = Profile::printerTemplate();
   json["socketTemplate"] = Profile::socketTemplate();
   json["plateTemplate"] = Profile::plateTemplate();
-  // json["octoprintTemplate"] = ;
+  json["octoprintTemplate"] = Profile::octoprintTemplate();
 
   return json;
 }

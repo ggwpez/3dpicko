@@ -9,7 +9,7 @@
 
 namespace c3picko {
 namespace pi {
-OctoPrint::OctoPrint(OctoConfig const &config, QObject *_parent)
+OctoPrint::OctoPrint(OctoConfig const& config, QObject* _parent)
     : QObject(_parent),
       config_(config),
       network_(new QNetworkAccessManager(this)),
@@ -18,15 +18,14 @@ OctoPrint::OctoPrint(OctoConfig const &config, QObject *_parent)
    QHostAddress add(config.address());
 
    if (add.protocol() == QAbstractSocket::IPv4Protocol ||
-                   add.protocol() == QAbstractSocket::IPv6Protocol)
-           url.setHost(config.address());
-   else
+                                   add.protocol() ==
+   QAbstractSocket::IPv6Protocol) url.setHost(config.address()); else
    {
 
    }	 */
 }
 
-void OctoPrint::SendCommand(Command *cmd) {
+void OctoPrint::SendCommand(Command* cmd) {
   /*if (resolve_status_ == ResolveStatus::UNRESOLVED)
   {
 
@@ -39,9 +38,9 @@ void OctoPrint::SendCommand(Command *cmd) {
   QNetworkRequest request(config_.protocol() + "://" + config_.address() +
                           "/api/" + cmd->GetApiUrl());
   request.setHeader(QNetworkRequest::ContentTypeHeader, cmd->GetContentType());
-  request.setRawHeader("X-Api-Key", config_.key().toUtf8());
+  request.setRawHeader("X-Api-Key", config_.key().key().toUtf8());
 
-  QNetworkReply *reply = nullptr;
+  QNetworkReply* reply = nullptr;
   switch (cmd->type()) {
     case Command::HTTPType::GET:
       reply = network_->get(request);
@@ -66,7 +65,7 @@ void OctoPrint::SendCommand(Command *cmd) {
   QObject::connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
 }
 
-void OctoPrint::SendCommandTo(Command *cmd, QUrl to) {}
+void OctoPrint::SendCommandTo(Command* cmd, QUrl to) {}
 
 void OctoPrint::Resolve() {}
 }  // namespace pi

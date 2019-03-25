@@ -1,3 +1,5 @@
+message(Using Qt version $$QT_VERSION)
+
 TEMPLATE = subdirs
 
 SUBDIRS += \

@@ -9,7 +9,8 @@ TEMPLATE = app
 
 SOURCES +=  tst_colonycollision.cc \
     tst_platedetection.cc \
-    main.cc
+    main.cc \
+    minimumcutproblemsolver.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ImageRecognition/release/ -lImageRecognition
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ImageRecognition/debug/ -lImageRecognition
@@ -33,5 +34,6 @@ LIBS += -L/usr/local/lib/ \
 
 HEADERS += \
     tst_colonycollision.h \
-    tst_platedetection.h
+    tst_platedetection.h \
+    minimumcutproblemsolver.hpp
 
