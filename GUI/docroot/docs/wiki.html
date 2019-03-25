@@ -9,9 +9,7 @@ Convert to List with proper line break, why is it not working by default?
 use fixed withd independent of browser size
 Add installation from scratch with images
 make sure:
-a1 row offset: yellow,
-a1 column offset: green, 
-is correct
+A1 = H1 in Grafik
 
 Feedback
 BUG :Remove home
@@ -478,14 +476,14 @@ Einstellungen nicht überprüft?
       <b>A1 row offset: </b><br>
     </div>
     <div id="a1_row_offset">
-      This is the offset from well A1 to the edge in row direction (from the left edge to well). <br>
+      This is the offset from well A1 to the edge in row direction (from the top edge to well). <br>
     </div>
     
     <div id="a1_column_offset-h">
       <b>A1 column offset: </b><br>
     </div>
     <div id="a1_column_offset">
-      This is the offset from well A1 to the edge in column direction (from the top edge to well).<br>
+      This is the offset from well A1 to the edge in column direction (from the left edge to well).<br>
     </div>
     
     <div id="well_spacing_center_to_center-h">
@@ -552,24 +550,6 @@ Einstellungen nicht überprüft?
   <p>
     Manually press the switch right sided to the scissors to activate them. They should close automatically and open after releasing the switch. <br>
     <img src="./img/wiki/pneumatic_scissors_switch.jpg"  width="400">
-  </p>
-</div>
-<div id="administration_software">
-  <h1> Setup - Software </h1>
-  
-  <h2> Install Software </h2>
-  <p>There are two options available for installing the software, either use the "Ready to use VM" or the "Manual installation </p>
-  <h3> Ready to use VM </h3>
-  <p>
-    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users as well as the 3d printer. The user's pc does not necessarily need a direct connection to the printer, however for trouble shooting purposes it is recommended.
-  </p>
-  <h3> Manual installation </h3>
-  <p>
-    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the commands in the script and type them in by hand.
-  </p>
-  <h2> Running the Software </h2>
-  <p>
-    The configuration for the web server is saved in the "serverconfig.ini" it is located in 3cpicko/GUI/. By default it is in working condition but for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the Main program and give it as parameter the serverconfig.ini.
   </p>
 </div>
 <div id="administration_hardware">
@@ -658,4 +638,22 @@ Einstellungen nicht überprüft?
   
   <h2> Known Errors </h2>
   <p></p>
+</div>
+<div id="administration_software">
+  <h1> Administration - Software </h1>
+  
+  <h2> Install Software </h2>
+  <p>There are two options available for installing the software, either use the "Ready to use VM" or the "Manual installation </p>
+  <h3> Ready to use VM </h3>
+  <p>
+    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users as well as the 3d printer. The user's pc does not necessarily need a direct connection to the printer, however for trouble shooting purposes it is recommended.
+  </p>
+  <h3> Manual installation </h3>
+  <p>
+    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the commands in the script and type them in by hand.
+  </p>
+  <h2> Running the Software </h2>
+  <p>
+    The configuration for the web server is saved in the "serverconfig.ini" it is located in 3cpicko/GUI/. By default it is in working condition but for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the Main program and give it as parameter the serverconfig.ini.
+  </p>
 </div>
