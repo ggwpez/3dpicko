@@ -225,13 +225,13 @@ void APIController::cropImage(Image::ID id, QObject* client) {
     // Is the cropped image valid?
     if (!original.crop(x, y, w, h, cropped, error))
     {
-                                                                                                                                                                                                                                                                    emit
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    emit
     OnImageCropError(id, client); // TODO inform client return;
     }
 
     if (!cropped.writeToFile()) // save cropped image to the hdd
     {
-                                                                                                                                                                                                                                                                    emit
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    emit
     OnImageCreateError("<cropped>", client); return;
     }
 
@@ -385,7 +385,7 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
 
   std::mt19937_64 gen(1234);  // same seed for determinism
   for (quint32 i = 0; i < all - number; ++i) {
-    std::uniform_int_distribution<> dis(0, suitable.size());
+    std::uniform_int_distribution<> dis(0, suitable.size() - 1);
     suitable.erase(suitable.begin() + dis(gen));
   }
 
@@ -507,8 +507,8 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
       db_->profiles().get(job.socket()).operator c3picko::PlateSocketProfile*();
   PlateProfile* plate =
       db_->profiles().get(job.plate()).operator c3picko::PlateProfile*();
-  // OctoConfig* octoprint	  = db_->profiles().get(job.octoprint()).operator
-  // c3picko::pi::OctoConfig*();
+  // OctoConfig* octoprint	  =
+  // db_->profiles().get(job.octoprint()).operator c3picko::pi::OctoConfig*();
 
   // static OctoConfig config("10.14.0.150",
   // pi::ApiKey("F866D6261972458CACAE9CB56E484758"));
