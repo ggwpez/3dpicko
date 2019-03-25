@@ -154,7 +154,7 @@ QJsonObject Profile::printerTemplate() {
                        "filament_extrusion_length_on_move_goal_to_cut", "",
                        -100, 100, .01, 0, 0, "mm"),
        makeNumberField(
-           "filament_extrusion_length_on_pick", "Filament offset (pick)",
+           "filament_extrusion_length_on_pick", "Filament length for pick",
            "Offset to the length up to which the filament will be extruded "
            "when picking from source- and placing on masterplate.",
            -300, 300, .01, 0, 0, "mm"),
