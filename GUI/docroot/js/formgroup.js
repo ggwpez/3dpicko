@@ -200,29 +200,4 @@ class FormGroup{
 
         return html += `</div>`;
     }
-<<<<<<< HEAD
 }
-
-// Load Wiki
-var wiki;
-$.get("wiki/index.html", function(data){
-    let doc = document.implementation.createHTMLDocument('wiki').createElement('div');
-    doc.innerHTML = data;
-    wiki = $(doc).find('#documentation-container');
-    AddWikiLinks();
-});
-
-function AddWikiLinks(){
-    if(wiki){
-        $('.wiki').each(function(){
-            let id = this.id.slice(5);
-            let link = '/wiki/index.html';
-            if(wiki.find('#'+id).length > 0) link+='#'+id;
-            this.innerHTML = `<a href="${link}" class="textLink" target="_blank" title="open documentation">${this.innerHTML}</a>`;
-            this.classList.remove("wiki");
-        })
-    }
-}
-=======
-}
->>>>>>> e874e7101a191268cf8c9ddfa82b19a18fc89f7a
