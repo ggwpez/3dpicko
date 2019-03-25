@@ -80,14 +80,14 @@ double Plate::calculateRotation(const math::OuterBorder& cont, std::size_t a1,
   // FIXME
   /*auto c2 = std::polar(1., std::atan2(cont[(a1 + 2) % 4].y - cont[(a1 + 1) %
   4].y, cont[(a1 + 2) % 4].x - cont[(a1 + 1) % 4].x)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                   + M_PI_2);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   + M_PI_2);
   auto c3
-                                                                  =
+                                                                                                                                  =
   std::polar(1., std::atan2(cont[(a1 + 3) % 4].y - cont[(a1 + 2) % 4].y,
   cont[(a1 + 3) % 4].x - cont[(a1 + 2) % 4].x) + M_PI); auto c4 = std::polar(1.,
   std::atan2(cont[(a1 + 4) % 4].y - cont[(a1 + 3) % 4].y, cont[(a1 + 4) % 4].x -
   cont[(a1 + 3) % 4].x)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                   - M_PI_2);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   - M_PI_2);
 
   auto sum = (c1 + c2 + c3 + c4);
 
