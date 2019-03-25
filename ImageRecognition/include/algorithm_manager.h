@@ -7,20 +7,26 @@
 
 class QThreadPool;
 namespace c3picko {
+/**
+ * @brief Saves a List of algorithms, which can then be accessed by algos().
+ */
 class AlgorithmManager : public QObject {
   Q_OBJECT
  public:
-  AlgorithmManager(QThreadPool *pool, QList<Algorithm *> algos,
-                   QObject *_parent = nullptr);
+  AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
+                   QObject* _parent = nullptr);
 
  public:
-  AlgorithmJob *createJob(cv::Mat source, Algorithm::ID id,
-                          AlgorithmJob::ID job_id, AlgorithmResult *result,
+  AlgorithmJob* createJob(cv::Mat source, Algorithm::ID id,
+                          AlgorithmJob::ID job_id, AlgorithmResult* result,
                           QJsonObject settings);
-  QList<Algorithm *> algos() const;
+  /**
+   * @brief Always cloneEmpty() the result algorithm that you want to use.
+   */
+  QList<Algorithm*> algos() const;
 
  protected:
-  QThreadPool *pool_;
-  QList<Algorithm *> algos_;
+  QThreadPool* pool_;
+  QList<Algorithm*> algos_;
 };
 }  // namespace c3picko

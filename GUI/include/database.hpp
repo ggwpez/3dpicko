@@ -10,6 +10,10 @@
 #include "include/types/profile.hpp"
 
 namespace c3picko {
+/**
+ * @brief A Database. Can be saved and loaded into/from a file.
+ * Consists of multiple Tables.
+ */
 class Database : public QObject, JsonConvertable {
   Q_OBJECT
  public:

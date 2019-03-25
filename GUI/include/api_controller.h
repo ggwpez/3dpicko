@@ -18,6 +18,14 @@ class AlgorithmJob;
 namespace pi {
 class Command;
 }
+/**
+ * @brief Contains the logic for the API.
+ * Works together with APIInput and APIOutput.
+ * The public functions are called by APIInput which then process the input and
+ * emit the neccecary SIGNALS that are connected to the matching SLOTS from
+ * APIOutput. APIOutput then informs the clients of the result from these
+ * functions.
+ */
 class APIController : public QObject {
   Q_OBJECT
   friend class APIInput;

@@ -40,6 +40,9 @@ class AlgorithmResult {
    * @brief The job succeeded
    */
   bool stages_succeeded_;
+  /**
+   * @brief The cleanup stage succeeded
+   */
   bool cleanup_succeeded_;
 
   /**

@@ -7,6 +7,9 @@
 #include "include/resource_path.h"
 
 namespace c3picko {
+/**
+ * @brief Represents a cached image. Internal format is cv::Mat.
+ */
 class Image {
  public:
   typedef QString ID;
@@ -40,7 +43,7 @@ class Image {
    * @brief Calculates a unique id (hash) for the given matrix
    * @return
    */
-  static ID calculateId(const cv::Mat &image);
+  static ID calculateId(const cv::Mat& image);
 
   /**
    * @brief Returns a cropped version of the current image.
@@ -53,11 +56,11 @@ class Image {
    * @param error Error string is set, when return is false
    * @return Success.
    */
-  bool crop(int x, int y, int w, int h, Image &output, QString &error);
+  bool crop(int x, int y, int w, int h, Image& output, QString& error);
 
-  bool readCvMat(cv::Mat &output);
-  bool readData(QByteArray &output) const;
-  static bool decodeCvMat(QByteArray data, cv::Mat &output);
+  bool readCvMat(cv::Mat& output);
+  bool readData(QByteArray& output) const;
+  static bool decodeCvMat(QByteArray data, cv::Mat& output);
 
   ResourcePath path() const;
   ID id() const;

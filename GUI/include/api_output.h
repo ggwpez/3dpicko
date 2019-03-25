@@ -12,6 +12,12 @@ class Colony;
 class AlgorithmManager;
 class APIInput;
 class APIController;
+
+/**
+ * @brief Creates the messages that should be send to the client(s) as response
+ * for the given event. All these SLOTS map to the according SIGNALS from the
+ * APIController op_. Emits the to* SIGNALS from the APIController member op_.
+ */
 class APIOutput : public QObject {
   Q_OBJECT
 

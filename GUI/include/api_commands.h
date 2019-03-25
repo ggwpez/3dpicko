@@ -3,6 +3,9 @@
 #include <QString>
 
 namespace c3picko {
+/**
+ * @brief List of all permitted API commands to eliminate spelling mistakes.
+ */
 struct APICommands {
   static QString GET_IMAGE_LIST;
   static QString GET_PROFILE_LIST;

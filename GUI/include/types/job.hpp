@@ -9,6 +9,10 @@
 #include "include/types/profile.hpp"
 
 namespace c3picko {
+/**
+ * @brief A pick job, will be filled with data step by step by the use throught
+ * the GUI.
+ */
 class Job {
  public:
   typedef QString ID;

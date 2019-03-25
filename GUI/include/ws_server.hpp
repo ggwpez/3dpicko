@@ -13,28 +13,32 @@ class QWebSocket;
 class QWebSocketServer;
 namespace c3picko {
 
+/**
+ * @brief Websocket Server. Handles websocket connections and API requests for
+ * all clients. Configured via config.ini [websockets]
+ */
 class WsServer : public QObject {
   Q_OBJECT
  public:
-  WsServer(QSettings &settings, QSslConfiguration *ssl,
-           QObject *_parent = nullptr);
+  WsServer(QSettings& settings, QSslConfiguration* ssl,
+           QObject* _parent = nullptr);
   ~WsServer();
 
  public slots:
   void NewDebugLine(QString line);
 
   // From API
-  void ToClient(QObject *client, QString type, QJsonObject data);
+  void ToClient(QObject* client, QString type, QJsonObject data);
   void ToAll(QString type, QJsonObject data);
-  void ToAllExClient(QObject *excluded, QString type, QJsonObject data);
+  void ToAllExClient(QObject* excluded, QString type, QJsonObject data);
 
  private slots:
   // From QWebSocketServer
   void NewConnection();
   void acceptError(QAbstractSocket::SocketError);
-  void peerVerifyError(QSslError const &);
+  void peerVerifyError(QSslError const&);
   void serverError(QWebSocketProtocol::CloseCode);
-  void sslErrors(const QList<QSslError> &errors);
+  void sslErrors(const QList<QSslError>& errors);
 
   // From QWebSocket
   void NewTextData(QString data);
@@ -44,8 +48,8 @@ class WsServer : public QObject {
 
  public:
   bool StartListen();
-  void SendToClient(QWebSocket *client, QString type, QJsonObject packet);
-  void ServiceRequestForClient(QJsonObject request, QWebSocket *socket);
+  void SendToClient(QWebSocket* client, QString type, QJsonObject packet);
+  void ServiceRequestForClient(QJsonObject request, QWebSocket* socket);
 
   static QString defaultHost();
   static quint16 defaultPort();
@@ -53,11 +57,11 @@ class WsServer : public QObject {
  signals:
   void OnStarted();
   void OnStopped();
-  void OnRequest(QJsonObject request, QString raw_request, QObject *client);
+  void OnRequest(QJsonObject request, QString raw_request, QObject* client);
 
  private:
-  QWebSocketServer *server_;
-  QList<QWebSocket *> clients_;
+  QWebSocketServer* server_;
+  QList<QWebSocket*> clients_;
   QString host_;
   quint16 port_;
 };

@@ -12,7 +12,7 @@ class AlgorithmResult;
 class AlgoSetting;
 class AlgorithmJob;
 /**
- * @brief Performs calculations stepwise.
+ * @brief Performs calculations stepwise in a pipeline way of excution.
  * Operations from other Algorithms can be reused.
  * Needs AlgorithmJob as parent QObject before calling run().
  * @tparam Input data type
@@ -22,8 +22,8 @@ class Algorithm : public QObject, public QRunnable {
   Q_OBJECT
  public:
   typedef QString ID;
-  typedef void (*AlgoStep)(AlgorithmJob *, AlgorithmResult *);
-  typedef void (*AlgoCleanup)(Algorithm *);
+  typedef void (*AlgoStep)(AlgorithmJob*, AlgorithmResult*);
+  typedef void (*AlgoCleanup)(Algorithm*);
 
   Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps,
             QList<AlgoSetting> defaultSettings, bool isThreadable,
@@ -43,7 +43,7 @@ class Algorithm : public QObject, public QRunnable {
    * Used instead of a factory.
    * @return Pointer to instance.
    */
-  virtual Algorithm *cloneEmpty() const = 0;
+  virtual Algorithm* cloneEmpty() const = 0;
 
  public:
   ID id() const;

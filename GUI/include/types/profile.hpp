@@ -13,7 +13,8 @@ class OctoConfig;
 }
 
 /**
- * @brief Encapsulator for the 3 GCode profile classes.
+ * @brief Encapsulator for the 3 GCode profile classes and the OctoPrint
+ * profile.
  */
 class Profile {
  public:
