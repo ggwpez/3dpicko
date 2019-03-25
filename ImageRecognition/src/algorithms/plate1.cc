@@ -12,7 +12,7 @@ Plate1::Plate1()
     : Algorithm("1", "Plate1", "Detects a plate with red frame attached",
                 {(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
                  (AlgoStep)Plate1::detect},
-                {}, false, 5000) {}
+                {}, true, 5000) {}
 
 void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
   cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
@@ -94,11 +94,6 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
       }
     }
   }
-
-  /*cv::resize(tmp, tmp, cv::Size(ret.size().width / 3, ret.size().height / 3));
-  cv::imshow("tmp", tmp);
-  while (cv::waitKey(0))
-          ;*/
 
   if (!outer_edges.size())
     throw std::runtime_error("Could not approximate outer edge");

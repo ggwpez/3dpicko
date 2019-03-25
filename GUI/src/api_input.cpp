@@ -54,7 +54,6 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
         Marshalling::fromJson<QString>(req_data["original_filename"]);
     Image image =
         Image(img_data, img_name, "descrtiption", QDateTime::currentDateTime());
-    qDebug() << "Hash" << image.id();
 
     api->UploadImage(image, client);
   } else if (path == APICommands::CROP_IMAGE) {

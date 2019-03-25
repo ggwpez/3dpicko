@@ -1,5 +1,6 @@
 #include "include/algorithm_result.h"
 #include <QJsonArray>
+#include <QThread>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
 #include "include/colony.hpp"
@@ -45,29 +46,46 @@ cv::Mat& AlgorithmResult::newMat() {
 }
 
 void AlgorithmResult::cleanup() {
+  if (cleanup_succeeded_ || cleanup_error_.size()) return;
   /*std::string name;
 int			i = 0;
 
 for (void* stage : stack_)
 {
-                                                                    cv::Mat&
+                                                                                                                                    cv::Mat&
 mat  = *reinterpret_cast<cv::Mat*>(stage); std::string name = "STAGE-" +
 std::to_string(i++); if (!mat.cols || !mat.rows) continue;
 
-                                                                    cv::namedWindow(name,
+                                                                                                                                    cv::namedWindow(name,
 cv::WINDOW_NORMAL); cv::resizeWindow(name, 1920, 1080); cv::imshow(name, mat);
-                                                                    cv::imwrite("lel"
+                                                                                                                                    cv::imwrite("lel"
 + name + ".png", mat);
 }
 
 while (cv::waitKey(0) != 'q')
-                                                                    ;
+                                                                                                                                    ;
 cv::destroyAllWindows();*/
 
-  // Dont delete them right now, otherwise we cant user them
-  // colonies_.~vector();
-  qDeleteAll(stack_);
-  stack_.clear();
+  QString error_prefix, error_infix, error_postfix, error;
+  QTextStream(&error_prefix) << "Result "
+                             << "c3picko::AlgorithmResult"
+                             << " crashed (step=";
+  QTextStream(&error_postfix)
+      << ",thread=" << QThread::currentThreadId() << ") ";
+
+  try {
+    qDeleteAll(stack_);
+    stack_.clear();
+    cleanup_succeeded_ = true;
+  } catch (std::exception const& e) {
+    cleanup_error_ = error_prefix + "cleanup" + error_postfix + ": " + e.what();
+    qCritical("%s", qPrintable(cleanup_error_));
+    cleanup_succeeded_ = false;
+  } catch (...) {
+    cleanup_error_ = error_prefix + "cleanup" + error_postfix + ": unknown";
+    qCritical("%s", qPrintable(cleanup_error_));
+    cleanup_succeeded_ = false;
+  }
 }
 
 QString AlgorithmResult::stageError() const { return stage_error_; }

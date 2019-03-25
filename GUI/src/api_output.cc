@@ -149,7 +149,7 @@ void APIOutput::ColonyDetectionStarted(
     Job::ID, QObject*) { /* TODO inform client, maybe add a loading animtion */
 }
 
-void APIOutput::ColonyDetected(const std::vector<Colony>* colonies,
+void APIOutput::ColonyDetected(Job::ID job, const std::vector<Colony>* colonies,
                                QObject* client) {
   QJsonArray json_coords;
 
@@ -157,7 +157,7 @@ void APIOutput::ColonyDetected(const std::vector<Colony>* colonies,
     json_coords.push_back(Marshalling::toJson(colony));
 
   emit op->toClient(client, APICommands::GET_POSITIONS,
-                    {{"colonies", json_coords}});
+                    {{"job", job}, {"colonies", json_coords}});
   //	delete colonies;
 }
 

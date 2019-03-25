@@ -149,7 +149,8 @@ class APIController : public QObject {
    * APIOutput::ColonyDetected
    * @param client
    */
-  void OnColonyDetected(std::vector<Colony> const* colonies, QObject* client);
+  void OnColonyDetected(Job::ID job, std::vector<Colony> const* colonies,
+                        QObject* client);
   void OnColonyDetectionError(QString error, QObject* client);
 
  private:
