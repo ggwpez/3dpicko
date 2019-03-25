@@ -54,24 +54,6 @@ void Algorithm::run() {
   else
     emit job->OnAlgoFailed();
 
-  try {
-    result->cleanup();  // TODO use after free?
-    result->cleanup_succeeded_ = true;
-  } catch (std::exception const& e) {
-    qCritical("%s%s%s: %s", qPrintable(error_prefix), "cleanup",
-              qPrintable(error_postfix), e.what());
-    result->cleanup_succeeded_ = false;
-  } catch (...) {
-    qCritical("%s%s%s: %s", qPrintable(error_prefix), "cleanup",
-              qPrintable(error_postfix), "unknown");
-    result->cleanup_succeeded_ = false;
-  }
-
-  if (result->cleanup_succeeded_)
-    emit job->OnCleanupSucceeded();
-  else
-    emit job->OnCleanupFailed();
-
   if (error.size()) qCritical() << error;
 
   emit job->OnFinished();

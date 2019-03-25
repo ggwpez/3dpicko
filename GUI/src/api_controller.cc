@@ -10,10 +10,11 @@
 #include "include/plate_result.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 #include <QJsonArray>
 #include <QMetaMethod>
-
 #include <random>
+
 using namespace c3picko::pi;
 namespace c3picko {
 APIController::APIController(AlgorithmManager* colony_detector,
@@ -113,56 +114,56 @@ void APIController::DeleteJob(Job::ID id, QObject* client) {
 }
 
 void APIController::UploadImage(Image image, QObject* client) {
-  // Is the user trying to upload an image twice?
-  if (db_->images().exists(image.id())) {
-    qDebug() << "Ignoring doubled image";
-    // TODO inform client?
-    emit OnImageCreateError("<cropped>", client);
-  } else {
-    cv::Mat raw;
-    if (!image.readCvMat(raw)) {
-      emit OnImageCreateError("Could not read/find image", client);
-      return;
-    }
+  cv::Mat raw;
+  if (!image.readCvMat(raw)) {
+    emit OnImageCreateError("Could not read/find image", client);
+    return;
+  }
 
-    Algorithm::ID aid("1");
-    AlgorithmJob::ID jid = db_->newResultJobId();
-    AlgorithmResult* result = new PlateResult(db_->newResultId());
+  Algorithm::ID aid("1");
+  AlgorithmJob::ID jid = db_->newResultJobId();
+  std::shared_ptr<AlgorithmResult> result =
+      std::make_shared<PlateResult>(db_->newResultId());
 
-    AlgorithmJob* ajob =
-        plate_detector_->createJob(raw, aid, jid, result, QJsonObject());
+  AlgorithmJob* ajob =
+      plate_detector_->createJob(raw, aid, jid, result.get(), QJsonObject());
 
-    if (!ajob)
-      emit OnImageCreateError(
-          "Internal Error: Algorithm not found (" + aid + ")", client);
-    else {
-      connect(
-          ajob, &AlgorithmJob::OnAlgoSucceeded, client,
-          [this, client, image, ajob, result] {
-            cv::Mat* mat;
-            if (result->stack().empty() || !(mat = result->stack().back())) {
-              emit OnImageCreateError("Assertion failure", client);
-              return;
-            }
-            Image cropped(*mat, image.originalName(), image.description(),
-                          image.uploaded());
+  if (!ajob)
+    emit OnImageCreateError("Internal Error: Algorithm not found (" + aid + ")",
+                            client);
+  else {
+    // Copy the result shared_ptr, such that it lives until we are done with
+    // the callback.
+    // Here we crop the image and insert it into the database, it not yet
+    // existing
+    connect(ajob, &AlgorithmJob::OnAlgoSucceeded, client,
+            [this, client, image, ajob, result] {
+              cv::Mat* mat;
+              if (result->stack().empty() || !(mat = result->stack().back()))
+                return emit OnImageCreateError(
+                    "Assertion failure: Result from PlateDetection was null",
+                    client);
 
-            if (!cropped.writeToFile()) {
-              emit OnImageCreateError(cropped.id(), client);
-            } else {
-              db_->images().add(cropped.id(), cropped);
+              Image cropped(*mat, image.originalName(), image.description(),
+                            image.uploaded());
+
+              if (!cropped.writeToFile())
+                return emit OnImageCreateError(cropped.id(), client);
+
+              // Is the user trying to upload an image twice?
+              if (db_->images().exists(cropped.id()))
+                qDebug() << "Ignoring doubled image";
+              else
+                db_->images().add(cropped.id(), cropped);
 
               emit this->OnImageCreated(cropped, client);
               qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
-            }
-          });
-      connect(ajob, &AlgorithmJob::OnAlgoFailed, client,
-              [this, result, client] {
-                emit OnImageCreateError(result->stageError(), client);
-              });
+            });
+    connect(ajob, &AlgorithmJob::OnAlgoFailed, client, [this, result, client] {
+      emit OnImageCreateError(result->stageError(), client);
+    });
 
-      ajob->start(true, true);
-    }
+    ajob->start(true, true);
   }
 }
 
@@ -225,13 +226,13 @@ void APIController::cropImage(Image::ID id, QObject* client) {
     // Is the cropped image valid?
     if (!original.crop(x, y, w, h, cropped, error))
     {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    emit
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    emit
     OnImageCropError(id, client); // TODO inform client return;
     }
 
     if (!cropped.writeToFile()) // save cropped image to the hdd
     {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    emit
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    emit
     OnImageCreateError("<cropped>", client); return;
     }
 
@@ -450,10 +451,11 @@ AlgorithmJob* APIController::detectColonies(Job::ID job_id, QString algo_id,
           emit OnColonyDetectionError("Algorithm not found", client);
         } else {
           connect(algo_job, &AlgorithmJob::OnAlgoSucceeded, client,
-                  [this, client, algo_job, result] {
+                  [this, client, job_id, algo_job, result] {
                     db_->detectionResults().add(result->id(),
                                                 *result);  // TODO not too cool
-                    emit this->OnColonyDetected(&result->colonies(), client);
+                    emit this->OnColonyDetected(job_id, &result->colonies(),
+                                                client);
                     qDebug() << "Detected" << result->colonies().size() << "in"
                              << algo_job->tookMs() << "ms";
                   });

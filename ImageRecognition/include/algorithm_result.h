@@ -29,12 +29,14 @@ class AlgorithmResult {
    */
   virtual void finalize();
 
+ public slots:
+  void cleanup();
+
  public:
   ID id_;
   /**
    * @brief Explicit cleanup for debugging
    */
-  void cleanup();
 
   /**
    * @brief The job succeeded

@@ -72,7 +72,7 @@ bool Image::writeToFile() {
     std::vector<uint8_t> raw;
     cv::imencode(".jpg", image_, raw);  // TODO use extension
 
-    if (!file.write(reinterpret_cast<char const *>(raw.data()), raw.size())) {
+    if (!file.write(reinterpret_cast<char const*>(raw.data()), raw.size())) {
       qCritical() << "Could not write image" << id_ << "(" << file.errorString()
                   << ")";
       return false;
@@ -94,7 +94,7 @@ bool Image::deleteFile() {
 
 void Image::clearCache() { image_.release(); }
 
-bool Image::crop(int x, int y, int w, int h, Image &output, QString &error) {
+bool Image::crop(int x, int y, int w, int h, Image& output, QString& error) {
   x = qBound(0, x, width_ - 1);
   y = qBound(0, y, height_ - 1);
   w = qBound(1, w, width_ - x);
@@ -118,7 +118,7 @@ bool Image::crop(int x, int y, int w, int h, Image &output, QString &error) {
   return true;
 }
 
-bool Image::readCvMat(cv::Mat &output) {
+bool Image::readCvMat(cv::Mat& output) {
   if (!(output = image_).empty()) return true;
 
   QByteArray data;
@@ -127,7 +127,7 @@ bool Image::readCvMat(cv::Mat &output) {
   return decodeCvMat(data, output);
 }
 
-bool Image::readData(QByteArray &output) const {
+bool Image::readData(QByteArray& output) const {
   output = {};
   QFile file(path_.toSystemAbsolute());
 
@@ -141,7 +141,7 @@ bool Image::readData(QByteArray &output) const {
   return true;
 }
 
-bool Image::decodeCvMat(QByteArray data, cv::Mat &output) {
+bool Image::decodeCvMat(QByteArray data, cv::Mat& output) {
   if (data.isEmpty()) return false;
 
   output = cv::imdecode(cv::Mat(1, data.size(), CV_8UC1, data.data()),
@@ -153,19 +153,16 @@ QDateTime Image::uploaded() const { return uploaded_; }
 
 QString Image::description() const { return description_; }
 
-Image::ID Image::calculateId(cv::Mat const &image) {
-  /*QCryptographicHash hasher(QCryptographicHash::Sha256);
+Image::ID Image::calculateId(cv::Mat const& image) {
+  QCryptographicHash hasher(QCryptographicHash::Sha256);
 
   std::vector<char> data;  // TODO this is not gud
   for (int i = 0; i < image.rows; ++i)
     data.insert(data.end(), image.ptr<uint8_t>(i),
-                                                    image.ptr<uint8_t>(i) +
-  image.cols);
+                image.ptr<uint8_t>(i) + image.cols);
 
   hasher.addData(data.data(), data.size());
-  return hasher.result().toHex();*/
-
-  return QString::number(rand());
+  return hasher.result().toHex();
 }
 
 Image::ID Image::id() const { return id_; }
@@ -179,7 +176,7 @@ QString Image::originalName() const { return original_name_; }
 ResourcePath Image::path() const { return path_; }
 
 template <>
-QJsonObject Marshalling::toJson(const Image &value) {
+QJsonObject Marshalling::toJson(const Image& value) {
   QJsonObject obj;
 
   obj["id"] = value.id();
@@ -194,7 +191,7 @@ QJsonObject Marshalling::toJson(const Image &value) {
 }
 
 template <>
-Image Marshalling::fromJson(const QJsonObject &obj) {
+Image Marshalling::fromJson(const QJsonObject& obj) {
   return Image(Marshalling::fromJson<QString>(obj["id"]),
                Marshalling::fromJson<QString>(obj["original_name"]),
                Marshalling::fromJson<QString>(obj["description"]),
