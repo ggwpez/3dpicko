@@ -453,7 +453,7 @@ function strategyTab(){
 function overviewTab(selected_colonies){
     // TODO disable clicks
     $('.next-step').html(`<span class="spinner-border spinner-border-sm"></span>`);
-    removeUnselectedColonies(selected_colonies);
+    PrintSelectedColonies(selected_colonies);
     // TODO hack
     setTimeout(function(){
         let plate_selection = document.getElementById("select-plate-profile");

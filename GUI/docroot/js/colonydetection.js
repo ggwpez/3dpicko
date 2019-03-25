@@ -166,29 +166,6 @@ function selectionTabEnter()
     };
 }
 
-// TODO
-function removeUnselectedColonies(indices)
-{
-    layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
-    included_colonies = new Map();
-    indices.forEach(i => {
-        console.log("#" , parseInt(i));
-        let colony = colony_array[parseInt(i)];
-        let hash = colony.x+','+colony.y;
-        included_colonies.set(hash, new Circle({
-            x: colony.x * layer1.canvas.width,
-            y: colony.y * layer1.canvas.height,
-            radius: colony.major_length * 1.25 * down_scale,
-            linecolor: 'white',
-            canvas: layer1.canvas,
-            hash: hash
-        }));
-    });    
-    show_selected = true;
-    show_excluded = false;
-    printPositions();
-}
-
 function updatePositions(coords)
 {
     colony_array = coords.colonies;
@@ -203,7 +180,7 @@ function updatePositions(coords)
         if(colony.excluded_by != ""){
             color = settings_color[changed_settings.id][colony.excluded_by] || 'grey';
             excluded_colonies.set(hash, new Circle({
-                id: index,
+                id: colony.id,
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
@@ -217,7 +194,7 @@ function updatePositions(coords)
         }
         else{
             included_colonies.set(hash, new Circle({
-                id: index,
+                id: colony.id,
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
@@ -273,6 +250,16 @@ function printPositions(){
             colony.draw();
         }   
     }
+}
+
+function PrintSelectedColonies(ids)
+{
+    layer1.context.clearRect(0,0, layer1.canvas.width, layer1.canvas.height);
+    for(let id of ids){
+        for(let colony of included_colonies.values()){
+            if(colony.get("id") == id) colony.draw();
+        }
+    }   
 }
 
 function UpdateNumberOfColonies(){
