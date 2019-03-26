@@ -2,13 +2,10 @@
 #include <opencv2/imgproc.hpp>
 #include <tuple>
 
-namespace c3picko
-{
-cv::Mat* PlateResult::rotatedImage() const
-{
-	if (stack_.empty() || !stack_.back())
-		return nullptr;
+namespace c3picko {
+cv::Mat* PlateResult::rotatedImage() const {
+  if (stack_.empty() || !stack_.back()) return nullptr;
 
-	return stack_.back();
+  return stack_.back();
 }
-} // namespace c3picko
+}  // namespace c3picko

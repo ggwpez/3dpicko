@@ -1,50 +1,51 @@
 #include "include/algorithm_manager.h"
+#include <QThreadPool>
 #include "include/algorithm_job.h"
 #include "include/algorithm_result.h"
-#include <QThreadPool>
 
 using namespace c3picko;
 
-namespace c3picko
-{
-AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos, QObject* _parent)
-	: QObject(_parent), pool_(pool), algos_(algos)
-{
-	for (Algorithm* algo : algos_)
-	{
-		algo->setParent(this);
+namespace c3picko {
+AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
+                                   QObject* _parent)
+    : QObject(_parent), pool_(pool), algos_(algos) {
+  for (Algorithm* algo : algos_) {
+    algo->setParent(this);
 
 #ifdef QT_NO_DEBUG
-		for (auto it = algos.begin(); it != algos.end(); ++it)
-			if (!(*it)->isThreadable())
-				qWarning().nospace() << "All algorithms should be threadable in a release build (name=" << (*it)->name() << ")";
+    for (auto it = algos.begin(); it != algos.end(); ++it)
+      if (!(*it)->isThreadable())
+        qWarning().nospace()
+            << "All algorithms should be threadable in a release build (name="
+            << (*it)->name() << ")";
 #endif
-	}
+  }
 }
 
-AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id, AlgorithmJob::ID job_id, AlgorithmResult* result,
-										  QJsonObject settings)
-{
-	for (Algorithm* algo : algos_)
-	{
-		if (algo->id() == algo_id)
-		{
-			cv::Mat*   input	= new cv::Mat(source.clone());
-			Algorithm* new_algo = algo->cloneEmpty();
-			qint64	 max_time = new_algo->maxMs() * 2;
+AlgorithmJob* AlgorithmManager::createJob(cv::Mat source, Algorithm::ID algo_id,
+                                          AlgorithmJob::ID job_id,
+                                          AlgorithmResult* result,
+                                          QJsonObject settings) {
+  for (Algorithm* algo : algos_) {
+    if (algo->id() == algo_id) {
+      cv::Mat* input = new cv::Mat(source.clone());
+      Algorithm* new_algo = algo->cloneEmpty();
+      qint64 max_time = new_algo->maxMs() * 2;
 
-			AlgorithmJob* job = new AlgorithmJob(job_id, new_algo, settings, input, result, pool_, max_time, nullptr);
-			connect(job, &AlgorithmJob::OnFinished, job, [input, job]() { // TODO do we need a context object here?
-				delete input;
-			});
+      AlgorithmJob* job = new AlgorithmJob(job_id, new_algo, settings, input,
+                                           result, pool_, max_time, nullptr);
+      connect(job, &AlgorithmJob::OnFinished, job,
+              [input, job]() {  // TODO do we need a context object here?
+                delete input;
+              });
 
-			return job;
-		}
-	}
+      return job;
+    }
+  }
 
-	return nullptr;
+  return nullptr;
 }
 
 QList<Algorithm*> AlgorithmManager::algos() const { return algos_; }
 
-} // namespace c3picko
+}  // namespace c3picko
