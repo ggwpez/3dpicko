@@ -1,71 +1,69 @@
 #pragma once
 
+#include "include/colony.hpp"
 #include <QString>
 #include <vector>
-#include "include/colony.hpp"
 
-namespace cv {
+namespace cv
+{
 class Mat;
 }
-namespace c3picko {
+namespace c3picko
+{
 class Colony;
 /**
  * @brief Represents a failed or succeeded AlgorithmJob.
  */
-class AlgorithmResult {
- public:
-  typedef QString ID;
+class AlgorithmResult
+{
+  public:
+	typedef QString ID;
 
-  AlgorithmResult(ID id);
-  ~AlgorithmResult();
+	AlgorithmResult(ID id);
+	virtual ~AlgorithmResult();
 
-  cv::Mat& newMat();
-  cv::Mat& newMat(cv::Mat const& copy_from);
+	/**
+	 * @brief Will be called after the last step of the algorithm succeeded
+	 */
+	virtual void finalize();
 
-  cv::Mat& oldMat();
+  public slots:
+	void cleanup();
 
-  /**
-   * @brief Will be called after the last step of the algorithm succeeded
-   */
-  virtual void finalize();
+  private:
+	virtual void cleanup_impl();
 
- public slots:
-  void cleanup();
+  public:
+	ID		  id_;
+	QDateTime created_;
+	/**
+	 * @brief Explicit cleanup for debugging
+	 */
 
- public:
-  ID id_;
-  /**
-   * @brief Explicit cleanup for debugging
-   */
+	/**
+	 * @brief The job succeeded
+	 */
+	bool stages_succeeded_;
+	/**
+	 * @brief The cleanup stage succeeded
+	 */
+	bool cleanup_succeeded_;
 
-  /**
-   * @brief The job succeeded
-   */
-  bool stages_succeeded_;
-  /**
-   * @brief The cleanup stage succeeded
-   */
-  bool cleanup_succeeded_;
+	/**
+	 * @brief Last stage that the job was in.
+	 */
+	int		last_stage_;
+	QString stage_error_, cleanup_error_;
+	bool	is_finalized_ = false;
 
-  /**
-   * @brief Last stage that the job was in.
-   */
-  int last_stage_;
-  QString stage_error_, cleanup_error_;
-  bool is_finalized_ = false;
-
-  ID id() const;
-  bool stagesSucceeded() const;
-  bool cleanupSucceeded() const;
-  int lastStage() const;
-  quint64 tookNs() const;
-  QString cleanupError() const;
-  QString stageError() const;
-
-  std::list<cv::Mat*> const& stack() const;
-
- private:
-  std::list<cv::Mat*> stack_;
+	ID		  id() const;
+	bool	  stagesSucceeded() const;
+	bool	  cleanupSucceeded() const;
+	int		  lastStage() const;
+	quint64   tookNs() const;
+	QString   cleanupError() const;
+	QString   stageError() const;
+	QDateTime created() const;
 };
 MAKE_MARSHALLABLE(AlgorithmResult);
-}  // namespace c3picko
+} // namespace c3picko

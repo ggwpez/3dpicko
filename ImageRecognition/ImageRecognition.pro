@@ -17,7 +17,8 @@ SOURCES += \
     src/detection_result.cc \
     src/plate_result.cc \
     src/plate.cc \
-    src/algorithms/plate1.cc
+    src/algorithms/plate1.cc \
+    src/matrix_result.cc
 
 	#src/main.cpp
 
@@ -34,7 +35,8 @@ HEADERS += \
     include/detection_result.h \
     include/plate_result.h \
     include/plate.h \
-    include/algorithms/plate1.h
+    include/algorithms/plate1.h \
+    include/matrix_result.h
 
 INCLUDEPATH += /usr/local/include/opencv
 

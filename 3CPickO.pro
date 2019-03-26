@@ -14,4 +14,4 @@ SUBDIRS += \
 
 Main.depends = PiCommunicator GUI Gcode ImageRecognition
 TestGcode.depends = Gcode
-AlgorithmTest.depends = ImageRecognition
+AlgorithmTest.depends = ImageRecognition GUI

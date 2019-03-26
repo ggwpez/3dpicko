@@ -8,11 +8,49 @@
     "deleted_jobs": {
     },
     "detection_results": {
+        "20": {
+            "cleanup_error": "",
+            "cleanup_succeeded": false,
+            "id": "20",
+            "last_stage": 4,
+            "stage_error": "",
+            "stages_succeeded": true
+        }
     },
     "images": {
+        "846930886": {
+            "description": "descrtiption",
+            "height": 1709,
+            "id": "846930886",
+            "original_name": "PICT_20190308_173503.JPG",
+            "path": "/uploads/VADfShjw",
+            "uploaded": {
+                "formatted": "26.03.19 17:44",
+                "ms": 1553618670701
+            },
+            "width": 2550
+        }
     },
-    "job_id": 210,
+    "job_id": 211,
     "jobs": {
+        "210": {
+            "created": {
+                "formatted": "26.03.19 17:44",
+                "ms": 1553618674354
+            },
+            "description": "",
+            "detections": [
+                "20"
+            ],
+            "id": "210",
+            "img_id": "846930886",
+            "name": "",
+            "printer": "302",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        }
     },
     "profile_id": 306,
     "profiles": {
@@ -120,6 +158,6 @@
             "type": "octoprint-profile"
         }
     },
-    "result_id": 19,
-    "result_job_id": 13
+    "result_id": 21,
+    "result_job_id": 15
 }
