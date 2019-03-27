@@ -4,8 +4,13 @@
 $(function(){
   $("#wiki-content").load("./docs/wiki.html #introduction");
   var element = document.getElementById("Introduction");
-  element.classList.remove("btn-link");
-  element.classList.add("btn-primary");
+  try {
+    element.classList.remove("btn-link");
+  } catch {}
+  try {
+      element.classList.add("btn-primary");
+      
+} catch {}
 });
 
 function loadWiki(id, site){
@@ -14,7 +19,9 @@ function loadWiki(id, site){
         moveWiki(id);
     }*/
     
-    moveWiki(id);
+    //moveWiki(id);
+    var elementt = document.getElementById("Nomenclature");
+    elementt.scrollIntoView();
     
     resetButtons();
     var element = document.getElementById(id);
