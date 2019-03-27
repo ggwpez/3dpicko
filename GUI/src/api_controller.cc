@@ -451,9 +451,9 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
 
   QSet<Colony::ID> selected = job.coloniesToPick();
   std::vector<LocalColonyCoordinates> coords;
-  std::map<Colony::ID, Well> pick_positions;
+  std::map<Well, Colony::ID> pick_positions;
 
-  int w = 0;
+  Well well(job.startingRow(), job.startingCol(), plate);
   // Convert the colony coordinates to real world coordinates
   for (QSet<Colony::ID>::iterator it = selected.begin(); it != selected.end();
        ++it) {
@@ -466,7 +466,8 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
 
     // Invert the y-axis. FIXME get the frame size from the plate profile
     coords.push_back(Point(f->x() * 128, (1.0 - f->y()) * 85.9));
-    pick_positions[*it] = Well{1, ++w};
+    pick_positions.emplace(well, *it);
+    if (it + 1 != selected.end()) ++well;
   }
 
   std::vector<GcodeInstruction> code =
@@ -594,7 +595,7 @@ void APIController::request(QJsonObject request, QString raw_request,
   try {
     input_->serviceRequest(request, raw_request, client);
   } catch (Exception const& e) {
-    output_->Error(e.what(), e.what(), client);
+    output_->Error("std::exception", e.what(), client);
     qWarning("std::exception %s", e.what());
   } catch (std::exception const& e) {
     output_->Error("Exception", e.what(), client);

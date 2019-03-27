@@ -44,7 +44,8 @@ void APIOutput::JobCreateError(QString id, QObject* client) {
 }
 
 void APIOutput::JobDeleted(Job job, QObject*) {
-  emit op->toAll(APICommands::DELETE_JOB, {{"id", job.id()}});
+  emit op->toAll(APICommands::DELETE_JOB,
+                 {{"id", job.id()}, {"report", "/index.html"}});
 }
 
 void APIOutput::JobDeleteError(Job::ID id, QObject* client) {

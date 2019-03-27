@@ -8,13 +8,32 @@
 class QPdfWriter;
 namespace c3picko {
 class Database;
-struct Well {
+class Well {
+ public:
+  Well(quint8 row, quint8 col, PlateProfile* plate);
+
   /**
-   * @brief A1 = (1,1)
+   * @brief Pre increment operator
+   * @return Advances the well. Throws on error.
    */
-  int row, col;
+  Well& operator++();
+  bool operator<(Well const&) const;
 
   QString toString() const;
+
+  quint8 row() const;
+  quint8 col() const;
+  /**
+   * @brief Index of the well. Example: A1 = 0, B1 = 1, A2 = 8
+   */
+  quint16 index() const;
+
+ private:
+  /**
+   * @brief B1 = (2,1)
+   */
+  quint8 row_, col_;
+  PlateProfile* plate_;
 };
 
 /**
@@ -43,14 +62,14 @@ class ReportCreator {
    */
   static ReportCreator fromDatabase(
       Database& db, Report::ID id, Job::ID job,
-      const std::map<Colony::ID, Well>& pick_positions);
+      const std::map<Well, Colony::ID>& pick_positions);
 
   Report createReport() const;
   void writePdfReport(QPdfWriter*) const;
 
  private:
   ReportCreator(Report::ID id, Job const& job, QDateTime creation,
-                const std::map<Colony::ID, Well>& pick_positions,
+                const std::map<Well, Colony::ID>& pick_positions,
                 const Image& image, DetectionResult const& results_,
                 QSet<Colony::ID> colonies_to_pick, Profile const& plate_,
                 Profile const& printer_, Profile const& socket_,
@@ -61,7 +80,7 @@ class ReportCreator {
   /**
    * @brief Maps the colonies to their wells in the order of them being picked.
    */
-  std::map<Colony::ID, Well> pick_positions_;
+  std::map<Well, Colony::ID> pick_positions_;
   Image const& image_;
   DetectionResult const& result_;
   QSet<Colony::ID> colonies_to_pick_;

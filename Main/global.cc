@@ -67,10 +67,10 @@ ResourcePath reportFolder() { return DocRoot() + "reports/"; }
  * Aborts the application if not found.
  * @return The valid filename
  */
-QString searchConfigFile(int argc, char** argv) {
+QString searchConfigFile(QStringList args) {
   QFile file;
   QString path = QCoreApplication::applicationDirPath() + "/serverconfig.ini";
-  if (argc > 1) path = argv[1];
+  if (args.size() > 1) path = args[1];
   file.setFileName(path);
 
   QFileInfo info(file);
@@ -101,8 +101,12 @@ static void setupSignals(QCoreApplication* app) {
 #endif
 }
 
-void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings) {
+static QString ini_file_path;
+QString Setup(QCoreApplication* app) {
   setupSignals(app);
+  ini_file_path = searchConfigFile(app->arguments());
+  QSettings settings(ini_file_path, QSettings::IniFormat);
+  settings.beginGroup("global");
 
   QString path = QFileInfo(ini_file_path).absolutePath() + "/" +
                  settings.value("root").toString();
@@ -122,13 +126,67 @@ void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings) {
   // Create "report" folder
   if (!QDir(reportFolder().toSystemAbsolute()).exists())
     QDir().mkdir(reportFolder().toSystemAbsolute());
+
+  return ini_file_path;
 }
 
-QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
+QString logTextColor(QtMsgType type) {
+  switch (type) {
+    case QtMsgType::QtInfoMsg:
+      return "";
+    case QtMsgType::QtDebugMsg:
+      return "";
+    case QtMsgType::QtWarningMsg:
+      return "\x1B[33m";  // Orange
+    case QtMsgType::QtCriticalMsg:
+      return "\x1B[31m";         // Red
+    case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
+      return "\x1B[31;1m";       // Red, Fat
+    default:
+      Q_UNREACHABLE();
+  }
+}
+
+static std::function<void(QString)> messageHandler;
+static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
+                            const QString& msg) {
+  QString message = qFormatLogMessage(type, context, msg);
+  QString time =
+      "[ " + QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate) +
+      " ] ";
+  QString color_begin = logTextColor(type), color_end = "\033[0m";
+
+  if (messageHandler) messageHandler(time + message);
+
+    // TODO bad style to write everything to stderr
+#ifdef Q_OS_LINUX
+  fprintf(stderr, "%s%s%s%s\n", qPrintable(time), qPrintable(color_begin),
+          qPrintable(message), qPrintable(color_end));
+#else
+  fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));
+#endif
+}
+
+void setMessageHandler(const std::function<void(QString)>& handler) {
+  messageHandler = handler;
+}
+
+void startLog() { qInstallMessageHandler(handleQtMessage); }
+
+void stopLog() { qInstallMessageHandler(nullptr); }
+
+QString dateTimeFormat() { return "dd.MM.yy HH:mm:ss"; }
 
 int exitCodeRestart() { return 123; }
 int exitCodeSuccess() { return 0; }
 int exitCodeError() { return 1; }
 
 const char* defaultImageExtension() { return "jpg"; }
+
+QString getConfig() {
+  if (ini_file_path.isEmpty())
+    throw Exception("Setup must be called before getConfig()");
+
+  return ini_file_path;
+}
 }  // namespace c3picko
