@@ -22,7 +22,7 @@ class PlateResult : public MatrixResult {
    */
   Plate rotated_;
 
-  cv::Mat* rotatedImage() const;
+  std::shared_ptr<cv::Mat> rotatedImage() const;
 };
 MAKE_MARSHALLABLE(PlateResult);
 }  // namespace c3picko

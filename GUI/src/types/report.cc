@@ -68,8 +68,8 @@ Report ReportCreator::createReport() const {
 
       cv::Scalar clr(rand() % 255, rand() % 255, rand() % 255);
       Well const& well(it->first);
-      cv::circle(mat, pos, colony.major_length(), clr, 2);
-      math::drawText(mat, pos, well.toString(), clr, 1, 1);
+      cv::circle(mat, pos, colony.major_length(), clr, 1);
+      math::drawText(mat, pos, well.toString(), clr, 1.5, 2);
     }
 
     cv::imwrite(img_path.toSystemAbsolute().toStdString(), mat);

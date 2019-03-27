@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <stack>
 #include "include/algorithm_result.h"
 
@@ -12,6 +13,7 @@ class MatrixResult : public AlgorithmResult {
  public:
   using AlgorithmResult::AlgorithmResult;
   MatrixResult(AlgorithmResult&&);
+  virtual ~MatrixResult();
 
   cv::Mat& first() const;
   cv::Mat& newMat();
@@ -19,11 +21,11 @@ class MatrixResult : public AlgorithmResult {
   cv::Mat& oldMat();
   cv::Mat const& oldMat() const;
 
-  std::list<cv::Mat*> const& stack() const;
-
-  void cleanup_impl() override;
+  void cleanup();
+  std::list<std::shared_ptr<cv::Mat>> const& stack() const;
 
  protected:
-  std::list<cv::Mat*> stack_;
+  // MatrixResult is copyable
+  std::list<std::shared_ptr<cv::Mat>> stack_;
 };
 }  // namespace c3picko

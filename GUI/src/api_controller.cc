@@ -375,6 +375,11 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
         if (!algo_job) {
           emit OnColonyDetectionError("Algorithm not found", client);
         } else {
+          // Remove old results from the database
+          if (job.resultIDs().size() &&
+              db_->detectionResults().exists(job.resultID()))
+            db_->detectionResults().remove(job.resultID());
+
           job.setResultID(result->id());
           job.setResultAlgorithmJob(algo_job);
 
@@ -449,14 +454,15 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 
+  // Order the colonies by their top left position
   QSet<Colony::ID> selected = job.coloniesToPick();
+
   std::vector<LocalColonyCoordinates> coords;
   std::map<Well, Colony::ID> pick_positions;
 
   Well well(job.startingRow(), job.startingCol(), plate);
   // Convert the colony coordinates to real world coordinates
-  for (QSet<Colony::ID>::iterator it = selected.begin(); it != selected.end();
-       ++it) {
+  for (auto it = selected.begin(); it != selected.end(); ++it) {
     auto f = std::find_if(result.includedBegin(), result.includedEnd(),
                           [&it](Colony const& c) { return c.id() == *it; });
 
@@ -478,7 +484,8 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
       ReportCreator::fromDatabase(*db_, "132", job.id(), pick_positions));
   Report report = reporter.createReport();
 
-  job.resultJob()->result()->cleanup();  // TODO dumb
+  // Delete the images
+  result.cleanup();
   qDebug() << "Created report.pdf";
 
   QFile file("out.gcode");

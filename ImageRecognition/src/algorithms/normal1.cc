@@ -23,12 +23,12 @@ Normal1::Normal1()
 			  "", true, {}, Qt::red),*/
 		   AlgoSetting::make_rangeslider_double("area", "Area", "lel", 50, 2000,
 												1, {120, 1000}),
-		   AlgoSetting::make_slider_double("safety_margin_lt",
+		   AlgoSetting::make_rangeslider_double("safety_margin_lt",
 										   "Safety Margin LeftTop", "", 0, 1,
-										   .01, .1, Qt::gray),
-		   AlgoSetting::make_slider_double("safety_margin_rb",
+												.01, {.1,.1}, Qt::gray),
+		   AlgoSetting::make_rangeslider_double("safety_margin_rb",
 										   "Safety Margin RightBot", "", 0, 1,
-										   .01, .9, Qt::gray),
+												.01, {.9,.9}, Qt::gray),
 		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
 												"", 0, 1, .001, {.7, 1},
 												Qt::cyan),
@@ -263,9 +263,12 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
 
 void Normal1::safetyMargin(AlgorithmJob* base, DetectionResult* result) {
   std::vector<Colony>& input = result->colonies();
-  double margin_lt = base->settingById("safety_margin_lt").value<double>();
-  double margin_rb = base->settingById("safety_margin_rb").value<double>();
-  cv::Point2d lt(margin_lt, margin_lt), rb(margin_rb, margin_rb);
+  auto margin_lt =
+      base->settingById("safety_margin_lt").value<math::Range<double>>();
+  auto margin_rb =
+      base->settingById("safety_margin_rb").value<math::Range<double>>();
+  cv::Point2d lt(margin_lt.lower_, margin_lt.upper_),
+      rb(margin_rb.lower_, margin_rb.upper_);
 
   for (auto it = input.begin(); it != input.end(); ++it) {
     Colony const& c = *it;
