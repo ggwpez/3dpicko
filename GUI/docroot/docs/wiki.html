@@ -289,34 +289,35 @@ Navileiste scorllen Introduction
 </div>
 <div id="user_manual_advanced_settings">
   <h1> Advanced Settings </h1>
-  <h2> Choose Colonies </h2>
   <h3> Detection Settings </h3>
   
   <h4 id="algorithm-h"> Algorithm </h4>
   <div id="algorithm">
     <p>
-      Here you can select the Algorithm which will be used for the colony detection. There are two choices either "Normal" or "Fluro". Normal is for any kind of colonies while Fluro is only intended for fluorescent.</p>
+      Choose "Fluro" for detecting fluorescent colonies, otherwise "Normal".
+    </p>
   </div>
   
   <h4 id="area-h"> Area </h4>
   <div id="area">
     <p>
-      With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles alone or the middle sized one and one of the others.<br>
+       Set an upper and lower limit of area a colony should have. <br>
       <img src="./img/wiki/Area.jpg"  width="400">
     </p>
   </div>
-  
-  <h4 id="safty_margin-h"> Safety Margin </h4>
-  <div id="safty_margin">
+
+  <h4 id="safty_margin_lt-h"> Safety Margin </h4>
+  <div id="safty_margin_lt">
     <p>
-      This setting is used to exclude all colonies which are to close to the Petri dish wall to be picked. This is a saftey feature to ensure that the head does not collide with any wall.
+        FEHLER MODAL
+       Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
     </p>
   </div>
   
   <h4 id="aabb_ratio-h"> AABB Side Ratio </h4>
   <div id="aabb_ratio">
     <p>
-      This option lets you choose what ratio of length and width the colony can have. A perfectly round colony would have the ration 1. In the example image refer to the green bounding box, the calculation is as follows: whatever side is shorter is divided by the longer side. <br>
+      Filter colonies by the ratio of the width and length of their bounding boxes. A perfectly round colony would have the ration 1. The calculation is as follows: <img src="./img/wiki/side_ratio.jpg"> <br><br>
       <img src="./img/wiki/aabb_ratio.jpg"  width="400"> <br>
 	  <b>Calculation:</b><br>
 	  The shorter side of the bounding box is taken and divided by the longer side.
