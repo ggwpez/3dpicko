@@ -72,4 +72,4 @@ format:linux:
 document:linux:
   stage: document
   script:
-    - doxygen Doxyfile > /dev/nul
+    - doxygen Doxyfile > /dev/null
