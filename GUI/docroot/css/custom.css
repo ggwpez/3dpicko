@@ -341,3 +341,8 @@ input[type="range"]:not(.multirange)::-moz-range-progress {
   height: 8px;
   border-radius: 4px; 
 }
+
+li{
+    word-break: normal;
+    word-wrap: normal; 
+}

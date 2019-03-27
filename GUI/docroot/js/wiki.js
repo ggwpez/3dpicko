@@ -10,14 +10,30 @@ $(function(){
 
 function loadWiki(id, site){
     $("#wiki-content").load(site);
+    /*if (id == About || id == Nomenclature){
+        moveWiki(id);
+    }*/
+    
+    moveWiki(id);
+    
     resetButtons();
     var element = document.getElementById(id);
     element.classList.remove("btn-link");
     element.classList.add("btn-primary");
 }
 
+function moveWiki(position){
+    var element = document.getElementById(position);
+    element.scrollIntoView();
+}
+
+
 function resetButtons(){
-    var element = document.getElementById("Introduction");
+    var element = document.getElementById("About");
+    element.classList.remove("btn-primary");
+    element.classList.add("btn-link");
+    
+    var element = document.getElementById("Nomenclature");
     element.classList.remove("btn-primary");
     element.classList.add("btn-link");
     
@@ -49,6 +65,13 @@ function resetButtons(){
     element.classList.remove("btn-primary");
     element.classList.add("btn-link");
 }
+
+
+function loadHelpString(headline, site){
+    $("#help-headline").text(headline);
+	$("#help-body").load(site);
+}
+
 
 function loadHelp(headline, site){
 	/*
