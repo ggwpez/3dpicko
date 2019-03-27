@@ -71,7 +71,7 @@ Einstellungen nicht überprüft?
   <p> Before starting any picking process please make sure all preconditions are met, these steps are very important since not complying them can not only destroy your experiment but also damage the device. </p>
   - For safety reasons the colony picker has to be located on a plane non-flammable surface in a well ventilated room. <br>
   - There must be enough filament for processing the colony pick (for each colony about 1 cm filament is needed). <br>
-  - The filament has to be extruded up to the end of the nozzle. Please refer to the chapter manual extrusion in "Configuration Hardware" for more information on that topic. <br>
+  - The filament has to be extruded up to the end of the nozzle. Please refer to the chapter "Refilling the Filament" in "Configuration Hardware" for more information on that topic. <br>
   - The waste bin needs to have enough space to not overflow while picking. <br>
   - There must be air pressure available, you can test this with manually activating the pneumatic scissors, for more information see "Configuration Hardware" <br>
   - The picker must be connected to power and the red power button on the right has to be switched on (the display is no indication since it can also be lit when the picker is turned off). <br>
@@ -117,14 +117,14 @@ Einstellungen nicht überprüft?
     <img src="./img/wiki/Orientation_Dish.jpg"  width="400"> <br>
     Note the correct orientation!
     </p>
-  
+  <!--
   <h2> 3. Open Web Interface </h2>
   <p>
     Now enter the following URL into your browser: <a href="https://c3picko.bio.tu-darmstadt.de">c3picko.bio.tu-darmstadt.de</a> you will be welcomed with the following page: <br>
     <img src="./img/wiki/webinterface.jpg"  width="400">
   </p>
-  
-  <h2> 4. Choose Image </h2>
+  -->
+  <h2> 3. Choose Image </h2>
   <p>
     There are two options to upload a picture. It can be either uploaded via a click on "Drop Image" and selected in the file explorer or drag and dropped in the dedicated area. If the image was uploaded beforehand it can be select below the photo upload within "All Images".
   </p>
@@ -138,31 +138,31 @@ Einstellungen nicht überprüft?
   </p>
   -->
   
-  <h2> 5. Set Attributes </h2>
+  <h2> 4. Set Attributes </h2>
   <p> Insert here Information about the pick-job, the date will automatically inserted. This information will be displayed in the "History". </p>
   
-  <h2> 6. Detect Colonies </h2>
+  <h2> 5. Detect Colonies </h2>
   <p>
     The colony detection runs automatically when this step is reached. After changing any settings the colony detection will automatically be redone. Besides changing the settings on the right hand side the colonies can also be clicked upon in the picture. This shows more information about them and toggles the inclusion. For more information about the filter click the name of the desired one. The "Excluded" button above the image of the Petri dish will display all detected colonies. The colour of the "X" on-top the colonies correlates with the filter which excludes them. <br>
     <img src="./img/wiki/Detection_Settings.jpg"  width="400">
   </p>
   
-  <h2> 7. Choose Plates </h2>
+  <h2> 6. Choose Plates </h2>
   <p>
     Here the selection of the PCR dish takes place, the drop down menu offers all available PCR dishes. Below the PCR dish selection the number of colonies which will be picked can be selected. To the right the starting well can be chosen with a click on the desired well. All chosen wells are shown in green. If more colonies are selected than available wells the excess colonies will be discarded.
     This is an example of a 96 well PCR dish: <br>
     <img src="./img/wiki/PCR_Dish_Site.jpg"  width="400">
   </p>
   
-  <h2> 8. Overview </h2>
+  <h2> 7. Overview </h2>
   <p>
     This site shows you all the configuration you have done before and is intended as a mean to exclude any errors before starting the picking process
   </p>
   
-  <h2> 9. Start Picking </h2>
+  <h2> 8. Start Picking </h2>
   <p> Here you can finally start the picking process. </p>
   
-  <h2> 10. Finishing </h2>
+  <h2> 9. Finishing </h2>
   <p>
     After the picking process is complete you can remove the Petri dishes from the colony picker and start your experiments. Please<b> don't turn the printer off via the power switch</b>, first the integrated pc needs to be turned off. Best leave this to the administrators ;)
   </p>
@@ -181,7 +181,7 @@ Einstellungen nicht überprüft?
   <h4 id="area-h"> Area </h4>
   <div id="area">
     <p>
-      With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles. <br>
+      With this setting you can select what size the colonies you want to pick should possess, you can select a lower as well as an upper limit. In the example image you could filter out any of the three circles, but not just the middle sized one.<br>
       <img src="./img/wiki/Area.jpg"  width="400">
     </p>
   </div>
@@ -189,7 +189,7 @@ Einstellungen nicht überprüft?
   <h4 id="safty_margin-h"> Safety Margin </h4>
   <div id="safty_margin">
     <p>
-      This setting is used to exclude all colonies which are to close to the Petri dish wall to be picked
+      This setting is used to exclude all colonies which are to close to the Petri dish wall to be picked. This is a saftey feature to ensure that the head does not collide with any wall.
     </p>
   </div>
   
@@ -197,7 +197,7 @@ Einstellungen nicht überprüft?
   <div id="aabb_ratio">
     <p>
       This option lets you choose what ratio of length and width the colony can have. A perfectly round colony would have the ration 1. In the example image refer to the green bounding box, the calculation is as follows: whatever side is shorter is divided by the longer side. <br>
-      <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+      <img src="./img/wiki/aabb_ratio.jpg"  width="400"> <br>
 	  <b>Calculation:</b><br>
 	  The shorter side of the bounding box is taken and divided by the longer side.
     </p>
@@ -206,8 +206,8 @@ Einstellungen nicht überprüft?
   <h4 id="bb_ratio-h"> BB Side Ratio </h4>
   <div id="bb_ratio">
     <p>
-      This option is similar to the one above, the only difference is that the bounding box is rotated to be as small as possible and not aligned with the edges of the image. Refer to the red bounding box. <br>
-      <img src="./img/wiki/side_ratio.jpg"  width="400"> <br>
+      Here one can choose the ratio of length and hight of the colonies to be included. For this a bounding box is laid around the colony and rotated to be as small as possible. Refer to the red bounding box. <br>
+      <img src="./img/wiki/bb_ratio.jpg"  width="400"> <br>
 	  <b>Calculation:</b><br>
 	  The shorter side of the rotated bounding box is taken and divided by the longer side.
     </p>
@@ -237,7 +237,7 @@ Einstellungen nicht überprüft?
   <h4 id="max_number_of_colonies-h"> Number of Colonies </h4>
   <div id="max_number_of_colonies">
     <p>
-      Here is defined how many colonies are being picked. If less colonies are selected than recognized the excess is discarded.
+      Here is defined how many colonies are being picked. If less colonies are selected than recognized the excess is discarded. The selection of colonies is randomized.
     </p>
   </div>
   
@@ -438,7 +438,7 @@ Einstellungen nicht überprüft?
 
   <h3> Plate Profiles </h3>
     <div id="plate_profiles">
-    <p>This option is intended to great new PCR dishes in different sizes. <br></p>
+    <p>This option is intended to create new PCR dishes in different sizes. <br></p>
     <img src="./img/wiki/PCR_Dish2.jpg"  width="400"> <br>
     <p>
     Column: red, <br>
@@ -537,7 +537,7 @@ Einstellungen nicht überprüft?
   <h2> Refilling the Filament </h2>
   <p> For replacing the filament operate the handle at the stepper motor. <br>
     <img src="./img/wiki/fillament_handle.jpg"  width="400"> <br>
-     Now the stepper motor lost grip and the present filament can be pulled out. Afterwards the new filament can be inserted in the handles hole and pushed past the stepper motor into the tube. Push the filament until it reaches the nozzle, sometimes it tangles with the brass tube connection. To fix this the tube connection can be unscrewed and the filament manually placed into the brass adapter and screwed on again. When finished make sure the filament is located at the tip of the nozzle. <br>
+     Now the stepper motor lost grip and the present filament can be pulled out. Afterwards the new filament can be inserted in the handles hole and pushed past the stepper motor into the tube. Push the filament until it reaches the nozzle, sometimes it tangles with the brass tube connection. To fix this the tube connection can be unscrewed and the filament manually placed into the brass adapter and screwed on again. When finished make sure the filament is located at the tip of the nozzle. The filament needs to be steril, if there are any contaminations, they can be transmitted to the hardware and recontaminated a future filament. <br>
     <img src="./img/wiki/fillament_nozzle.jpg"  width="400"> <br>
     Only if this is met the printer can determine the filament exact location and pick correctly.
   </p>
@@ -556,7 +556,7 @@ Einstellungen nicht überprüft?
   
   <h2> Overview </h2>
   <p>
-    The colony picker consist of a 3d printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operate able. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
+    The colony picker consist of a 3d printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operable. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
   </p>
   
   <h2> Additional Parts </h2>
@@ -586,7 +586,7 @@ Einstellungen nicht überprüft?
   
   <h3> 1. Assembly </h3>
   <p>
-    Assemble the printer according to the manufactures instruction. Now screw the pneumatic scissors into the Petri dish holder. Afterwards place the Petri dish holder onto the heating bed. Now the Petri dish holder can be mounted onto the printer to do this first place the screws heads up inside the frame and fixated it with a nut (This nut will now hold the Petri dish bed onto the heating element). A further nut has to be placed on top of the last on, for later high adjustment. Afterwards put the screws through the dedicated holes of 3d printer's heating bed holder and fixated it with another nut. Now assemble the switch for the pneumatic scissors to do this glue it into the switch holder and position it into the Petri dish holder. <br>
+    Assemble the printer according to the manufactures instruction. But do not mount or connect the heating bed. Now screw the pneumatic scissors into the Petri dish holder. Now the Petri dish holder can be mounted onto the printer to do this first place the screws heads up inside the frame and fixated it with a nut (This nut will now hold the Petri dish bed onto the heating element). A further nut has to be placed on top of the last on, for later high adjustment. Afterwards put the screws through the dedicated holes of 3d printer's heating bed holder and fixated it with another nut. Now assemble the switch for the pneumatic scissors to do this glue it into the switch holder and position it into the Petri dish holder. <br>
     Heating-bed holder: <br>
     <img src="./img/wiki/Heatingbed_Holder.jpg"  width="400"> <br>
     switch holder with attached switch: <br>
@@ -624,7 +624,7 @@ Einstellungen nicht überprüft?
   
   <h3> 4. Calibration </h3>
   <p>
-    Now slowly move the printers head to the front left corner of the Petri dish holder. After you reached that location slowly move it to the back and adjust the nuts, so that the distance between nozzle and Petri dish holder stay the same. After you reached the back do the same moving right.
+    It is important, that the socket is leveled, otherwise the ilament might not puncture all colonies or might even collide with a Petri dish. For leveling it slowly move the printers head to the front left corner of the Petri dish holder (e.g. by hand or webinterface of the pickers mini pc). After you reached that location slowly move it to the back and adjust the nuts, so that the distance between nozzle and Petri dish holder stay the same. After you reached the back do the same moving right.
   </p> 
   
   <h3> 5. Filament </h3>
@@ -639,17 +639,17 @@ Einstellungen nicht überprüft?
   <h1> Administration - Software </h1>
   
   <h2> Install Software </h2>
-  <p>There are two options available for installing the software, either use the "Ready to use VM" or the "Manual installation </p>
+  <p>There are two options available for installing the software, either use the "Ready to use VM" or the "Manual Installation </p>
   <h3> Ready to use VM </h3>
   <p>
-    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users as well as the 3d printer. The user's pc does not necessarily need a direct connection to the printer, however for trouble shooting purposes it is recommended.
+    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users and the server has access to the mini pc controlling the picker. The user's pc does not necessarily need a direct connection to the printer, however for trouble shooting purposes it is recommended (e.g. for manual controlling the picker).
   </p>
   <h3> Manual Installation </h3>
   <p>
-    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the commands in the script and type them in by hand.
+    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the script to check those commands.
   </p>
   <h2> Running the Software </h2>
   <p>
-    The configuration for the web server is saved in the "serverconfig.ini" it is located in 3cpicko/GUI/. By default it is in working condition but for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the Main program and give it as parameter the serverconfig.ini.
+    The configuration for the web server is saved in the "serverconfig.ini" it is located in 3cpicko/GUI/. By default it is in working condition but for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the "Main" program and give it as parameter the "serverconfig.ini".
   </p>
 </div>
