@@ -60,12 +60,14 @@ Report ReportCreator::createReport() const {
     cv::Mat mat = result_.first();
     std::vector<Colony> const& colonies(result_.colonies());
 
-    for (auto it : pick_positions_) {
-      Colony const& colony(colonies[it.second]);
+    for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
+      Colony const& colony =
+          *std::find_if(colonies.begin(), colonies.end(),
+                        [it](Colony const& c) { return c.id() == it->second; });
       cv::Point pos(colony.x() * mat.cols, colony.y() * mat.rows);
 
       cv::Scalar clr(rand() % 255, rand() % 255, rand() % 255);
-      Well const& well(it.first);
+      Well const& well(it->first);
       cv::circle(mat, pos, colony.major_length(), clr, 2);
       math::drawText(mat, pos, well.toString(), clr, 1, 1);
     }
@@ -136,7 +138,9 @@ colonies from all "
   int i = 0;
   for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
     Well const& well = it->first;
-    Colony const& colony = colonies[it->second];
+    Colony const& colony =
+        *std::find_if(colonies.begin(), colonies.end(),
+                      [it](Colony const& c) { return c.id() == it->second; });
 
     std::vector<QString> data = {well.toString(), QString::number(it->second),
                                  QString::number(colony.x() * 100, 'f', 1),
