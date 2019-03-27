@@ -13,6 +13,7 @@ class MatrixResult : public AlgorithmResult {
   using AlgorithmResult::AlgorithmResult;
   MatrixResult(AlgorithmResult&&);
 
+  cv::Mat& first() const;
   cv::Mat& newMat();
   cv::Mat& newMat(cv::Mat const& copy_from);
   cv::Mat& oldMat();

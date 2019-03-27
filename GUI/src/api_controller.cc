@@ -473,9 +473,10 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
       gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
                                                 job.startingCol(), coords);
 
-  Report report(Report::fromDatabase(*db_, "132", job.id(), pick_positions));
-  QPdfWriter pdf("report.pdf");
-  report.writePdfReport(&pdf);
+  ReportCreator reporter(
+      ReportCreator::fromDatabase(*db_, "132", job.id(), pick_positions));
+  Report report = reporter.createReport();
+
   job.resultJob()->result()->cleanup();  // TODO dumb
   qDebug() << "Created report.pdf";
 
@@ -490,7 +491,8 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   }
   file.flush();
   file.close();
-  qDebug() << "Job started";
+
+  emit OnJobStarted(job, client);
   // Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
   // printer->SendCommand(cmd); // TODO inform client
 }

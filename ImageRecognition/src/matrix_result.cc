@@ -4,6 +4,12 @@ namespace c3picko {
 MatrixResult::MatrixResult(AlgorithmResult&& base)
     : AlgorithmResult(std::move(base)) {}
 
+cv::Mat& MatrixResult::first() const {
+  if (!stack_.size() || !stack_.front())
+    throw Exception("Assertion failure: Stack empty");
+  return *stack_.front();
+}
+
 cv::Mat& MatrixResult::newMat() {
   cv::Mat* new_mat = new cv::Mat();
 

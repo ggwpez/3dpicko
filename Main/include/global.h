@@ -21,6 +21,7 @@ ResourcePath Etc();
 ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
+ResourcePath reportFolder();
 
 QString searchConfigFile(int argc, char** argv);
 void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings);

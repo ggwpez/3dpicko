@@ -113,7 +113,7 @@ class APIController : public QObject {
   void OnJobDeleted(Job, QObject* client);
   void OnJobDeleteError(Job::ID id, QObject* client);
 
-  void OnJobStarted(Job::ID, QObject* client);
+  void OnJobStarted(Job, QObject* client);
   void OnJobStartError(QString error, QObject* client);
 
   void OnImageCreated(Image, QObject* client);

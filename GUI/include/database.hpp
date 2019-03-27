@@ -5,6 +5,7 @@
 #include "include/table.hpp"
 #include "include/types/image.hpp"
 #include "include/types/job.hpp"
+#include "include/types/report.h"
 
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "include/types/profile.hpp"
@@ -40,6 +41,7 @@ class Database : public QObject, JsonConvertable {
   Profile::ID newProfileId();
   AlgorithmResult::ID newResultId();
   AlgorithmJob::ID newResultJobId();
+  Report::ID newReportId();
 
   Profile::ID defaultPrinter() const;
   Profile::ID defaultSocket() const;
@@ -73,6 +75,7 @@ class Database : public QObject, JsonConvertable {
   qint64 profile_id_;
   qint64 result_job_id_;
   qint64 result_id_;
+  qint64 report_id_;
 
   Profile::ID default_printer_;
   Profile::ID default_socket_;

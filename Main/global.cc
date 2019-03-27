@@ -60,6 +60,8 @@ QString UploadFolderName() { return "uploads"; }
 
 ResourcePath UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
+ResourcePath reportFolder() { return DocRoot() + "reports/"; }
+
 /**
  * Search the configuration file.
  * Aborts the application if not found.
@@ -117,6 +119,9 @@ void Setup(QCoreApplication* app, QString ini_file_path, QSettings& settings) {
   // Create "uploads" folder
   if (!QDir(UploadFolder().toSystemAbsolute()).exists())
     QDir().mkdir(UploadFolder().toSystemAbsolute());
+  // Create "report" folder
+  if (!QDir(reportFolder().toSystemAbsolute()).exists())
+    QDir().mkdir(reportFolder().toSystemAbsolute());
 }
 
 QString dateTimeFormat() { return "dd.MM.yy HH:mm"; }
@@ -126,5 +131,4 @@ int exitCodeSuccess() { return 0; }
 int exitCodeError() { return 1; }
 
 const char* defaultImageExtension() { return "jpg"; }
-
 }  // namespace c3picko

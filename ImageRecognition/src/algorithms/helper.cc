@@ -13,8 +13,8 @@
 namespace c3picko {
 namespace math {
 bool LineLineIntersect(double x1, double y1, double x2, double y2, double x3,
-                       double y3, double x4, double y4, double &ixOut,
-                       double &iyOut)  // Output
+                       double y3, double x4, double y4, double& ixOut,
+                       double& iyOut)  // Output
 {
   // http://mathworld.wolfram.com/Line-LineIntersection.html
 
@@ -44,7 +44,7 @@ bool LineLineIntersect(double x1, double y1, double x2, double y2, double x3,
 
 double det(double a, double b, double c, double d) { return a * d - b * c; }
 
-double brightness(std::vector<cv::Point> const &contour, cv::Mat const &mat) {
+double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat) {
   if (quint64(contour.size()) >= (std::numeric_limits<quint64>::max() >> 8)) {
     qWarning() << Q_FUNC_INFO << "possible overflow, aborted";
     return 0;
@@ -67,13 +67,13 @@ cv::Point2d gravityCenter(cv::InputArray poly) {
   return cv::Point2d(m.m10 / m.m00, m.m01 / m.m00);
 }
 
-void drawText(cv::Mat &output, cv::Point pos, QString string,
-              cv::Scalar color) {
+void drawText(cv::Mat& output, cv::Point pos, QString string, cv::Scalar color,
+              int scale, int thickness) {
   cv::Point2i img_center{output.cols / 2, output.rows / 2};
 
   int f_type = cv::FONT_HERSHEY_SIMPLEX;
-  int f_scale = 2;
-  int f_thick = 2;
+  int f_scale = scale;
+  int f_thick = thickness;
 
   std::string text = string.toStdString();
 
@@ -82,7 +82,7 @@ void drawText(cv::Mat &output, cv::Point pos, QString string,
   cv::putText(output, text, t_pos, f_type, f_scale, color, f_thick);
 }
 
-std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const &colonies,
+std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const& colonies,
                                             const int r, const int d,
                                             const int min_dist) {
   const std::size_t n = colonies.size();
@@ -135,9 +135,9 @@ std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const &colonies,
   return ret;
 }
 
-void findConnectedComponentEdges(cv::Mat const &input,
-                                 std::vector<std::vector<cv::Point>> &contours,
-                                 math::Range<int> const &area) {
+void findConnectedComponentEdges(cv::Mat const& input,
+                                 std::vector<std::vector<cv::Point>>& contours,
+                                 math::Range<int> const& area) {
   std::vector<std::vector<cv::Point>> components;
   // TODO filter area with stats
   cv::Mat stats, centers, labels(input.rows, input.cols, CV_32S);
@@ -182,15 +182,15 @@ struct Curve {
 };
 
 // Strict include, points on the edge are considered outside
-bool polyIncludesPoly(std::vector<cv::Point> const &poly1,
-                      std::vector<cv::Point> const &poly2) {
+bool polyIncludesPoly(std::vector<cv::Point> const& poly1,
+                      std::vector<cv::Point> const& poly2) {
   for (int i = 0; i < poly2.size(); ++i)
     if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
 
   return true;
 }
 
-cv::Point2d gravityCenter(std::vector<cv::Point> const &poly) {
+cv::Point2d gravityCenter(std::vector<cv::Point> const& poly) {
   cv::Moments m = cv::moments(poly);
 
   if (!m.m00 || std::isnan(m.m00))

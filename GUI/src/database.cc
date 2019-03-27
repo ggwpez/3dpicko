@@ -79,6 +79,8 @@ AlgorithmJob::ID Database::newResultJobId() {
   return QString::number(result_job_id_++);
 }
 
+Report::ID Database::newReportId() { return QString::number(report_id_++); }
+
 Profile::ID Database::defaultPrinter() const { return default_printer_; }
 
 Profile::ID Database::defaultSocket() const { return default_socket_; }

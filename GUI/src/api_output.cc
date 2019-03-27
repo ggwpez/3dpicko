@@ -51,8 +51,8 @@ void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
   Error(APICommands::DELETE_JOB, "id=" + id, client);
 }
 
-void APIOutput::JobStarted(Job::ID id, QObject*) {
-  emit op->toAll(APICommands::START_JOB, {{"id", id}});
+void APIOutput::JobStarted(Job job, QObject*) {
+  emit op->toAll(APICommands::START_JOB, {{"id", job.id()}});
 }
 
 void APIOutput::JobStartError(QString error, QObject* client) {
