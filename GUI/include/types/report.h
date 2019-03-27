@@ -44,12 +44,14 @@ class Report {
  public:
   typedef QString ID;
 
-  Report(ResourcePath pdf, ResourcePath image);
+  Report(Job::ID job, ResourcePath pdf, ResourcePath image);
 
+  Job::ID job() const;
   ResourcePath const& pdf() const;
   ResourcePath const& image() const;
 
  private:
+  Job::ID job_;
   ResourcePath pdf_, image_;
 };
 

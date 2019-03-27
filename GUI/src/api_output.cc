@@ -44,16 +44,17 @@ void APIOutput::JobCreateError(QString id, QObject* client) {
 }
 
 void APIOutput::JobDeleted(Job job, QObject*) {
-  emit op->toAll(APICommands::DELETE_JOB,
-                 {{"id", job.id()}, {"report", "/index.html"}});
+  emit op->toAll(APICommands::DELETE_JOB, {{"id", job.id()}});
 }
 
 void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
   Error(APICommands::DELETE_JOB, "id=" + id, client);
 }
 
-void APIOutput::JobStarted(Job job, QObject*) {
-  emit op->toAll(APICommands::START_JOB, {{"id", job.id()}});
+void APIOutput::JobStarted(Report report, QObject*) {
+  emit op->toAll(
+      APICommands::START_JOB,
+      {{"id", report.job()}, {"report", report.pdf().toDocRootAbsolute()}});
 }
 
 void APIOutput::JobStartError(QString error, QObject* client) {

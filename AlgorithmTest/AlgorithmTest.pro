@@ -22,14 +22,6 @@ HEADERS += \
 INCLUDEPATH += $$ROOTPATH/Main $$ROOTPATH/ImageRecognition $$ROOTPATH/GUI
 DEPENDPATH += $$ROOTPATH/Main $$ROOTPATH/ImageRecognition $$ROOTPATH/GUI
 
-INCLUDEPATH += /usr/local/include/opencv
-
-LIBS += -L/usr/local/lib/ \
-        -lopencv_core \
-        -lopencv_imgproc \
-        -lopencv_highgui \
-        -lopencv_imgcodecs
-
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ImageRecognition/release/ -lImageRecognition
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ImageRecognition/debug/ -lImageRecognition
 else:unix: LIBS += -L$$OUT_PWD/../ImageRecognition/ -lImageRecognition
@@ -49,3 +41,11 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../GUI/
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../GUI/release/GUIWebserver.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../GUI/debug/GUIWebserver.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../GUI/libGUIWebserver.a
+
+INCLUDEPATH += /usr/local/include/opencv
+
+LIBS += -L/usr/local/lib/ \
+        -lopencv_core \
+        -lopencv_imgproc \
+        -lopencv_highgui \
+        -lopencv_imgcodecs

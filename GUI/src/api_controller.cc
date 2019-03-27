@@ -493,7 +493,7 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   file.flush();
   file.close();
 
-  emit OnJobStarted(job, client);
+  emit OnJobStarted(report, client);
   // Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
   // printer->SendCommand(cmd); // TODO inform client
 }

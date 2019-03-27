@@ -73,7 +73,7 @@ Report ReportCreator::createReport() const {
     cv::imwrite(img_path.toSystemAbsolute().toStdString(), mat);
   }
 
-  return Report(pdf_path, img_path);
+  return Report(job_.id(), pdf_path, img_path);
 }
 
 void ReportCreator::writePdfReport(QPdfWriter* pdf) const {
@@ -203,9 +203,10 @@ quint16 Well::index() const {
   return quint16((col_ - 1) * plate_->numberOfRows() + (row_ - 1));
 }
 
-Report::Report(ResourcePath pdf, ResourcePath image)
-    : pdf_(pdf), image_(image) {}
+Report::Report(Job::ID job, ResourcePath pdf, ResourcePath image)
+    : job_(job), pdf_(pdf), image_(image) {}
 
+Job::ID Report::job() const { return job_; }
 ResourcePath const& Report::pdf() const { return pdf_; }
 
 const ResourcePath& Report::image() const { return image_; }
