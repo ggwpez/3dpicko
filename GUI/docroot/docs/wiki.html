@@ -317,40 +317,34 @@ Navileiste scorllen Introduction
   <h4 id="aabb_ratio-h"> AABB Side Ratio </h4>
   <div id="aabb_ratio">
     <p>
-      Filter colonies by the ratio of the width and length of their bounding boxes. A perfectly round colony would have the ration 1. The calculation is as follows: <img src="./img/wiki/side_ratio.jpg"> <br><br>
+      Filter colonies by the ratio of the width and length of their bounding boxes. A perfectly round colony would have the ration 1. Refer to the red bounding box. The calculation is as follows: <img src="./img/wiki/side_ratio.jpg"> <br><br>
       <img src="./img/wiki/aabb_ratio.jpg"  width="400"> <br>
-	  <b>Calculation:</b><br>
-	  The shorter side of the bounding box is taken and divided by the longer side.
     </p>
   </div>
   
   <h4 id="bb_ratio-h"> BB Side Ratio </h4>
   <div id="bb_ratio">
     <p>
-      Here one can choose the ratio of length and hight of the colonies to be included. For this a bounding box is laid around the colony and rotated to be as small as possible. Refer to the red bounding box. <br>
+      Filter colonies by the ratio of the width and length of their bounding boxes. A perfectly round colony would have the ration 1. The calculation is as follows: Refer to the red bounding box. <br>
+      <img src="./img/wiki/side_ratio.jpg"> <br>
       <img src="./img/wiki/bb_ratio.jpg"  width="400"> <br>
-	  <b>Calculation:</b><br>
-	  The shorter side of the rotated bounding box is taken and divided by the longer side.
     </p>
   </div>
     
   <h4 id="convexity-h"> Convexity </h4>
   <div id="convexity">
     <p>
-      This is option filters the convexity, it processes the outline of the colony and checks if the arc is evenly, the more evenly it is the higher the number becomes. <br>
+      Filter colonies by their convexity. The calculation is as follows: First the convex hull of the colony is approximated. Afterwards the area of the recognized hull is divided by the area of the approximated hull. <br>
       <img src="./img/wiki/Convexity.jpg"  width="400"> <br>
-	  <b>Calculation:</b><br>
-	  First the convex hull of the colony is approximated. Afterwards the area of the recognized hull is divided by the area of the approximated hull.
     </p>
   </div>
   
   <h4 id="circularity-h"> Circularity </h4>
   <div id="circularity">
     <p>
-      This option checks the roundness of the colonies The rounder the colony the higher the number. <br>
+      Filter colonies by their roundness. The calculation is as follows: <img src="./img/wiki/circularity.jpg"> 
+      <br>
       <img src="./img/wiki/Circularity.jpg"  width="400"> <br>
-	  <b>Calculation:</b><br>
-	  This calculates the perfect circumference<sup>2</sup> of the colonies area and divides it by the recognized circumference<sup>2</sup>.
     </p>
   </div>
   
