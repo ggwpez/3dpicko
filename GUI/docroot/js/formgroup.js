@@ -131,7 +131,7 @@ class FormGroup{
 		WORKING:
 		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('${id}','./docs/User-Manual-Advanced-Settings.html #${id}')">${name}</a></span>:</label>`;
 		*/
-		html += `<span data-toggle="popover"> <a tabindex="0" class="textLink" data-toggle="modal" data-trigger="hover" data-placement="top" data-html="true" data-delay='{"show":200}' data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #${id}-h','./docs/wiki.html #${id}')">${name}</a></span>:</label>`;
+		html += `<a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #${id}-h','./docs/wiki.html #${id}')">${name}</a>:</label>`;
 		
         //else html += `${name}:</label>`;
 

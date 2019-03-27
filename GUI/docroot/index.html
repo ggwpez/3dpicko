@@ -15,33 +15,21 @@
   <div id="overlay"><div class="spinner-border text-primary overlay-spinner"></div></div>
   <nav>
     <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
-      <a class="nav-item nav-link" id="nav-start-tab" data-toggle="tab" href="#nav-start" role="tab" aria-controls="nav-start" aria-selected="false">Start</a>
-      <a class="nav-item nav-link active" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="true">New Job</a>
+      <a class="nav-item nav-link active" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-wiki" aria-selected="true">Wiki</a>
+      <a class="nav-item nav-link" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="false">New Job</a>
       <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">All Jobs</a>
       <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">History</a>
       <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
-      <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-settings" aria-selected="false">Admin</a>
-      <!-- inserted Wiki -->
-      <a class="nav-item nav-link" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-settings" aria-selected="false">Wiki</a>
-      <!-- /inserted Wiki -->
+      <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-admin" aria-selected="false">Admin</a>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade" id="nav-start" role="tabpanel" aria-labelledby="nav-start-tab">
-      <div class="container justify-content-start">
-        <div class="row ">
-          <div class="col-lg-8">
-            <h1>Intro &hellip;</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="tab-pane fade show active" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
+    <div class="tab-pane fade" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
       <div class="container-fluid">
         <div class="row">
           <div class="col-auto pr-0">
             <div class="nav flex-column nav-pills mb-2" id="steps">
-              <h4 id="headertag">Entwurf</h4>
+              <h4 id="headertag">New Job</h4>
               <div class="nav-link active" id="browse-tab" href="#browse">1. Choose Image</div>
               <div class="nav-link" id="attributes-tab" href="#attributes">2. Set Attributes</div>
               <div class="nav-link" id="selection-tab" href="#selection">3. Detect Colonies</div>
@@ -54,8 +42,8 @@
             <div class="tab-content mb-2" id="tabContent">
               <div class="tab-pane fade show active col" id="browse">
                 <div class="row mb-4">
-                  <div class="col-md-6 col-lg-4" style="min-width: 400px;">
-                    <h2>Choose Image</h2>
+                  <div class="col-md-6 col-lg-4 heading-box" style="min-width: 400px;">
+                    <h2 class="box-heading">Choose Image</h2>
                     <h6 id="img-name"></h6>
                     <form><input id="classicUpload" type="file" style="display: none;"></form>
                     <div id="dropZone" class="empty"></div>
@@ -69,11 +57,12 @@
                 <div class="row">
                   <div class="col">
                     <div id="all-images" style="display: none;"></div>
+                    <div id="show-more-images"></div>
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade col-md-6 col-xl-4" id="attributes">
-                <h2>Pickjob Attributes</h2>
+              <div class="tab-pane fade col-md-6 col-xl-4 heading-box" id="attributes" style="padding-bottom: 50px;">
+                <h2 class="box-heading">Pickjob Attributes</h2>
                 <form id="attributes-form" name="attributes-form" action="javascript:void(0);">
                   <div class="form-group">
                     <label for="staticImgName">Image:</label><span id="staticImgName"></span>
@@ -85,7 +74,7 @@
                     <label for="inputJobName">Job name</label>
                     <input type="text" class="form-control" id="inputJobName" placeholder="optional">
                   </div>
-                  <!-- Achtung Profi-Code -->
+                  <!-- remove display:none; to enable manual selection of printer- and socket-profile, else default profiles are used -->
                   <div class="form-row" style="display: none;">
                     <div class="form-group col-md-6">
                       <label for="select-printer-profile">Printer-Profile</label>
@@ -118,7 +107,6 @@
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
                           <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray&trade;</label>
                         </div>
-                        
                       </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas> <!-- For colony image -->
                       <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas> <!-- For colony circles -->
@@ -126,6 +114,7 @@
                       <canvas id="layer3" style="position: absolute; left: 0; top: 0; z-index: 3;"></canvas> <!-- For safety-margin -->
                     </div>
                     <div id="buttons">
+                      <div id="legend" style="display: none; float: left;"><h4>Legend:</h4></div>
                       <button id="strategy-tab-button" class="btn btn-success next-step mt-1" onclick="strategyTab()" disabled>Continue</button>
                     </div>
                     <div id="showCoordinates"></div>
@@ -142,9 +131,9 @@
               </div>
               <div class="tab-pane fade col" id="strategy">
                 <div class="row">
-                  <div class="col-md-4 col-lg-2" style="min-width: 300px;">
-                    <h2>Choose Goal Plate</h2>
-                    <form id="strategy-form" action="javascript:void(0);">
+                  <div class="col-md-4 col-lg-2 heading-box" style="min-width: 300px;">
+                    <h2 class="box-heading">Choose Goal Plate</h2>
+                    <form id="strategy-form" style="margin-bottom: 2em;" action="javascript:void(0);">
                       <div class="form-group">
                         <label for="select-plate-profile">Goal Plate:</label>
                         <select class="form-control" id="select-plate-profile"></select>
@@ -154,8 +143,8 @@
                     </form>
                     <button id="enter-overview-button" class="btn btn-success next-step">Continue</button>
                   </div>
-                  <div class="col">
-                    <h2>Choose Starting Well</h2>
+                  <div class="col-auto heading-box">
+                    <h2 class="box-heading">Choose Starting Well: <span id="starting-well" class="text-primary"></span></h2>
                     <canvas id="pickstrategy-canvas"></canvas>
                     <br>
                   </div>
@@ -166,8 +155,8 @@
                 <div class="row">
                   <div class="col-md-8">
                     <div id="overview-image" style="position: relative;">
-                      <img id="processed-layer0" width="100%" style="z-index: 0;">
-                      <img id="processed-layer1" width="100%" style="position: absolute; left: 0; top: 0; z-index: 1;">
+                      <img id="processed-layer0" style="z-index: 0;">
+                      <img id="processed-layer1" style="position: absolute; left: 0; top: 0; z-index: 1;">
                     </div>
                   </div>
                   <div class="col-md-4">
@@ -258,52 +247,49 @@
       <div id="debug-output"></div>
     </div>
     <!-- inserted Wiki -->
-    <div class="tab-pane fade" id="nav-wiki" role="tabpanel" aria-labelledby="nav-wiki-tab">
-	  <div class="container-fluid">
-		<div class="row">
-		  <div class="col-auto">
+    <div class="tab-pane fade show active" id="nav-wiki" role="tabpanel" aria-labelledby="nav-wiki-tab">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-auto">
             <div class="sticky-top">
-			  <h4 id ="headertag">Wiki</h4>
+              <h4 id ="headertag">Wiki</h4>
               <div class="row">
-			    <button class="btn btn-link m-1" id="Introduction" onclick="loadWiki('Introduction','./docs/wiki.html #introduction')">Introduction</button>
-			  </div>
+                <button class="btn btn-link m-1" id="Introduction" onclick="loadWiki('Introduction','./docs/wiki.html #introduction')">Introduction</button>
+              </div>
               <h5 id ="headertag">User Manual</h5>
               <div class="row">
-  			    <button class="btn btn-link m-1" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
-			  </div>
-			  <div class="row">
-			    <button class="btn btn-link m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
-              </div>
-              <div class="row">
-                <button class="btn btn-link m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
-              </div>
-			  <h5 id ="headertag">Configuration</h5>
-			  <div class="row">
-			    <button class="btn btn-link m-1" id="Configuration-Hardware" onclick="loadWiki('Configuration-Hardware','./docs/wiki.html #configuration_hardware')" >Hardware</button>
-              </div>
-              <div class="row">
-			    <button class="btn btn-link m-1" id="Configuration-Software" onclick="loadWiki('Configuration-Software','./docs/wiki.html #configuration_software')" >Software</button>
-              </div>
-			  <h5 id ="headertag">Administration</h5>
-			  <div class="row">
-			    <button class="btn btn-link m-1" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
-              </div>
-              <div class="row">
-			    <button class="btn btn-link m-1" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
-              </div>
+               <button class="btn btn-link m-1" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
+             </div>
+             <div class="row">
+               <button class="btn btn-link m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
+             </div>
+             <div class="row">
+              <button class="btn btn-link m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
             </div>
-		  </div>
-		  <div class="col-5">
-            <p id="wiki-content">Error: Page not found</p>
+            <h5 id ="headertag">Configuration</h5>
+            <div class="row">
+              <button class="btn btn-link m-1" id="Configuration-Hardware" onclick="loadWiki('Configuration-Hardware','./docs/wiki.html #configuration_hardware')" >Hardware</button>
+            </div>
+            <div class="row">
+              <button class="btn btn-link m-1" id="Configuration-Software" onclick="loadWiki('Configuration-Software','./docs/wiki.html #configuration_software')" >Software</button>
+            </div>
+            <h5 id ="headertag">Administration</h5>
+            <div class="row">
+              <button class="btn btn-link m-1" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
+            </div>
+            <div class="row">
+              <button class="btn btn-link m-1" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
+            </div>
           </div>
-	    </div>
-	  </div>
+        </div>
+        <div class="col col-lg-5">
+          <p id="wiki-content">Error: Page not found</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 <!-- /inserted Wiki -->
-</div>
 
 <!-- Info-Dialog -->
 <div class="modal fade" id="info-dialog" tabindex="-1">
@@ -346,12 +332,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <p id="help-body">Error: Help not found </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -365,14 +349,12 @@
 <script type="text/javascript" src="js/multirange.js"></script>
 <script type="text/javascript" src="js/formgroup.js"></script>
 <script type="text/javascript" src="js/dropzone.js"></script>
+<script type="text/javascript" src="js/wiki.js"></script>
 <script type="text/javascript" src="js/colonydetection.js"></script>
-<script type="text/javascript" src="js/pickstrategie.js"></script>
+<script type="text/javascript" src="js/pickstrategy.js"></script>
 <script type="text/javascript" src="js/circle.js"></script>
 <script type="text/javascript" src="js/api.js"></script>
 <script type="text/javascript" src="js/config.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
-<!-- /inserted Wiki -->
-<script type="text/javascript" src="js/wiki.js"></script>
-<!-- /inserted Wiki -->
 </body>
 </html>

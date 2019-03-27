@@ -10,6 +10,18 @@ label{
 li{
 	word-break: break-all;
 }
+.heading-box{
+    margin: 20px 5px 0px 5px;
+	border: 1px solid gray;
+    border-radius: 10px;
+    padding-bottom: 15px;
+}
+.box-heading{
+    margin-top: -20px;
+    background: white;
+    width: fit-content;
+    width: -moz-fit-content;
+}
 .textLink, .textLink:visited{
 	font-style: inherit;
 	color: inherit;
@@ -125,10 +137,20 @@ a[href].textLink:hover, a[href].textLink:active, a[href].textLink:focus, a[href]
 	color: black;
 	border-color: black;
 }
-#dropZone .spinner-border{
+.spinner-border{
 	border-left-color: transparent;
+}
+.image-card .spinner-border{
+	display: block;
+	margin: 3rem auto;
+}
+#dropZone .spinner-border{
 	width: 3rem;
 	height: 3rem;
+}
+#show-more-images{
+	/*display: none;*/
+	text-align: center;
 }
 
 #overlay{

@@ -48,6 +48,7 @@ function AddProfiles(data){
     default_profiles["printer-profile"] = data.defaultPrinter;
     default_profiles["socket-profile"] = data.defaultSocket;
     default_profiles["plate-profile"] = data.defaultPlate;
+    default_profiles["octoprint-profile"] = data.defaultOctoprint;
     profile_templates["printer-profile"] = data.printerTemplate;
     profile_templates["socket-profile"] = data.socketTemplate;
     profile_templates["plate-profile"] = data.plateTemplate;
@@ -85,7 +86,7 @@ function AddProfileToList(profile){
     <div class="card-header" data-toggle="collapse" data-target="#collapse-${profile.id}">
     <span id="default-label-${profile.id}" class="badge badge-primary" ${(default_profiles[profile.type]==profile.id)?``:`style="display: none;"`}>Default</span>
     <h4 class="btn btn-link">
-    ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${profile.id}">&times;</button>`}
+    ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="profile" data-id="${profile.id}">&times;</button>`}
     ${(new_profile)?`Create New Profile &gt;`:`${profile.profile_name}`}
     </h4>
     </div>
@@ -119,8 +120,9 @@ function AddProfileToList(profile){
     profile_form.AddInputEvents();
     FormGroup.AddFormEvents('form-'+profile.id, UpdateSettingsProfile, unsaved_elements);
 
-    // add profile as option in "pickjob attributes" (if enabled)
-    if(!(new_profile) && (profile.type == "printer-profile" || profile.type == "socket-profile")){
+    // add profiles as options
+    let select = document.getElementById("select-"+profile.type);
+    if(!new_profile && select){
         if(profile.id == default_profiles[profile.type]){
             document.getElementById("select-"+profile.type).add(new Option(profile.profile_name,  profile.id, true, true), 0);
         }
@@ -145,17 +147,8 @@ function DeleteProfile(id){
         const profile = all_profiles[id];
         const type = profile.type;
         // delete profile in options
-        switch(type){
-            case "printer-profile":
-            $('#select-printer-profile option[value='+id+']').remove();
-            break;
-            case "socket-profile":
-            $('#select-socket-profile option[value='+id+']').remove();
-            break;
-            case "plate-profile":
-            // TODO update options list
-            break;
-        }
+        let option = $('#select-'+profile.type+' option[value='+id+']');
+        if(option.length > 0) option.remove();
         delete all_profiles[id];
         delete unsaved_elements["form-"+id];
     }

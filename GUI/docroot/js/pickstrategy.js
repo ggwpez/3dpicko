@@ -9,7 +9,6 @@ var colony_count = 1;
 
 function drawWells(col_arg, rows_arg, colonys = 1)
 {
-	// TODO default starting well
 	cols = col_arg;
 	rows = rows_arg;
 	colony_count = colonys;
@@ -21,12 +20,9 @@ function drawWells(col_arg, rows_arg, colonys = 1)
 	collided_id = -1, old_collided_id = -1;
 	balls = [];
 	pickstrategy_context.canvas.width = cols*size+40;
-	pickstrategy_context.canvas.height = rows*size+55+30;
+	pickstrategy_context.canvas.height = rows*size+55;
 	pickstrategy_context.font = "16px Arial";
-	// pickstrategy_context.fillStyle = "black";
-	// pickstrategy_context.textAlign = "right";
-	// pickstrategy_context.fillText("Number of Colonys: "+ colony_count,pickstrategy_context.canvas.width, pickstrategy_context.canvas.height-10);
-
+	
 	for (var x = 0; x < cols; ++x){
 		for (var y = 0; y < rows; ++y)
 		{
@@ -88,12 +84,9 @@ function updateWells(number_of_colonies = false){
 	}
 	old_collided_id = collided_id;
 
-	pickstrategy_context.clearRect(0, pickstrategy_context.canvas.height-30, pickstrategy_context.canvas.width/2, 30);
-	pickstrategy_context.fillStyle = "black";
 	collided_row = collided_id%rows+1;
 	collided_column = (collided_id-collided_id%rows)/rows+1;
-	pickstrategy_context.textAlign = "start";
-	pickstrategy_context.fillText("Start at Well: "+String.fromCharCode(64 + collided_row)+(collided_column),0, pickstrategy_context.canvas.height-10);
+	document.getElementById('starting-well').innerHTML = String.fromCharCode(64 + collided_row)+(collided_column);
 }
 
 pickstrategy_canvas.addEventListener('mousedown', function (e){

@@ -42,8 +42,9 @@ $(function Setup()
                 // $('#overlay').hide();
                 EnableDropzone();
                 // TODO
-                if('uploadimage' in data) ShowAlert("Upload failed.<br>Maybe Plate can't be detected.", "danger");
-                else ShowAlert(JSON.stringify(data), "danger");
+                if('uploadimage' == data.where) ShowAlert("Upload failed.<br>Maybe Plate can't be detected.", "danger");
+                else if('deleteimage' == data.where) ShowAlert("Deletion failed.<br>Maybe Image is used in Pickjob", "danger");
+                else ShowAlert("Error: "+data.what+" in "+data.where, "danger");
             }
             else if (type == "getimagelist")
             {
@@ -100,7 +101,7 @@ $(function Setup()
             {
                 AddJobToList(data);
                 current_job = data;
-                document.getElementById("headertag").innerHTML = "Entwurf #" +data.id;
+                document.getElementById("headertag").innerHTML = "Job #" +data.id;
                 ShowAlert("Pickjob "+data.id+" saved.", "success");
             }
             else if (type == "getjoblist")
@@ -137,7 +138,9 @@ $(function Setup()
             }
             else if (type == "getpositions")
             {
-                updatePositions(data);
+                if(current_job.id == data.job){
+                    updatePositions(data);
+                }
             }
             else if (type == "getdetectionalgorithms"){
                 console.log("########## Algos", JSON.stringify(data));
@@ -166,11 +169,10 @@ $(function Setup()
 
 function AddJobToList(job)
 {
-    // Is the job not already in the list ?
     if (!(job.id in all_jobs))
     {
         console.log("Adding job: " +JSON.stringify(job));
-        // ${job.created.formatted}
+        // TODO everything...
         var name = (job.step == 7) ? "Job" : "Entwurf";
         var html = `<div class="card m-1 job-card" id="job-${job.id}" >
         <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="job" data-id="${job.id}">&times;</button>
@@ -179,13 +181,12 @@ function AddJobToList(job)
         <img class="card-img" src="${images_list[job.img_id].path}" alt="${images_list[job.img_id].original_name}">
         <p class="card-text"><ul>
         <li>ID: ${job.id}</li>
-        <li>Created: </li>
-        <li>Step: ${job.step}</li>
+        <li>Created: ${job.created.formatted} </li>
         ${job.description}
         </p>
         </div>
         <div class="card-footer bg-white">
-        <a href="#" class="btn btn-primary ">edit</a>
+        <a href="#" class="btn btn-primary ">Download Report</a>
         </div>
         </div>`;
 
@@ -200,7 +201,6 @@ function AddJobToHistoryList(job)
 }
 
 function AddImageToList(image_object){
-
     if (!(image_object.id in images_list))
     {
         console.log("Adding image " +JSON.stringify(image_object));
@@ -209,7 +209,7 @@ function AddImageToList(image_object){
         <button type="button" class="close" style="line-height: 0.5;" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
         <div class="card-body p-1" style="cursor: pointer;">
         <h7 class="card-title mb-1 mr-3">${image_object.original_name}</h7>
-        <div class="spinner-border m-5" id="loading-${image_object.id}"></div>
+        <div class="spinner-border" id="loading-${image_object.id}"></div>
         <img id="image-${image_object.id}" class="card-img" src="${image_object.path}" alt="${image_object.original_name}" style="display: none;">
         <p class="card-text">Date: ${image_object.uploaded.formatted}</li></p>
         </div>
@@ -267,55 +267,41 @@ $(function(){
     HashChanged();
 
     $('#delete-dialog').on('show.bs.modal', function (e) {
-    // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
-    const type = $(e.relatedTarget).data('type');
-    const id = $(e.relatedTarget).data('id');
-    const dialog_text = document.getElementById('delete-dialog-title');
-    const dialog_button = document.getElementById('delete-button');
+        // use: <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="image" data-id="${image_object.id}">&times;</button>
+        const type = $(e.relatedTarget).data('type');
+        const id = $(e.relatedTarget).data('id');
+        const dialog_text = document.getElementById('delete-dialog-title');
+        const dialog_button = document.getElementById('delete-button');
 
-    switch (type) {
-        case "image":
-        dialog_text.innerHTML = `Delete image ${images_list[id].original_name}?`;
-        dialog_button.onclick = function(){
-            console.log("Trying to delete image with id: " + id);
-            api("deleteimage", {id: id.toString()});
-        };
-        break;
-        case "job":
-        dialog_text.innerHTML = `Delete job ${all_jobs[id].name}?`;
-        dialog_button.onclick = function(){
-            console.log("Trying to delete job with id: " + id);
-            api("deletejob", {id: id.toString()});
-        };
-        break;
-        case "printer-profile":
-        dialog_text.innerHTML = `Delete printer profile ${all_profiles[id].profile_name}?`;
-        dialog_button.onclick = function(){
-            console.log("Trying to delete printer profile with id: " + id);
-            api("deletesettingsprofile", {id: id.toString()});
-        };
-        break;
-        case "socket-profile":
-        dialog_text.innerHTML = `Delete socket profile ${all_profiles[id].profile_name}?`;
-        dialog_button.onclick = function(){
-            console.log("Trying to delete socket profile with id: " + id);
-            api("deletesettingsprofile", {id: id.toString()});
-        };
-        break;
-        case "plate-profile":
-        dialog_text.innerHTML = `Delete plate profile ${all_profiles[id].profile_name}?`;
-        dialog_button.onclick = function(){
-            console.log("Trying to delete plate profile with id: " + id);
-            api("deletesettingsprofile", {id: id.toString()});
-        };
-        break;
-        default:
-        dialog_text.innerHTML = `Not implemented`;
-        dialog_button.onclick = function(){
-            console.log("called non implemented delete");
-        };
-    }
-});
+        switch (type) {
+            case "image":
+            dialog_text.innerHTML = `Delete Image ${images_list[id].original_name}?`;
+            dialog_button.onclick = function(){
+                console.log("Trying to delete image with id: " + id);
+                api("deleteimage", {id: id.toString()});
+            };
+            break;
+            case "job":
+            dialog_text.innerHTML = `Delete Job ${all_jobs[id].name}?`;
+            dialog_button.onclick = function(){
+                console.log("Trying to delete job with id: " + id);
+                api("deletejob", {id: id.toString()});
+            };
+            break;
+            case "profile":
+            dialog_text.innerHTML = `Delete Profile ${all_profiles[id].profile_name}?`;
+            dialog_button.onclick = function(){
+                console.log("Trying to delete profile with id: " + id);
+                api("deletesettingsprofile", {id: id.toString()});
+            };
+            break;
+            default:
+            dialog_text.innerHTML = `Not Implemented`;
+            dialog_button.onclick = function(){
+                console.log("called non implemented delete");
+            };
+        }
+    });
 });
 
 function SetChosen(image_id){
@@ -401,14 +387,6 @@ function selectionTab(){
 
 function strategyTab(){
     let plate_selection = document.getElementById("select-plate-profile");
-    console.log(all_profiles);
-    for(let profile_id in all_profiles){
-        let profile = all_profiles[profile_id];
-        if(profile.type=="plate-profile"){
-            if(profile.id == default_profiles[profile.type]) plate_selection.add(new Option(profile.profile_name,  profile.id, true, true), 0);
-            else plate_selection.add(new Option(profile.profile_name, profile.id));
-        }
-    }
     if(plate_selection.length > 0){
         SetColoniesToPick();
         plate_selection.onchange = function(){
