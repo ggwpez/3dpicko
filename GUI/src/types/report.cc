@@ -65,7 +65,7 @@ Report ReportCreator::createReport() const {
       cv::Scalar clr(rand() % 255, rand() % 255, rand() % 255);
       // Well well(pick_positions_.at(colony.id()));
       cv::circle(mat, pos, colony.major_length(), clr, 2);
-      math::drawText(mat, pos, QString::number(colony.id()), clr, 1, 1);
+      math::drawText(mat, pos, QString::number(colony.id()), clr, .5, 1);
     }
 
     cv::imwrite(img_path.toSystemAbsolute().toStdString(), mat);

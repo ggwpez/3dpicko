@@ -21,3 +21,4 @@ ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
 QMAKE_CXXFLAGS += -Werror=return-type -std=c++11
+QMAKE_LFLAGS += -fuse-ld=gold

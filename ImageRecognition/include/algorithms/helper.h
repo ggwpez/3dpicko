@@ -112,7 +112,7 @@ void findConnectedComponentEdges(const cv::Mat& input,
                                  math::Range<int> const& area);
 
 void drawText(cv::Mat& output, cv::Point pos, QString string,
-              cv::Scalar color = cv::Scalar::all(255), int scale = 1,
+              cv::Scalar color = cv::Scalar::all(255), double scale = 1,
               int thickness = 1);
 }  // namespace math
 }  // namespace c3picko

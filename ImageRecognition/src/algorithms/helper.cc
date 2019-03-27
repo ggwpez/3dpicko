@@ -68,11 +68,11 @@ cv::Point2d gravityCenter(cv::InputArray poly) {
 }
 
 void drawText(cv::Mat& output, cv::Point pos, QString string, cv::Scalar color,
-              int scale, int thickness) {
+              double scale, int thickness) {
   cv::Point2i img_center{output.cols / 2, output.rows / 2};
 
   int f_type = cv::FONT_HERSHEY_SIMPLEX;
-  int f_scale = scale;
+  double f_scale = scale;
   int f_thick = thickness;
 
   std::string text = string.toStdString();
