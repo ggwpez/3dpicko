@@ -15,11 +15,7 @@ $(function(){
 
 function loadWiki(id, site){
     $("#wiki-content").load(site);
-    /*if (id == About || id == Nomenclature){
-        moveWiki(id);
-    }*/
-    
-    //moveWiki(id);
+    moveWiki(id);
     var elementt = document.getElementById("Nomenclature");
     elementt.scrollIntoView();
     
@@ -81,27 +77,6 @@ function loadHelpString(headline, site){
 
 
 function loadHelp(headline, site){
-	/*
-	switch (headline) {
-		case "area":
-			headline = "Area";
-			break;
-		case "aabb_ratio":
-			headline = "AABB Side Ratio";
-			break;
-		case "bb_ratio":
-			headline = "BB Side Ratio";
-			break;		
-		case "convexity":
-			headline = "Convexity";
-			break;		
-		case "circularity":
-			headline = "Circularity";
-			break;		
-		default:
-	}
-	*/
-    //$("#help-headline").text(headline);
 	$("#help-headline").load(headline);
     $("#help-body").load(site);
 }
