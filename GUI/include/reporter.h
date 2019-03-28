@@ -27,7 +27,21 @@ class Reporter {
            const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
            Profile const& plate_, Profile const& printer_,
            Profile const& socket_, Profile const& octoprint_);
+
   void writePdfReport(QString img_name, QPdfWriter*, QString& html) const;
+
+  QString createProlog() const;
+  QString createTitle() const;
+  QString createEpilog() const;
+  QString createLog() const;
+  QString createImage(QString url) const;
+  QString createBr(quint32 width = 1) const;
+  /**
+   * @param Row wise data
+   * @return HTML-table
+   */
+  QString createTable(QString title, QVector<QString> col_name,
+                      QVector<QVector<QString>> data) const;
 
   Report::ID id_;
   Job job_;

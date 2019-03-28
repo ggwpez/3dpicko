@@ -52,6 +52,7 @@ class AlgorithmJob : public QObject {
   QDateTime end() const;
 
   qint64 maxMs() const;
+  Algorithm* algo() const;
 
  signals:
   void OnAlgoSucceeded();

@@ -1,4 +1,5 @@
 #include "include/reporter.h"
+#include "include/algorithm.h"
 #include "include/database.hpp"
 #include "include/types/well.h"
 
@@ -89,77 +90,108 @@ Report Reporter::createReport() const {
   return Report(job_.id(), pdf_path, img_path);
 }
 
-void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
-                              QString& html) const {
-  QString title = "Report #" + id_ + " for job #" + job_.id() + " (" +
-                  job_.name().left(20) + ")";
-  pdf->setPageSize(QPagedPaintDevice::A4);
-  pdf->setCreator("3CPickO");
-  pdf->setTitle(title);
-  // pdf->setResolution(2400);
-
-  // cv::Mat const& mat = result_.oldMat();
-  // QImage		   image(1000, 1000, QImage::Format_RGB888);
-  // image.fill(Qt::red);
-
-  std::vector<Colony> const& colonies = result_->colonies();
+QString Reporter::createLog() const {
   AlgorithmJob* algo = job_.resultJob().get();
-  // source https://forum.qt.io/topic/78143/export-a-qtablewidget-in-pdf
-  const std::size_t columns = 4;
-  const std::size_t rows = pick_positions_.size();
-  html += "<!doctype html><html><head><title>" + title +
-          "</title></head><body><font style=\"font-family:'Courier';\">";
-  html += ("<center>Report #" + id_ + "</center><br>");
-  html += ("<img style='max-width: 100%; height: auto;' src='" + img_name +
-           "' alt='Colonies'>");
-  html +=
-      ("<br><br>" + image_.uploaded().toString(dateTimeFormat()) + ": " +
-       "Image #" + image_.id().left(10) + "... created<br>" +
-       job_.created().toString(dateTimeFormat()) + ": " + "Job #" + job_.id() +
-       " created<br>" + algo->start().toString(dateTimeFormat()) + ": " +
-       "AlgorithmJob #" + algo->id() + " created<br>" +
-       algo->end().toString(dateTimeFormat()) + ": " + "DetectionResult #" +
-       result_->id() + " created<br><br>");
+  return image_.uploaded().toString(dateTimeFormat()) + ": " + "Image #" +
+         image_.id().left(10) + "... created<br>" +
+         job_.created().toString(dateTimeFormat()) + ": " + "Job #" +
+         job_.id() + " created<br>" + algo->start().toString(dateTimeFormat()) +
+         ": " + "AlgorithmJob #" + algo->id() + " created<br>" +
+         algo->end().toString(dateTimeFormat()) + ": " + "DetectionResult #" +
+         result_->id() + " created";
+}
 
-  static std::vector<QString> headers = {" Well ", " Colony ",
-                                         " PositionX [%] ", " PositionY [%] "};
-  Q_ASSERT(headers.size() == columns);
+QString Reporter::createImage(QString url) const {
+  return "<a href=''>"
+         "<img align='middle' style='max-width: 100%; height: auto;' src='" +
+         url +
+         "'>"
+         "</a>";
+}
 
-  html += "<table style='width:50%' align='center' border='1'><tr>";
-  for (int i = 0; i < columns; i++) {
-    html += "<th>" + headers[i] + "</th>";
-  }
+QString Reporter::createBr(quint32 width) const {
+  return QString("<br>").repeated(width);
+}
+
+QString Reporter::createTable(QString title, QVector<QString> col_name,
+                              QVector<QVector<QString>> row_data) const {
+  QString html("<center>" + title + "</center><br>");
+  html += "<table style='width:50%' align='center' border='1'>";
+
+  // Name the columns
+  html += "<tr>";
+  for (QString name : col_name) html += "<th>" + name + "</th>";
   html += "</tr>";
 
-  int i = 0;
-  for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
+  // Append Row data
+  for (QVector<QString> row : row_data) {
     html += "<tr>";
-    Well const& well = it->first;
-    Colony const& colony =
-        *std::find_if(colonies.begin(), colonies.end(),
-                      [it](Colony const& c) { return c.id() == it->second; });
-
-    std::vector<QString> data = {well.toString(), QString::number(it->second),
-                                 QString::number(colony.x() * 100, 'f', 1),
-                                 QString::number(colony.y() * 100, 'f', 1)};
-    Q_ASSERT(data.size() == columns);
-
-    ++i;
-    for (std::size_t j = 0; j < columns; j++) {
-      html += "<td>" + data[j].toUpper() + "</td>";
-    }
+    for (QString entry : row) html += "<td>" + entry + "</td>";
     html += "</tr>";
   }
+
   html += "</table>";
+  return html;
+}
 
-  html += "<br><br><br>Detection settings";
+void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
+                              QString& html) const {
+  pdf->setPageSize(QPagedPaintDevice::A4);
+  pdf->setCreator("3CPickO");
+  pdf->setTitle(createTitle());
+  // pdf->setResolution(2400);
 
-  for (AlgoSetting const& setting : algo->settings())
-    html += setting.name() + " = TODO<br>";
-  html += "</font></body></html>";
+  AlgorithmJob* ajob = job_.resultJob().get();
+  std::vector<Colony> const& colonies = result_->colonies();
+  html += createProlog() + "<center>" + createTitle() + "</center><br>" +
+          createImage(img_name) + "<br><br>" + createLog() + "<br><br>";
+
+  // Colony data table
+  {
+    static QVector<QString> headers = {" Well ", " Colony ", " PositionX [%] ",
+                                       " PositionY [%] "};
+    QVector<QVector<QString>> row_data;
+
+    for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
+      Well const& well = it->first;
+      Colony const& colony =
+          *std::find_if(colonies.begin(), colonies.end(),
+                        [it](Colony const& c) { return c.id() == it->second; });
+      QVector<QString> data = {well.toString(), QString::number(it->second),
+                               QString::number(colony.x() * 100, 'f', 1),
+                               QString::number(colony.y() * 100, 'f', 1)};
+
+      row_data.push_back(data);
+    }
+    html += createTable("Picked Colonies", headers, row_data);
+  }
+  html += createBr(2);
+  // Detection settings
+  {
+    static QVector<QString> headers = {"Name", "Value"};
+    QVector<QVector<QString>> row_data;
+
+    for (AlgoSetting const& setting : ajob->settings())
+      row_data.push_back({setting.name(), setting.value<QString>()});
+
+    html += createTable("Settings for '" + ajob->algo()->name() + "'", headers,
+                        row_data);
+  }
+  html += createEpilog();
 
   QTextDocument doc;
   doc.setHtml(html);
   doc.print(pdf);
 }
+
+QString Reporter::createProlog() const {
+  return "<!doctype html><html><head><title>" + createTitle() +
+         "</title></head><body><tt>";
+}
+
+QString Reporter::createTitle() const {
+  return "Report #" + id_ + " for Job #" + job_.id();
+}
+
+QString Reporter::createEpilog() const { return "</tt></body></html>"; }
 }  // namespace c3picko

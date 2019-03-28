@@ -198,5 +198,14 @@ cv::Point2d gravityCenter(std::vector<cv::Point> const& poly) {
 
   return cv::Point2d(m.m10 / m.m00, m.m01 / m.m00);
 }
+
+QString rangeToString(const math::Range<double>& v) {
+  QString begin = (v.lower_closed_ ? "[" : "("),
+          end = (v.upper_closed_ ? "]" : ")");
+
+  return begin + QString::number(v.lower_) + ", " + QString::number(v.upper_) +
+         end;
+}
+
 }  // namespace math
 }  // namespace c3picko

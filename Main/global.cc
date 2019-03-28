@@ -2,6 +2,7 @@
 #include <QSslConfiguration>
 #include <QSslKey>
 #include <QtDebug>
+#include "include/algorithms/helper.h"
 #include "include/exception.h"
 #include "include/resource_path.h"
 
@@ -101,9 +102,15 @@ static void setupSignals(QCoreApplication* app) {
 #endif
 }
 
+static void qtTypeSetup() {
+  QMetaType::registerConverter<math::Range<double>, QString>(
+      math::rangeToString);
+}
+
 static QString ini_file_path;
 QString Setup(QCoreApplication* app) {
   setupSignals(app);
+  qtTypeSetup();
   ini_file_path = searchConfigFile(app->arguments());
   QSettings settings(ini_file_path, QSettings::IniFormat);
   settings.beginGroup("global");

@@ -65,6 +65,8 @@ struct Range {
   int _pad2;
 };
 
+QString rangeToString(math::Range<double> const& v);
+
 /**
  * @brief Determinant of the matrix
  * a b
