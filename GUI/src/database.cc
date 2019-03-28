@@ -102,6 +102,7 @@ void Database::read(QJsonObject const& obj) {
   profile_id_ = obj["profile_id"].toInt();
   result_id_ = obj["result_id"].toInt();
   result_job_id_ = obj["result_job_id"].toInt();
+  report_id_ = obj["report_id"].toInt();
 
   default_printer_ = Marshalling::fromJson<QString>(obj["default_printer"]);
   default_socket_ = Marshalling::fromJson<QString>(obj["default_socket"]);
@@ -123,6 +124,7 @@ void Database::write(QJsonObject& obj) const {
   obj["profile_id"] = profile_id_;
   obj["result_id"] = result_id_;
   obj["result_job_id"] = result_job_id_;
+  obj["report_id"] = report_id_;
 
   obj["default_printer"] = default_printer_;
   obj["default_socket"] = default_socket_;

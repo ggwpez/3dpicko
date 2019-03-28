@@ -13,7 +13,7 @@ ReportTest::~ReportTest() {}
 void ReportTest::initTestCase() {}
 
 void ReportTest::test_case1() {
-  std::vector<std::pair<Colony::ID, Well>> pseq;
+  // std::vector<std::pair<Colony::ID, Well>> pseq;
 
   // for (int i = 0; i < 300; ++i) pseq.emplace_back(i, Well{1, 1});
 

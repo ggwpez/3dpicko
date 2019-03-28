@@ -8,7 +8,8 @@
 #include "include/gcodegenerator.h"
 #include "include/octoprint.h"
 #include "include/plate_result.h"
-#include "include/types/report.h"
+#include "include/reporter.h"
+#include "include/types/well.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -474,8 +475,8 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
       gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
                                                 job.startingCol(), coords);
 
-  ReportCreator reporter(
-      ReportCreator::fromDatabase(*db_, "132", job.id(), pick_positions));
+  Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
+                                           pick_positions));
   Report report = reporter.createReport();
 
   qDebug() << "Created report.pdf";

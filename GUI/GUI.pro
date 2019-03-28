@@ -18,7 +18,9 @@ SOURCES += \
     src/api_output.cc \
     src/api_commands.cc \
     src/types/report.cc \
-    src/types/history.cc
+    src/types/history.cc \
+    src/reporter.cc \
+    src/types/well.cc
 
 HEADERS += \
     include/requestmapper.h \
@@ -33,7 +35,9 @@ HEADERS += \
     include/api_controller.h \
     include/api_commands.h \
     include/types/history.h \
-    include/types/report.h
+    include/types/report.h \
+    include/reporter.h \
+    include/types/well.h
 
 OTHER_FILES += serverconfig.ini
 
