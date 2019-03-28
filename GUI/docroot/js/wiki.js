@@ -50,7 +50,8 @@ function resetButtons(){
     element.classList.add("btn-link");
 }
 
-function loadHelp(headline, site){
+function loadHelp(id){
+	let path = './docs/wiki.html';
 	/*
 	switch (headline) {
 		case "area":
@@ -72,6 +73,6 @@ function loadHelp(headline, site){
 	}
 	*/
     //$("#help-headline").text(headline);
-	$("#help-headline").load(headline);
-    $("#help-body").load(site);
+	$("#help-headline").load(path+" #"+id+"-h");
+    $("#help-body").load(path+" #"+id);
 }

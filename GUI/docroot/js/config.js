@@ -97,7 +97,7 @@ function AddProfileToList(profile){
     <input type="hidden" id="id" name="id" value="${profile.id}">
     <input type="hidden" id="type" name="type" value="${profile.type}">
     <div class="form-group">
-    <label for="profile_name">Profile Identifier:</label>
+    <label for="profile_name"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('${profile.type}s_identifier-h')">Profile Identifier:</a></label>
     <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
     </div>
     `;
