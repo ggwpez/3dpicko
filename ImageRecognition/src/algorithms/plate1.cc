@@ -12,7 +12,7 @@ Plate1::Plate1()
     : Algorithm("1", "Plate1", "Detects a plate with red frame attached",
                 {(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
                  (AlgoStep)Plate1::detect},
-                {}, true, 5000) {}
+                {}, true, 50000) {}
 
 void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
   cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
