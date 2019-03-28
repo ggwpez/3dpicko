@@ -8,7 +8,7 @@ var images_array = [];
 var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
-// TODO delete "new_job" if job saved or executed
+// "id"=>"description"
 var unsaved_elements = {};
 
 var global_alert = $('#global-alert');
@@ -107,6 +107,7 @@ $(function Setup()
                     console.log("Deleting job: " +data.id);
                     document.getElementById('job-' +data.id).style.display = "none";
                     ShowAlert("Job "+job_name+" deleted.", "success");
+                    if(data.id == current_job.id) current_job = {};
                     delete all_jobs[data.id];
                 }
             }
@@ -114,8 +115,20 @@ $(function Setup()
             {
                 AddJobToList(data);
                 current_job = data;
+                current_job.status = "created";
                 document.getElementById("headertag").innerHTML = "Job #" +data.id;
                 ShowAlert("Pickjob "+data.id+" saved.", "success");
+            }
+            else if (type == "startjob"){
+                ShowAlert(`Job ${data.id} started`, "success");
+                if(data.id == current_job.id){
+                    current_job.status = "started";
+                    delete unsaved_elements['new_job'];
+                    button_div = document.getElementById('overview-buttons');
+                    if(data.report){
+                        button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.report}" download="report_${current_job.id}.pdf">Download Report</a>`);
+                    }
+                }
             }
             else if (type == "getjoblist")
             {
@@ -135,6 +148,10 @@ $(function Setup()
             }
             else if (type == "createsettingsprofile"){
                 AddProfileToList(data);
+                if(data.type == 'octoprint-profile'){
+                    $('#card-new-octoprint-profile').remove();
+                    delete unsaved_elements["form-new-octoprint-profile"];
+                }
                 ShowAlert(data.profile_name+" added.", "success");
             }
             else if (type == "updatesettingsprofile"){
@@ -143,6 +160,7 @@ $(function Setup()
             }
             else if (type == "deletesettingsprofile"){
                 ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
+                if(all_profiles[data.id].type == 'octoprint-profile') AddProfileToList(profile_templates["octoprint-profile"]);
                 DeleteProfile(data.id);
             }
             else if (type == "debug")
@@ -163,15 +181,6 @@ $(function Setup()
                 // job: id, ids: array 
                 if(current_job.id == data.job){
                     overviewTab(data.ids);
-                }
-            }
-            else if (type == "startjob"){
-                ShowAlert(`Job ${data.id} started`, "success");
-                if(data.id == current_job.id){
-                    button_div = document.getElementById('overview-buttons');
-                    if(data.report){
-                        button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.report}" download="report_${current_job.id}.pdf">Download Report</a>`);
-                    }
                 }
             }
             else
@@ -270,12 +279,21 @@ $(function(){
             }
             changes += "</ul>";
             ShowAlert(changes, "danger", 6000);
+            e.preventDefault();
             var confirmationMessage = "Unsaved Changes...";
             (e || window.event).returnValue = confirmationMessage;
             return confirmationMessage;
         }
         else{
             return false;
+        }
+    });
+    // delete current job
+    window.addEventListener("unload", function (e) {
+        console.log("Delete?", current_job);
+        if(current_job.status == "created"){
+            console.log("Delete Job", current_job);
+            api("deletejob", {id: current_job.id.toString()});
         }
     });
 
@@ -375,7 +393,6 @@ const tabOrder = [ "browse", "cut", "attributes", "selection", "strategy", "over
 function tabEnter(tabId)
 {
     if(tabId > 0) unsaved_elements['new_job'] = "New Job: "+tabOrder[tabId];
-    // TODO delete unsaved_elements['new_job']; if job saved or executed
     console.log("Enabling tab: " +tabOrder[tabId]);
     for(let id = 0; id < tabOrder.length; id++){
         if(id < tabId){
