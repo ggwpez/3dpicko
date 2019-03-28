@@ -11,7 +11,7 @@
 namespace c3picko {
 ReportCreator::ReportCreator(Report::ID id, const Job& job, QDateTime creation,
                              const std::map<Well, Colony::ID>& pick_positions,
-                             Image const& image, const DetectionResult& result,
+                             Image const& image, const DetectionResult* result,
                              QSet<Colony::ID> colonies_to_pick,
                              const Profile& plate_, const Profile& printer,
                              const Profile& socket, const Profile& octoprint)
@@ -39,7 +39,8 @@ ReportCreator ReportCreator::fromDatabase(
                 &octoprint = db.profiles().get(job.octoprint());
 
   Image& img = db.images().get(job.imgID());
-  DetectionResult& result = std::ref(db.detectionResults().get(job.resultID()));
+  DetectionResult* result =
+      static_cast<DetectionResult*>(job.resultJob()->result().get());
 
   return ReportCreator(id, job, QDateTime::currentDateTime(), pick_positions,
                        img, result, job.coloniesToPick(), plate, printer,
@@ -57,8 +58,8 @@ Report ReportCreator::createReport() const {
   }
   // Render the colonies and their ids with
   {
-    cv::Mat mat = result_.first();
-    std::vector<Colony> const& colonies(result_.colonies());
+    cv::Mat mat = result_->first();
+    std::vector<Colony> const& colonies(result_->colonies());
 
     for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
       Colony const& colony =
@@ -89,7 +90,7 @@ void ReportCreator::writePdfReport(QPdfWriter* pdf) const {
   // QImage		   image(1000, 1000, QImage::Format_RGB888);
   // image.fill(Qt::red);
 
-  std::vector<Colony> const& colonies = result_.colonies();
+  std::vector<Colony> const& colonies = result_->colonies();
   AlgorithmJob* algo = job_.resultJob().get();
   // source https://forum.qt.io/topic/78143/export-a-qtablewidget-in-pdf
   const std::size_t columns = 4;
@@ -106,7 +107,7 @@ void ReportCreator::writePdfReport(QPdfWriter* pdf) const {
       " created<br>" + algo->start().toString(dateTimeFormat()) + ": " +
       "AlgorithmJob #" + algo->id() + " created<br>" +
       algo->end().toString(dateTimeFormat()) + ": " + "DetectionResult #" +
-      result_.id() + " created<br><br>");
+      result_->id() + " created<br><br>");
   /*"<center>Job "
 + job_.id() + " will pick " + QString::number(pick_positions_.size()) + "
 colonies from all "

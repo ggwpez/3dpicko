@@ -60,12 +60,10 @@ Database::ImageTable& Database::deletedImages() { return deleted_images_; }
 
 Database::ProfileTable& Database::profiles() { return profiles_; }
 
-// Database::DetectionJobTable& Database::detectionJobs() { return
-// detection_jobs_; }
+// Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
 
-Database::DetectionResultTable& Database::detectionResults() {
-  return detection_results_;
-}
+// Database::DetectionResultTable& Database::detectionResults() { return
+// detection_results_; }
 
 Job::ID Database::newJobId() { return QString::number(job_id_++); }
 
@@ -119,7 +117,7 @@ void Database::write(QJsonObject& obj) const {
   obj["profiles"] = (QJsonObject)profiles_;
 
   // obj["detection_jobs"] = (QJsonObject)detection_jobs_;
-  obj["detection_results"] = (QJsonObject)detection_results_;
+  // obj["detection_results"] = (QJsonObject)detection_results_;
 
   obj["job_id"] = job_id_;
   obj["profile_id"] = profile_id_;

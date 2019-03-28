@@ -20,4 +20,4 @@ DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11

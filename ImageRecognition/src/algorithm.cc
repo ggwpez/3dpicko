@@ -15,7 +15,7 @@ void Algorithm::run() {
   AlgorithmJob* job = qobject_cast<AlgorithmJob*>(this->parent());
   if (!job) throw Exception("Algorithm always needs AlgorithmJob as parent");
 
-  AlgorithmResult* result = job->result();
+  AlgorithmResult* result = job->result().get();
 
   QString error_prefix, error_infix, error_postfix, error;
   QTextStream error_ts(&error);

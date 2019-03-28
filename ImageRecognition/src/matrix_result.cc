@@ -9,39 +9,42 @@ MatrixResult::~MatrixResult() {
   cleanup();
 }
 
-cv::Mat& MatrixResult::first() const {
-  if (!stack_.size() || !stack_.front())
-    throw Exception("Assertion failure: Stack empty");
-  return *stack_.front();
+cv::Mat& MatrixResult::first() {
+  if (!stack_.size()) throw Exception("Assertion failure: Stack empty");
+  return stack_.front();
+}
+
+const cv::Mat& MatrixResult::first() const {
+  if (!stack_.size()) throw Exception("Assertion failure: Stack empty");
+  return stack_.front();
 }
 
 cv::Mat& MatrixResult::newMat() {
-  auto new_mat = std::make_shared<cv::Mat>();
+  cv::Mat new_mat;
 
   stack_.push_back(new_mat);
 
-  return *new_mat;
+  return stack_.back();
 }
 
 cv::Mat& MatrixResult::newMat(cv::Mat const& copy_from) {
-  auto new_mat = std::make_shared<cv::Mat>();
+  cv::Mat new_mat;
 
-  copy_from.copyTo(*new_mat);
-
+  copy_from.copyTo(new_mat);
   stack_.push_back(new_mat);
-  return *new_mat;
+
+  return stack_.back();
 }
 
 cv::Mat& MatrixResult::oldMat() {
-  if (!stack_.size() || !stack_.back())
-    throw Exception("Assertion failure: Stack empty");
-  return *stack_.back();
+  if (!stack_.size()) throw Exception("Assertion failure: Stack empty");
+
+  return stack_.back();
 }
 
 const cv::Mat& MatrixResult::oldMat() const {
-  if (!stack_.size() || !stack_.back())
-    throw Exception("Assertion failure: Stack empty");
-  return *stack_.back();
+  if (!stack_.size()) throw Exception("Assertion failure: Stack empty");
+  return stack_.back();
 }
 
 void MatrixResult::cleanup() {
@@ -49,7 +52,5 @@ void MatrixResult::cleanup() {
   stack_.clear();
 }
 
-const std::list<std::shared_ptr<cv::Mat>>& MatrixResult::stack() const {
-  return stack_;
-}
+const std::list<cv::Mat>& MatrixResult::stack() const { return stack_; }
 }  // namespace c3picko

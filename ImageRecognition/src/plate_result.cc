@@ -3,9 +3,9 @@
 #include <tuple>
 
 namespace c3picko {
-std::shared_ptr<cv::Mat> PlateResult::rotatedImage() const {
-  if (stack_.empty() || !stack_.back()) return nullptr;
+cv::Mat const* PlateResult::rotatedImage() const {
+  if (stack_.empty()) return nullptr;
 
-  return stack_.back();
+  return &stack_.back();
 }
 }  // namespace c3picko

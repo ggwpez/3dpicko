@@ -72,7 +72,7 @@ class ReportCreator {
  private:
   ReportCreator(Report::ID id, Job const& job, QDateTime creation,
                 const std::map<Well, Colony::ID>& pick_positions,
-                const Image& image, DetectionResult const& results_,
+                const Image& image, const DetectionResult* results_,
                 QSet<Colony::ID> colonies_to_pick, Profile const& plate_,
                 Profile const& printer_, Profile const& socket_,
                 Profile const& octoprint_);
@@ -84,7 +84,7 @@ class ReportCreator {
    */
   std::map<Well, Colony::ID> pick_positions_;
   Image const& image_;
-  DetectionResult const& result_;
+  DetectionResult const* result_;
   QSet<Colony::ID> colonies_to_pick_;
   Profile const& plate_;
   Profile const& printer_;

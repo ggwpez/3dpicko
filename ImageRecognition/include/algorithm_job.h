@@ -2,6 +2,7 @@
 
 #include <QElapsedTimer>
 #include <QObject>
+#include <memory>
 #include "include/algo_setting.h"
 #include "include/algorithm_result.h"
 
@@ -24,14 +25,14 @@ class AlgorithmJob : public QObject {
 
  private:
   AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings, void* input,
-               AlgorithmResult* result, QThreadPool* pool, qint64 maxMs,
-               QObject* _parent);
+               std::shared_ptr<AlgorithmResult> result, QThreadPool* pool,
+               qint64 maxMs, QObject* _parent);
 
  public:
   ~AlgorithmJob();
 
   void* input();
-  AlgorithmResult* result() const;
+  std::shared_ptr<AlgorithmResult> result() const;
 
   AlgoSetting const& settingById(AlgoSetting::ID id) const;
   AlgoSetting const& settingByName(QString name) const;
@@ -43,7 +44,6 @@ class AlgorithmJob : public QObject {
   void setSettings(QJsonObject const&);
 
   ID id() const;
-  AlgorithmResult::ID result_id() const;
 
   qint64 tookMs() const;
   qint64 elapsedMs() const;
@@ -86,7 +86,7 @@ class AlgorithmJob : public QObject {
    * @brief This pointer is only valid during the call of start(...)
    * It will not be de/serialised. TODO
    */
-  AlgorithmResult* result_;
+  std::shared_ptr<AlgorithmResult> result_;
   AlgorithmResult::ID result_id_;
   /**
    * @brief max_ms_ Soft limit for the maximal time, a job should take in ms.

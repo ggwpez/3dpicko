@@ -15,6 +15,7 @@
 #include <QJsonArray>
 #include <QMetaMethod>
 #include <QPdfWriter>
+#include <memory>
 #include <random>
 
 using namespace c3picko::pi;
@@ -124,11 +125,11 @@ void APIController::UploadImage(Image image, QObject* client) {
 
   Algorithm::ID aid("1");
   AlgorithmJob::ID jid = db_->newResultJobId();
-  std::shared_ptr<PlateResult> result =
-      std::make_shared<PlateResult>(db_->newResultId());
+  std::shared_ptr<PlateResult> result(
+      std::make_shared<PlateResult>(db_->newResultId()));
 
   AlgorithmJob* ajob =
-      plate_detector_->createJob(raw, aid, jid, result.get(), QJsonObject());
+      plate_detector_->createJob(raw, aid, jid, result, QJsonObject());
 
   if (!ajob)
     emit OnImageCreateError("Internal Error: Algorithm not found (" + aid + ")",
@@ -138,7 +139,7 @@ void APIController::UploadImage(Image image, QObject* client) {
     // the callback.
     // Here we crop the image and insert it into the database, it not yet
     // existing
-    connect(ajob, &AlgorithmJob::OnAlgoSucceeded, client,
+    connect(ajob, &AlgorithmJob::OnAlgoSucceeded, ajob,
             [this, client, image, ajob, result] {
               if (!result->rotatedImage())
                 return emit OnImageCreateError(
@@ -160,8 +161,8 @@ void APIController::UploadImage(Image image, QObject* client) {
               emit this->OnImageCreated(cropped, client);
               qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
             });
-    connect(ajob, &AlgorithmJob::OnAlgoFailed, client, [this, result, client] {
-      emit OnImageCreateError(result->stageError(), client);
+    connect(ajob, &AlgorithmJob::OnAlgoFailed, ajob, [this, ajob, client] {
+      emit OnImageCreateError(ajob->result()->stageError(), client);
     });
 
     ajob->start(true, true);
@@ -262,17 +263,18 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
     return emit OnSetColoniesToPickError("Job " + id + " not found", client);
 
   Job& job = db_->jobs().get(id);
-  if (!db_->detectionResults().exists(job.resultID()))
+  if (!job.resultJob() || !job.resultJob()->result())
     return emit OnSetColoniesToPickError(
         "Job " + id + " has no detected colonies attatched to it", client);
 
-  DetectionResult& result = db_->detectionResults().get(job.resultID());
+  DetectionResult* result =
+      static_cast<DetectionResult*>(job.resultJob()->result().get());
   QSet<Colony::ID> suitable;
   QSet<Colony::ID> in_algo, ex_algo;
   {
-    for (auto it = result.includedBegin(); it != result.includedEnd(); ++it)
+    for (auto it = result->includedBegin(); it != result->includedEnd(); ++it)
       in_algo.insert(it->id());
-    for (auto it = result.excludedBegin(); it != result.excludedEnd(); ++it)
+    for (auto it = result->excludedBegin(); it != result->excludedEnd(); ++it)
       ex_algo.insert(it->id());
   }
 
@@ -366,38 +368,30 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
                     << img.path().toSystemAbsolute();
         emit OnColonyDetectionError("Image not readable or empty", client);
       } else {
-        AlgorithmJob::ID result_job_id = db_->newResultJobId();
-        std::shared_ptr<DetectionResult> result =
-            std::make_shared<DetectionResult>(db_->newResultId());
+        AlgorithmResult::ID result_id = db_->newResultId();
+        AlgorithmJob::ID algo_job_id = db_->newResultJobId();
+        std::shared_ptr<DetectionResult> result(
+            std::make_shared<DetectionResult>(result_id));
         std::shared_ptr<AlgorithmJob> algo_job(colony_detector_->createJob(
-            image, algo_id, result_job_id, result.get(), settings));
+            image, algo_id, algo_job_id, result, settings));
+        AlgorithmJob* raw = algo_job.get();
 
         if (!algo_job) {
           emit OnColonyDetectionError("Algorithm not found", client);
         } else {
-          // Remove old results from the database
-          if (job.resultIDs().size() &&
-              db_->detectionResults().exists(job.resultID()))
-            db_->detectionResults().remove(job.resultID());
-
-          job.setResultID(result->id());
           job.setResultAlgorithmJob(algo_job);
-
-          connect(algo_job.get(), &AlgorithmJob::OnAlgoSucceeded, client,
-                  [this, client, job_id, algo_job, result] {
-                    db_->detectionResults().add(result->id(),
-                                                *result);  // TODO not too cool
+          connect(raw, &AlgorithmJob::OnAlgoSucceeded, raw,
+                  [this, client, job_id, raw, result] {
                     emit this->OnColonyDetected(job_id, &result->colonies(),
                                                 client);
                     qDebug() << "Detected" << result->colonies().size() << "in"
-                             << algo_job->tookMs() << "ms";
+                             << raw->tookMs() << "ms";
                   });
-          connect(algo_job.get(), &AlgorithmJob::OnAlgoFailed, client,
-                  [this, result, client] {
-                    emit OnColonyDetectionError(result->stageError(), client);
+          connect(algo_job.get(), &AlgorithmJob::OnAlgoFailed, raw,
+                  [this, raw, client] {
+                    emit OnColonyDetectionError(raw->result()->stageError(),
+                                                client);
                   });
-          // connect(algo_job.get(), &AlgorithmJob::OnFinished, [result]() {
-          // result->cleanup(); });
 
           return algo_job;
         }
@@ -422,13 +416,13 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
     return emit OnJobStartError("Job '" + id + "' job found", client);
   Job& job = db_->jobs().get(id);
 
-  if (!db_->detectionResults().exists(job.resultID()))
+  if (!job.resultJob() || !job.resultJob()->result())
     return emit OnJobStartError(
         "Job " + id +
             " could not find its detection results: " + job.resultID(),
         client);
-  DetectionResult& result = static_cast<DetectionResult&>(
-      db_->detectionResults().get(job.resultID()));
+  DetectionResult* result =
+      static_cast<DetectionResult*>(job.resultJob()->result().get());
 
   if (!db_->profiles().exists(job.printer()) ||
       !db_->profiles().exists(job.socket()) ||
@@ -463,10 +457,10 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   Well well(job.startingRow(), job.startingCol(), plate);
   // Convert the colony coordinates to real world coordinates
   for (auto it = selected.begin(); it != selected.end(); ++it) {
-    auto f = std::find_if(result.includedBegin(), result.includedEnd(),
+    auto f = std::find_if(result->includedBegin(), result->includedEnd(),
                           [&it](Colony const& c) { return c.id() == *it; });
 
-    if (f == result.includedEnd())
+    if (f == result->includedEnd())
       return emit OnJobStartError("Internal error: Cant find selected colonie",
                                   client);
 
@@ -484,8 +478,6 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
       ReportCreator::fromDatabase(*db_, "132", job.id(), pick_positions));
   Report report = reporter.createReport();
 
-  // Delete the images
-  result.cleanup();
   qDebug() << "Created report.pdf";
 
   QFile file("out.gcode");

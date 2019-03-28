@@ -15,17 +15,18 @@ class MatrixResult : public AlgorithmResult {
   MatrixResult(AlgorithmResult&&);
   virtual ~MatrixResult();
 
-  cv::Mat& first() const;
+  cv::Mat& first();
+  cv::Mat const& first() const;
   cv::Mat& newMat();
   cv::Mat& newMat(cv::Mat const& copy_from);
   cv::Mat& oldMat();
   cv::Mat const& oldMat() const;
 
   void cleanup();
-  std::list<std::shared_ptr<cv::Mat>> const& stack() const;
+  std::list<cv::Mat> const& stack() const;
 
  protected:
   // MatrixResult is copyable
-  std::list<std::shared_ptr<cv::Mat>> stack_;
+  std::list<cv::Mat> stack_;
 };
 }  // namespace c3picko

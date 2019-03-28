@@ -21,8 +21,8 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Job> JobTable;
   typedef Table<Image> ImageTable;
   typedef Table<Profile> ProfileTable;
-  typedef Table<DetectionResult> DetectionResultTable;
-  // typedef Table<AlgorithmJob> DetectionJobTable;
+  // typedef Table<DetectionResult*> DetectionResultTable;
+  // typedef Table<AlgorithmJob*>	AlgoJobTable;
 
   Database(QSettings& settings, QObject* parent);
 
@@ -34,8 +34,8 @@ class Database : public QObject, JsonConvertable {
   ImageTable& images();
   ImageTable& deletedImages();  // "
   ProfileTable& profiles();
-  // DetectionJobTable &detectionJobs();
-  DetectionResultTable& detectionResults();
+  // AlgoJobTable&		  algoJobs();
+  // DetectionResultTable& detectionResults();
 
   Job::ID newJobId();
   Profile::ID newProfileId();
@@ -64,12 +64,12 @@ class Database : public QObject, JsonConvertable {
   ImageTable images_;
   ImageTable deleted_images_;
   ProfileTable profiles_;
-  // DetectionJobTable detection_jobs_;
+  // AlgoJobTable algo_jobs_;
   /**
    * @brief Saves all past image detection processes.
    * TODO create a way to disable it.
    */
-  DetectionResultTable detection_results_;
+  // DetectionResultTable detection_results_;
 
   qint64 job_id_;
   qint64 profile_id_;
