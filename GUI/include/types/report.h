@@ -16,14 +16,13 @@ class Report {
  public:
   typedef QString ID;
 
-  Report(Job::ID job, ResourcePath pdf, ResourcePath image);
+  Report(Job::ID job, ResourcePath data);
 
   Job::ID job() const;
-  ResourcePath const& pdf() const;
-  ResourcePath const& image() const;
+  ResourcePath const& data() const;
 
  private:
   Job::ID job_;
-  ResourcePath pdf_, image_;
+  ResourcePath data_;
 };
 }  // namespace c3picko

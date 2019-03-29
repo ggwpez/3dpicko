@@ -54,7 +54,7 @@ void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
 void APIOutput::JobStarted(Report report, QObject*) {
   emit op->toAll(
       APICommands::START_JOB,
-      {{"id", report.job()}, {"report", report.pdf().toDocRootAbsolute()}});
+      {{"id", report.job()}, {"report", report.data().toDocRootAbsolute()}});
 }
 
 void APIOutput::JobStartError(QString error, QObject* client) {

@@ -3,6 +3,7 @@
 #include <complex>
 #include <opencv2/core.hpp>
 
+class QByteArray;
 class QString;
 namespace c3picko {
 class Colony;
@@ -64,6 +65,8 @@ struct Range {
   bool lower_closed_, upper_closed_;
   int _pad2;
 };
+
+QByteArray matToBase64(cv::Mat const&);
 
 QString rangeToString(math::Range<double> const& v);
 

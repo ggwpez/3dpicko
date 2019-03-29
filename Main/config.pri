@@ -24,3 +24,6 @@ QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11
 
 INCLUDEPATH += $$ROOTPATH/quazip
 DEPENDPATH += $$ROOTPATH/quazip
+
+# List with all possible defines
+# C3PICKO_API_KEY_CHECK_OFF, C3PICKO_NO_ZLIB, C3PICKO_NO_QUAZIP

@@ -1,14 +1,18 @@
 #include "include/algorithms/helper.h"
-#include <opencv2/core/hal/interface.h>
+#include "include/colony.hpp"
+
+#include <QByteArray>
 #include <QDebug>
 #include <QtGlobal>
+
 #include <algorithm>
 #include <complex>
 #include <numeric>
+#include <set>
+
+#include <opencv2/core/hal/interface.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
-#include <set>
-#include "include/colony.hpp"
 
 namespace c3picko {
 namespace math {
@@ -207,5 +211,13 @@ QString rangeToString(const math::Range<double>& v) {
          end;
 }
 
+QByteArray matToBase64(const cv::Mat& mat) {
+  QByteArray data;
+  std::vector<uchar> tmp;
+  cv::imencode(".png", mat, tmp);
+  std::copy(tmp.begin(), tmp.end(), std::back_inserter(data));
+
+  return data.toBase64();
+}
 }  // namespace math
 }  // namespace c3picko

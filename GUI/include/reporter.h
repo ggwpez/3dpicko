@@ -21,21 +21,23 @@ class Reporter {
 
   Report createReport() const;
 
+  QString createImage(QString url) const;
+
  private:
   Reporter(Report::ID id, Job const& job, QDateTime creation,
-           const std::map<Well, Colony::ID>& pick_positions, const Image& image,
+           const std::map<Well, Colony::ID>& pick_positions, Image& image,
            const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
            Profile const& plate_, Profile const& printer_,
            Profile const& socket_, Profile const& octoprint_);
 
-  void writeHtmlReport(QString img_name, QString& html) const;
+  void writeHtmlReport(cv::Mat const& img_data, QString& html) const;
 
   QString createProlog() const;
   QString createTitle() const;
   QString createEpilog() const;
   QString createLog() const;
   QString createJobInfo() const;
-  QString createImage(QString url) const;
+  QString createImage(QByteArray base64) const;
   QString createBr(quint32 width = 1) const;
   /**
    * @param Row wise data
@@ -51,7 +53,7 @@ class Reporter {
    * @brief Maps the colonies to their wells in the order of them being picked.
    */
   std::map<Well, Colony::ID> pick_positions_;
-  Image const& image_;
+  Image& image_;
   DetectionResult const* result_;
   QSet<Colony::ID> colonies_to_pick_;
   Profile const& plate_;

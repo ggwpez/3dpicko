@@ -11,8 +11,8 @@
 #include "httplistener.h"
 #include "staticfilecontroller.h"
 
+#include <QCoreApplication>
 #include <QFile>
-#include <QGuiApplication>
 #include <QThreadPool>
 #include <QtGlobal>
 
@@ -23,9 +23,6 @@ static int start(int argc, char** argv) {
 #ifdef Q_OS_LINUX
   startLog();
 #endif
-  // We need a QGuiApplication for the QPdfWriter class from Report. Thats a bit
-  // unlucky
-  // TODO search workaround
   QCoreApplication app(argc, argv);
   QString ini_file(Setup(&app));
   QSettings settings(ini_file, QSettings::IniFormat);
