@@ -346,3 +346,9 @@ li{
     word-break: normal;
     word-wrap: normal; 
 }
+
+@media print {
+    .row{
+      display: block;
+    }
+}
