@@ -10,8 +10,9 @@ SUBDIRS += \
 	ImageRecognition \
 	TestGcode \
 	Calibration \
-	AlgorithmTest
+	AlgorithmTest \
+	quazip
 
-Main.depends = PiCommunicator GUI Gcode ImageRecognition
+Main.depends = PiCommunicator GUI Gcode ImageRecognition quazip
 TestGcode.depends = Gcode
 AlgorithmTest.depends = ImageRecognition GUI
