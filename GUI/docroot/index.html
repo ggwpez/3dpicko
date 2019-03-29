@@ -252,36 +252,38 @@
         <div class="row">
           <div class="col-auto">
             <div class="sticky-top">
-              <h5 id ="headertag">Introduction</h5>
+              <h5 class="py-1">Introduction</h5>
               <div class="row">
-                <button class="btn btn-link btn-sm m-1" id="Introduction" onclick="loadWiki('Introduction','./docs/wiki.html #about')">About</button>
+                <button class="btn btn-link btn-sm ml-2" id="About" onclick="loadWiki('About','./docs/wiki.html #introduction')">About</button>
               </div>
               <div class="row">
-                <button class="btn btn-link btn-sm m-1" id="Introduction" onclick="loadWiki('Introduction','./docs/wiki.html #nomenclature')">Nomenclature of Hardware</button>
+                <button class="btn btn-link btn-sm ml-2" id="Nomenclature" onclick="loadWiki('Nomenclature','./docs/wiki.html #introduction')">Nomenclature of Hardware</button>
               </div>
-              <h5 id ="headertag">User Manual</h5>
+              <h5 class="py-1"> User Manual</h5>
               <div class="row">
-               <button class="btn btn-link btn-sm m-1" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
+               <button class="btn btn-link btn-sm ml-2" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
              </div>
              <div class="row">
-               <button class="btn btn-link btn-sm m-1" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
+               <button class="btn btn-link btn-sm ml-2" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
              </div>
              <div class="row">
-              <button class="btn btn-link btn-sm m-1" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
+              <button class="btn btn-link btn-sm ml-2" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
             </div>
-            <h5 id ="headertag">Configuration</h5>
+			<!--
+            <h5 class="py-1" >Configuration</h5>
             <div class="row">
-              <button class="btn btn-link btn-sm m-1" id="Configuration-Hardware" onclick="loadWiki('Configuration-Hardware','./docs/wiki.html #configuration_hardware')" >Hardware</button>
+              <button class="btn btn-link btn-sm ml-2" id="Configuration-Hardware" onclick="loadWiki('Configuration-Hardware','./docs/wiki.html #configuration_hardware')" >Hardware</button>
+            </div>
+			-->
+            <h5 class="py-1" >Administration</h5>
+            <div class="row">
+              <button class="btn btn-link btn-sm ml-2" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
             </div>
             <div class="row">
-              <button class="btn btn-link btn-sm m-1" id="Configuration-Software" onclick="loadWiki('Configuration-Software','./docs/wiki.html #configuration_software')" >Software</button>
+              <button class="btn btn-link btn-sm ml-2" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
             </div>
-            <h5 id ="headertag">Administration</h5>
-            <div class="row">
-              <button class="btn btn-link btn-sm m-1" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
-            </div>
-            <div class="row">
-              <button class="btn btn-link btn-sm m-1" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
+			<div class="row">
+              <button class="btn btn-link btn-sm ml-2" id="Administration-Configure-Picker" onclick="loadWiki('Administration-Configure-Picker','./docs/wiki.html #administration_configure-picker')" >Configure Picker</button>
             </div>
           </div>
         </div>
@@ -292,7 +294,6 @@
     </div>
   </div>
 </div>
-<!-- /inserted Wiki -->
 
 <!-- Info-Dialog -->
 <div class="modal fade" id="info-dialog" tabindex="-1">
@@ -328,8 +329,6 @@
 <div id="alert-window">
   <div id="global-alert" style="display: none;">Disconnected from server.</div>
 </div>
-<!-- inserted Wiki -->
-<!-- change aria-labelledby -->
 <div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -343,7 +342,6 @@
     </div>
   </div>
 </div>
-<!-- /inserted Wiki -->
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Bootstrap JS -->

@@ -4,20 +4,39 @@
 $(function(){
   $("#wiki-content").load("./docs/wiki.html #introduction");
   var element = document.getElementById("Introduction");
-  element.classList.remove("btn-link");
-  element.classList.add("btn-primary");
+  try {
+    element.classList.remove("btn-link");
+  } catch {}
+  try {
+      element.classList.add("btn-primary");
+      
+} catch {}
 });
 
 function loadWiki(id, site){
     $("#wiki-content").load(site);
+    moveWiki(id);
+    var elementt = document.getElementById("Nomenclature");
+    elementt.scrollIntoView();
+    
     resetButtons();
     var element = document.getElementById(id);
     element.classList.remove("btn-link");
     element.classList.add("btn-primary");
 }
 
+function moveWiki(position){
+    var element = document.getElementById(position);
+    element.scrollIntoView();
+}
+
+
 function resetButtons(){
-    var element = document.getElementById("Introduction");
+    var element = document.getElementById("About");
+    element.classList.remove("btn-primary");
+    element.classList.add("btn-link");
+    
+    var element = document.getElementById("Nomenclature");
     element.classList.remove("btn-primary");
     element.classList.add("btn-link");
     
@@ -50,6 +69,18 @@ function resetButtons(){
     element.classList.add("btn-link");
 }
 
+<<<<<<< GUI/docroot/js/wiki.js
+
+function loadHelpString(headline, site){
+    $("#help-headline").text(headline);
+	$("#help-body").load(site);
+}
+
+
+function loadHelp(headline, site){
+	$("#help-headline").load(headline);
+    $("#help-body").load(site);
+=======
 function loadHelp(id){
 	let path = './docs/wiki.html';
 	/*
@@ -75,4 +106,5 @@ function loadHelp(id){
     //$("#help-headline").text(headline);
 	$("#help-headline").load(path+" #"+id+"-h");
     $("#help-body").load(path+" #"+id);
+>>>>>>> GUI/docroot/js/wiki.js
 }
