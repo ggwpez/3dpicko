@@ -1,5 +1,4 @@
-#ifndef ALGO_SETTING_H
-#define ALGO_SETTING_H
+#pragma once
 
 #include <QColor>
 #include <QDebug>
@@ -58,7 +57,7 @@ class AlgoSetting {
   ID type() const;
   QString name() const;
   QString description() const;
-  inline void setValue(QJsonValue const &value) {
+  inline void setValue(QJsonValue const& value) {
     if (type_ == "rangeslider") {
       QJsonObject range = value.toObject();
 
@@ -124,9 +123,9 @@ class AlgoSetting {
   QVariant valueVariant() const;
   QVariant defaultValueVariant() const;
 
-  QVariantMap const &options() const;
+  QVariantMap const& options() const;
   QColor color() const;
-  void addSubSetting(AlgoSetting const &sub);
+  void addSubSetting(AlgoSetting const& sub);
 
   QList<AlgoSetting> subSettings() const;
 
@@ -143,5 +142,3 @@ class AlgoSetting {
 };
 MAKE_MARSHALLABLE(AlgoSetting);
 }  // namespace c3picko
-
-#endif  // ALGO_SETTING_H

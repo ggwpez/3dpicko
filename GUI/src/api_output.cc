@@ -51,8 +51,10 @@ void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
   Error(APICommands::DELETE_JOB, "id=" + id, client);
 }
 
-void APIOutput::JobStarted(Job::ID id, QObject*) {
-  emit op->toAll(APICommands::START_JOB, {{"id", id}});
+void APIOutput::JobStarted(Report report, QObject*) {
+  emit op->toAll(
+      APICommands::START_JOB,
+      {{"id", report.job()}, {"report", report.pdf().toDocRootAbsolute()}});
 }
 
 void APIOutput::JobStartError(QString error, QObject* client) {
@@ -80,13 +82,17 @@ void APIOutput::ProfileCreated(Profile profile, QObject*) {
                  Marshalling::toJson(profile));
 }
 
+void APIOutput::ProfileCreateError(QString error, QObject* client) {
+  Error(APICommands::CREATE_SETTINGS_PROFILE, error, client);
+}
+
 void APIOutput::ProfileUpdated(Profile profile, QObject*) {
   emit op->toAll(APICommands::UPDATE_SETTINGS_PROFILE,
                  Marshalling::toJson(profile));
 }
 
 void APIOutput::ProfileUpdateError(Profile::ID id, QObject* client) {
-  Error("updatesettingsprofile", "id=" + id, client);
+  Error(APICommands::UPDATE_SETTINGS_PROFILE, "id=" + id, client);
 }
 
 void APIOutput::ProfileDeleted(Profile::ID profile, QObject*) {

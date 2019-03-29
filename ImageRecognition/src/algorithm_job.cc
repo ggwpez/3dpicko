@@ -7,8 +7,8 @@
 namespace c3picko {
 AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
                            QJsonObject settings, void* input,
-                           AlgorithmResult* result, QThreadPool* pool,
-                           qint64 max_ms, QObject* _parent)
+                           std::shared_ptr<AlgorithmResult> result,
+                           QThreadPool* pool, qint64 max_ms, QObject* _parent)
     : QObject(_parent),
       id_(id),
       created_(QDateTime::currentDateTime()),
@@ -52,6 +52,8 @@ void AlgorithmJob::timeStop() {
   took_ms_ = elapsedMs();
 }
 
+Algorithm* AlgorithmJob::algo() const { return algo_; }
+
 QDateTime AlgorithmJob::created() const { return created_; }
 
 QDateTime AlgorithmJob::start() const { return start_; }
@@ -63,8 +65,6 @@ qint64 AlgorithmJob::maxMs() const { return max_ms_; }
 qint64 AlgorithmJob::tookMs() const { return took_ms_; }
 
 qint64 AlgorithmJob::elapsedMs() const { return start_.msecsTo(end_); }
-
-AlgorithmResult::ID AlgorithmJob::result_id() const { return result_id_; }
 
 AlgorithmJob::ID AlgorithmJob::id() const { return id_; }
 
@@ -112,7 +112,9 @@ void AlgorithmJob::setSettings(const QJsonObject& sett) {
   for (auto key : sett.keys()) setSettingsValueByID(key, sett[key]);
 }
 
-AlgorithmResult* AlgorithmJob::result() const { return result_; }
+std::shared_ptr<AlgorithmResult> AlgorithmJob::result() const {
+  return result_;
+}
 
 template <>
 QJsonObject Marshalling::toJson(const AlgorithmJob& value) {

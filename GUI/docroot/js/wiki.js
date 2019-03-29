@@ -15,11 +15,7 @@ $(function(){
 
 function loadWiki(id, site){
     $("#wiki-content").load(site);
-    /*if (id == About || id == Nomenclature){
-        moveWiki(id);
-    }*/
-    
-    //moveWiki(id);
+    moveWiki(id);
     var elementt = document.getElementById("Nomenclature");
     elementt.scrollIntoView();
     
@@ -73,6 +69,7 @@ function resetButtons(){
     element.classList.add("btn-link");
 }
 
+<<<<<<< GUI/docroot/js/wiki.js
 
 function loadHelpString(headline, site){
     $("#help-headline").text(headline);
@@ -81,6 +78,11 @@ function loadHelpString(headline, site){
 
 
 function loadHelp(headline, site){
+	$("#help-headline").load(headline);
+    $("#help-body").load(site);
+=======
+function loadHelp(id){
+	let path = './docs/wiki.html';
 	/*
 	switch (headline) {
 		case "area":
@@ -102,6 +104,7 @@ function loadHelp(headline, site){
 	}
 	*/
     //$("#help-headline").text(headline);
-	$("#help-headline").load(headline);
-    $("#help-body").load(site);
+	$("#help-headline").load(path+" #"+id+"-h");
+    $("#help-body").load(path+" #"+id);
+>>>>>>> GUI/docroot/js/wiki.js
 }

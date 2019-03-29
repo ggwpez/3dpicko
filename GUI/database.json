@@ -1,21 +1,13 @@
 {
+    "default_octoprint": "306",
     "default_plate": "304",
     "default_printer": "302",
     "default_socket": "303",
-    "default_octoprint": "306",
     "deleted_images": {
     },
     "deleted_jobs": {
     },
     "detection_results": {
-        "20": {
-            "cleanup_error": "",
-            "cleanup_succeeded": false,
-            "id": "20",
-            "last_stage": 4,
-            "stage_error": "",
-            "stages_succeeded": true
-        }
     },
     "images": {
         "846930886": {
@@ -25,7 +17,7 @@
             "original_name": "PICT_20190308_173503.JPG",
             "path": "/uploads/VADfShjw",
             "uploaded": {
-                "formatted": "26.03.19 17:44",
+                "formatted": "26.03.19 17:44:30",
                 "ms": 1553618670701
             },
             "width": 2550
@@ -35,7 +27,7 @@
     "jobs": {
         "210": {
             "created": {
-                "formatted": "26.03.19 17:44",
+                "formatted": "26.03.19 17:44:34",
                 "ms": 1553618674354
             },
             "description": "",
@@ -144,16 +136,14 @@
             },
             "type": "plate-profile"
         },
-        "306":
-        {
+        "306": {
             "id": "306",
             "profile_name": "Creatily Ender v3",
-            "settings":
-            {
-                "address": "10.14.0.150",
-                "api_key": { "data": "F866D6261972458CACAE9CB56E484758" },
-                "protocol": "http",
-                "port": 80
+            "settings": {
+                "address": "192.168.2.181",
+                "api_key": "F866D6261972458CACAE9CB56E484758",
+                "port": 80,
+                "protocol": "http"
             },
             "type": "octoprint-profile"
         }

@@ -25,6 +25,8 @@ dependencies:linux:
 build:linux:
   stage: build
   script:
+    - git submodule init
+    - git submodule update
     - mkdir build
     - cd build
     - qmake -qt=qt5 ..
@@ -72,4 +74,4 @@ format:linux:
 document:linux:
   stage: document
   script:
-    - doxygen Doxyfile
+    - doxygen Doxyfile > /dev/null

@@ -5,6 +5,7 @@
 #include "include/table.hpp"
 #include "include/types/image.hpp"
 #include "include/types/job.hpp"
+#include "include/types/report.h"
 
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "include/types/profile.hpp"
@@ -20,8 +21,8 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Job> JobTable;
   typedef Table<Image> ImageTable;
   typedef Table<Profile> ProfileTable;
-  typedef Table<DetectionResult> DetectionResultTable;
-  // typedef Table<AlgorithmJob> DetectionJobTable;
+  // typedef Table<DetectionResult*> DetectionResultTable;
+  // typedef Table<AlgorithmJob*>	AlgoJobTable;
 
   Database(QSettings& settings, QObject* parent);
 
@@ -33,13 +34,14 @@ class Database : public QObject, JsonConvertable {
   ImageTable& images();
   ImageTable& deletedImages();  // "
   ProfileTable& profiles();
-  // DetectionJobTable &detectionJobs();
-  DetectionResultTable& detectionResults();
+  // AlgoJobTable&		  algoJobs();
+  // DetectionResultTable& detectionResults();
 
   Job::ID newJobId();
   Profile::ID newProfileId();
   AlgorithmResult::ID newResultId();
   AlgorithmJob::ID newResultJobId();
+  Report::ID newReportId();
 
   Profile::ID defaultPrinter() const;
   Profile::ID defaultSocket() const;
@@ -49,6 +51,7 @@ class Database : public QObject, JsonConvertable {
   void setdefaultPrinter(const Profile::ID& default_printer);
   void setDefaultSocket(const Profile::ID& default_socket);
   void setDefaultPlate(const Profile::ID& default_plate);
+  void setDefaultOctoprint(const Profile::ID& default_octo);
 
   void read(const QJsonObject&) override;
   void write(QJsonObject&) const override;
@@ -62,17 +65,18 @@ class Database : public QObject, JsonConvertable {
   ImageTable images_;
   ImageTable deleted_images_;
   ProfileTable profiles_;
-  // DetectionJobTable detection_jobs_;
+  // AlgoJobTable algo_jobs_;
   /**
    * @brief Saves all past image detection processes.
    * TODO create a way to disable it.
    */
-  DetectionResultTable detection_results_;
+  // DetectionResultTable detection_results_;
 
   qint64 job_id_;
   qint64 profile_id_;
   qint64 result_job_id_;
   qint64 result_id_;
+  qint64 report_id_;
 
   Profile::ID default_printer_;
   Profile::ID default_socket_;

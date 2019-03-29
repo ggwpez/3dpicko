@@ -61,7 +61,17 @@ function AddProfiles(data){
     AddProfileToList(profile_templates["printer-profile"]);
     AddProfileToList(profile_templates["socket-profile"]);
     AddProfileToList(profile_templates["plate-profile"]);
-    AddProfileToList(profile_templates["octoprint-profile"]);
+    if(!data.profiles.find(function(element){
+        return element.type == "octoprint-profile";
+    }))
+    {
+        AddProfileToList(profile_templates["octoprint-profile"]);
+    }
+    else{
+        $('#card-new-octoprint-profile').remove();
+        delete unsaved_elements["form-new-octoprint-profile"];
+    }
+
     // add Profiles
     data.profiles.forEach(AddProfileToList);
 }
@@ -74,7 +84,7 @@ function AddProfileToList(profile){
     }
 
     let new_profile = false;
-    if(!profile.id) {
+    if(!profile.id || profile.id == "new-"+profile.type) {
         if(document.getElementById('card-new-'+profile.type)) return;
         new_profile = true;
         profile.id = "new-"+profile.type;
@@ -97,7 +107,7 @@ function AddProfileToList(profile){
     <input type="hidden" id="id" name="id" value="${profile.id}">
     <input type="hidden" id="type" name="type" value="${profile.type}">
     <div class="form-group">
-    <label for="profile_name">Profile Identifier:</label>
+    <label for="profile_name"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('${profile.type}s_identifier-h')">Profile Identifier:</a></label>
     <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
     </div>
     `;

@@ -19,56 +19,16 @@
 using namespace stefanfrings;
 using namespace c3picko;
 
-static WsServer* ws_ptr = nullptr;
-
-static QString textColor(QtMsgType type) {
-  switch (type) {
-    case QtMsgType::QtInfoMsg:
-      return "";
-    case QtMsgType::QtDebugMsg:
-      return "";
-    case QtMsgType::QtWarningMsg:
-      return "\x1B[33m";  // Orange
-    case QtMsgType::QtCriticalMsg:
-      return "\x1B[31m";         // Red
-    case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
-      return "\x1B[31;1m";       // Red, Fat
-    default:
-      Q_UNREACHABLE();
-  }
-}
-static void msg_handler(QtMsgType type, const QMessageLogContext& context,
-                        const QString& msg) {
-  QString message = qFormatLogMessage(type, context, msg);
-  QString time =
-      "[ " + QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate) +
-      " ] ";
-  QString color_begin = textColor(type), color_end = "\033[0m";
-
-  if (ws_ptr)
-    QMetaObject::invokeMethod(ws_ptr, "NewDebugLine",
-                              Q_ARG(QString, time + message));
-
-    // TODO bad style to write everything to stderr
-#ifdef Q_OS_LINUX
-  fprintf(stderr, "%s%s%s%s\n", qPrintable(time), qPrintable(color_begin),
-          qPrintable(message), qPrintable(color_end));
-#else
-  fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));
-#endif
-}
-
 static int start(int argc, char** argv) {
 #ifdef Q_OS_LINUX
-  qInstallMessageHandler(msg_handler);
+  startLog();
 #endif
   // We need a QGuiApplication for the QPdfWriter class from Report. Thats a bit
   // unlucky
   // TODO search workaround
-  QGuiApplication app(argc, argv);
-  QString ini_file = searchConfigFile(argc, argv);
+  QCoreApplication app(argc, argv);
+  QString ini_file(Setup(&app));
   QSettings settings(ini_file, QSettings::IniFormat);
-  Setup(&app, ini_file, settings);
 
   QThreadPool* algo_pool = new QThreadPool(&app);
   algo_pool->setMaxThreadCount(qMin(1, QThread::idealThreadCount() / 2));
@@ -93,16 +53,15 @@ static int start(int argc, char** argv) {
   QSslConfiguration* ssl = LoadSslConfig(settings);
 
   // HTTP server
-  QSettings* http_settings =
-      new QSettings(ini_file, QSettings::IniFormat, &app);
-  http_settings->beginGroup("http");
-  new HttpListener(http_settings, ssl,
+  QSettings http_settings(ini_file, QSettings::IniFormat);
+  http_settings.beginGroup("http");
+  new HttpListener(&http_settings, ssl,
                    new RequestMapper(staticFileController, &app), &app);
 
   // WS server
-  QSettings* ws_settings = new QSettings(ini_file, QSettings::IniFormat, &app);
-  ws_settings->beginGroup("websockets");
-  WsServer* ws_server = new WsServer(*ws_settings, ssl, &app);
+  QSettings ws_settings(ini_file, QSettings::IniFormat);
+  ws_settings.beginGroup("websockets");
+  WsServer* ws_server = new WsServer(ws_settings, ssl, &app);
 
   QObject::connect(ws_server, &WsServer::OnRequest, api,
                    &APIController::request);
@@ -113,16 +72,18 @@ static int start(int argc, char** argv) {
                    &WsServer::ToAllExClient);
 
   QObject::connect(&app, &QCoreApplication::aboutToQuit, [db] {
-    db->saveToFile();                 // save database
-    qInstallMessageHandler(nullptr);  // reset message handlers
-    ws_ptr =
-        nullptr;  // also dont redirect the console output to WsServer anymore
+    db->saveToFile();  // save database
+    stopLog();         // reset message handlers
   });
 
-  if (!ws_server->StartListen())
-    return 1;
-  else
-    ws_ptr = ws_server;
+  if (!ws_server->StartListen()) return 1;
+
+  // copy logging output to ws_server
+  setMessageHandler([&ws_server](QString msg) {
+    if (ws_server)
+      QMetaObject::invokeMethod(ws_server, "NewDebugLine",
+                                Q_ARG(QString, msg));  // send to other thread
+  });
 
   return app.exec();
 }
