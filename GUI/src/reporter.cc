@@ -75,18 +75,18 @@ Report Reporter::createReport() const {
     cv::imwrite(img_path.toSystemAbsolute().toStdString(), mat);
   }
   // Create pdf and write to file
-  /*{
+  {
     QString html;
-    QPdfWriter pdf(pdf_path.toSystemAbsolute());
-    writePdfReport(img_name, &pdf, html);
+    // QPdfWriter pdf(pdf_path.toSystemAbsolute());
+    // writePdfReport(img_name, &pdf, html);
     // Write html
     QFile file(htm_path.toSystemAbsolute());
 
     if (!file.open(QIODevice::WriteOnly))
-                  throw Exception("Could not write report to: " +
-                                                                                  htm_path.toSystemAbsolute());
+      throw Exception("Could not write report to: " +
+                      htm_path.toSystemAbsolute());
     file.write(html.toUtf8());
-  }*/
+  }
   JlCompress::compressFiles(
       ResourcePath::fromDocRootAbsolute("/reports/report_" + id_ + ".zip")
           .toSystemAbsolute(),

@@ -141,9 +141,7 @@
             "profile_name": "Creatily Ender v3",
             "settings": {
                 "address": "10.14.0.150",
-                "api_key": {
-                    "data": "F866D6261972458CACAE9CB56E484758"
-                },
+                "api_key": "F866D6261972458CACAE9CB56E484758",
                 "port": 80,
                 "protocol": "http"
             },
