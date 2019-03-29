@@ -19,14 +19,14 @@ dependencies:linux:
     - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
     - git config --global user.email "gitlab@spam.tasty.limo"
     - git config --global user.name "Commitbot"
-    - git submodule init
-    - git submodule update
   except:
     - /^.*-format$/
 
 build:linux:
   stage: build
   script:
+    - git submodule init
+    - git submodule update
     - mkdir build
     - cd build
     - qmake -qt=qt5 ..
