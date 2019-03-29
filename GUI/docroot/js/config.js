@@ -63,7 +63,15 @@ function AddProfiles(data){
     AddProfileToList(profile_templates["plate-profile"]);
     if(!data.profiles.find(function(element){
         return element.type == "octoprint-profile";
-    })) AddProfileToList(profile_templates["octoprint-profile"]);
+    }))
+    {
+        AddProfileToList(profile_templates["octoprint-profile"]);
+    }
+    else{
+        $('#card-new-octoprint-profile').remove();
+        delete unsaved_elements["form-new-octoprint-profile"];
+    }
+
     // add Profiles
     data.profiles.forEach(AddProfileToList);
 }
@@ -76,7 +84,7 @@ function AddProfileToList(profile){
     }
 
     let new_profile = false;
-    if(!profile.id) {
+    if(!profile.id || profile.id == "new-"+profile.type) {
         if(document.getElementById('card-new-'+profile.type)) return;
         new_profile = true;
         profile.id = "new-"+profile.type;

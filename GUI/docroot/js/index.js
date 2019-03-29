@@ -151,6 +151,7 @@ $(function Setup()
                 if(data.type == 'octoprint-profile'){
                     $('#card-new-octoprint-profile').remove();
                     delete unsaved_elements["form-new-octoprint-profile"];
+                    SetDefaultProfile(data.id);
                 }
                 ShowAlert(data.profile_name+" added.", "success");
             }
