@@ -61,7 +61,9 @@ function AddProfiles(data){
     AddProfileToList(profile_templates["printer-profile"]);
     AddProfileToList(profile_templates["socket-profile"]);
     AddProfileToList(profile_templates["plate-profile"]);
-    AddProfileToList(profile_templates["octoprint-profile"]);
+    if(!data.profiles.find(function(element){
+        return element.type == "octoprint-profile";
+    })) AddProfileToList(profile_templates["octoprint-profile"]);
     // add Profiles
     data.profiles.forEach(AddProfileToList);
 }
