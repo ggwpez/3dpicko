@@ -126,7 +126,7 @@ $(function Setup()
                     delete unsaved_elements['new_job'];
                     button_div = document.getElementById('overview-buttons');
                     if(data.report){
-                        button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.report}" download="report_${current_job.id}.pdf">Download Report</a>`);
+                        button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.report}" download>Download Report</a>`);
                     }
                 }
             }
