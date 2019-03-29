@@ -450,9 +450,7 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   OctoConfig* octoprint =
       db_->profiles().get(job.octoprint()).operator c3picko::pi::OctoConfig*();
 
-  // static OctoConfig config("10.14.0.150",
-  // pi::ApiKey("F866D626197258CACAE9CB56E484758"));
-  OctoPrint* printer = nullptr;  // new OctoPrint(*octoprint, this);
+  OctoPrint* printer = new OctoPrint(*octoprint, this);
 
   GcodeGenerator gen(*socket, *printerp, *plate);
 
@@ -501,8 +499,9 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   file.close();
 
   emit OnJobStarted(report, client);
-  // Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-  // printer->SendCommand(cmd); // TODO inform client
+  Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
+  printer->SendCommand(cmd);  // TODO inform client
+  connect(cmd, &Command::OnFinished, printer, &OctoPrint::deleteLater);
 }
 
 void APIController::shutdown(QObject*) {
