@@ -78,3 +78,4 @@ function loadHelpString(headline, site){
 function loadHelp(headline, site){
 	$("#help-headline").load(headline);
     $("#help-body").load(site);
+}
