@@ -83,14 +83,14 @@ Report Reporter::createReport() const {
     QFile file(htm_path.toSystemAbsolute());
 
     if (!file.open(QIODevice::WriteOnly))
-          throw Exception("Could not write report to: " +
-                                          htm_path.toSystemAbsolute());
+                  throw Exception("Could not write report to: " +
+                                                                                  htm_path.toSystemAbsolute());
     file.write(html.toUtf8());
   }*/
   JlCompress::compressFiles(
       ResourcePath::fromDocRootAbsolute("/reports/report_" + id_ + ".zip")
           .toSystemAbsolute(),
-      {* / pdf_path.toSystemAbsolute(), * / img_path.toSystemAbsolute(),
+      {/* pdf_path.toSystemAbsolute(), */ img_path.toSystemAbsolute(),
        htm_path.toSystemAbsolute()});
 
   return Report(
