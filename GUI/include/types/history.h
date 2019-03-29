@@ -1,6 +1,7 @@
 #pragma once
 
 #include "include/types/job.hpp"
+#include "include/types/report.h"
 
 namespace c3picko {
 /**
@@ -9,5 +10,6 @@ namespace c3picko {
 class History {
  private:
   Job::ID job_;
+  Report::ID report_;
 };
 }  // namespace c3picko

@@ -19,23 +19,8 @@ ROOTPATH = $$PWD/../
 DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
-INCLUDEPATH += $$ROOTPATH/Main
-DEPENDPATH += $$ROOTPATH/Main
-
-INCLUDEPATH += $$ROOTPATH/GUI
-DEPENDPATH += $$ROOTPATH/GUI
-
-INCLUDEPATH += $$ROOTPATH/Gcode
-DEPENDPATH += $$ROOTPATH/Gcode
-
-INCLUDEPATH += $$ROOTPATH/PiCommunicator $$ROOTPATH/PiCommunicator/include
-DEPENDPATH += $$ROOTPATH/PiCommunicator $$ROOTPATH/PiCommunicator/include
-
-INCLUDEPATH += $$ROOTPATH/ImageRecognition
-DEPENDPATH += $$ROOTPATH/ImageRecognition
-
-INCLUDEPATH += $$ROOTPATH/QtWebApp/httpserver/
-DEPENDPATH += $$ROOTPATH/QtWebApp/httpserver/
-
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11
+
+INCLUDEPATH += $$ROOTPATH/quazip
+DEPENDPATH += $$ROOTPATH/quazip

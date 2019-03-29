@@ -74,7 +74,6 @@ class Job {
   Profile::ID plate_, printer_, socket_, octoprint_;
   int starting_row_, starting_col_;
   QSet<Colony::ID> colonies_to_pick_;
-
   /**
    * @brief How far is the configuration of this Job?
    */

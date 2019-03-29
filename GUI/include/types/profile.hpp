@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "include/marshalling.hpp"
+#include "include/types/profile_type.h"
 
 namespace c3picko {
 class PrinterProfile;
@@ -11,7 +12,6 @@ class PlateProfile;
 namespace pi {
 class OctoConfig;
 }
-
 /**
  * @brief Encapsulator for the 3 GCode profile classes and the OctoPrint
  * profile.
@@ -19,7 +19,7 @@ class OctoConfig;
 class Profile {
  public:
   typedef QString ID;
-  Profile(QString type, QString name, ID id, QJsonObject const& settings);
+  Profile(ProfileType type, QString name, ID id, QJsonObject const& settings);
 
   explicit operator PrinterProfile*() const;
   explicit operator PlateSocketProfile*() const;
@@ -29,7 +29,7 @@ class Profile {
   ID id() const;
   void setId(ID id);
   QString name() const;
-  QString type() const;
+  ProfileType type() const;
 
   std::shared_ptr<PlateProfile> plate() const;
   std::shared_ptr<PlateSocketProfile> socket() const;
@@ -84,7 +84,7 @@ class Profile {
   static QJsonObject octoprintTemplate();
 
  private:
-  QString type_;
+  ProfileType type_;
   QString name_;
   QString id_;
   std::shared_ptr<PlateProfile> plate_;
@@ -92,7 +92,7 @@ class Profile {
   std::shared_ptr<PrinterProfile> printer_;
   std::shared_ptr<pi::OctoConfig> octoprint_;
 };
-MAKE_MARSHALLABLE(Profile);
+MAKE_MARSHALLABLE(Profile)
 }  // namespace c3picko
 
 #endif  // PROFILE_HPP

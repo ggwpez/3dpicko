@@ -290,7 +290,7 @@ function SetColoniesToPick(){
     });
     included_by_user = included;
     excluded_by_user = excluded;
-    number_of_colonies = included_by_server - excluded_by_user.size /*TODO add colonies backend + included_by_user.size*/;
+    number_of_colonies = included_by_server - excluded_by_user.size + included_by_user.size;
     document.getElementById('enter-overview-button').onclick = function(){
         api('setcoloniestopick',{'job': current_job.id, 'ex_user': excluded_user, 'in_user': included_user,'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
     }

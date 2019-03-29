@@ -18,7 +18,8 @@ class AlgorithmManager : public QObject {
 
  public:
   AlgorithmJob* createJob(cv::Mat source, Algorithm::ID id,
-                          AlgorithmJob::ID job_id, AlgorithmResult* result,
+                          AlgorithmJob::ID job_id,
+                          std::shared_ptr<AlgorithmResult> result,
                           QJsonObject settings);
   /**
    * @brief Always cloneEmpty() the result algorithm that you want to use.

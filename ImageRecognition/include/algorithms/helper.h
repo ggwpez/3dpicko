@@ -65,6 +65,8 @@ struct Range {
   int _pad2;
 };
 
+QString rangeToString(math::Range<double> const& v);
+
 /**
  * @brief Determinant of the matrix
  * a b
@@ -112,7 +114,8 @@ void findConnectedComponentEdges(const cv::Mat& input,
                                  math::Range<int> const& area);
 
 void drawText(cv::Mat& output, cv::Point pos, QString string,
-              cv::Scalar color = cv::Scalar::all(255));
+              cv::Scalar color = cv::Scalar::all(255), double scale = 1,
+              int thickness = 1);
 }  // namespace math
 }  // namespace c3picko
 #include <QMetaType>

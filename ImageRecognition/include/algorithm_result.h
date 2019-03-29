@@ -24,12 +24,6 @@ class AlgorithmResult {
    */
   virtual void finalize();
 
- public slots:
-  void cleanup();
-
- private:
-  virtual void cleanup_impl();
-
  public:
   ID id_;
   QDateTime created_;
@@ -62,5 +56,5 @@ class AlgorithmResult {
   QString stageError() const;
   QDateTime created() const;
 };
-MAKE_MARSHALLABLE(AlgorithmResult);
+MAKE_SERIALIZABLE(AlgorithmResult);
 }  // namespace c3picko
