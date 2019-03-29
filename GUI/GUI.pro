@@ -20,7 +20,8 @@ SOURCES += \
     src/types/report.cc \
     src/types/history.cc \
     src/reporter.cc \
-    src/types/well.cc
+    src/types/well.cc \
+    src/types/profile_type.cc
 
 HEADERS += \
     include/requestmapper.h \
@@ -37,7 +38,8 @@ HEADERS += \
     include/types/history.h \
     include/types/report.h \
     include/reporter.h \
-    include/types/well.h
+    include/types/well.h \
+    include/types/profile_type.h
 
 OTHER_FILES += serverconfig.ini
 

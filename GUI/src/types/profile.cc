@@ -8,24 +8,25 @@
 #include "include/printerprofile.h"
 
 namespace c3picko {
-Profile::Profile(QString type, QString name, ID id, QJsonObject const& settings)
+Profile::Profile(ProfileType type, QString name, ID id,
+                 QJsonObject const& settings)
     : type_(type), name_(name), id_(id) {
   // NOTE if you add something here, also add it down at toJson
-  if (type_ == "printer-profile") {
+  if (type_ == ProfileType::PRINTER) {
     printer_ = std::make_shared<PrinterProfile>(
         Marshalling::fromJson<PrinterProfile>(settings));
-  } else if (type_ == "socket-profile") {
+  } else if (type_ == ProfileType::SOCKET) {
     socket_ = std::make_shared<PlateSocketProfile>(
         Marshalling::fromJson<PlateSocketProfile>(settings));
-  } else if (type_ == "plate-profile") {
+  } else if (type_ == ProfileType::PLATE) {
     plate_ = std::make_shared<PlateProfile>(
         Marshalling::fromJson<PlateProfile>(settings));
-  } else if (type_ == "octoprint-profile") {
+  } else if (type_ == ProfileType::OCTOPRINT) {
     octoprint_ = std::make_shared<pi::OctoConfig>(
         Marshalling::fromJson<pi::OctoConfig>(settings));
   } else {
     plate_ = nullptr;
-    qWarning() << "Unknown profile type" << type_;
+    qWarning() << "Unknown profile type" << (int)type_;
   }
 }
 
@@ -35,7 +36,7 @@ void Profile::setId(Profile::ID id) { id_ = id; }
 
 QString Profile::name() const { return name_; }
 
-QString Profile::type() const { return type_; }
+ProfileType Profile::type() const { return type_; }
 
 std::shared_ptr<PlateProfile> Profile::plate() const { return plate_; }
 
@@ -127,41 +128,40 @@ QJsonObject Profile::printerTemplate() {
   QJsonObject json;
 
   json["settings"] = {
-      {makeNumberField("movement_speed", "Movement speed",
-                       "", 1, 10800, 1,
+      {makeNumberField("movement_speed", "Movement speed", "", 1, 10800, 1,
                        10800, 10800, "mm/60 s" /* Minute is not a SI unit*/),
        makeVec3Field("cut_filament_position_above_trigger", "Cut position", "",
                      NULL_POINT, PR_MAX, .01, NULL_POINT, NULL_POINT, "mm"),
        makeNumberField("z_coordinate_pushing_the_trigger", "Push trigger at",
                        "", -300, 300, .01, 0, 0, "mm"),
        makeNumberField("filament_extrusion_length_on_move_cut_to_pick",
-                       "Filament length cut to source", "",
-                       -100, 100, .01, 0, 0, "mm"),
+                       "Filament length cut to source", "", -100, 100, .01, 0,
+                       0, "mm"),
        makeNumberField("filament_extrusion_length_on_move_pick_to_master",
-                       "Filament length source to master", "",
-                       -100, 100, .01, 0, 0, "mm"),
+                       "Filament length source to master", "", -100, 100, .01,
+                       0, 0, "mm"),
        makeNumberField("filament_extrusion_length_on_move_master_to_goal",
-                       "Filament length master to goal", "",
-                       -100, 100, .01, 0, 0, "mm"),
+                       "Filament length master to goal", "", -100, 100, .01, 0,
+                       0, "mm"),
        makeNumberField("filament_extrusion_length_on_move_goal_to_cut",
-                       "Filament length goal to cut", "",
-                       -100, 100, .01, 0, 0, "mm"),
-       makeNumberField(
-           "filament_extrusion_length_on_pick", "Filament length pick from source",
-           "", -300, 300, .01, 0, 0, "mm"),
+                       "Filament length goal to cut", "", -100, 100, .01, 0, 0,
+                       "mm"),
+       makeNumberField("filament_extrusion_length_on_pick",
+                       "Filament length pick from source", "", -300, 300, .01,
+                       0, 0, "mm"),
        makeNumberField("filament_extrusion_length_on_put_onto_master",
-                       "Filament length put onto master", "", -100,
-                       100, .01, 0, 0, "mm"),
+                       "Filament length put onto master", "", -100, 100, .01, 0,
+                       0, "mm"),
        makeNumberField("filament_extrusion_length_after_cut",
-                       "Filament length after cut", "", -100, 100,
-                       .01, 0, 0, "mm"),
+                       "Filament length after cut", "", -100, 100, .01, 0, 0,
+                       "mm"),
        makeNumberField("length_of_removed_filament",
                        "Filament length to be cut", "", 0, 100, .01, 0, 0,
                        "mm"),
        makeNumberField("safety_distance_between_top_surface_of_all_plates_and_"
                        "nozzle_on_move",
-                       "Safety distance between nozzle and plates",
-                       "", -100, 100, .01, 0, 0, "mm")}};
+                       "Safety distance between nozzle and plates", "", -100,
+                       100, .01, 0, 0, "mm")}};
 
   return json;
 }
@@ -171,11 +171,11 @@ QJsonObject Profile::socketTemplate() {
 
   json["settings"] = {
       {makeVec2Field("global_origin_of_source_plate",
-                     "Source plate cutout origin", "",
-                     NULL_POINT, PR_MAX, .01, NULL_POINT, NULL_POINT, "mm"),
+                     "Source plate cutout origin", "", NULL_POINT, PR_MAX, .01,
+                     NULL_POINT, NULL_POINT, "mm"),
        makeVec2Field("global_origin_of_master_plate",
-                     "Master plate cutout origin", "",
-                     NULL_POINT, PR_MAX, .01, NULL_POINT, NULL_POINT, "mm"),
+                     "Master plate cutout origin", "", NULL_POINT, PR_MAX, .01,
+                     NULL_POINT, NULL_POINT, "mm"),
        makeVec2Field("global_origin_of_goal_plate", "Goal plate cutout origin",
                      "", NULL_POINT, PR_MAX, .01, NULL_POINT, NULL_POINT, "mm"),
        makeEnumField("orientation_of_goal_plate",
@@ -205,31 +205,27 @@ QJsonObject Profile::plateTemplate() {
   json["settings"] = {
       {makeNumberField("number_of_rows", "Number of rows", "", 1, 100, 1, 0, 0,
                        ""),
-       makeNumberField("number_of_columns", "Number of columns", "", 1, 100, 1, 0, 0,
-                       ""),
-       makeNumberField("a1_row_offset", "A1 row offset", "",
-                       -1000, 1000, .01, 0, 0, "mm"),
-       makeNumberField("a1_column_offset", "A1 column offset", "",
-                       -1000, 1000, .01, 0, 0, "mm"),
+       makeNumberField("number_of_columns", "Number of columns", "", 1, 100, 1,
+                       0, 0, ""),
+       makeNumberField("a1_row_offset", "A1 row offset", "", -1000, 1000, .01,
+                       0, 0, "mm"),
+       makeNumberField("a1_column_offset", "A1 column offset", "", -1000, 1000,
+                       .01, 0, 0, "mm"),
        makeNumberField("well_spacing_center_to_center",
-                       "Well spacing center to center", "",
-                       -100, 100, .01, 0, 0, "mm"),
-       makeNumberField("height_source_plate", "Source plate height", "", -100, 100, .01, 0, 0,
-                       "mm"),
-       makeNumberField("height_master_plate", "Master plate height", "", -100, 100, .01, 0, 0,
-                       "mm"),
-       makeNumberField("height_goal_plate", "Goal plate height", "", -100, 100, .01, 0, 0,
-                       "mm"),
-       makeNumberField("well_depth", "Well depth", "",
-                       0, 100, .01, 0, 0, "mm"),
-       makeNumberField(
-           "culture_medium_thickness_source_plate", "Source medium thickness",
-           "", 0, 200,
-           .01, 0, 0, "mm"),
-       makeNumberField(
-           "culture_medium_thickness_master_plate", "Master medium thickness",
-           "", 0, 200,
-           .01, 0, 0, "mm")}};
+                       "Well spacing center to center", "", -100, 100, .01, 0,
+                       0, "mm"),
+       makeNumberField("height_source_plate", "Source plate height", "", -100,
+                       100, .01, 0, 0, "mm"),
+       makeNumberField("height_master_plate", "Master plate height", "", -100,
+                       100, .01, 0, 0, "mm"),
+       makeNumberField("height_goal_plate", "Goal plate height", "", -100, 100,
+                       .01, 0, 0, "mm"),
+       makeNumberField("well_depth", "Well depth", "", 0, 100, .01, 0, 0, "mm"),
+       makeNumberField("culture_medium_thickness_source_plate",
+                       "Source medium thickness", "", 0, 200, .01, 0, 0, "mm"),
+       makeNumberField("culture_medium_thickness_master_plate",
+                       "Master medium thickness", "", 0, 200, .01, 0, 0,
+                       "mm")}};
 
   return json;
 }
@@ -265,19 +261,19 @@ QJsonObject Marshalling::toJson(const Profile& value) {
 
   // TODO also dumb
   QJsonObject settings;
-  if (value.type() == "printer-profile")
+  if (value.type() == ProfileType::PRINTER)
     settings = Marshalling::toJson(*value.printer());
-  else if (value.type() == "socket-profile")
+  else if (value.type() == ProfileType::SOCKET)
     settings = Marshalling::toJson(*value.socket());
-  else if (value.type() == "plate-profile")
+  else if (value.type() == ProfileType::PLATE)
     settings = Marshalling::toJson(*value.plate());
-  else if (value.type() == "octoprint-profile")
+  else if (value.type() == ProfileType::OCTOPRINT)
     settings = Marshalling::toJson(*value.octoprint());
   else
     qWarning() << "Cant write profile of unknown type";
 
   obj["settings"] = settings;
-  obj["type"] = value.type();
+  obj["type"] = profileToString(value.type());
   obj["profile_name"] = value.name();
   obj["id"] = value.id();
 
@@ -286,7 +282,7 @@ QJsonObject Marshalling::toJson(const Profile& value) {
 
 template <>
 Profile Marshalling::fromJson(const QJsonObject& obj) {
-  return Profile(Marshalling::fromJson<QString>(obj["type"]),
+  return Profile(profileFromString(obj["type"].toString()),
                  Marshalling::fromJson<QString>(obj["profile_name"]),
                  Marshalling::fromJson<QString>(obj["id"]),
                  obj["settings"].toObject());

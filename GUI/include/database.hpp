@@ -51,6 +51,7 @@ class Database : public QObject, JsonConvertable {
   void setdefaultPrinter(const Profile::ID& default_printer);
   void setDefaultSocket(const Profile::ID& default_socket);
   void setDefaultPlate(const Profile::ID& default_plate);
+  void setDefaultOctoprint(const Profile::ID& default_octo);
 
   void read(const QJsonObject&) override;
   void write(QJsonObject&) const override;

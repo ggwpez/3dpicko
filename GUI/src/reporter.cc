@@ -92,8 +92,8 @@ Report Reporter::createReport() const {
 
 QString Reporter::createLog() const {
   AlgorithmJob* algo = job_.resultJob().get();
-  return image_.uploaded().toString(dateTimeFormat()) + ": " + "Image #" +
-         image_.id().left(10) + "... created<br>" +
+  return "<br>Log:<br>" + image_.uploaded().toString(dateTimeFormat()) + ": " +
+         "Image #" + image_.id() + " created<br>" +
          job_.created().toString(dateTimeFormat()) + ": " + "Job #" +
          job_.id() + " created<br>" + algo->start().toString(dateTimeFormat()) +
          ": " + "AlgorithmJob #" + algo->id() + " created<br>" +
@@ -101,8 +101,15 @@ QString Reporter::createLog() const {
          result_->id() + " created";
 }
 
+QString Reporter::createJobInfo() const {
+  return "Name: " + job_.name() + createBr() +
+         "Desription: " + job_.description() + createBr() +
+         "Date: " + job_.created().toString(dateTimeFormat()) + createBr();
+}
+
 QString Reporter::createImage(QString url) const {
-  return "<a href=''>"
+  return "<a href='" + url +
+         "'>"
          "<img align='middle' style='max-width: 100%; height: auto;' src='" +
          url +
          "'>"
@@ -143,13 +150,13 @@ void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
 
   AlgorithmJob* ajob = job_.resultJob().get();
   std::vector<Colony> const& colonies = result_->colonies();
-  html += createProlog() + "<center>" + createTitle() + "</center><br>" +
-          createImage(img_name) + "<br><br>" + createLog() + "<br><br>";
+  html += createProlog() + "<center>" + createTitle() + "</center>" +
+          createBr() + createJobInfo() + createBr() + createImage(img_name) +
+          createBr(2);
 
   // Colony data table
   {
-    static QVector<QString> headers = {" Well ", " Colony ", " PositionX [%] ",
-                                       " PositionY [%] "};
+    static QVector<QString> headers = {"Well ", "Colony", "Area [pixel]"};
     QVector<QVector<QString>> row_data;
 
     for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
@@ -158,8 +165,7 @@ void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
           *std::find_if(colonies.begin(), colonies.end(),
                         [it](Colony const& c) { return c.id() == it->second; });
       QVector<QString> data = {well.toString(), QString::number(it->second),
-                               QString::number(colony.x() * 100, 'f', 1),
-                               QString::number(colony.y() * 100, 'f', 1)};
+                               QString::number(colony.area(), 'f', 0)};
 
       row_data.push_back(data);
     }
@@ -177,6 +183,7 @@ void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
     html += createTable("Settings for '" + ajob->algo()->name() + "'", headers,
                         row_data);
   }
+  html += createBr(2) + createLog();
   html += createEpilog();
 
   QTextDocument doc;

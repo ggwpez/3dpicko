@@ -47,6 +47,7 @@ class APIOutput : public QObject {
   void ImageDeleteError(QString path, QObject* client);
 
   void ProfileCreated(Profile profile, QObject* client);
+  void ProfileCreateError(QString error, QObject* client);
   void ProfileUpdated(Profile, QObject* client);
   void ProfileUpdateError(Profile::ID, QObject* client);
   void ProfileDeleted(Profile::ID profile, QObject* client);

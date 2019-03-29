@@ -175,18 +175,23 @@ void APIController::createSettingsProfile(Profile& profile_wo_id,
   Profile::ID id = db_->newProfileId();
   profile_wo_id.setId(id);
 
+  // check that there is not already an octoprint profile
+  if (profile_wo_id.type() == ProfileType::OCTOPRINT) {
+    for (auto it = db_->profiles().begin(); it != db_->profiles().end(); ++it)
+      if (it->type() == ProfileType::OCTOPRINT)
+        return emit OnProfileCreateError(
+            "Cant create more than one octoprint profile", client);
+  }
+
   db_->profiles().add(id, profile_wo_id);
-  // profile.write(response);
   emit OnProfileCreated(profile_wo_id, client);
 }
 
 void APIController::updateSettingsProfile(Profile& profile, QObject* client) {
   if (!db_->profiles().exists(profile.id())) {
-    // response = {{"error", "Profile Id unknown: '" +profile.id() +"'"}};
     emit OnProfileUpdateError(profile.id(), client);
   } else {
     db_->profiles().add(profile.id(), profile);
-    // response = json_profile;
     emit OnProfileUpdated(profile, client);
   }
 }
@@ -208,15 +213,17 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
   } else {
     Profile& profile = db_->profiles().get(id);
 
-    if (profile.type() == "printer-profile")
+    if (profile.type() == ProfileType::PRINTER)
       db_->setdefaultPrinter(id);
-    else if (profile.type() == "socket-profile")
+    else if (profile.type() == ProfileType::SOCKET)
       db_->setDefaultSocket(id);
-    else if (profile.type() == "plate-profile")
+    else if (profile.type() == ProfileType::PLATE)
       db_->setDefaultPlate(id);
+    else if (profile.type() == ProfileType::OCTOPRINT)
+      db_->setDefaultOctoprint(id);
     else {
       qCritical() << "Database corrupt or wrong version: Profile" << id
-                  << "had unknown type" << profile.type();
+                  << "had unknown type" << (int)profile.type();
       emit OnDefaultSettingsProfileSetError("Database error", client);
       return;
     }

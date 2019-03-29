@@ -122,8 +122,7 @@ class APIController : public QObject {
   void OnImageDeleteError(QString path, QObject* client);
 
   void OnProfileCreated(Profile profile, QObject* client);
-  // not used
-  // void OnProfileCreateError(Profile::ID profile, QObject* client);
+  void OnProfileCreateError(QString error, QObject* client);
   void OnProfileUpdated(Profile, QObject* client);
   void OnProfileUpdateError(Profile::ID, QObject* client);
   void OnProfileDeleted(Profile::ID profile, QObject* client);

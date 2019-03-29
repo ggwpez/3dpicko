@@ -34,6 +34,7 @@ class Reporter {
   QString createTitle() const;
   QString createEpilog() const;
   QString createLog() const;
+  QString createJobInfo() const;
   QString createImage(QString url) const;
   QString createBr(quint32 width = 1) const;
   /**

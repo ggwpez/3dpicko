@@ -145,4 +145,8 @@ void Database::setDefaultSocket(const Profile::ID& default_socket) {
 void Database::setDefaultPlate(const Profile::ID& default_plate) {
   default_plate_ = default_plate;
 }
+
+void Database::setDefaultOctoprint(const Profile::ID& default_octo) {
+  default_octoprint_ = default_octo;
+}
 }  // namespace c3picko
