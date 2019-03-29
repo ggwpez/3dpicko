@@ -28,7 +28,7 @@ class Reporter {
            Profile const& plate_, Profile const& printer_,
            Profile const& socket_, Profile const& octoprint_);
 
-  void writePdfReport(QString img_name, QPdfWriter*, QString& html) const;
+  void writeHtmlReport(QString img_name, QString& html) const;
 
   QString createProlog() const;
   QString createTitle() const;

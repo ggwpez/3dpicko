@@ -78,7 +78,7 @@ Report Reporter::createReport() const {
   {
     QString html;
     // QPdfWriter pdf(pdf_path.toSystemAbsolute());
-    // writePdfReport(img_name, &pdf, html);
+    writeHtmlReport(img_name, html);
     // Write html
     QFile file(htm_path.toSystemAbsolute());
 
@@ -150,11 +150,10 @@ QString Reporter::createTable(QString title, QVector<QString> col_name,
   return html;
 }
 
-void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
-                              QString& html) const {
-  pdf->setPageSize(QPagedPaintDevice::A4);
+void Reporter::writeHtmlReport(QString img_name, QString& html) const {
+  /*pdf->setPageSize(QPagedPaintDevice::A4);
   pdf->setCreator("3CPickO");
-  pdf->setTitle(createTitle());
+  pdf->setTitle(createTitle());*/
   // pdf->setResolution(2400);
 
   AlgorithmJob* ajob = job_.resultJob().get();
@@ -195,9 +194,9 @@ void Reporter::writePdfReport(QString img_name, QPdfWriter* pdf,
   html += createBr(2) + createLog();
   html += createEpilog();
 
-  QTextDocument doc;
-  doc.setHtml(html);
-  doc.print(pdf);
+  // QTextDocument doc;
+  // doc.setHtml(html);
+  // doc.print(pdf);
 }
 
 QString Reporter::createProlog() const {
