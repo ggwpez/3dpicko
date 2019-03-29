@@ -45,7 +45,5 @@ OTHER_FILES += serverconfig.ini
 
 INCLUDEPATH += $$ROOTPATH/ImageRecognition $$ROOTPATH/Main $$ROOTPATH/PiCommunicator/include $$ROOTPATH/PiCommunicator $$ROOTPATH/Gcode
 DEPENDPATH += $$ROOTPATH/ImageRecognition $$ROOTPATH/Main $$ROOTPATH/PiCommunicator/include $$ROOTPATH/PiCommunicator $$ROOTPATH/Gcode
-INCLUDEPATH += $$ROOTPATH/quazip
-DEPENDPATH += $$ROOTPATH/quazip
 
 include(../QtWebApp/httpserver/httpserver.pri)

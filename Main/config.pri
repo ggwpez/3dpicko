@@ -21,3 +21,6 @@ ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
 QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11
+
+INCLUDEPATH += $$ROOTPATH/quazip
+DEPENDPATH += $$ROOTPATH/quazip
