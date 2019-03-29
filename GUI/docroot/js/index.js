@@ -2,11 +2,13 @@
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
+// contains undisplayed images
+var images_array = [];
 // current job (local)
 var current_job = {};
 // all_jobs[job.id] = job;
 var all_jobs = [];
-// TODO delete "new_job" if job saved or executed
+// "id"=>"description"
 var unsaved_elements = {};
 
 var global_alert = $('#global-alert');
@@ -49,9 +51,32 @@ $(function Setup()
             else if (type == "getimagelist")
             {
                 console.log(data);
-                let div_images = document.getElementById('all-images');
-                data.images.forEach(AddImageToList);
-                div_images.style.display = "block";
+                document.getElementById('all-images').innerHTML = "";
+                images_array = data.images;
+                images_list = {};
+                ShowMoreImages();
+                if(chosen_image.path && !(chosen_image.id in images_list)){
+                    chosen_image = images_array.find(function(image_object){
+                        return image_object.id == chosen_image.id
+                    });
+                    if(!chosen_image){
+                        SetChosen(false);
+                        ShowAlert("Chosen image deleted on server.", "danger");
+                    }
+                    else AddImageToList(chosen_image);
+                }
+            }
+            else if (type == "uploadimage")
+            {
+                clearTimeout(upload_timeout_id);
+                let image = new Image();
+                image.onload = function(){
+                    AddImageToList(data, true);
+                    SetChosen(data.id);
+                    ShowAlert("Image "+data.original_name+" uploaded.", "success");
+                    EnableDropzone();
+                }
+                image.src = data.path;
             }
             else if (type == "deleteimage")
             {
@@ -63,7 +88,7 @@ $(function Setup()
                 else
                 {
                     console.log("Deleting image: " +data.id);
-                    document.getElementById('img-' +data.id).style.display = "none";    // TODO remove deleted from selection
+                    document.getElementById('img-' +data.id).style.display = "none";
                     ShowAlert(images_list[data.id].original_name+" deleted.", "success");
                     if(chosen_image.id == data.id) SetChosen(false);
                     delete images_list[data.id];
@@ -82,34 +107,35 @@ $(function Setup()
                     console.log("Deleting job: " +data.id);
                     document.getElementById('job-' +data.id).style.display = "none";
                     ShowAlert("Job "+job_name+" deleted.", "success");
+                    if(data.id == current_job.id) current_job = {};
                     delete all_jobs[data.id];
                 }
-            }
-            else if (type == "uploadimage")
-            {
-                clearTimeout(upload_timeout_id);
-                let image = new Image();
-                image.onload = function(){
-                    AddImageToList(data);
-                    SetChosen(data.id);
-                    ShowAlert("Image "+data.original_name+" uploaded.", "success");
-                    EnableDropzone();
-                }
-                image.src = data.path;
             }
             else if (type == "createjob")
             {
                 AddJobToList(data);
                 current_job = data;
+                current_job.status = "created";
                 document.getElementById("headertag").innerHTML = "Job #" +data.id;
                 ShowAlert("Pickjob "+data.id+" saved.", "success");
+            }
+            else if (type == "startjob"){
+                ShowAlert(`Job ${data.id} started`, "success");
+                if(data.id == current_job.id){
+                    current_job.status = "started";
+                    delete unsaved_elements['new_job'];
+                    button_div = document.getElementById('overview-buttons');
+                    if(data.report){
+                        button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.report}" download>Download Report</a>`);
+                    }
+                }
             }
             else if (type == "getjoblist")
             {
                 // TODO review
                 if(data.jobs){
-                    data.jobs.forEach(AddJobToList);    
-                } else AddJobToList(data);
+                    data.jobs.forEach(AddJobToList);
+                } else AddJobToList(data, true);
                 
                 console.log("Jobs:\n" +data);
             }
@@ -122,6 +148,11 @@ $(function Setup()
             }
             else if (type == "createsettingsprofile"){
                 AddProfileToList(data);
+                if(data.type == 'octoprint-profile'){
+                    $('#card-new-octoprint-profile').remove();
+                    delete unsaved_elements["form-new-octoprint-profile"];
+                    SetDefaultProfile(data.id);
+                }
                 ShowAlert(data.profile_name+" added.", "success");
             }
             else if (type == "updatesettingsprofile"){
@@ -130,6 +161,7 @@ $(function Setup()
             }
             else if (type == "deletesettingsprofile"){
                 ShowAlert(all_profiles[data.id].profile_name+" deleted.", "success");
+                if(all_profiles[data.id].type == 'octoprint-profile') AddProfileToList(profile_templates["octoprint-profile"]);
                 DeleteProfile(data.id);
             }
             else if (type == "debug")
@@ -167,22 +199,23 @@ $(function Setup()
         });
 });
 
-function AddJobToList(job)
+function AddJobToList(job, start = false)
 {
     if (!(job.id in all_jobs))
     {
         console.log("Adding job: " +JSON.stringify(job));
         // TODO everything...
         var name = (job.step == 7) ? "Job" : "Entwurf";
+        name = job.name || "Pickjob "+job.id;
         var html = `<div class="card m-1 job-card" id="job-${job.id}" >
         <button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="job" data-id="${job.id}">&times;</button>
         <div class="card-body p-1">
-        <h5 class="card-title mr-2 p-1">${name} ${job.name}</h5>
+        <h5 class="card-title mr-2 p-1">${name}</h5>
         <img class="card-img" src="${images_list[job.img_id].path}" alt="${images_list[job.img_id].original_name}">
         <p class="card-text"><ul>
         <li>ID: ${job.id}</li>
         <li>Created: ${job.created.formatted} </li>
-        ${job.description}
+        ${job.description?`<li>Description: <textarea style="width:100%;border: none;">${job.description}</textarea></li>`:``}
         </p>
         </div>
         <div class="card-footer bg-white">
@@ -190,7 +223,7 @@ function AddJobToList(job)
         </div>
         </div>`;
 
-        document.getElementById('allJobList').insertAdjacentHTML('beforeend', html);
+        document.getElementById('allJobList').insertAdjacentHTML(start?'afterbegin':'beforeend', html);
         all_jobs[job.id] = job;
     }
 }
@@ -200,7 +233,17 @@ function AddJobToHistoryList(job)
 
 }
 
-function AddImageToList(image_object){
+function ShowMoreImages(){
+    // let max_images = 8 - Object.keys(images_list).length % 8;
+    let max_images = 3;
+    for(let i = 0; i < max_images && images_array.length > 0; i++){
+        AddImageToList(images_array.pop());
+    }
+    document.getElementById('show-more-images').style.display = (images_array.length < 1)?'none':'block';
+    document.getElementById('all-images').style.display = "block";
+}
+
+function AddImageToList(image_object, start = false){
     if (!(image_object.id in images_list))
     {
         console.log("Adding image " +JSON.stringify(image_object));
@@ -216,7 +259,7 @@ function AddImageToList(image_object){
         </div>`;
 
         images_list[image_object.id] = image_object;
-        document.getElementById('all-images').insertAdjacentHTML('afterbegin',html);
+        document.getElementById('all-images').insertAdjacentHTML(start?'afterbegin':'beforeend',html);
         document.getElementById('image-'+image_object.id).onload = function(){
             $(this).show();
             $('#loading-'+image_object.id).remove();
@@ -237,12 +280,21 @@ $(function(){
             }
             changes += "</ul>";
             ShowAlert(changes, "danger", 6000);
+            e.preventDefault();
             var confirmationMessage = "Unsaved Changes...";
             (e || window.event).returnValue = confirmationMessage;
             return confirmationMessage;
         }
         else{
             return false;
+        }
+    });
+    // delete current job
+    window.addEventListener("unload", function (e) {
+        console.log("Delete?", current_job);
+        if(current_job.status == "created"){
+            console.log("Delete Job", current_job);
+            api("deletejob", {id: current_job.id.toString()});
         }
     });
 
@@ -282,7 +334,7 @@ $(function(){
             };
             break;
             case "job":
-            dialog_text.innerHTML = `Delete Job ${all_jobs[id].name}?`;
+            dialog_text.innerHTML = `Delete Job ${all_jobs[id].name||all_jobs[id].id}?`;
             dialog_button.onclick = function(){
                 console.log("Trying to delete job with id: " + id);
                 api("deletejob", {id: id.toString()});
@@ -342,7 +394,6 @@ const tabOrder = [ "browse", "cut", "attributes", "selection", "strategy", "over
 function tabEnter(tabId)
 {
     if(tabId > 0) unsaved_elements['new_job'] = "New Job: "+tabOrder[tabId];
-    // TODO delete unsaved_elements['new_job']; if job saved or executed
     console.log("Enabling tab: " +tabOrder[tabId]);
     for(let id = 0; id < tabOrder.length; id++){
         if(id < tabId){
@@ -444,15 +495,15 @@ function overviewTab(selected_colonies){
         document.getElementById('processed-layer1').src = canvas_layer1.toDataURL();
         // <li>Printer: ${all_profiles[current_job.printer].profile_name}</li>
         // <li>Socket: ${all_profiles[current_job.socket].profile_name}</li>
-        const html = `
+        let html = `
         <ul class="mt-2">
         <li>Date: ${new Date().toLocaleDateString()}</li>
         <li>Job name: ${current_job.name}</li>
         <li>Plate: ${all_profiles[plate_id].profile_name}</li>
-        <li>Description: ${current_job.description}</li>
         <li>Number of detected colonies: ${number_of_colonies}</li>
         <li>Number of picked colonies: ${document.getElementById('number-max_number_of_coloniesstrategy-form').value}</li>
         <li>Pick strategy: Starting at ${String.fromCharCode(64 + collided_row)}${collided_column}</li>
+        ${current_job.description?`<li>Description:<br><textarea rows="5" style="border: none;">${current_job.description}</textarea></li>`:''}
         </ul>
         `;
         document.getElementById('overview-metadata').insertAdjacentHTML('afterbegin', html);

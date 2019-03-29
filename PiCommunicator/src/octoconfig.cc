@@ -20,7 +20,7 @@ QJsonObject Marshalling::toJson(const pi::OctoConfig& value) {
   QJsonObject obj;
 
   obj["address"] = value.address();
-  obj["api_key"] = Marshalling::toJson<pi::ApiKey>(value.key());
+  obj["api_key"] = value.key().key();
   obj["protocol"] = value.protocol();
   obj["port"] = value.port();
 
@@ -30,7 +30,7 @@ QJsonObject Marshalling::toJson(const pi::OctoConfig& value) {
 template <>
 pi::OctoConfig Marshalling::fromJson(const QJsonObject& obj) {
   return pi::OctoConfig(Marshalling::fromJson<QString>(obj["address"]),
-                        Marshalling::fromJson<pi::ApiKey>(obj["api_key"]),
+                        pi::ApiKey(obj["api_key"].toString()),
                         Marshalling::fromJson<QString>(obj["protocol"]),
                         obj["port"].toInt());
 }

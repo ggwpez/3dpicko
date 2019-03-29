@@ -38,7 +38,7 @@ class APIOutput : public QObject {
   void JobCreateError(QString, QObject*);
   void JobDeleted(Job, QObject* client);
   void JobDeleteError(Job::ID id, QObject* client);
-  void JobStarted(Job::ID, QObject* client);
+  void JobStarted(Report report, QObject* client);
   void JobStartError(QString error, QObject* client);
 
   void ImageCreated(Image, QObject* client);
@@ -47,6 +47,7 @@ class APIOutput : public QObject {
   void ImageDeleteError(QString path, QObject* client);
 
   void ProfileCreated(Profile profile, QObject* client);
+  void ProfileCreateError(QString error, QObject* client);
   void ProfileUpdated(Profile, QObject* client);
   void ProfileUpdateError(Profile::ID, QObject* client);
   void ProfileDeleted(Profile::ID profile, QObject* client);

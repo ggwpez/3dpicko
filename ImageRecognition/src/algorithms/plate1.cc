@@ -59,7 +59,6 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   std::vector<math::InnerBorder> inner_edges;
   std::vector<std::vector<cv::Point>> contours;
 
-  cv::Mat tmp(ret);
   math::findConnectedComponentEdges(erroded, contours, area);
   qDebug() << "Found" << contours.size() << "contours";
 
@@ -89,8 +88,6 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
         math::OuterBorder edge;
         std::copy(curve.begin(), curve.begin() + 4, edge.begin());
         outer_edges.push_back(edge);
-
-        cv::drawContours(tmp, contours, i, cv::Scalar::all(255), 2);
       }
     }
   }

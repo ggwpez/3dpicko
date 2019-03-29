@@ -18,7 +18,10 @@ SOURCES += \
 	src/api_output.cc \
 	src/api_commands.cc \
 	src/types/report.cc \
-	src/types/history.cc
+	src/types/history.cc \
+	src/reporter.cc \
+	src/types/well.cc \
+	src/types/profile_type.cc
 
 HEADERS += \
 	include/requestmapper.h \
@@ -33,8 +36,14 @@ HEADERS += \
 	include/api_controller.h \
 	include/api_commands.h \
 	include/types/history.h \
-	include/types/report.h
+	include/types/report.h \
+	include/reporter.h \
+	include/types/well.h \
+	include/types/profile_type.h
 
 OTHER_FILES += serverconfig.ini
+
+INCLUDEPATH += $$ROOTPATH/ImageRecognition $$ROOTPATH/Main $$ROOTPATH/PiCommunicator/include $$ROOTPATH/PiCommunicator $$ROOTPATH/Gcode
+DEPENDPATH += $$ROOTPATH/ImageRecognition $$ROOTPATH/Main $$ROOTPATH/PiCommunicator/include $$ROOTPATH/PiCommunicator $$ROOTPATH/Gcode
 
 include(../QtWebApp/httpserver/httpserver.pri)

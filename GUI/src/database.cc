@@ -60,12 +60,10 @@ Database::ImageTable& Database::deletedImages() { return deleted_images_; }
 
 Database::ProfileTable& Database::profiles() { return profiles_; }
 
-// Database::DetectionJobTable& Database::detectionJobs() { return
-// detection_jobs_; }
+// Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
 
-Database::DetectionResultTable& Database::detectionResults() {
-  return detection_results_;
-}
+// Database::DetectionResultTable& Database::detectionResults() { return
+// detection_results_; }
 
 Job::ID Database::newJobId() { return QString::number(job_id_++); }
 
@@ -78,6 +76,8 @@ AlgorithmResult::ID Database::newResultId() {
 AlgorithmJob::ID Database::newResultJobId() {
   return QString::number(result_job_id_++);
 }
+
+Report::ID Database::newReportId() { return QString::number(report_id_++); }
 
 Profile::ID Database::defaultPrinter() const { return default_printer_; }
 
@@ -102,6 +102,7 @@ void Database::read(QJsonObject const& obj) {
   profile_id_ = obj["profile_id"].toInt();
   result_id_ = obj["result_id"].toInt();
   result_job_id_ = obj["result_job_id"].toInt();
+  report_id_ = obj["report_id"].toInt();
 
   default_printer_ = Marshalling::fromJson<QString>(obj["default_printer"]);
   default_socket_ = Marshalling::fromJson<QString>(obj["default_socket"]);
@@ -117,12 +118,13 @@ void Database::write(QJsonObject& obj) const {
   obj["profiles"] = (QJsonObject)profiles_;
 
   // obj["detection_jobs"] = (QJsonObject)detection_jobs_;
-  obj["detection_results"] = (QJsonObject)detection_results_;
+  // obj["detection_results"] = (QJsonObject)detection_results_;
 
   obj["job_id"] = job_id_;
   obj["profile_id"] = profile_id_;
   obj["result_id"] = result_id_;
   obj["result_job_id"] = result_job_id_;
+  obj["report_id"] = report_id_;
 
   obj["default_printer"] = default_printer_;
   obj["default_socket"] = default_socket_;
@@ -142,5 +144,9 @@ void Database::setDefaultSocket(const Profile::ID& default_socket) {
 
 void Database::setDefaultPlate(const Profile::ID& default_plate) {
   default_plate_ = default_plate;
+}
+
+void Database::setDefaultOctoprint(const Profile::ID& default_octo) {
+  default_octoprint_ = default_octo;
 }
 }  // namespace c3picko
