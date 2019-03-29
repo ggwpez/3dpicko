@@ -2,6 +2,7 @@
 #include "include/algorithm.h"
 #include "include/database.hpp"
 #include "include/types/well.h"
+#include "quazip/JlCompress.h"
 
 #include <QPageLayout>
 #include <QPdfWriter>
@@ -86,8 +87,16 @@ Report Reporter::createReport() const {
                       htm_path.toSystemAbsolute());
     file.write(html.toUtf8());
   }
+  JlCompress::compressFiles(
+      ResourcePath::fromDocRootAbsolute("/reports/report_" + id_ + ".zip")
+          .toSystemAbsolute(),
+      {pdf_path.toSystemAbsolute(), img_path.toSystemAbsolute(),
+       htm_path.toSystemAbsolute()});
 
-  return Report(job_.id(), pdf_path, img_path);
+  return Report(
+      job_.id(),
+      ResourcePath::fromDocRootAbsolute("/reports/report_" + id_ + ".zip"),
+      img_path);
 }
 
 QString Reporter::createLog() const {
