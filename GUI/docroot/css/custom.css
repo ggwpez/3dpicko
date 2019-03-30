@@ -7,6 +7,9 @@ label{
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
+li{
+	word-break: break-all;
+}
 .heading-box{
     margin: 20px 5px 0px 5px;
 	border: 1px solid gray;
@@ -146,8 +149,7 @@ a[href].textLink:hover, a[href].textLink:active, a[href].textLink:focus, a[href]
 	height: 3rem;
 }
 #show-more-images{
-	display: none;
-	margin-top: 1rem;
+	/*display: none;*/
 	text-align: center;
 }
 
@@ -344,3 +346,9 @@ li{
     word-break: normal;
     word-wrap: normal; 
 }
+/*
+@media print {
+    .row{
+      display: block;
+    }
+}*/
