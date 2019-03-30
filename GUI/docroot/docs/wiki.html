@@ -175,7 +175,7 @@ Navileiste scorllen Introduction
     <ul>
       <li> drag and drop in the dedicated area. </li>
       <li> clicking on "Drop Image" and selecting it in the file explorer. </li>
-      <li> clicking on an image under "All Images", which contains already uploaded images </li>
+      <li> clicking on an already uploaded image </li>
     </ul>
   </div>
   <br>
@@ -807,7 +807,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   -->
   <h2> Parts </h2>
   <p>
-    The colony picker consist of a 3d printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operable. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
+    The colony picker consist of a 3D printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operable. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
   </p>
   <p>  Here are additional items listed needed to assemble the device. </p>
   
@@ -847,7 +847,9 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   
   <h3> 2. Positioning </h3>
   <p>
-    Position the colony picker on a plane surface. Make sure it has enough space to all sides, so that the socket can move unhindered on the x,y axes. Also check the 3d printer’s manual for further instruction.
+    Position the colony picker on a plane surface. 
+	Make sure it has enough space to all sides, so that the socket can move unhindered on the x,y axes. 
+	Also check the 3D printer’s manual for further instruction.
   </p>
   
   <h3> 3. Wiring </h3>
@@ -906,24 +908,22 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   <h1> Administration - Software </h1>
   
   <h2> Install Software </h2>
-  <p>There are two options available for installing the software. Either use the "Ready to use VM" or the "Manual Installation </p>
-  <h3> Ready to use VM </h3>
   <p>
-    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users and the server has access to the mini pc controlling the picker. The user's pc does not necessarily need a direct connection to the printer, however it is recommended for trouble shooting purposes (e.g. for manual controlling the picker).
-  </p>
-  <h3> Manual Installation </h3>
-  <p>
-  <!--
-    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the script to check those commands.
-  -->
-   The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software you can use the provided script.
+    The software is delivered as a hdd image and a XML configuration file which can be imported as a VM.
+	The network configuration has to be set up such that the server is accessible by the users and the server has access to the Raspberry Pi controlling the picker. 
+	The user's PC does not necessarily need a direct connection to the Raspberry Pi, however it is recommended for trouble shooting purposes 
+	(e.g. for manual controlling the picker).  
   </p>
   <h2> Running the Software </h2>
   <p>
   <!--
     The configuration for the web server is saved in the "serverconfig.ini". It is located in 3cpicko/GUI/. By default it is in working condition. But for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the "Main" program and give it as parameter the "serverconfig.ini".
   -->
-   The configuration for the web server is saved in the "serverconfig.ini". It is located in 3cpicko/GUI/. It works out of the box. Modify it if you want to add encryption or change the standard port (8080). For running the service start the "Main" program and pass the "serverconfig.ini" as the parameter.
+   The configuration for the web server is saved in the "serverconfig.ini". 
+   It is located in 3cpicko/GUI/. It works out of the box. 
+   Modify it if you want to add encryption or change the standard port (8080).
+   The program starts automatically.
+   For running the service manually start the "Main" program and pass the "serverconfig.ini" as the parameter.
   </p>
 </div>
 
