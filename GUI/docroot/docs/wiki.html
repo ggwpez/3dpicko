@@ -107,7 +107,9 @@ Navileiste scorllen Introduction
   <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('pneumatic_scissors_switch', 'Testing Pneumatic Scissors')">There must be air pressure available, you can test this with manually activating the pneumatic scissors.</a> </li>
   <li>The picker must be connected to power and the red power button on the right has to be switched on (the display is no indication since it can also be lit when the picker is turned off).</li>
   <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('check_network_connection', 'Check Network Connection')">The picker needs a working network connection.</a> </li>
-  <li>Make sure that you know where the printer's power button is. In case of any malfunctioning of the printer turn it off immediatly.
+  <li>Make sure that you know where the printer's <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('power_button', 'Power button')">power button</a> is. In case of any malfunctioning of the printer turn it off immediatly.
+  
+  
   </ul>
   </div>
 </div>
@@ -764,7 +766,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   </div>
 </div>
 <div id="configuration_hardware">
-  <h1> Configuration - Hardware </h1>
+  <h1> Configuration - Hardware </h1>check_network_connection
   <!--
   <div id="refilling_the_filament-h">
   <h2> Refilling the Filament </h2>
@@ -932,6 +934,9 @@ Exclude colonies based on their difference to the left, right, upper and lower b
 </div>
 
 
+<!-- Additional modal help windows
+-->
+
 <h4 id="safety_margin_rb-h"> Safety Margin </h4>
   <div id="safety_margin_rb">
     <p>
@@ -939,11 +944,4 @@ Exclude colonies based on their difference to the left, right, upper and lower b
     </p>
 </div>
 
-
-<h4 id="power_button-h"> Safety Margin </h4>
-  <img id="power_button" src="./img/wiki/power_button.jpg"  width="400">    
-</div>
-
-
-
-powerbutton.jpg
+<img id="power_button" src="./img/wiki/power_button.jpg"  width="400">
