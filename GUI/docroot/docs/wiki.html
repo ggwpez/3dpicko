@@ -102,11 +102,11 @@ Navileiste scorllen Introduction
   <ul>
   <li> The colony picker is located on a plane non-flammable surface in a well ventilated room. </li>
   <li> There is enough filament for processing the colony pick (for each colony about 1 cm filament is needed). </li>
-  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #refilling_the_filament-h','./docs/wiki.html #filament_nozzle')">The filament has to be extruded up to the end of the nozzle.</a> </li>
+  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('filament_nozzle','Refilliing the filament')">The filament has to be extruded up to the end of the nozzle.</a> </li>
   <li> There is enough space in the trashcan to accomidate the waste. </li>
-  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #pneumatic_scissors_switch-h','./docs/wiki.html #pneumatic_scissors_switch')">There must be air pressure available, you can test this with manually activating the pneumatic scissors.</a> </li>
+  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('pneumatic_scissors_switch')">There must be air pressure available, you can test this with manually activating the pneumatic scissors.</a> </li>
   <li>The picker must be connected to power and the red power button on the right has to be switched on (the display is no indication since it can also be lit when the picker is turned off).</li>
-  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #check_network_connection-h','./docs/wiki.html #check_network_connection')">The picker needs a working network connection.</a> </li>
+  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('check_network_connection')">The picker needs a working network connection.</a> </li>
   </ul>
   </div>
 </div>
@@ -114,7 +114,7 @@ Navileiste scorllen Introduction
   <h1> Guide through the Picking Process </h1>
   <p>
     The following guide depicts an exemplary pick step by step. Since this is intended to make the start into the picking process as easy as possible most functions are not mentioned here. To get a better understanding for those please refer to "Advanced Settings". <br>
-    <a class="textLink text-danger" data-dismiss="modal" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelpString('Preconditions','./docs/wiki.html #precondition')">Make sure that all preconditions are met</a>
+    <a class="textLink text-danger" data-dismiss="modal" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('precondition','Preconditions')">Make sure that all preconditions are met</a>
     </p>
   
   
@@ -164,17 +164,17 @@ Navileiste scorllen Introduction
     <img src="./img/wiki/webinterface.jpg"  width="400">
   </p>
   -->
-  <h2> 3. Choose Image </h2>
-  <p>
+  <h2 id="choose_image-h"> 3. Choose Image </h2>
+  <div id="choose_image">
     Choose your image by either:
     <ul>
       <li> drag and drop in the dedicated area. </li>
       <li> clicking on "Drop Image" and selecting it in the file explorer. </li>
       <li> clicking on an image under "All Images", which contains already uploaded images </li>
     </ul>
-    <br>
-    <img src="./img/wiki/webinterface.jpg"  width="400">
-  </p>
+  </div>
+  <br>
+  <img src="./img/wiki/webinterface.jpg"  width="400">
   
   <!--
   <h2> 5. Cut Image </h2>
@@ -185,28 +185,29 @@ Navileiste scorllen Introduction
   </p>
   -->
   
-  <h2> 4. Set Attributes </h2>
+  <h2 id="pickjob_attributes-h"> 4. Set Attributes </h2>
   
   <!--
   <p> Insert here Information about the pick-job, the date will automatically inserted. This information will be displayed in the "History". </p>
   -->
   INSERT SCREENSHOT
-  <ul>
-    <li> Insert Information about the pick-job </li>
-    <li> The date is inserted automatically </li>
-    <li> These information will be displayed under the tab "History".</li>
-  </ul>
-
+  <div id="pickjob_attributes">
+    <ul>
+      <li> Insert Information about the pick-job </li>
+      <li> The date is inserted automatically </li>
+      <li> These information will be displayed under the tab "History".</li>
+    </ul>
+  </div>
   
-  <h2> 5. Detect Colonies </h2>
-  <p>
-	Colony detection runs automatically when this step is reached.
-	<p><img src="./img/wiki/ .jpg"  width="400"></p>
+  <h2 id="detect_colonies-h"> 5. Detect Colonies </h2>
+  Colony detection runs automatically when this step is reached.
+  <p><img src="./img/wiki/ .jpg"  width="400"></p>
+  <div id="detect_colonies">
 	<dl>
 		<dt>1</dt>
 			<ul style="list-style-type:disc;">
 				<li>Detected colonies are marked with a white circle if they are included, with a coloured circle and crossed if they are excluded</li>
-				<li>The colour of a cirlce matches the color of one of the detection settings on the right hand side, showing the reason for exclusion</li>
+				<li>The colour of a cross matches the color of one of the detection settings on the right hand side, showing the reason for exclusion</li>
 				<li>Include or exclude any single colony by clicking on it directly on the image</li>
 				<li>Hovering over a colony shows more detailed information about exclusion reason</li>
 				</ul>
@@ -232,36 +233,38 @@ Navileiste scorllen Introduction
 			</ul>
 		
 	</dl>
-  </p>
+  </div>
   
-  <h2> 6. Choose Plates </h2>
-  <p>
-	<!--
+  <h2 id="choose_plates-h"> 6. Choose Plates </h2>
+  <!--
     Here the selection of the PCR dish takes place, the drop down menu offers all available PCR dishes. Below the PCR dish selection the number of colonies which will be picked can be selected. To the right the starting well can be chosen with a click on the desired well. All chosen wells are shown in green. If more colonies are selected than available wells the excess colonies will be discarded.
     This is an example of a 96 well PCR dish: <br>
-	-->
-	<dl>
-		<dt>1</dt>
-			<ul style="list-style-type:disc;">
-				<li>Choose one of the supported PCR plates</li>
-			</ul>
-		<dt>2</dt>
-			<ul style="list-style-type:disc;">
-				<li>Set how many colonies should be picked. Note: They are chosen randomly.</li>
-			</ul>
-		<dt>3</dt>
-			<ul style="list-style-type:disc;">
-				<li>Click on that well the first colony should be transferred to</li>
-				<li>Every well a colony is transferred to is marked green</li>
-				<li>Colonies are transferred column-wise</li>
-				<li>If more colonies are selected than wells are available the excess colonies will be discarded</li>
-			</ul>
-	</dl>
-    <p><img src="./img/wiki/PCR_Dish_Site.jpg"  width="400"></p>
-  </p>
+  -->
+  <dl>
+    <dt>1</dt>
+      <div id="choose_plates">
+			   <ul style="list-style-type:disc;">
+				 <li>Choose one of the supported PCR plates</li>
+			 </ul>
+      </div>
+    <dt>2</dt>
+      <ul style="list-style-type:disc;">
+        <li>Set how many colonies should be picked. Note: They are chosen randomly.</li>
+      </ul>
+    <dt>3</dt>
+      <div id="choose_starting_well">
+      <ul style="list-style-type:disc;">
+        <li>Click on that well the first colony should be transferred to</li>
+        <li>Every well a colony is transferred to is marked green</li>
+        <li>Colonies are transferred column-wise</li>
+        <li>If more colonies are selected than wells are available the excess colonies will be discarded</li>
+      </ul>
+      </div>
+  </dl>
+  <p><img src="./img/wiki/PCR_Dish_Site.jpg"  width="400"></p>
   
-  <h2> 7. Overview </h2>
-  <p>
+  <h2 id="overview-h"> 7. Overview </h2>
+  <div id="overview">
 	<!--
     This site shows you all the configuration you have done before and is intended as a mean to exclude any errors before starting the picking process
 	-->
@@ -281,8 +284,8 @@ Navileiste scorllen Introduction
 				<li>Starts the picker</li>
 			</ul>
 	</dl>
-	<p><img src="./img/wiki/Overview_Site.jpg"  width="400"></p>
-  </p>
+  </div>
+  <p><img src="./img/wiki/Overview_Site.jpg"  width="400"></p>
   <!--
   <h2> 8. Start Picking </h2>
   <p> Here you can finally start the picking process. </p>
@@ -352,7 +355,6 @@ Navileiste scorllen Introduction
     </p>
   </div>
   
-  <h3 id="Choose Plates"> Choose Plates </h3>
   <h4 id="max_number_of_colonies-h"> Number of Colonies </h4>
   <div id="max_number_of_colonies">
     <p>
@@ -401,10 +403,10 @@ Navileiste scorllen Introduction
     <!--
 	<p> If you use more than one printer use this to select the printer parameter. </p>
     -->
-	<div id="printer_profiles_identifier-h">
+	<div id="printer-profile_identifier-h">
       <b>Profile Identifier: </b>
     </div>
-    <div id="printer_profiles_identifier">
+    <div id="printer-profile_identifier">
       An arbitrary name for the profile.<br>
     </div>
 	
@@ -539,10 +541,10 @@ Exclude colonies based on their difference to the left, right, upper and lower b
 	The rotated orientation is marked in blue.
 	</p>
 	-->
-	<div id="socket_profile_identifier-h">
+	<div id="socket-profile_identifier-h">
       <b>Profile identifier: </b>
     </div>
-    <div id="socket_profile_identifier">
+    <div id="socket-profile_identifier">
       An arbitrary name for the profile.<br>
     </div>
 	
@@ -641,10 +643,10 @@ Exclude colonies based on their difference to the left, right, upper and lower b
 	Gree line: A1 column offset, <br>
 	Blue line: well spacing centre to centre<br>
 	</p>
-    <div id="profile_identifier-h">
+    <div id="plate-profile_identifier-h">
       <b>Profile identifier: </b>
     </div>
-    <div id="profile_identifier">
+    <div id="plate-profile_identifier">
       An arbitrary name for the profile.<br>
     </div>
     
@@ -655,13 +657,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
 	<!--
       The number of wells in one row (e.g. row 1: 8 wells). <br>
 	 -->
-	 The number of wells in one colum Safety Margin
-
-Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
- Safety Margin
-
-Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
-n (e.g. column 1: 8 wells). <br>
+	 The number of wells in one column (e.g. column 1: 8 wells). <br>
     </div>
     
     <div id="number_of_columns-h">
@@ -894,7 +890,7 @@ n (e.g. column 1: 8 wells). <br>
    -->
    It is important that the socket is leveled. Otherwise the filament might not pick all colonies or might even collide with one of the plates inside the socket. For leveling it move the printers head carefully from one of the socket's corner to the other (e.g. by hand or webinterface of the pickers mini pc). While doing so adjust the nuts to the effect that the distance between nozzle and socket is everywhere the same.
   </p> 
-  filament_handle
+  
   <h3> 5. Filament </h3>
   <p>
     Insert the filament. Operate the handle at the stepper motor. <br>
@@ -914,10 +910,7 @@ n (e.g. column 1: 8 wells). <br>
   <p>There are two options available for installing the software. Either use the "Ready to use VM" or the "Manual Installation </p>
   <h3> Ready to use VM </h3>
   <p>
-    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users and the server has access to the mini pc controlling the picker. The user's pc does not necessarily need a direct connection to the printer, howeve Safety Margin
-
-Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
-r it is recommended for trouble shooting purposes (e.g. for manual controlling the picker).
+    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users and the server has access to the mini pc controlling the picker. The user's pc does not necessarily need a direct connection to the printer, however it is recommended for trouble shooting purposes (e.g. for manual controlling the picker).
   </p>
   <h3> Manual Installation </h3>
   <p>
