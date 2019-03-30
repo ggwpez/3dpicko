@@ -15,10 +15,8 @@ $(function(){
 
 function loadWiki(id, site){
     $("#wiki-content").load(site);
-    moveWiki(id);
-    var elementt = document.getElementById("Nomenclature");
-    elementt.scrollIntoView();
-    
+    //moveWiki(id);
+
     resetButtons();
     var element = document.getElementById(id);
     element.classList.remove("btn-link");
