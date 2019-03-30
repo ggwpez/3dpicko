@@ -50,7 +50,8 @@ SOURCES += main.cpp \
 	marshalling.cc \
 	exception.cc \
 	setting.cc \
-	resource_path.cc
+	resource_path.cc \
+    updater.cc
 
 HEADERS += \
 	include/json_constructable.hpp \
@@ -59,7 +60,8 @@ HEADERS += \
 	include/marshalling.hpp \
 	include/exception.h \
 	include/setting.h \
-	include/resource_path.h
+	include/resource_path.h \
+    include/updater.h
 
 unix {
 	HEADERS += include/signal_daemon.h
