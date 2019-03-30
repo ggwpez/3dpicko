@@ -227,11 +227,6 @@ function AddJobToList(job, start = false)
     }
 }
 
-function AddJobToHistoryList(job)
-{
-
-}
-
 function ShowMoreImages(){
     // let max_images = 8 - Object.keys(images_list).length % 8;
     let max_images = 3;
