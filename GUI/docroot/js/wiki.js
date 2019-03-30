@@ -30,7 +30,6 @@ function moveWiki(position){
     element.scrollIntoView();
 }
 
-
 function resetButtons(){
     var element = document.getElementById("About");
     element.classList.remove("btn-primary");
@@ -69,42 +68,13 @@ function resetButtons(){
     element.classList.add("btn-link");
 }
 
-<<<<<<< GUI/docroot/js/wiki.js
-
 function loadHelpString(headline, site){
     $("#help-headline").text(headline);
 	$("#help-body").load(site);
 }
 
-
-function loadHelp(headline, site){
-	$("#help-headline").load(headline);
-    $("#help-body").load(site);
-=======
 function loadHelp(id){
 	let path = './docs/wiki.html';
-	/*
-	switch (headline) {
-		case "area":
-			headline = "Area";
-			break;
-		case "aabb_ratio":
-			headline = "AABB Side Ratio";
-			break;
-		case "bb_ratio":
-			headline = "BB Side Ratio";
-			break;		
-		case "convexity":
-			headline = "Convexity";
-			break;		
-		case "circularity":
-			headline = "Circularity";
-			break;		
-		default:
-	}
-	*/
-    //$("#help-headline").text(headline);
 	$("#help-headline").load(path+" #"+id+"-h");
     $("#help-body").load(path+" #"+id);
->>>>>>> GUI/docroot/js/wiki.js
 }
