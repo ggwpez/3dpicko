@@ -68,13 +68,10 @@ function resetButtons(){
     element.classList.add("btn-link");
 }
 
-function loadHelpString(headline, site){
-    $("#help-headline").text(headline);
-	$("#help-body").load(site);
-}
-
-function loadHelp(id){
+function loadHelp(id, headline){
 	let path = './docs/wiki.html';
-	$("#help-headline").load(path+" #"+id+"-h");
+	console.log(path+" #"+id);
+	if(headline) $("#help-headline").text(headline);  
+	else $("#help-headline").load(path+" #"+id+"-h");
     $("#help-body").load(path+" #"+id);
 }

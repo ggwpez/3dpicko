@@ -13,11 +13,13 @@ var number_of_colonies = 0;
 let excluded_by_user = new Map(), included_by_user = new Map();
 let excluded_colonies = new Map(), included_colonies = new Map();
 let included_by_server;
+let selected_colony_color;
 var algorithms;
 var changed_settings = {id:'', changed_algorithm: false, new_request: false, processed: true};
 
 // fit size of canvas to window (max: image-size)
 function resizeCanvas(img) {
+    console.log("Offset width:", document.getElementById('detection-settings-div').offsetWidth);
     let width = $('#selection').width() - document.getElementById('detection-settings-div').offsetWidth - 20;
     let height =  window.innerHeight - document.getElementById('layer_parent').getBoundingClientRect().top - 55;
     if(width < img.width || height < img.height){
@@ -46,7 +48,9 @@ function resizeCanvas(img) {
     
     // fix width
     // TODO enable resizing?
-    $('#selection').css('min-width', $('#layer_parent').width()+$('#detection-settings-div').width());
+    console.log("Offset width after resize:", document.getElementById('detection-settings-div').offsetWidth);
+    console.log("width:", $('#detection-settings-div').width());
+    $('#selection').css('min-width', $('#layer_parent').width()+330);
 }
 
 function drawSafetyMargin(lt, rb){
@@ -164,6 +168,17 @@ function selectionTabEnter()
         // TODO different settings if fluro is used...
         $('#layer0').toggleClass('x-ray', this.checked);
     };
+    selected_colony_color = document.getElementById('selected-colony-color').value || "#ffffff";
+    document.getElementById('selected-colony-color').onchange = function(){
+        selected_colony_color = this.value;
+        for(let colony of included_colonies.values()){
+            colony.set('linecolor', selected_colony_color);
+        }
+        for(let colony of included_by_user.values()){
+            colony.set('linecolor', selected_colony_color);
+        }
+        printPositions();
+    };
 }
 
 function updatePositions(coords)
@@ -176,7 +191,6 @@ function updatePositions(coords)
     {
         let hash = colony.x+','+colony.y;
         
-        let color = '#FFFFFF';
         if(colony.excluded_by != ""){
             color = settings_color[changed_settings.id][colony.excluded_by] || 'grey';
             excluded_colonies.set(hash, new Circle({
@@ -198,8 +212,8 @@ function updatePositions(coords)
                 x: colony.x * layer1.canvas.width,
                 y: colony.y * layer1.canvas.height,
                 radius: colony.major_length * 1.25 * down_scale,
-                linecolor: color,
-                defaultLinecolor: color,
+                linecolor: selected_colony_color,
+                defaultLinecolor: selected_colony_color,
                 canvas: layer1.canvas,
                 excluded_by: "",
                 area: colony.area,

@@ -95,7 +95,7 @@
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
                   <div id="colony-layers">
-                    <h2><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number" class="text-primary">0</span>
+                    <h2><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number" class="text-primary">0</span><input id="selected-colony-color" type="color" value="#ffffff">
                     </h2>
                     <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
@@ -105,7 +105,7 @@
                           <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
                         </div>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray&trade;</label>
+                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray</label>
                         </div>
                       </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas> <!-- For colony image -->
@@ -132,10 +132,10 @@
               <div class="tab-pane fade col" id="strategy">
                 <div class="row">
                   <div class="col-md-4 col-lg-2 heading-box" style="min-width: 300px;">
-                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_goal_plate')">Choose Goal Plate</a></h2>
+                    <h2 class="box-heading">Choose Goal Plate</h2>
                     <form id="strategy-form" style="margin-bottom: 2em;" action="javascript:void(0);">
                       <div class="form-group">
-                        <label for="select-plate-profile">Goal Plate:</label>
+                        <label for="select-plate-profile"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_plates')">Goal Plate: </a></label>
                         <select class="form-control" id="select-plate-profile"></select>
                       </div>
                       <div id="number-of-colonies-slider"></div>
