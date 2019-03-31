@@ -1,48 +1,21 @@
 #include "include/algorithms/helper.h"
-#include <opencv2/core/hal/interface.h>
+#include "include/colony.hpp"
+
+#include <QByteArray>
 #include <QDebug>
 #include <QtGlobal>
+
 #include <algorithm>
 #include <complex>
 #include <numeric>
+#include <set>
+
+#include <opencv2/core/hal/interface.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
-#include <set>
-#include "include/colony.hpp"
 
 namespace c3picko {
 namespace math {
-bool LineLineIntersect(double x1, double y1, double x2, double y2, double x3,
-                       double y3, double x4, double y4, double& ixOut,
-                       double& iyOut)  // Output
-{
-  // http://mathworld.wolfram.com/Line-LineIntersection.html
-
-  double detL1 = det(x1, y1, x2, y2);
-  double detL2 = det(x3, y3, x4, y4);
-  double x1mx2 = x1 - x2;
-  double x3mx4 = x3 - x4;
-  double y1my2 = y1 - y2;
-  double y3my4 = y3 - y4;
-
-  double xnom = det(detL1, x1mx2, detL2, x3mx4);
-  double ynom = det(detL1, y1my2, detL2, y3my4);
-  double denom = det(x1mx2, y1my2, x3mx4, y3my4);
-  if (denom == 0.0)  // Lines don't seem to cross
-  {
-    return false;
-  }
-
-  ixOut = xnom / denom;
-  iyOut = ynom / denom;
-  if (!std::isfinite(ixOut) ||
-      !std::isfinite(iyOut))  // Probably a numerical issue
-    return false;
-
-  return true;  // All OK
-}
-
-double det(double a, double b, double c, double d) { return a * d - b * c; }
 
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat) {
   if (quint64(contour.size()) >= (std::numeric_limits<quint64>::max() >> 8)) {
@@ -158,10 +131,12 @@ void findConnectedComponentEdges(cv::Mat const& input,
       // if (a < 100)
       // continue;
 
+      // Save the contour point
       components[label].emplace_back(c, r);
     }
   }
 
+  // Approximate the contours with a variable epsilon
   contours.resize(components.size());
   for (std::size_t i = 0; i < components.size(); ++i) {
     std::vector<cv::Point> hull;
@@ -170,16 +145,6 @@ void findConnectedComponentEdges(cv::Mat const& input,
     cv::approxPolyDP(hull, contours[i], eps, true);
   }
 }
-
-struct Curve {
-  // from cv::findContours
-  std::vector<cv::Point> raw;
-  // approximation epsilon
-  double eps;
-  double area;
-  // approximated
-  std::vector<cv::Point> curve;
-};
 
 // Strict include, points on the edge are considered outside
 bool polyIncludesPoly(std::vector<cv::Point> const& poly1,
@@ -207,5 +172,13 @@ QString rangeToString(const math::Range<double>& v) {
          end;
 }
 
+QByteArray matToBase64(const cv::Mat& mat) {
+  QByteArray data;
+  std::vector<uchar> tmp;
+  cv::imencode(".png", mat, tmp);
+  std::copy(tmp.begin(), tmp.end(), std::back_inserter(data));
+
+  return data.toBase64();
+}
 }  // namespace math
 }  // namespace c3picko

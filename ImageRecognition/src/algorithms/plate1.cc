@@ -10,16 +10,10 @@
 namespace c3picko {
 Plate1::Plate1()
     : Algorithm("1", "Plate1", "Detects a plate with red frame attached",
-                {(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
+                {(AlgoStep)Normal1::cvt, (AlgoStep)Plate1::threshold,
                  (AlgoStep)Plate1::detect},
                 {}, true, 5000) {}
 
-void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
-  cv::Mat& output = result->newMat();
-
-  cv::cvtColor(input, output, CV_BGR2GRAY);
-}
 void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
@@ -49,6 +43,26 @@ bool polyIncludesPoly(std::array<cv::Point, s1> const& poly1,
 }
 
 void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
+  // This code was written very quickly, it is therefore quite messy and needs
+  // to be reworked
+  /**
+   * Steps:
+   *
+   * 1. Detect the contours of all connected components in the black and white
+   *    input image. Approximate the contours with polygons, now called edge.
+   * 2. Filter the edges by their size and number of edges.
+   *    6 pointed ones are interpreted as inner edge,
+   *    4 pointed ones are interpreted as outer edge.
+   * 3. Filter outer edges by their side ratio.
+   * 4. Filter inner and outer edges such that the outer edge always includes
+   *    the inner edge.
+   * 5. Order all (inner,outer) pairs by their squared point distance.
+   * 6. Select the pair with the smallest distance.
+   * 7. Create a Plate object and a rotated instance, cut and rotate the
+   *    original according to the rotated plate, such that the plate is centered
+   *    in the center.
+   */
+
   cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input());
   cv::Mat const& erroded = result->oldMat();
 
@@ -57,36 +71,32 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   cv::Mat& ret(result->newMat(original));
   std::vector<math::OuterBorder> outer_edges;
   std::vector<math::InnerBorder> inner_edges;
-  std::vector<std::vector<cv::Point>> contours;
+  std::vector<std::vector<cv::Point>> edges;
 
-  math::findConnectedComponentEdges(erroded, contours, area);
-  qDebug() << "Found" << contours.size() << "contours";
+  // Step 1
+  math::findConnectedComponentEdges(erroded, edges, area);
+  qDebug() << "Found" << edges.size() << "contours";
 
-  for (std::size_t i = 0; i < contours.size(); ++i) {
-    auto curve = contours[i];
+  // Step 2
+  for (std::size_t i = 0; i < edges.size(); ++i) {
+    auto edge = edges[i];
     /*std::vector<cv::Point> curve;
     double				   eps = 0.05 *
     cv::arcLength(contours[i], true);
     // good? cv::approxPolyDP(contours[i], curve, eps, true);*/
-    double a = cv::contourArea(curve);
-
-    /*cv::Mat tmp;
-    cv::resize(ret, tmp, cv::Size(ret.cols / 2, ret.rows / 2));
-    cv::imshow(std::to_string(i), tmp);
-    cv::waitKey(0);
-    cv::destroyAllWindows();*/
+    double a = cv::contourArea(edge);
 
     if (area.excludes(a)) continue;
     // Filter out all curves with 4 or 6 points and size atleast 1/16 or the
     // image size
-    if ((curve.size() == 6 || curve.size() == 4)) {
-      if (curve.size() == 6) {
+    if ((edge.size() == 6 || edge.size() == 4)) {
+      if (edge.size() == 6) {
         math::InnerBorder edge;
-        std::copy(curve.begin(), curve.begin() + 6, edge.begin());
+        std::copy(edge.begin(), edge.begin() + 6, edge.begin());
         inner_edges.push_back(edge);
       } else {
         math::OuterBorder edge;
-        std::copy(curve.begin(), curve.begin() + 4, edge.begin());
+        std::copy(edge.begin(), edge.begin() + 4, edge.begin());
         outer_edges.push_back(edge);
       }
     }
@@ -100,19 +110,19 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   double eps = .1;
   double plate_ratio = 128. / 85.9;  // FIXME get data from plate profile
   double optimal = 1 / plate_ratio;
-  math::Range<double> outer_bb_ratio(optimal - eps, optimal + eps);
+  math::Range<double> outer_side_ratio(optimal - eps, optimal + eps);
 
-  // Now filter the found curves to find the ones belonging to the plate
-  // Filter 4p polygons by bb side ratio
+  // Step 3
   for (auto it = outer_edges.begin(); it != outer_edges.end();) {
-    auto edge(*it);
+    auto polygon(*it);
 
-    double w = math::distance(edge[0].x, edge[0].y, edge[1].x, edge[1].y);
-    double h = math::distance(edge[1].x, edge[1].y, edge[2].x,
-                              edge[2].y);  // TODO use cv::norm
+    double w =
+        math::distance(polygon[0].x, polygon[0].y, polygon[1].x, polygon[1].y);
+    double h = math::distance(polygon[1].x, polygon[1].y, polygon[2].x,
+                              polygon[2].y);  // TODO use cv::norm
 
     double r(std::min(w, h) / double(std::max(w, h)));
-    if (!outer_bb_ratio.contains(r))
+    if (!outer_side_ratio.contains(r))
       outer_edges.erase(it);
     else
       ++it;
@@ -121,7 +131,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   if (!outer_edges.size())
     throw std::runtime_error("Could not approximate outer edges");
 
-  // Filter 6p polygons
+  // Step 4: Filter 6p polygons
   // Distances between the 4p's and 6p's to find the two, that are closest
   // together and where the 4p strictly includes the 6p first int is the
   // inner_edge index second one the outer
@@ -143,8 +153,8 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
       // eps for the approxPolyDP
       if (!polyIncludesPoly(outer, inner)) continue;
 
-      for (std::size_t c = 0; c < outer.size(); ++c)  // 4 loops, RIP me
-      {
+      // Step 5
+      for (std::size_t c = 0; c < outer.size(); ++c) {
         // Minimum distance between the two closest points from 4p and 6p
         double d_min = std::numeric_limits<double>::infinity();
         // index of the d_min element
@@ -167,6 +177,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
     }
   }
 
+  // Step 6
   // Now filter for the best match by the Sum of Squared Error
   auto it = std::min_element(
       corner_distances.begin(), corner_distances.end(),
@@ -182,6 +193,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   auto outer_edge = outer_edges[std::get<1>(*it)];
   double best_dist = std::get<2>(*it);
 
+  // Step 7
   result->original_ = Plate(outer_edge, inner_edge);
   result->rotated_ = result->original_.normalized(ret, ret);
 }

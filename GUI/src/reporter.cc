@@ -2,7 +2,9 @@
 #include "include/algorithm.h"
 #include "include/database.hpp"
 #include "include/types/well.h"
+#ifndef C3PICKO_NO_QUAZIP
 #include "quazip/JlCompress.h"
+#endif
 
 #include <QPageLayout>
 #include <QPdfWriter>
@@ -13,7 +15,7 @@
 namespace c3picko {
 Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
                    const std::map<Well, Colony::ID>& pick_positions,
-                   Image const& image, const DetectionResult* result,
+                   Image& image, const DetectionResult* result,
                    QSet<Colony::ID> colonies_to_pick, const Profile& plate_,
                    const Profile& printer, const Profile& socket,
                    const Profile& octoprint)
@@ -50,53 +52,52 @@ Reporter Reporter::fromDatabase(
 }
 
 Report Reporter::createReport() const {
-  ResourcePath pdf_path = reportFolder() + "report_" + id_ + ".pdf";
-  QString img_name = "report_image_" + id_ + ".png";
-  ResourcePath img_path = reportFolder() + img_name;
-  ResourcePath htm_path = reportFolder() + "report_" + id_ + ".html";
+  QString name = "report_" + id_ + "-" + job_.name() + "-" +
+                 job_.created().toString("dd.MM.yy");
+  ResourcePath output = reportFolder() + name + ".zip";
+  ResourcePath htm_path = reportFolder() + name + ".html";
+  cv::Mat img_data = result_->first();
 
-  // Render the colonies and their ids with
+  // Render the colonies and their ids
   {
-    cv::Mat mat = result_->first();
     std::vector<Colony> const& colonies(result_->colonies());
 
     for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
       Colony const& colony =
           *std::find_if(colonies.begin(), colonies.end(),
                         [it](Colony const& c) { return c.id() == it->second; });
-      cv::Point pos(colony.x() * mat.cols, colony.y() * mat.rows);
+      cv::Point pos(colony.x() * img_data.cols, colony.y() * img_data.rows);
 
       cv::Scalar clr(rand() % 255, rand() % 255, rand() % 255);
       Well const& well(it->first);
-      cv::circle(mat, pos, colony.major_length(), clr, 1);
-      math::drawText(mat, pos, well.toString(), clr, 1.5, 2);
+      cv::circle(img_data, pos, colony.major_length(), clr, 1);
+      math::drawText(img_data, pos, well.toString(), clr, 1.5, 2);
     }
-
-    cv::imwrite(img_path.toSystemAbsolute().toStdString(), mat);
   }
-  // Create pdf and write to file
+
+  // Create html and write to file
   {
-    QString html;
-    // QPdfWriter pdf(pdf_path.toSystemAbsolute());
-    writeHtmlReport(img_name, html);
-    // Write html
     QFile file(htm_path.toSystemAbsolute());
+    QString html;
+    writeHtmlReport(img_data, html);
 
     if (!file.open(QIODevice::WriteOnly))
       throw Exception("Could not write report to: " +
                       htm_path.toSystemAbsolute());
+
     file.write(html.toUtf8());
   }
-  JlCompress::compressFiles(
-      ResourcePath::fromDocRootAbsolute("/reports/report_" + id_ + ".zip")
-          .toSystemAbsolute(),
-      {/* pdf_path.toSystemAbsolute(), */ img_path.toSystemAbsolute(),
-       htm_path.toSystemAbsolute()});
 
-  return Report(
-      job_.id(),
-      ResourcePath::fromDocRootAbsolute("/reports/report_" + id_ + ".zip"),
-      img_path);
+#ifndef C3PICKO_NO_ZLIB
+  // Compress the html + gcode
+  JlCompress::compressFiles(output.toSystemAbsolute(),
+                            {/* TODO add gcode */ htm_path.toSystemAbsolute()});
+#else
+  // Let the client only download the html
+  output = htm_path;
+#endif
+
+  return Report(job_.id(), output);
 }
 
 QString Reporter::createLog() const {
@@ -125,6 +126,12 @@ QString Reporter::createImage(QString url) const {
          "</a>";
 }
 
+QString Reporter::createImage(QByteArray base64) const {
+  return "<img align='middle' style='max-width: 100%; height: auto;' "
+         "src='data:image/png;base64," +
+         base64 + "'>";
+}
+
 QString Reporter::createBr(quint32 width) const {
   return QString("<br>").repeated(width);
 }
@@ -150,34 +157,34 @@ QString Reporter::createTable(QString title, QVector<QString> col_name,
   return html;
 }
 
-void Reporter::writeHtmlReport(QString img_name, QString& html) const {
-  /*pdf->setPageSize(QPagedPaintDevice::A4);
-  pdf->setCreator("3CPickO");
-  pdf->setTitle(createTitle());*/
-  // pdf->setResolution(2400);
+void Reporter::writeHtmlReport(const cv::Mat& img_data, QString& html) const {
+  QByteArray image_data = math::matToBase64(img_data);
 
   AlgorithmJob* ajob = job_.resultJob().get();
   std::vector<Colony> const& colonies = result_->colonies();
   html += createProlog() + "<center>" + createTitle() + "</center>" +
-          createBr() + createJobInfo() + createBr() + createImage(img_name) +
+          createBr() + createJobInfo() + createBr() + createImage(image_data) +
           createBr(2);
 
   // Colony data table
   {
-    static QVector<QString> headers = {"Well ", "Colony", "Area [pixel]"};
+    static QVector<QString> headers = {"#", "Well", "Area [pixel]"};
     QVector<QVector<QString>> row_data;
 
+    quint32 i = 0;
     for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
       Well const& well = it->first;
       Colony const& colony =
           *std::find_if(colonies.begin(), colonies.end(),
                         [it](Colony const& c) { return c.id() == it->second; });
-      QVector<QString> data = {well.toString(), QString::number(it->second),
+      QVector<QString> data = {QString::number(++i), well.toString(),
                                QString::number(colony.area(), 'f', 0)};
 
       row_data.push_back(data);
     }
-    html += createTable("Picked Colonies", headers, row_data);
+
+    html += createTable("Picked Colonies (" + QString::number(i) + ")", headers,
+                        row_data);
   }
   html += createBr(2);
   // Detection settings
@@ -193,10 +200,6 @@ void Reporter::writeHtmlReport(QString img_name, QString& html) const {
   }
   html += createBr(2) + createLog();
   html += createEpilog();
-
-  // QTextDocument doc;
-  // doc.setHtml(html);
-  // doc.print(pdf);
 }
 
 QString Reporter::createProlog() const {

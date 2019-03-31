@@ -7,8 +7,6 @@
 namespace c3picko {
 /**
  * @brief Represents a setting that will be displayed in the Web GUI.
- * Should we move this to the GUI project? The class is also used by
- * ImageRecognition...
  */
 class Setting {
  public:
@@ -38,9 +36,9 @@ class Setting {
           QVariant default_value, QString placeholder, QVariant min,
           QVariant max, QVariant step, ValueType value_type,
           QVariantMap options, int max_str_len, int min_str_len,
-          const std::vector<Setting> &sub_settings);
+          const std::vector<Setting>& sub_settings);
 
-  void setValue(QJsonValue const &value);
+  void setValue(QJsonValue const& value);
 
  protected:
   // General attributes
