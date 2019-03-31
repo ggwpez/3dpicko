@@ -30,7 +30,7 @@ build:linux:
     - mkdir build
     - cd build
     - qmake -qt=qt5 ..
-    - make -j6
+    - make -j6 > /dev/null
     - cd ..
   artifacts:
     paths:
@@ -43,7 +43,7 @@ test:linux:
     - mkdir -p build
     - cd build
     - qmake -qt=qt5 ..
-    - make -j6
+    - make -j6 > /dev/null
     - export LD_LIBRARY_PATH=../PiCommunicator
     - make check
   except:
