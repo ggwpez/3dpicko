@@ -18,7 +18,6 @@
       <a class="nav-item nav-link active" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-wiki" aria-selected="true">Wiki</a>
       <a class="nav-item nav-link" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="false">New Job</a>
       <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">All Jobs</a>
-      <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">History</a>
       <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
       <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-admin" aria-selected="false">Admin</a>
     </div>
@@ -95,7 +94,7 @@
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
                   <div id="colony-layers">
-                    <h2><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number" class="text-primary">0</span>
+                    <h2><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number" class="text-primary">0</span><input id="selected-colony-color" type="color" value="#ffffff">
                     </h2>
                     <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
@@ -105,7 +104,7 @@
                           <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
                         </div>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray&trade;</label>
+                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray</label>
                         </div>
                       </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas> <!-- For colony image -->
@@ -131,11 +130,11 @@
               </div>
               <div class="tab-pane fade col" id="strategy">
                 <div class="row">
-                  <div class="col-md-4 col-lg-2 heading-box" style="min-width: 300px;">
-                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_goal_plate')">Choose Goal Plate</a></h2>
+                  <div class="col-md-4 col-lg-2 heading-box" style="min-width: 330px;">
+                    <h2 class="box-heading">Choose Target Plate</h2>
                     <form id="strategy-form" style="margin-bottom: 2em;" action="javascript:void(0);">
                       <div class="form-group">
-                        <label for="select-plate-profile">Goal Plate:</label>
+                        <label for="select-plate-profile"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_plates')">Target Plate: </a></label>
                         <select class="form-control" id="select-plate-profile"></select>
                       </div>
                       <div id="number-of-colonies-slider"></div>
@@ -152,7 +151,7 @@
               </div>
               <div class="tab-pane fade col-xl-10" id="overview">
                 <div class="row">
-                  <div class="col heading-box">
+                  <div class="col heading-box" style="min-width: 500px">
                     <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('overview')">Overview</a></h2>
                     <div class="row">
                       <div class="col-md-8">
@@ -212,11 +211,6 @@
         <div id="allJobList"></div>
       </div>
     </div>
-    <div class="tab-pane fade" id="nav-historic-jobs" role="tabpanel" aria-labelledby="nav-historic-jobs-tab">
-      <div class="container">
-        <h1>Job History</h1>
-      </div>
-    </div>
     <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
       <div class="container-fluid">
         <div class="row mb-2" id="group">
@@ -254,36 +248,30 @@
             <div class="sticky-top">
               <h5 class="py-1">Introduction</h5>
               <div class="row">
-                <button class="btn btn-link btn-sm ml-2" id="About" onclick="loadWiki('About','./docs/wiki.html #introduction')">About</button>
+                <button class="btn btn-primary btn-sm ml-2 wiki-link" id="About" onclick="loadWiki('About','./docs/wiki.html #introduction');document.getElementById('About-Section').scrollIntoView()">About</button>
               </div>
               <div class="row">
-                <button class="btn btn-link btn-sm ml-2" id="Nomenclature" onclick="loadWiki('Nomenclature','./docs/wiki.html #introduction')">Nomenclature of Hardware</button>
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Nomenclature" onclick="loadWiki('Nomenclature','./docs/wiki.html #introduction');document.getElementById('Nomenclature-Section').scrollIntoView()">Nomenclature of Hardware</button>
               </div>
               <h5 class="py-1"> User Manual</h5>
               <div class="row">
-               <button class="btn btn-link btn-sm ml-2" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
+               <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
              </div>
              <div class="row">
-               <button class="btn btn-link btn-sm ml-2" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
+               <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
              </div>
              <div class="row">
-              <button class="btn btn-link btn-sm ml-2" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
             </div>
-			<!--
-            <h5 class="py-1" >Configuration</h5>
+			      <h5 class="py-1" >Administration</h5>
             <div class="row">
-              <button class="btn btn-link btn-sm ml-2" id="Configuration-Hardware" onclick="loadWiki('Configuration-Hardware','./docs/wiki.html #configuration_hardware')" >Hardware</button>
-            </div>
-			-->
-            <h5 class="py-1" >Administration</h5>
-            <div class="row">
-              <button class="btn btn-link btn-sm ml-2" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
             </div>
             <div class="row">
-              <button class="btn btn-link btn-sm ml-2" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
             </div>
 			<div class="row">
-              <button class="btn btn-link btn-sm ml-2" id="Administration-Configure-Picker" onclick="loadWiki('Administration-Configure-Picker','./docs/wiki.html #administration_configure-picker')" >Configure Picker</button>
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Configure-Picker" onclick="loadWiki('Administration-Configure-Picker','./docs/wiki.html #administration_configure-picker')" >Configure Picker</button>
             </div>
           </div>
         </div>

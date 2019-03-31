@@ -1,4 +1,3 @@
-/* global WsSetup, api, AddProfileToList, DeleteProfile, drawPositions, SetDefaultProfile, $, Cropper, selectionTabEnter, drawWells, collided_row, collided_column, FormGroup, profile_templates, AddGeneralSetting, number_of_colonies */
 //"id"=>"image_object"
 var images_list = {};
 var chosen_image = {};
@@ -226,11 +225,6 @@ function AddJobToList(job, start = false)
         document.getElementById('allJobList').insertAdjacentHTML(start?'afterbegin':'beforeend', html);
         all_jobs[job.id] = job;
     }
-}
-
-function AddJobToHistoryList(job)
-{
-
 }
 
 function ShowMoreImages(){

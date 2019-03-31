@@ -39,19 +39,23 @@ Navileiste scorllen Introduction
   <li> Software </li>
   </ul>
   -->
-  <div id="About">
+  <div id="About-Section">
     <h2> About </h2>
       <p>
-      This is the manual belonging to the colony picker C3PickO. The "User Manual" is directed to the common user of the picker and explains how to use it and the software. "Configuration" describes how to configurate the hardware and software. Hence it targets rather administrators, but it explains tasks a capable user can handle as well. "Administration" is targeting administrator only and explains how to setup the hardware and software.
+      This is the manual belonging to the colony picker C3PickO. 
+	  The "User Manual" is directed to the common user of the picker 
+	  and explains how to use it and the software. 
+	  "Administration" is targeting administrator only and explains how 
+	  to setup the hardware and software and how to configure the picker.
       </p>
       <p>
-      The "User Manual" consists of three chapters. "First Steps" explains what precondition have to be met for operating the device. "Example Picking Process" demonstrates how a successful colony picking process is done. "Advanced Settings" all further setting are explained.
+      The "User Manual" consists of three chapters. "First Steps" explains what precondition have to be met for operating the device. "Example Picking Process" demonstrates how a successful colony picking process is done. "Advanced Settings" explains all further settings.
       </p>
       <p>
-      Please note "that" the specification given are "tailored to and testet with the hardware provided by the "TU Darmstadt" (camera 3D printer, 3d printed parts). Howerver they can be transfered to similar hardware.
+      Please note that the specification given are geared to and testet with the hardware provided by the TU Darmstadt (camera 3D printer, 3d printed parts). However they can be transfered to similar hardware.
       The contact person is <a href="mailto:kabisch@bio.tu-darmstadt.de">Prof. Dr. Johannes Kabisch</a>. </p>
   </div>
-  <div id="Nomenclature">
+  <div id="Nomenclature-Section">
     <h2> Nomenclature of Hardware </h2>
     <!-- <p> Here you can find pictures of the different parts which are referenced in the manual by name. </p> -->
   
@@ -77,13 +81,14 @@ Navileiste scorllen Introduction
   
     <h3> Filament </h3>
     <p>
-    <img src="./img/wiki/.jpg"  width="400">
+    <img src="./img/wiki/filament.jpg"  width="400">
     </p>
-  
+	<!--
     <h3> Waste Bin </h3>
     <p>
       <img src="./img/wiki/waste_bin.jpg"  width="400">
     </p>
+	-->
   </div>
   
   <!--<h2> Where to find more? </h2>
@@ -91,17 +96,20 @@ Navileiste scorllen Introduction
 </div>
 <div id="user_manual_first_steps">
   <h1> First Steps </h1>
-  <p> Before starting any picking process please make sure all preconditions are met. These steps are very important. Not complying with them can notonly destroy your experiment but also damage the device. </p>
+  <p> Before starting any picking process please make sure all preconditions are met. These steps are very important. Not complying with them can not only destroy your experiment but also damage the device. </p>
   Check if the following is given: <br>
   <div id="precondition">
   <ul>
   <li> The colony picker is located on a plane non-flammable surface in a well ventilated room. </li>
   <li> There is enough filament for processing the colony pick (for each colony about 1 cm filament is needed). </li>
-  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #refilling_the_fillament-h','./docs/wiki.html #fillament_nozzle')">The filament has to be extruded up to the end of the nozzle.</a> </li>
+  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('filament_nozzle','Refilliing the filament')">The filament has to be extruded up to the end of the nozzle.</a> </li>
   <li> There is enough space in the trashcan to accomidate the waste. </li>
-  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #pneumatic_scissors_switch-h','./docs/wiki.html #pneumatic_scissors_switch')">There must be air pressure available, you can test this with manually activating the pneumatic scissors.</a> </li>
+  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('pneumatic_scissors_switch', 'Testing Pneumatic Scissors')">There must be air pressure available, you can test this with manually activating the pneumatic scissors.</a> </li>
   <li>The picker must be connected to power and the red power button on the right has to be switched on (the display is no indication since it can also be lit when the picker is turned off).</li>
-  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('./docs/wiki.html #check_network_connection-h','./docs/wiki.html #check_network_connection')">The picker needs a working network connection.</a> </li>
+  <li> <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('check_network_connection', 'Check Network Connection')">The picker needs a working network connection.</a> </li>
+  <li>Make sure that you know where the printer's <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('power_button', 'Power button')">power button</a> is. In case of any malfunctioning of the printer turn it off immediatly.
+  
+  
   </ul>
   </div>
 </div>
@@ -109,7 +117,7 @@ Navileiste scorllen Introduction
   <h1> Guide through the Picking Process </h1>
   <p>
     The following guide depicts an exemplary pick step by step. Since this is intended to make the start into the picking process as easy as possible most functions are not mentioned here. To get a better understanding for those please refer to "Advanced Settings". <br>
-    <a class="textLink text-danger" data-dismiss="modal" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelpString('Preconditions','./docs/wiki.html #precondition')">Make sure that all preconditions are met</a>
+    <a class="textLink text-danger" data-dismiss="modal" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('precondition','Preconditions')">Make sure that all preconditions are met</a>
     </p>
   
   
@@ -135,19 +143,20 @@ Navileiste scorllen Introduction
 	  <li>Put the Petri dish inside of the camera module.</li>
 	  <li>Turn the Petri dish so that the angled side are to the left.</li>
       <li><u>Centre the Petri dish as good as possible.</u></li>
-      <li>Zoom in until there is about "DAUMENTBREITE" space left to each side.</li>
+      <li>Zoom in until there is at least 2 cm space left to each side.</li>
 	  <li>Check for correct camera rotation.</li>
     </ul>
-	""Take the picture" and check wether it has good contrast. Afterwards copy it to the pc you intend to start the picking process with.
-    After refully remove the red frame."
+	Take the picture and check wether it has good contrast. Afterwards copy it to the device you intend to start the picking process with.
+    Afterwards remove the red frame carefully.
   </p>
   
   <h2> 2. Insert the Petri Dishes into the Socket </h2>
   <p>
     <ul>
-      <li> Put the Plates into the socket according to the socket's inscription </li>
+      <li> Put the plates into the socket according to the socket's inscription </li>
       <li> Mind the correct orientation </li>
-      <li> "Errors" can damage the picker </li>
+	  <li> Do not forget to remove the covers of the plates</li>
+      <li> Mistakes can damage the picker </li>
     </ul>
     It should look like this: <br>
     <img src="./img/wiki/Orientation_Dish.jpg"  width="400"> <br>
@@ -159,17 +168,17 @@ Navileiste scorllen Introduction
     <img src="./img/wiki/webinterface.jpg"  width="400">
   </p>
   -->
-  <h2> 3. Choose Image </h2>
-  <p>
+  <h2 id="choose_image-h"> 3. Choose Image </h2>
+  <img src="./img/wiki/webinterface.jpg"  width="400">
+  <div id="choose_image">
     Choose your image by either:
     <ul>
       <li> drag and drop in the dedicated area. </li>
       <li> clicking on "Drop Image" and selecting it in the file explorer. </li>
-      <li> clicking on an image under "All Images", which contains already uploaded images </li>
+      <li> clicking on an already uploaded image </li>
     </ul>
-    <br>
-    <img src="./img/wiki/webinterface.jpg"  width="400">
-  </p>
+  </div>
+  <br>
   
   <!--
   <h2> 5. Cut Image </h2>
@@ -180,28 +189,29 @@ Navileiste scorllen Introduction
   </p>
   -->
   
-  <h2> 4. Set Attributes </h2>
+  <h2 id="pickjob_attributes-h"> 4. Set Attributes </h2>
   
   <!--
   <p> Insert here Information about the pick-job, the date will automatically inserted. This information will be displayed in the "History". </p>
   -->
-  INSERT SCREENSHOT
-  <ul>
-    <li> Insert Information about the pick-job </li>
-    <li> The date is inserted automatically </li>
-    <li> These information will be displayed under the tab "History".</li>
-  </ul>
-
+  <img src="./img/wiki/pickjob_attributes.jpg"  width="400">
+  <div id="pickjob_attributes">
+    <ul>
+      <li> Insert Information about the pick-job </li>
+      <li> The date is inserted automatically </li>
+      <li> These information will be displayed under the tab "History".</li>
+    </ul>
+  </div>
   
-  <h2> 5. Detect Colonies </h2>
-  <p>
-	Colony detection runs automatically when this step is reached.
-	<p><img src="./img/wiki/ .jpg"  width="400"></p>
+  <h2 id="detect_colonies-h"> 5. Detect Colonies </h2>
+  Colony detection runs automatically when this step is reached.
+  <p><img src="./img/wiki/Detection_Settings.jpg"  width="400"></p>
+  <div id="detect_colonies">
 	<dl>
 		<dt>1</dt>
 			<ul style="list-style-type:disc;">
-				<li>Detected colonies are marked with a white circle if they are included, with a coloured circle and crossed if they are excluded</li>
-				<li>The colour of a cirlce matches the color of one of the detection settings on the right hand side, showing the reason for exclusion</li>
+				<li>Detected colonies are marked with a white circle if they are included, with a coloured cross if they are excluded</li>
+				<li>The colour of a cross matches the colour of one of the detection settings on the right hand side, showing the reason for exclusion</li>
 				<li>Include or exclude any single colony by clicking on it directly on the image</li>
 				<li>Hovering over a colony shows more detailed information about exclusion reason</li>
 				</ul>
@@ -210,7 +220,7 @@ Navileiste scorllen Introduction
 			<ul style="list-style-type:disc;">
 				<li>Adjust the detection by changing its settings</li>
 				<li>Changing any detection settings triggers another colony detection run automatically</li>
-				<li>For more information about a filter click on its name or read <a class="textLink text-primary" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')">"Advanced Settings"</a></li>
+				<li>For more information about a filter click on its name or read <a class="textLink text-primary" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings');window.scrollTo(0, 0);">"Advanced Settings"</a></li>
 			</ul>
 		
 		<dt>3</dt>
@@ -227,57 +237,59 @@ Navileiste scorllen Introduction
 			</ul>
 		
 	</dl>
-  </p>
+  </div>
   
-  <h2> 6. Choose Plates </h2>
-  <p>
-	<!--
+  <h2 id="choose_plates-h"> 6. Choose Plates </h2>
+  <!--
     Here the selection of the PCR dish takes place, the drop down menu offers all available PCR dishes. Below the PCR dish selection the number of colonies which will be picked can be selected. To the right the starting well can be chosen with a click on the desired well. All chosen wells are shown in green. If more colonies are selected than available wells the excess colonies will be discarded.
     This is an example of a 96 well PCR dish: <br>
-	-->
-	<dl>
-		<dt>1</dt>
-			<ul style="list-style-type:disc;">
-				<li>Choose one of the supported PCR plates</li>
-			</ul>
-		<dt>2</dt>
-			<ul style="list-style-type:disc;">
-				<li>Set how many colonies should be picked. Note: They are chosen randomly.</li>
-			</ul>
-		<dt>3</dt>
-			<ul style="list-style-type:disc;">
-				<li>Click on that well the first colony should be transferred to</li>
-				<li>Every well a colony is transferred to is marked green</li>
-				<li>Colonies are transferred column-wise</li>
-				<li>If more colonies are selected than wells are available the excess colonies will be discarded</li>
-			</ul>
-	</dl>
-    <p><img src="./img/wiki/PCR_Dish_Site.jpg"  width="400"></p>
-  </p>
+  -->
+  <p><img src="./img/wiki/PCR_Dish_Site.jpg"  width="400"></p>
+  <dl>
+    <dt>1</dt>
+      <div id="choose_plates">
+         <ul style="list-style-type:disc;">
+         <li>Choose one of the supported PCR plates</li>
+       </ul>
+      </div>
+    <dt>2</dt>
+      <ul style="list-style-type:disc;">
+        <li>Set how many colonies should be picked. Note: They are chosen randomly.</li>
+      </ul>
+    <dt>3</dt>
+      <div id="choose_starting_well">
+      <ul style="list-style-type:disc;">
+        <li>Click on that well the first colony should be transferred to</li>
+        <li>Every well a colony is transferred to is marked green</li>
+        <li>Colonies are transferred column-wise</li>
+        <li>If more colonies are selected than wells are available the excess colonies will be discarded</li>
+      </ul>
+      </div>
+  </dl>
   
-  <h2> 7. Overview </h2>
-  <p>
-	<!--
+  <h2 id="overview-h"> 7. Overview </h2>
+  <p><img src="./img/wiki/Overview_Site.jpg"  width="400"></p>
+  <div id="overview">
+  <!--
     This site shows you all the configuration you have done before and is intended as a mean to exclude any errors before starting the picking process
-	-->
-	<dl>
-		<dt>1</dt>
-			<ul style="list-style-type:disc;">
-				<li>Shows a summery of all the configuration you have done</li>
-			</ul>
-		
-		<dt>2</dt>
-			<ul style="list-style-type:disc;">
-				<li>Check them if you can really confirm</li>
-			</ul>
-			
-		<dt>3</dt>
-			<ul style="list-style-type:disc;">
-				<li>Starts the picker</li>
-			</ul>
-	</dl>
-	<p><img src="./img/wiki/Overview_Site.jpg"  width="400"></p>
-  </p>
+  -->
+  <dl>
+    <dt>1</dt>
+      <ul style="list-style-type:disc;">
+        <li>Shows a summery of all the configuration you have done</li>
+      </ul>
+    
+    <dt>2</dt>
+      <ul style="list-style-type:disc;">
+        <li>Check them if you can really confirm</li>
+      </ul>
+      
+    <dt>3</dt>
+      <ul style="list-style-type:disc;">
+        <li>Starts the picker</li>
+      </ul>
+  </dl>
+  </div>
   <!--
   <h2> 8. Start Picking </h2>
   <p> Here you can finally start the picking process. </p>
@@ -306,11 +318,10 @@ Navileiste scorllen Introduction
     </p>
   </div>
 
-  <h4 id="safty_margin_lt-h"> Safety Margin </h4>
-  <div id="safty_margin_lt">
+  <h4 id="safety_margin_lt-h"> Safety Margin </h4>
+  <div id="safety_margin_lt">
     <p>
-        FEHLER MODAL
-       Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
+       Exclude colonies based on their distance to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
     </p>
   </div>
   
@@ -325,8 +336,10 @@ Navileiste scorllen Introduction
   <h4 id="bb_ratio-h"> BB Side Ratio </h4>
   <div id="bb_ratio">
     <p>
-      Filter colonies by the ratio of the width and length of their bounding boxes. A perfectly round colony would have the ration 1. The calculation is as follows: Refer to the red bounding box. <br>
-      <img src="./img/wiki/side_ratio.jpg"> <br>
+      Filter colonies by the ratio of the width and length of their bounding boxes. 
+	  A perfectly round colony would have the ration 1.
+	  The calculation is as follows: <img src="./img/wiki/side_ratio.jpg"> <br>
+	  Refer to the red bounding box. <br>
       <img src="./img/wiki/bb_ratio.jpg"  width="400"> <br>
     </p>
   </div>
@@ -347,15 +360,6 @@ Navileiste scorllen Introduction
       <img src="./img/wiki/Circularity.jpg"  width="400"> <br>,
     </p>
   </div>
-  
-  <h3 id="Choose Plates"> Choose Plates </h3>
-  <h4 id="max_number_of_colonies-h"> Number of Colonies </h4>
-  <div id="max_number_of_colonies">
-    <p>
-      Here is defined how many colonies are being picked. If less colonies are selected than recognized the excess is discarded. The selection of colonies is randomized.
-    </p>
-  </div>
-  
   <!--
   <h4 id="filter-h"> Filter Colonies </h4>
   <div id="filter">
@@ -387,7 +391,7 @@ Navileiste scorllen Introduction
   <!--
   <p> In the settings section you can change various settings about your Hardware namely your printer, your socket which is basically the printing bed and the PCR dishes </p>
 	-->
-  <p><img src="./img/wiki/settings_tab.jpg"  width="400"></p>
+  <p><img src="./img/wiki/settings_tab.jpg"></p>
   <p>Under the settings tab you must create at least one profile of each of the following types. With each profile you can adapt picking process to your demand to a certain extend.</p>
 	<!--
   <h2> Web interface Settings </h2>
@@ -397,10 +401,10 @@ Navileiste scorllen Introduction
     <!--
 	<p> If you use more than one printer use this to select the printer parameter. </p>
     -->
-	<div id="printer_profiles_identifier-h">
+	<div id="printer-profile_identifier-h">
       <b>Profile Identifier: </b>
     </div>
-    <div id="printer_profiles_identifier">
+    <div id="printer-profile_identifier">
       An arbitrary name for the profile.<br>
     </div>
 	
@@ -455,7 +459,7 @@ Navileiste scorllen Introduction
 	</div>
 
   	<div id="filament_extrusion_length_on_move_master_to_goal-h">
-      <b>Filament length master to goal:</b>
+      <b>Filament length master to target:</b>
     </div>
     <div id="filament_extrusion_length_on_move_master_to_goal">
 	<!--
@@ -465,7 +469,7 @@ Navileiste scorllen Introduction
 	</div>
 	
   	<div id="filament_extrusion_length_on_move_goal_to_cut-h">
-      <b>Filament length goal to cut:</b>
+      <b>Filament length target to cut:</b>
     </div>
     <div id="filament_extrusion_length_on_move_goal_to_cut">
 	<!--
@@ -519,7 +523,10 @@ Navileiste scorllen Introduction
       <b>Safety distance between nozzle and plates:</b>
     </div>
     <div id="safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move">
-      It is crucial that the colonies pickers head does not touch the walls of any Petri dish, however moving in z axis is slow. For this setting find a balance between safety and speed. Absolute value in mm.<br>
+      It is crucial that the colonies pickers head does not touch the walls of any Petri dish, however moving in z axis is slow. For this setting find a balance between safety and speed. Absolute value in mm Safety Margin
+
+Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
+.<br>
     </div>
   </div>
   
@@ -532,10 +539,10 @@ Navileiste scorllen Introduction
 	The rotated orientation is marked in blue.
 	</p>
 	-->
-	<div id="socket_profile_identifier-h">
+	<div id="socket-profile_identifier-h">
       <b>Profile identifier: </b>
     </div>
-    <div id="socket_profile_identifier">
+    <div id="socket-profile_identifier">
       An arbitrary name for the profile.<br>
     </div>
 	
@@ -560,7 +567,7 @@ Navileiste scorllen Introduction
 	</div>
     
     <div id="global_origin_of_goal_plate-h">
-      <b> Goal plate cut-out origin: </b><br>
+      <b> Target plate cut-out origin: </b><br>
     </div>
     <div id="global_origin_of_goal_plate">
 	<!--
@@ -570,13 +577,15 @@ Navileiste scorllen Introduction
 	</div>
     
     <div id="orientation_of_goal_plate-h">
-      <b> Goal and master plate orientation: </b><br>
+      <b> Target and master plate orientation: </b><br>
     </div>
     <div id="orientation_of_goal_plate">
 	<!--
       This changes the orientation of the goal and master plate, so that the short side of the Petri dish extends along the y axis and the long side along the x axis.<br>
     -->
+	<!--
 	<p><img src="./img/wiki/schematic_goal_plate_orientations.jpg"  width="400"></p>
+	-->
 	</div>
     
     <div id="depth_of_cutout_the_source_plate_lies_in-h">
@@ -600,7 +609,7 @@ Navileiste scorllen Introduction
 	</div>
     
     <div id="depth_of_cutout_the_goal_plate_lies_in-h">
-      <b> Goal plate cut-out depth: </b><br>
+      <b> Target plate cut-out depth: </b><br>
     </div>
     <div id="depth_of_cutout_the_goal_plate_lies_in">
 	<!--
@@ -617,7 +626,9 @@ Navileiste scorllen Introduction
       This is the offset in x, y and z axis from the sockets origin to the origin of the printer. <br>
     -->
 	The distance in x, y and z direction from the sockets origin to the origin of the printer's workspace, absolute value in mm. <br>
+	<!--
 	<p><img src="./img/wiki/socket_offset.jpg"  width="400"></p>
+	-->
 	</div>
   </div>
 
@@ -634,10 +645,10 @@ Navileiste scorllen Introduction
 	Gree line: A1 column offset, <br>
 	Blue line: well spacing centre to centre<br>
 	</p>
-    <div id="profile_identifier-h">
+    <div id="plate-profile_identifier-h">
       <b>Profile identifier: </b>
     </div>
-    <div id="profile_identifier">
+    <div id="plate-profile_identifier">
       An arbitrary name for the profile.<br>
     </div>
     
@@ -690,8 +701,9 @@ Navileiste scorllen Introduction
 	 -->
     The distance between the centers of two neighbouring wells of the PCR plate, in mm. <br>
     </div>
-    
+    <!--
 	<p><img src="./img/wiki/plates_height_schematic.jpg"  width="400"> </p>
+	-->
     <div id="height_source_plate-h">
       <b>Source plate height: </b><br>
     </div>
@@ -713,7 +725,7 @@ Navileiste scorllen Introduction
     </div>
     
     <div id="height_goal_plate-h">
-      <b>Goal plate height: </b><br>
+      <b>Target plate height: </b><br>
     </div>
     <div id="height_goal_plate">
 	<!--
@@ -721,48 +733,85 @@ Navileiste scorllen Introduction
 	  -->
 	Height of the target plate, in mm. <br>
     </div>
-    
+    <!--
 	<p><img src="./img/wiki/well_depth_schematic.jpg"  width="400"> </p>
+	-->
     <div id="well_depth-h">
       <b> Well depth: </b><br>
     </div>
     <div id="well_depth">
-      The deepness of the well (in the centre), in mm.<br>
+      The depth of the well (in the centre), in mm.
+	  This defines the length of the extruded filament 
+	  for putting a picked colony into a well.<br>
     </div>
-	
+	<!--
 	<p><img src="./img/wiki/medium_thickness_schematic.jpg"  width="400"> </p>
+	-->
 	<div id="culture_medium_thickness_source_plate-h">
-      <b>Source medium thickness:</b><br>
+      <b>Source agarplate thickness:</b><br>
     </div>
     <div id="culture_medium_thickness_source_plate">
 	<!--
       The thickness of your medium. <br>
 	  -->
-	The height of the culture medium's surface inside the source plate, in relation to the plate's bottom, in mm. Ideally the surface should be as plane as possible.<br>
+	The height of the agarplate's surface inside the source plate, in relation to the plate's bottom, in mm. Ideally the surface should be as plane as possible.<br>
     </div>
 	
 	<div id="culture_medium_thickness_master_plate-h">
-      <b> Master medium thickness:</b><br>
+      <b> Master agarplate thickness:</b><br>
     </div>
     <div id="culture_medium_thickness_master_plate">
 	<!--
       The thickness of your medium. <br>
 	 -->
-	 The height of your culture medium's surface inside the master plate, in relation to the plate's bottom, in mm. Ideally the surface should be as plane as possible.<br>
+	 The height of your agarplate's surface inside the master plate, in relation to the plate's bottom, in mm. Ideally the surface should be as plane as possible.<br>
+    </div>
+  </div>
+  <h3>Octoprint Profiles</h3>
+  <div id="octoprint_profile">
+    <div id="octoprint-profile_identifier-h">
+      <b>Profile identifier: </b>
+    </div>
+    <div id="octoprint-profile_identifier">
+      An arbitrary name for the profile.
+    </div>
+    <div id="address-h">
+      <b>Hostname:</b><br>
+    </div>
+    <div id="address">
+      IPv4/IPv6/Hostname of the octoprint server.<br>Probably a raspberry pi.
+    </div>
+    <div id="api_key-h">
+      <b>ApiKey:</b><br>
+    </div>
+    <div id="api_key">
+      ApiKey of the octoprint.
+    </div>
+    <div id="protocol-h">
+      <b>Protocol:</b><br>
+    </div>
+    <div id="protocol">
+      Protocol used by octoprint. Usually http.
+    </div>
+    <div id="port-h">
+      <b>Port: </b><br>
+    </div>
+    <div id="port">
+      Port used by octoprint.
     </div>
   </div>
 </div>
 <div id="configuration_hardware">
   <h1> Configuration - Hardware </h1>
   <!--
-  <div id="refilling_the_fillament-h">
+  <div id="refilling_the_filament-h">
   <h2> Refilling the Filament </h2>
   </div>
-  <div id="refilling_the_fillament">
+  <div id="refilling_the_filament">
   <p> For replacing the filament operate the handle at the stepper motor. <br>
-    <img src="./img/wiki/fillament_handle.jpg"  width="400"> <br>
+    <img src="./img/wiki/filament_handle.jpg"  width="400"> <br>
      Now the stepper motor lost grip and the present filament can be pulled out. Afterwards the new filament can be inserted in the handles hole and pushed past the stepper motor into the tube. Push the filament until it reaches the nozzle, sometimes it tangles with the brass tube connection. To fix this the tube connection can be unscrewed and the filament manually placed into the brass adapter and screwed on again. When finished make sure the filament is located at the tip of the nozzle. The filament needs to be steril, if there are any contaminations, they can be transmitted to the hardware and recontaminated a future filament. <br>
-    <img id="fillament_nozzle" src="./img/wiki/fillament_nozzle.jpg"  width="400"> <br>
+    <img id="filament_nozzle" src="./img/wiki/filament_nozzle.jpg"  width="400"> <br>
     Only if this is met the printer can determine the filament exact location and pick correctly.
   </p>
   </div>
@@ -800,7 +849,7 @@ Navileiste scorllen Introduction
   -->
   <h2> Parts </h2>
   <p>
-    The colony picker consist of a 3d printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operable. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
+    The colony picker consist of a 3D printer which is controlled by a mini pc (Raspberry Pi). The pc is getting its commands from a server located elsewhere. The heated bed as well as the heating element for the nozzle are disconnected and should not be operable. The colony picker needs a mains power source, a network connection and 5 bar air pressure via a 6mm quick coupling.
   </p>
   <p>  Here are additional items listed needed to assemble the device. </p>
   
@@ -840,7 +889,9 @@ Navileiste scorllen Introduction
   
   <h3> 2. Positioning </h3>
   <p>
-    Position the colony picker on a plane surface. Make sure it has enough space to all sides, so that the socket can move unhindered on the x,y axes. Also check the 3d printer’s manual for further instruction.
+    Position the colony picker on a plane surface. 
+	Make sure it has enough space to all sides, so that the socket can move unhindered on the x,y axes. 
+	Also check the 3D printer’s manual for further instruction.
   </p>
   
   <h3> 3. Wiring </h3>
@@ -885,36 +936,55 @@ Navileiste scorllen Introduction
   <h3> 5. Filament </h3>
   <p>
     Insert the filament. Operate the handle at the stepper motor. <br>
-    <img src="./img/wiki/fillament_handle.jpg"  width="400"> <br>
+    <img src="./img/wiki/filament_handle.jpg"  width="400"> <br>
      Now the stepper motor lost grip and the present filament can be pulled out. Afterwards the new filament can be inserted in the handles hole and pushed past the stepper motor into the tube. Push the filament until it reaches the nozzle, sometimes it tangles with the brass tube connection. To fix this the tube connection can be unscrewed and the filament manually placed into the brass adapter and screwed on again. When finished make sure the filament is located at the tip of the nozzle. The filament needs to be steril, if there are any contaminations, they can be transmitted to the hardware and recontaminated a future filament. <br>
-    <img id="fillament_nozzle" src="./img/wiki/fillament_nozzle.jpg"  width="400"> <br>
+    <img id="filament_nozzle" src="./img/wiki/filament_nozzle.jpg"  width="400"> <br>
     Only if this is met the printer can determine the filament exact location and pick correctly.
   </p>
-  
+  <!--
   <h2> Known Errors </h2>
+  -->
   <p></p>
 </div>
 <div id="administration_software">
   <h1> Administration - Software </h1>
   
   <h2> Install Software </h2>
-  <p>There are two options available for installing the software. Either use the "Ready to use VM" or the "Manual Installation </p>
-  <h3> Ready to use VM </h3>
   <p>
-    The ready to use software is delivered as a hdd image and an XML configuration file for the vm. This image has to be installed on a server. The network configuration has to be set up so that the server is accessible by the users and the server has access to the mini pc controlling the picker. The user's pc does not necessarily need a direct connection to the printer, however it is recommended for trouble shooting purposes (e.g. for manual controlling the picker).
-  </p>
-  <h3> Manual Installation </h3>
-  <p>
-  <!--
-    The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software there is a script available which will do that for you. Natural you can use the script to check those commands.
-  -->
-   The Software needs some libraries e.g. for the image recognition. For installing all the dependencies as well as the software you can use the provided script.
+    The software is delivered as a hdd image and a XML configuration file which can be imported as a VM.
+	The network configuration has to be set up such that the server is accessible by the users and the server has access to the Raspberry Pi controlling the picker. 
+	The user's PC does not necessarily need a direct connection to the Raspberry Pi, however it is recommended for trouble shooting purposes 
+	(e.g. for manual controlling the picker).  
   </p>
   <h2> Running the Software </h2>
   <p>
   <!--
     The configuration for the web server is saved in the "serverconfig.ini". It is located in 3cpicko/GUI/. By default it is in working condition. But for adding encryption or changing the standard port (8080) it has to be modified. For running the service start the "Main" program and give it as parameter the "serverconfig.ini".
   -->
-   The configuration for the web server is saved in the "serverconfig.ini". It is located in 3cpicko/GUI/. It works out of the box. Modify it if you want to add encryption or change the standard port (8080). For running the service start the "Main" program and pass the "serverconfig.ini" as the parameter.
+   The configuration for the web server is saved in the "serverconfig.ini". 
+   It is located in 3cpicko/GUI/. It works out of the box. 
+   Modify it if you want to add encryption or change the standard port (8080).
+   The program starts automatically.
+   For running the service manually start the "Main" program and pass the "serverconfig.ini" as the parameter.
   </p>
 </div>
+
+
+<!-- Additional modal help windows
+-->
+<h4 id="max_number_of_colonies-h"> Number of Colonies </h4>
+<div id="max_number_of_colonies">
+  <p>
+    Here is defined how many colonies are being picked. If less colonies are selected than recognized the excess is discarded. The selection of colonies is randomized.
+  </p>
+</div>
+
+
+<h4 id="safety_margin_rb-h"> Safety Margin </h4>
+  <div id="safety_margin_rb">
+    <p>
+       Exclude colonies based on their difference to the left, right, upper and lower border of the plate. This is a saftey feature to ensure that the head does not collide with any wall.
+    </p>
+</div>
+
+<img id="power_button" src="./img/wiki/power_button.jpg"  width="400">

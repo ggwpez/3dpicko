@@ -135,17 +135,6 @@
                 "well_spacing_center_to_center": 4.5
             },
             "type": "plate-profile"
-        },
-        "306": {
-            "id": "306",
-            "profile_name": "Creatily Ender v3",
-            "settings": {
-                "address": "192.168.2.181",
-                "api_key": "F866D6261972458CACAE9CB56E484758",
-                "port": 80,
-                "protocol": "http"
-            },
-            "type": "octoprint-profile"
         }
     },
     "result_id": 21,

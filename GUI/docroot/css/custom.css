@@ -243,6 +243,12 @@ img {
 #layer-control .btn-secondary:not(:disabled):not(.disabled).focus{
 	box-shadow: none;
 }
+input[type=color]{
+	margin: 5px;
+	padding: 0px;
+	border: none;
+	width: 23px; 
+}
 
 /* Strategy Tab */
 #strategy input[type=number]{
@@ -338,9 +344,4 @@ input[type="range"]:not(.multirange)::-moz-range-progress {
   background-color: var(--primary);
   height: 8px;
   border-radius: 4px; 
-}
-
-li{
-    word-break: normal;
-    word-wrap: normal; 
 }
