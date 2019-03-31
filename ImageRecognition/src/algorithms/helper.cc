@@ -130,10 +130,12 @@ void findConnectedComponentEdges(cv::Mat const& input,
       // if (a < 100)
       // continue;
 
+      // Save the contour point
       components[label].emplace_back(c, r);
     }
   }
 
+  // Approximate the contours with a variable epsilon
   contours.resize(components.size());
   for (std::size_t i = 0; i < components.size(); ++i) {
     std::vector<cv::Point> hull;

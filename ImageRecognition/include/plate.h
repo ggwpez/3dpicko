@@ -5,6 +5,8 @@
 namespace c3picko {
 /**
  * @brief Represents a detected plate.
+ *
+ * Can be used to cut an image to the clipping of the detected plate.
  */
 class Plate {
  public:

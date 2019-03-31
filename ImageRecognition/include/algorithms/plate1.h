@@ -6,7 +6,7 @@
 namespace c3picko {
 class PlateResult;
 /**
- * @brief Algorithm for detecting a Plate (see plate.h) on an image under normal
+ * @brief Algorithm for detecting a Plate on an image under normal
  * light.
  *
  * TODO link
