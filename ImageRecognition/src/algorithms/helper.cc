@@ -16,6 +16,7 @@
 
 namespace c3picko {
 namespace math {
+
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat) {
   if (quint64(contour.size()) >= (std::numeric_limits<quint64>::max() >> 8)) {
     qWarning() << Q_FUNC_INFO << "possible overflow, aborted";
@@ -144,16 +145,6 @@ void findConnectedComponentEdges(cv::Mat const& input,
     cv::approxPolyDP(hull, contours[i], eps, true);
   }
 }
-
-struct Curve {
-  // from cv::findContours
-  std::vector<cv::Point> raw;
-  // approximation epsilon
-  double eps;
-  double area;
-  // approximated
-  std::vector<cv::Point> curve;
-};
 
 // Strict include, points on the edge are considered outside
 bool polyIncludesPoly(std::vector<cv::Point> const& poly1,

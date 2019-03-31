@@ -27,10 +27,6 @@ class Normal1 : public Algorithm {
     return new Normal1();
   }
 
-  void render_rrect(cv::Mat& out, cv::RotatedRect rect);
-  void drawText(cv::Mat& img, cv::Mat& output,
-                std::vector<cv::Vec3f>& colonies);
-
   static void safetyMargin(AlgorithmJob* base, DetectionResult* result);
 
  private:

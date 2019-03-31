@@ -23,18 +23,19 @@ typedef std::array<cv::Point, 6> InnerBorder;
  */
 template <typename T>
 struct Range {
-  inline Range(Range const& other)
+  inline Range()
+      : lower_(T()), upper_(T()), lower_closed_(true), upper_closed_(true) {}
+
+  inline Range(const Range<T>& other)
       : lower_(other.lower_),
         upper_(other.upper_),
         lower_closed_(other.lower_closed_),
         upper_closed_(other.upper_closed_) {}
-  inline Range()
-      : lower_(T()), upper_(T()), lower_closed_(true), upper_closed_(true) {}
   /**
    * @brief Range Contructor.
    */
-  inline Range(T const& lower, T const& upper, bool lower_closed = true,
-               bool upper_closed = true)
+  Range(const T& lower, const T& upper, bool lower_closed = true,
+        bool upper_closed = true)
       : lower_(lower),
         upper_(upper),
         lower_closed_(lower_closed),
@@ -45,8 +46,8 @@ struct Range {
    * @tparam S Type of the value that should be checked against.
    * Needs to have operators <, <=, > and <= for (S, T)
    */
-  template <typename S>
-  inline bool contains(S const& value) const {
+  template <typename S = T>
+  bool contains(S const& value) const {
     bool ok = !std::isnan(value);
 
     if (lower_closed_)
@@ -67,7 +68,7 @@ struct Range {
    * @tparam S Type of the value that should be checked against.
    * Needs to have operators <, <=, > and <= for (S, T)
    */
-  template <typename S>
+  template <typename S = T>
   inline bool excludes(S const& value) const {
     return !contains(value);
   }
@@ -89,14 +90,16 @@ struct Range {
    */
   bool upper_closed_;
 };
+/**
+ * @brief Convert a range to a string.
+ */
+QString rangeToString(math::Range<double> const& v);
 
 /**
  * @brief Converts an Image to a base64 Png string für web application use.
  * @return Base64 PNG data.
  */
 QByteArray matToBase64(cv::Mat const&);
-
-QString rangeToString(math::Range<double> const& v);
 
 /**
  * @brief L2-Norm of (x1,y1) and (x2,y2)
@@ -128,10 +131,23 @@ void findConnectedComponentEdges(const cv::Mat& input,
                                  std::vector<std::vector<cv::Point>>& contours,
                                  math::Range<int> const& area);
 
+/**
+ * @brief Draws @a string on @a out at position @pos with font @color, font
+ * @scale and line @thickness
+ * @param output Output image.
+ * @param pos Position of the text.
+ */
 void drawText(cv::Mat& output, cv::Point pos, QString string,
               cv::Scalar color = cv::Scalar::all(255), double scale = 1,
               int thickness = 1);
 }  // namespace math
 }  // namespace c3picko
 #include <QMetaType>
+template struct c3picko::math::Range<double>;
+// This forward declaration works, but the compiler does not create linkage?
+// TODO readelf -s --wide helper.o | xargs -I% sh -c "echo % | grep -o '[^ ]*$'
+// | grep -i 'range' | c++filt" template <> template <> bool
+// c3picko::math::Range<double>::contains<double>(double const&) const; template
+// <> template <> bool c3picko::math::Range<double>::excludes<double>(double
+// const&) const;
 Q_DECLARE_METATYPE(c3picko::math::Range<double>);

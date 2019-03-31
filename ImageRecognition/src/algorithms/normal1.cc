@@ -53,45 +53,6 @@ Normal1::Normal1()
 
 Normal1::~Normal1() {}
 
-void Normal1::render_rrect(cv::Mat& out, cv::RotatedRect rect) {
-  cv::Point2f vertices2f[4];
-  rect.points(vertices2f);
-
-  cv::Point vertices[4];
-  for (int i = 0; i < 4; ++i) vertices[i] = vertices2f[i];
-  cv::fillConvexPoly(out, vertices, 4, cv::Vec3b(255, 255, 255));
-}
-
-void Normal1::drawText(cv::Mat& img, cv::Mat& output,
-                       std::vector<cv::Vec3f>& colonies) {
-  cv::Point2i img_center{img.cols / 2, img.rows / 2};
-
-  // Sort the colonies by ascending distance from the center
-  std::sort(colonies.begin(), colonies.end(),
-            [&img_center](cv::Vec3f const& a, cv::Vec3f const& b) {
-              return (std::pow(img_center.x - a[0], 2) +
-                      std::pow(img_center.y - a[1], 2)) <
-                     (std::pow(img_center.x - b[0], 2) +
-                      std::pow(img_center.y - b[1], 2));
-            });
-
-  int f_type = cv::FONT_HERSHEY_SIMPLEX;
-  int f_scale = 2;
-  int f_thick = 2;
-
-  for (int i = 0; i < colonies.size(); ++i) {
-    std::string text = std::to_string(i);
-    cv::Point pos{int(colonies[i][0]), int(colonies[i][1])};
-
-    cv::Size text_size =
-        cv::getTextSize(text, f_type, f_scale, f_thick, nullptr);
-    cv::Point t_pos = {pos.x - text_size.width / 2,
-                       pos.y + text_size.height / 2};
-    cv::putText(output, text, t_pos, f_type, f_scale, cv::Scalar::all(255),
-                f_thick);
-  }
-}
-
 /**
  * @brief Checks the roundness of the given contour.
  * @return ID of a setting that leaded to the exclusion of the colony
@@ -117,9 +78,7 @@ static AlgoSetting::ID roundness(int area, int w, int h,
 
   double circ((4 * M_PI * area) / std::pow(cv::arcLength(contour, true), 2));
   if (circularity.excludes(circ))  // flouro .8
-  {
     return "circularity";
-  }
   std::vector<cv::Point> hull, hull_contour;
 
   cv::convexHull(contour, hull, false, false);
