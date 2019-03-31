@@ -3,6 +3,10 @@
 #include <complex>
 #include <opencv2/core.hpp>
 
+/**
+ * This file is the collecting pond for all that needs to find a permanent home.
+ */
+
 class QByteArray;
 class QString;
 namespace c3picko {
@@ -12,16 +16,11 @@ typedef double UnitValue;  // value in range [0,1]
 typedef std::array<cv::Point, 4> OuterBorder;
 typedef std::array<cv::Point, 6> InnerBorder;
 
-struct LineSeg {
-  double x, y;
-  double endx, endy;
-  /**
-   * @brief Angle Relative to the image coordinate system.
-   */
-  std::complex<double> angle;
-  double length;
-};
-
+/**
+ * @brief Represents a 2D interval in the mathematical sense.
+ *
+ * @tparam T Value type.
+ */
 template <typename T>
 struct Range {
   inline Range(Range const& other)
@@ -31,6 +30,9 @@ struct Range {
         upper_closed_(other.upper_closed_) {}
   inline Range()
       : lower_(T()), upper_(T()), lower_closed_(true), upper_closed_(true) {}
+  /**
+   * @brief Range Contructor.
+   */
   inline Range(T const& lower, T const& upper, bool lower_closed = true,
                bool upper_closed = true)
       : lower_(lower),
@@ -38,6 +40,11 @@ struct Range {
         lower_closed_(lower_closed),
         upper_closed_(upper_closed) {}
 
+  /**
+   * @return Whether value is conained on the range.
+   * @tparam S Type of the value that should be checked against.
+   * Needs to have operators <, <=, > and <= for (S, T)
+   */
   template <typename S>
   inline bool contains(S const& value) const {
     bool ok = !std::isnan(value);
@@ -55,27 +62,41 @@ struct Range {
     return ok;
   }
 
+  /**
+   * @return Whether value is excluded on the range.
+   * @tparam S Type of the value that should be checked against.
+   * Needs to have operators <, <=, > and <= for (S, T)
+   */
   template <typename S>
   inline bool excludes(S const& value) const {
     return !contains(value);
   }
 
-  T lower_, upper_;
-  short _pad;
-  bool lower_closed_, upper_closed_;
-  int _pad2;
+  /**
+   * @brief Lower value.
+   */
+  T lower_;
+  /**
+   * @param Interval's right side is closed.
+   */
+  T upper_;
+  /**
+   * @brief Left side is closed.
+   */
+  bool lower_closed_;
+  /**
+   * @brief Right side is closed.
+   */
+  bool upper_closed_;
 };
 
+/**
+ * @brief Converts an Image to a base64 Png string für web application use.
+ * @return Base64 PNG data.
+ */
 QByteArray matToBase64(cv::Mat const&);
 
 QString rangeToString(math::Range<double> const& v);
-
-/**
- * @brief Determinant of the matrix
- * a b
- * c d
- */
-double det(double a, double b, double c, double d);
 
 /**
  * @brief L2-Norm of (x1,y1) and (x2,y2)
@@ -84,15 +105,6 @@ template <typename T>
 inline T distance(T x1, T y1, T x2, T y2) {
   return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
 }
-
-/**
- * @brief LineLineIntersect
- */
-bool LineLineIntersect(double x1, double y1,  // Line 1 start
-                       double x2, double y2,  // Line 1 end
-                       double x3, double y3,  // Line 2 start
-                       double x4, double y4,  // Line 2 end
-                       double& ixOut, double& iyOut);
 
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat);
 

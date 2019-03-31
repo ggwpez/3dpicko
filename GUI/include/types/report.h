@@ -23,6 +23,9 @@ class Report {
 
  private:
   Job::ID job_;
+  /**
+   * @brief Path to the downloadable report.
+   */
   ResourcePath data_;
 };
 }  // namespace c3picko

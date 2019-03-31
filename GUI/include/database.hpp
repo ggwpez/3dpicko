@@ -76,10 +76,25 @@ class Database : public QObject, JsonConvertable {
    */
   // DetectionResultTable detection_results_;
 
+  /**
+   * @brief New unused job id.
+   */
   qint64 job_id_;
+  /**
+   * @brief New unused profile id.
+   */
   qint64 profile_id_;
+  /**
+   * @brief New unused result job id.
+   */
   qint64 result_job_id_;
+  /**
+   * @brief New unused result id.
+   */
   qint64 result_id_;
+  /**
+   * @brief New unused report id.
+   */
   qint64 report_id_;
 
   Profile::ID default_printer_;

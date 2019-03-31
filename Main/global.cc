@@ -197,5 +197,5 @@ QString getConfig() {
   return ini_file_path;
 }
 
-Version currentVersion() {}
+// Version currentVersion() {}
 }  // namespace c3picko
