@@ -60,6 +60,8 @@ Database::ImageTable& Database::deletedImages() { return deleted_images_; }
 
 Database::ProfileTable& Database::profiles() { return profiles_; }
 
+Database::VersionTable& Database::versions() { return versions_; }
+
 // Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
 
 // Database::DetectionResultTable& Database::detectionResults() { return
@@ -95,6 +97,7 @@ void Database::read(QJsonObject const& obj) {
   images_.read(obj["images"].toObject());
   deleted_images_.read(obj["deleted_images"].toObject());
   profiles_.read(obj["profiles"].toObject());
+  versions_.read(obj["versions"].toObject());
 
   // TODO read detection*
 
@@ -104,10 +107,12 @@ void Database::read(QJsonObject const& obj) {
   result_job_id_ = obj["result_job_id"].toInt();
   report_id_ = obj["report_id"].toInt();
 
-  default_printer_ = Marshalling::fromJson<QString>(obj["default_printer"]);
-  default_socket_ = Marshalling::fromJson<QString>(obj["default_socket"]);
-  default_plate_ = Marshalling::fromJson<QString>(obj["default_plate"]);
-  default_octoprint_ = Marshalling::fromJson<QString>(obj["default_octoprint"]);
+  default_printer_ = Marshalling::fromJson<Profile::ID>(obj["default_printer"]);
+  default_socket_ = Marshalling::fromJson<Profile::ID>(obj["default_socket"]);
+  default_plate_ = Marshalling::fromJson<Profile::ID>(obj["default_plate"]);
+  default_octoprint_ =
+      Marshalling::fromJson<Profile::ID>(obj["default_octoprint"]);
+  default_version_ = Marshalling::fromJson<Version::ID>(obj["default_version"]);
 }
 
 void Database::write(QJsonObject& obj) const {
@@ -116,6 +121,7 @@ void Database::write(QJsonObject& obj) const {
   obj["images"] = (QJsonObject)images_;
   obj["deleted_images"] = (QJsonObject)deleted_images_;
   obj["profiles"] = (QJsonObject)profiles_;
+  obj["versions"] = (QJsonObject)versions_;
 
   // obj["detection_jobs"] = (QJsonObject)detection_jobs_;
   // obj["detection_results"] = (QJsonObject)detection_results_;
@@ -130,6 +136,7 @@ void Database::write(QJsonObject& obj) const {
   obj["default_socket"] = default_socket_;
   obj["default_plate"] = default_plate_;
   obj["default_octoprint"] = default_octoprint_;
+  obj["default_version"] = default_version_;
 }
 
 bool Database::readOnly() const { return read_only_; }

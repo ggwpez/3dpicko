@@ -6,6 +6,7 @@
 #include "include/database.hpp"
 #include "include/requestmapper.h"
 #include "include/signal_daemon.h"
+#include "include/updater.h"
 #include "include/ws_server.hpp"
 
 #include "httplistener.h"
@@ -74,6 +75,9 @@ static int start(int argc, char** argv) {
   });
 
   if (!ws_server->StartListen()) return 1;
+  QSettings usettings(ini_file, QSettings::IniFormat);
+  usettings.beginGroup("updater");
+  Updater updater(usettings, *db);
 
   // copy logging output to ws_server
   setMessageHandler([&ws_server](QString msg) {

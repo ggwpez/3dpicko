@@ -12,6 +12,7 @@ class QCoreApplication;
 class QSslConfiguration;
 namespace c3picko {
 class ResourcePath;
+class Version;
 /**
  * @return Throws on error.
  */
@@ -36,6 +37,7 @@ QString Setup(QCoreApplication* app);
  * @return Path to serverconfig.ini. Only works after Setup
  */
 QString getConfig();
+Version currentVersion();
 
 /**
  * @brief logTextColor

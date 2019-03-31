@@ -19,11 +19,14 @@ class Reporter {
       Database& db, Report::ID id, Job::ID job,
       const std::map<Well, Colony::ID>& pick_positions);
 
+  /**
+   * @brief Creates a report with the data read from the fromData call.
+   * Saves the output to reports/ .
+   */
   Report createReport() const;
 
-  QString createImage(QString url) const;
-
  private:
+  QString createImage(QString url) const;
   Reporter(Report::ID id, Job const& job, QDateTime creation,
            const std::map<Well, Colony::ID>& pick_positions, Image& image,
            const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
@@ -32,16 +35,37 @@ class Reporter {
 
   void writeHtmlReport(cv::Mat const& img_data, QString& html) const;
 
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createProlog() const;
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createTitle() const;
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createEpilog() const;
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createLog() const;
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createJobInfo() const;
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createImage(QByteArray base64) const;
+  /**
+   * @brief Helper function for HTML creation.
+   */
   QString createBr(quint32 width = 1) const;
   /**
-   * @param Row wise data
-   * @return HTML-table
+   * @brief Helper function for HTML creation.
+   * @param data is row wise.
    */
   QString createTable(QString title, QVector<QString> col_name,
                       QVector<QVector<QString>> data) const;

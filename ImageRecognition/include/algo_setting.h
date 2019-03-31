@@ -12,6 +12,8 @@
 namespace c3picko {
 /**
  * @brief Represents a single option/threshold for an Algorithm.
+ *
+ * This class should be replaced with class Setting TODO
  */
 class AlgoSetting {
  public:
@@ -125,8 +127,8 @@ class AlgoSetting {
 
   QVariantMap const& options() const;
   QColor color() const;
-  void addSubSetting(AlgoSetting const& sub);
 
+  void addSubSetting(AlgoSetting const& sub);
   QList<AlgoSetting> subSettings() const;
 
  protected:
@@ -135,6 +137,10 @@ class AlgoSetting {
   QVariant min_, max_, step_;
   QVariantMap options_;
   QVariant default_value_;
+  /**
+   * @brief Child settings, only usefull for checkboxes, where the checkbox
+   * enables the Child settings.
+   */
   QList<AlgoSetting> sub_settings_;
   QColor color_;
 

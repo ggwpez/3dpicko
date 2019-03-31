@@ -6,6 +6,7 @@
 #include "include/types/image.hpp"
 #include "include/types/job.hpp"
 #include "include/types/report.h"
+#include "include/version.h"
 
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "include/types/profile.hpp"
@@ -21,6 +22,7 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Job> JobTable;
   typedef Table<Image> ImageTable;
   typedef Table<Profile> ProfileTable;
+  typedef Table<Version> VersionTable;
   // typedef Table<DetectionResult*> DetectionResultTable;
   // typedef Table<AlgorithmJob*>	AlgoJobTable;
 
@@ -34,6 +36,7 @@ class Database : public QObject, JsonConvertable {
   ImageTable& images();
   ImageTable& deletedImages();  // "
   ProfileTable& profiles();
+  VersionTable& versions();
   // AlgoJobTable&		  algoJobs();
   // DetectionResultTable& detectionResults();
 
@@ -65,6 +68,7 @@ class Database : public QObject, JsonConvertable {
   ImageTable images_;
   ImageTable deleted_images_;
   ProfileTable profiles_;
+  VersionTable versions_;
   // AlgoJobTable algo_jobs_;
   /**
    * @brief Saves all past image detection processes.
@@ -72,15 +76,31 @@ class Database : public QObject, JsonConvertable {
    */
   // DetectionResultTable detection_results_;
 
+  /**
+   * @brief New unused job id.
+   */
   qint64 job_id_;
+  /**
+   * @brief New unused profile id.
+   */
   qint64 profile_id_;
+  /**
+   * @brief New unused result job id.
+   */
   qint64 result_job_id_;
+  /**
+   * @brief New unused result id.
+   */
   qint64 result_id_;
+  /**
+   * @brief New unused report id.
+   */
   qint64 report_id_;
 
   Profile::ID default_printer_;
   Profile::ID default_socket_;
   Profile::ID default_plate_;
   Profile::ID default_octoprint_;
+  Version::ID default_version_;
 };
 }  // namespace c3picko
