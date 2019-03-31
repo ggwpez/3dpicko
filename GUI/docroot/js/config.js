@@ -1,566 +1,164 @@
+// id => profile-object
+var all_profiles = {};
+// *-profile => *-profile-template
+var profile_templates = {};
+var default_profiles = {
+    "printer-profile": "",
+    "socket-profile": "",
+    "plate-profile": "",
+    "octoprint-profile": ""
+};
+
 var UpdateSettingsProfile = function (e){
-  // var send = {
-  //   id: "XYZ",
-  //   type: "printer-profile",
-  //   profile_name: "Example Printer",
-  //   settings: {
-  //     "cut_filament_position_above_trigger": {x: 1,y: 2, z: 3},
-  //     "z_coordinate_pushing_the_trigger": 4,
-  //     ...
-  //   }
-  // };
-  
-  e.preventDefault();
-  
-  const form_data = new FormData(this);
-  let type = form_data.get('type');
-  let value = "";
-  var json_object = {
-    id: form_data.get('id'),
-    type: form_data.get('type'),
-    profile_name: form_data.get('profile_name'),
-    settings: {}
-  };
-  let template = profile_templates[type].settings;
-  for (let id in template){
-    if (template[id].type == 'number' || template[id].type == 'slider' || template[id].type == 'range') value = Number(form_data.get(id));
-    else if (template[id].type == 'checkbox') value = form_data.has(id);
-    else if (template[id].type == 'radio') value = form_data.get(id);
-    else if (template[id].type == 'vector3') value = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1]), z: Number(form_data.getAll(id)[2])};
-    else if (template[id].type == 'vector2') value = {x: Number(form_data.getAll(id)[0]), y: Number(form_data.getAll(id)[1])};
-    json_object.settings[id] = value;
-  }
-
-  // console.log({json_object});
-  $('#collapse-'+json_object.id).collapse('hide');
-  if (json_object.id == "new-printer-profile" || json_object.id == "new-socket-profile" || json_object.id == "new-plate-profile"){
-    $('#form-new-'+type)[0].reset();
-    api("createsettingsprofile", json_object);
-  } 
-  else api("updatesettingsprofile", json_object);
-}
-
-$(function LoadProfiles(){
-  // empty "new-profiles"
-  AddProfileToList(profile_templates['printer-profile']);
-  AddProfileToList(profile_templates['socket-profile']);
-  AddProfileToList(profile_templates['plate-profile']);
-  // debugging profiles
-  AddProfileToList(example_printer);
-  AddProfileToList(makergear);
-  AddProfileToList(creality);  
-  AddProfileToList(prototyp1);
-  AddProfileToList(default_plate);
-  AddProfileToList(large_plate);
-});
-
-function CreateFormGroupHtml({id, name, type, value, description="", min="" , max="", step=1, unit="mm", options={}}, new_value = ""){
-  if(new_value !== "") value = new_value;
-  // console.log("Input-Field:",{id, name, type, value, description, min , max, step, unit, options});
-  let form_group = `<div class="form-group"><label for="${id}">${name}:</label>`;
-  
-  if (type == "number"){
-    form_group += `${CreateNumberInputHtml(id, min, max, step, value)} ${unit}.`;
-  }
-  else if (type == "vector3"){
-    form_group += `(${CreateNumberInputHtml(id, min, max, step, value.x)},${CreateNumberInputHtml(id, min, max, step, value.y)},${CreateNumberInputHtml(id, min, max, step, value.z)}) ${unit}.`;
-  }
-  else if (type == "vector2"){
-    form_group += `(${CreateNumberInputHtml(id, min, max, step, value.x)},${CreateNumberInputHtml(id, min, max, step, value.y)}) ${unit}.`;
-  }
-  else if (type == "slider" || type == "range"){
-    form_group += `
-    <input type="range" class="custom-range" id="${id}" name="${id}" min="${min}" max="${max}" step="${step}" value="${value}">
-    <div style="text-align: center;"><span style="float:left;">${min}</span><input style="max-width: 40%; text-align: center;" type="number" min="${min}" max="${max}" step="${step}" id="slider-${id}" value="${value}"><span style="float:right">${max}</span></div>
-    `;
-  }
-  else if (type == "checkbox"){
-    form_group += `<div class="custom-control custom-checkbox d-inline"><input type="checkbox" class="custom-control-input" id="${id}" name="${id}" ${(value)?`checked`:``}><label class="custom-control-label" for="${id}"></label></div>`;
-  }
-  else if (type == "radio"){
-    for(let option_id in options){
-      form_group += `<br>`;
-      form_group += CreateRadioInputHtml(id, option_id, options[option_id], value);
+    // sends:
+    // json_object = {
+    //   id: "XYZ",
+    //   type: "printer-profile",
+    //   profile_name: "Example Printer",
+    //   settings: {
+    //     "cut_filament_position_above_trigger": {x: 1,y: 2, z: 3},
+    //     "z_coordinate_pushing_the_trigger": 4,
+    //     ...
+    //   }
+    // };
+    e.preventDefault();
+    const form_data = new FormData(this);
+    let id = form_data.get('id');
+    if("form-"+id in unsaved_elements){
+        let type = form_data.get('type');
+        var json_object = {
+            id: id,
+            type: form_data.get('type'),
+            profile_name: form_data.get('profile_name'),
+        };
+        json_object.settings = FormGroup.ReadForm(profile_templates[type], form_data);
+        console.log({json_object});
+        if(form_data.get('new_profile')=="true"){
+            $('#form-new-'+type)[0].reset();
+            api("createsettingsprofile", json_object);
+        }
+        else api("updatesettingsprofile", json_object);
     }
-  }
-  
-  if (description && description.length>0) form_group += `<small class="form-text text-muted">${description}</small>`;
-  form_group += `</div>`;
-  return form_group;
+    $('#collapse-'+id).collapse('hide');
 }
 
-function CreateNumberInputHtml(id, min, max, step = 1, value = "", placeholder = 0, required = true){
-  return `<input type="number" id="${id}" name="${id}" class="d-inline form-control-plaintext" ${required?`required="required"`:``} placeholder="${placeholder}" ${(min!="")?`min=${min}`:``} ${(max!="")?`max=${max}`:``} ${(step)?`step=${step}`:`1`} value="${value}">`;
-}
+// add profil-list sent by server
+function AddProfiles(data){
+    default_profiles["printer-profile"] = data.defaultPrinter;
+    default_profiles["socket-profile"] = data.defaultSocket;
+    default_profiles["plate-profile"] = data.defaultPlate;
+    default_profiles["octoprint-profile"] = data.defaultOctoprint;
+    profile_templates["printer-profile"] = data.printerTemplate;
+    profile_templates["socket-profile"] = data.socketTemplate;
+    profile_templates["plate-profile"] = data.plateTemplate;
+    profile_templates["octoprint-profile"] = data.octoprintTemplate;
+    profile_templates["printer-profile"].type = "printer-profile";
+    profile_templates["socket-profile"].type = "socket-profile";
+    profile_templates["plate-profile"].type = "plate-profile";
+    profile_templates["octoprint-profile"].type = "octoprint-profile";
+    // add empty "new-profiles"
+    AddProfileToList(profile_templates["printer-profile"]);
+    AddProfileToList(profile_templates["socket-profile"]);
+    AddProfileToList(profile_templates["plate-profile"]);
+    if(!data.profiles.find(function(element){
+        return element.type == "octoprint-profile";
+    }))
+    {
+        AddProfileToList(profile_templates["octoprint-profile"]);
+    }
+    else{
+        $('#card-new-octoprint-profile').remove();
+        delete unsaved_elements["form-new-octoprint-profile"];
+    }
 
-function CreateRadioInputHtml(id, option_id, option, value){
-  return `<div class="form-check form-check-inline">
-  <input class="form-check-input" type="radio" name="${id}" id="${option_id}" value="${option_id}" ${(value==option_id)?`checked`:``}>
-  <label class="form-check-label font-weight-normal" for="${option_id}">${option}</label>
-  </div>`;
+    // add Profiles
+    data.profiles.forEach(AddProfileToList);
 }
 
 function AddProfileToList(profile){
- if(profile.id in all_profiles){
-    // update profile (delete old profile)
-    // TODO check if new values
-    DeleteProfile(profile.id);
-  }
-  let button_text = "Save changes";
-  let new_profile = false;
+    if(profile.id in all_profiles){
+        // update profile (delete old profile)
+        // TODO check if new values
+        DeleteProfile(profile.id);
+    }
 
-  if(profile.id == "new-"+profile.type){
-    button_text = "Create profile";
-    new_profile = true;
-  }
-  else all_profiles[profile.id] = profile;
-  let html = `
-  <div class="card" id="card-${profile.id}">
-  <div class="card-header">
-  <h2 class="mb-0">
-  ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="printer-profile" data-id="${profile.id}">&times;</button>`}
-  <button id="link-${profile.id}" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-${profile.id}">
-  ${profile.profile_name}
-  </button>
-  </h2>
-  </div>
-  <div id="collapse-${profile.id}" class="collapse" data-parent="#group">
-  <div class="card-body">
-  <form id="form-${profile.id}" name="form-${profile.id}" method="post" enctype="multipart/form-data">
-  <input type="hidden" id="id" name="id" value="${profile.id}">
-  <input type="hidden" id="type" name="type" value="${profile.type}">
-  <div class="form-group">
-  <label for="profile_name">Profile identifier:</label>
-  <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
-  </div>`;
+    let new_profile = false;
+    if(!profile.id || profile.id == "new-"+profile.type) {
+        if(document.getElementById('card-new-'+profile.type)) return;
+        new_profile = true;
+        profile.id = "new-"+profile.type;
+    }
+    else all_profiles[profile.id] = profile;
 
-  // TODO? filament_extrusion_length_on_move_offset and filament_extrusion_length_on_pick_and_put_onto_master_plate_offset not send by server
-  if(profile.type == "printer-profile"&&!("filament_extrusion_length_on_move_offset" in profile.settings)){
-    profile.settings.filament_extrusion_length_on_move_offset = profile.settings.filament_extrusion_length_on_move - profile.settings.filament_extrusion_length_default;
-    profile.settings.filament_extrusion_length_on_pick_and_put_onto_master_plate_offset = profile.settings.filament_extrusion_length_on_pick_and_put_onto_master_plate - profile.settings.filament_extrusion_length_default;
-  } 
+    let html = `
+    <div class="card" id="card-${profile.id}">
+    <div class="card-header" data-toggle="collapse" data-target="#collapse-${profile.id}">
+    <span id="default-label-${profile.id}" class="badge badge-primary" ${(default_profiles[profile.type]==profile.id)?``:`style="display: none;"`}>Default</span>
+    <h4 class="btn btn-link">
+    ${(new_profile)?``:`<button type="button" class="close" data-toggle="modal" data-target="#delete-dialog" data-type="profile" data-id="${profile.id}">&times;</button>`}
+    ${(new_profile)?`Create New Profile &gt;`:`${profile.profile_name}`}
+    </h4>
+    </div>
+    <div id="collapse-${profile.id}" class="collapse" data-parent="#group">
+    <div class="card-body">
+    <form id="form-${profile.id}" name="form-${profile.id}" data-description="${(new_profile)?profile.id:profile.profile_name}" style="overflow-x: auto;">
+    <input type="hidden" id="new_profile" name="new_profile" value=${(new_profile)?true:false}>
+    <input type="hidden" id="id" name="id" value="${profile.id}">
+    <input type="hidden" id="type" name="type" value="${profile.type}">
+    <div class="form-group">
+    <label for="profile_name"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('${profile.type}_identifier')">Profile Identifier:</a></label>
+    <input required="required" id="profile_name" class="form-control" name="profile_name" type="text" placeholder="choose identifier" value="${(new_profile)?``:profile.profile_name}">
+    </div>
+    `;
+    let profile_form;
+    if(Array.isArray(profile.settings)){
+        profile_form = new FormGroup(profile, 'form-'+profile.id);
+    }
+    else{
+        // only data -> use template
+        // TODO backend send text field for profile name? (in template)
+        // profile.settings.profile_name = profile.profile_name;
+        profile_form = new FormGroup(profile_templates[profile.type], 'form-'+profile.id, profile);
+    }
+    html += profile_form.getHtml();
 
-  let template = profile_templates[profile.type].settings;
-  for(let setting_id in template){
-    let setting = template[setting_id];
-    setting.id = setting_id;
-    if(typeof(profile.settings[setting_id]) === 'object'&&profile.settings[setting_id].name) html += CreateFormGroupHtml(profile.settings[setting_id]);
-    else html += CreateFormGroupHtml(setting, profile.settings[setting_id]);
-  }
-  html += `<button type="submit" class="btn btn-primary">${button_text}</button></form></div></div></div>`;
+    if(new_profile) html += `<button type="submit" class="btn btn-primary">Create profile</button>`;
+    else html += `<button type="submit" class="btn btn-primary mr-2">Save changes</button><button type="button" class="btn btn-outline-primary" onclick="api('setdefaultsettingsprofile', {'id':'${profile.id}'});">Set as Default</button>`;
+    html += `</form></div></div></div>`;
+    document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
+    profile_form.AddInputEvents();
+    FormGroup.AddFormEvents('form-'+profile.id, UpdateSettingsProfile, unsaved_elements);
 
-  document.getElementById(profile.type+'s').insertAdjacentHTML('beforeend',html);
+    // add profiles as options
+    let select = document.getElementById("select-"+profile.type);
+    if(!new_profile && select){
+        if(profile.id == default_profiles[profile.type]){
+            document.getElementById("select-"+profile.type).add(new Option(profile.profile_name,  profile.id, true, true), 0);
+        }
+        else document.getElementById("select-"+profile.type).add(new Option(profile.profile_name, profile.id));
+    }
+}
 
-  $('#form-'+profile.id).on('submit', UpdateSettingsProfile);
-  $('#form-'+profile.id).on('focus', 'input', function(){this.select();});
-  $('#form-'+profile.id+' input[type="number"]').on('input', function(){
-    if (this.value.length>0) this.style.width = this.value.length + 0.5 + "ch";
-  }).trigger('input');
-
-  if(!(new_profile) && (profile.type == "printer-profile" || profile.type == "socket-profile")){
-    let profile_option = document.createElement('option');
-    profile_option.value = profile.id;
-    profile_option.text = profile.profile_name;
-    // TODO issue#18 .add(profile_option, 0); and select
-    document.getElementById("select-"+profile.type).add(profile_option);
-  }
+function SetDefaultProfile(id){
+    if(id in all_profiles){
+        let profile = all_profiles[id];
+        default_profiles[profile.type] = id;
+        $(`#${profile.type}s .card-header .badge`).hide();
+        $(`#${profile.type}s #card-${id} .badge`).show();
+        document.getElementById("select-"+profile.type).value = id;
+        ShowAlert("Set "+profile.profile_name+" as Default");
+    }
 }
 
 function DeleteProfile(id){
-  if(id in all_profiles){
-    $('#card-'+id).remove();
-    const profile = all_profiles[id];
-    switch(profile.type){
-      case "printer-profile": 
-      $('#select-printer-profile option[value='+id+']').remove();
-      break;
-      case "socket-profile": 
-      $('#select-socket-profile option[value='+id+']').remove();
-      break;
-      case "plate-profile": 
-      // TODO update options list
-      break;
+    if(id in all_profiles){
+        $('#card-'+id).remove();
+        const profile = all_profiles[id];
+        const type = profile.type;
+        // delete profile in options
+        let option = $('#select-'+profile.type+' option[value='+id+']');
+        if(option.length > 0) option.remove();
+        delete all_profiles[id];
+        delete unsaved_elements["form-"+id];
     }
-    delete all_profiles[id];
-  }
 }
-
-let profile_templates = {
-  "printer-profile": {
-    id : "new-printer-profile",
-    type : "printer-profile",
-    profile_name : "Create New Printer Profile &gt;",
-    settings: {
-      "cut_filament_position_above_trigger": {
-        name: "Cut position",
-        type: "vector3",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The (x,y,z) position, in the coordinate system of the printer, the nozzle needs to move to in order to be above the trigger of the scissor and directly above the center of the space between the scissors blades."
-      },
-      "z_coordinate_pushing_the_trigger": {
-        name: "Push trigger at",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
-      },    
-      "distance_between_pushed_trigger_and_gap_between_scissors_blade": {
-        name: "Cut distance",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut."
-      },
-      "movement_speed": {
-        name: "Movement speed",
-        type: "number",
-        min: 0,
-        step: 1,
-        value: "",
-        unit: "mm/min",
-        description: "The speed the nozzle is moved with."
-      },
-      "filament_extrusion_length_on_move_offset": {
-        name: "Filament offset (move)",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates."
-      },
-      "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": {
-        name: "Filament offset (pick)",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate."
-      }
-    }
-  },
-  "socket-profile" : {
-    id : "new-socket-profile",
-    type : "socket-profile",
-    profile_name : "Create New Socket Profile &gt;",
-    settings: {
-      "socket_origin_offset": {
-        name: "Socket origin offset",
-        type: "vector3",
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The (x,y,z) offset of the socket origin (with z-origin on socket surface) to the origin of the printers coordinate system (home)."
-      },
-      "global_origin_of_source_plate": {
-        name: "Source plate cutout origin",
-        type: "vector2",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The (x,y) origin of the slot/cut-out of the source plate given as a point of the coordinate system of the socket."
-      },    
-      "depth_of_cutout_the_source_plate_lies_in": {
-        name: "Source plate cutout depth",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The source plate cutout depth."
-      },
-      "global_origin_of_master_plate": {
-        name: "Master plate cutout origin",
-        type: "vector2",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The (x,y) origin of the slot/cut-out of the master plate given as a point of the coordinate system of the socket."
-      },    
-      "depth_of_cutout_the_master_plate_lies_in": {
-        name: "Master plate cutout depth",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The master plate cutout depth."
-      },
-      "global_origin_of_goal_plate": {
-        name: "Goal plate cutout origin",
-        type: "vector2",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The (x,y) origin of the slot/cut-out of the goal plate given as a point of the coordinate system of the socket."
-      },    
-      "depth_of_cutout_the_goal_plate_lies_in": {
-        name: "Goal plate cutout depth",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The goal plate cutout depth."
-      },
-      "orientation_of_goal_plate" : {
-        name: "Goal and master plate orientation",
-        type: "radio",
-        description: "Orientation of goal- and masterplate compared to the cutout it is lying in.",
-        options: {
-          kFirstRowFirstColumnAtCutoutOrigin : "Well 'A1' at cutout origin.",
-          kLastRowFirstColumnAtCutoutOrigin : "Well 'm1' at cutout origin. (m = last row)"
-        },
-        value: "kFirstRowFirstColumnAtCutoutOrigin" 
-      }
-    }
-  },
-  "plate-profile" : {
-    id : "new-plate-profile",
-    type : "plate-profile",
-    profile_name : "Create New Plate Profile &gt;",
-    settings: {
-      "number_of_rows": {
-        name: "Number of rows",
-        type: "number",
-        step: 1,
-        value: "",
-        unit: "",
-        description: "Number of rows the goal plate has."
-      },
-      "number_of_columns": {
-        name: "Number of columns",
-        type: "number",
-        step: 1,
-        value: "",
-        unit: "",
-        description: "Number of columns the goal plate has."
-      },
-      "a1_row_offset": {
-        name: "A1 row offset:",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The offset of the center of the first well A1 to the upper edge of the goal plate."
-      },    
-      "a1_column_offset": {
-        name: "A1 column offset",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The offset of the center of the first well A1 to the left edge of the goal plate."
-      }, 
-      "well_spacing_center_to_center": {
-        name: "Well spacing center to center",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The distance between the center of a well to the center of any directly adjacent well."
-      }, 
-      "height_source_plate": {
-        name: "Source plate height",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The height of the source plate."
-      },
-      "height_master_plate": {
-        name: "Master plate height",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The height of the master plate."
-      }, 
-      "height_goal_plate": {
-        name: "Goal plate height",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The height of the goal plate."
-      },  
-      "well_depth": {
-        name: "Well depth",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The depth of every well."
-      }, 
-      "well_depth": {
-        name: "Culture medium thickness",
-        type: "number",
-        min: 0,
-        step: 0.01,
-        value: "",
-        unit: "mm",
-        description: "The thickness of the used culture medium inside the source and master plate, for instance agars."
-      }
-    }
-  }
-};
-
-/*
-Local Profiles for debugging
-*/
-
-let example_printer = {
-  id : "PrinterXYZ",
-  type : "printer-profile",
-  profile_name : "Example Printer",
-  settings: {
-    "cut_filament_position_above_trigger": {
-      name: "Cut position",
-      type: "vector3",
-      min: 0,
-      step: 0.01,
-      value: {x:11,y:12,z:13},
-      unit: "mm",
-      description: "The (x,y,z) position, in the coordinate system of the printer, the nozzle needs to move to in order to be above the trigger of the scissor and directly above the center of the space between the scissors blades."
-    },
-    "z_coordinate_pushing_the_trigger": {
-      name: "Push trigger at",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: 14,
-      unit: "mm",
-      description: "The global z coordinate (at x and y of cut-position) the trigger of the scissor is definitely pushed."
-    },    
-    "distance_between_pushed_trigger_and_gap_between_scissors_blade": {
-      name: "Cut distance",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: 15,
-      unit: "mm",
-      description: "The distance between the nozzle when the trigger is pushed and the gap between the scissors blades, where the filament will be cut."
-    },
-    "movement_speed": {
-      name: "Movement speed",
-      type: "number",
-      min: 0,
-      step: 1,
-      value: 16,
-      unit: "mm/min",
-      description: "The speed the nozzle is moved with."
-    },
-    "filament_extrusion_length_on_move_offset": {
-      name: "Filament offset (move)",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: 17,
-      unit: "mm",
-      description: "Offset to the length up to which the filament will be extruded while moving the nozzle above the plates."
-    },
-    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset": {
-      name: "Filament offset (pick)",
-      type: "number",
-      min: 0,
-      step: 0.01,
-      value: 18,
-      unit: "mm",
-      description: "Offset to the length up to which the filament will be extruded when picking from source- and placing on masterplate."
-    }
-  }
-};
-
-let prototyp1 = {
-  "id" : "DEFAULTBLUE",
-  "type" : "socket-profile",
-  "profile_name" : "Default Socket Blue",
-  settings: {
-    "socket_origin_offset" : {x: 1, y: 2, z: 3},
-    "global_origin_of_source_plate" : {x:4, y:5},
-    "depth_of_cutout_the_source_plate_lies_in" : 6,
-    "global_origin_of_master_plate" : {x:7,y:8},
-    "depth_of_cutout_the_master_plate_lies_in" : 9,
-    "global_origin_of_goal_plate" : {x:10,y:11},
-    "depth_of_cutout_the_goal_plate_lies_in" : 12,
-    "orientation_of_goal_plate" : "kLastRowFirstColumnAtCutoutOrigin"
-  }
-};
-let default_plate = {
-  "id" : "DEFALUTPLATE",
-  "type" : "plate-profile",
-  "profile_name" : "Default Plates - 96 Wells",
-  settings:{
-    "number_of_rows" : 8,
-    "number_of_columns" : 12,
-    "a1_row_offset" : 1,
-    "a1_column_offset" : 2,
-    "well_spacing_center_to_center" : 3,
-    "height_source_plate" : 4,
-    "height_master_plate" : 5,
-    "height_goal_plate" : 6,
-    "well_depth" : 7,
-    "culture_medium_thickness" : 8
-  }
-};
-let large_plate = {
-  "id" : "LARGEPLATE",
-  "type" : "plate-profile",
-  "profile_name" : "LargePlate - 16x24=384 Wells",
-  settings:{
-    "number_of_rows" : 16,
-    "number_of_columns" : 24,
-    "a1_row_offset" : 1,
-    "a1_column_offset" : 2,
-    "well_spacing_center_to_center" : 3,
-    "height_source_plate" : 4,
-    "height_master_plate" : 5,
-    "height_goal_plate" : 6,
-    "well_depth" : 7,
-    "culture_medium_thickness" : 8
-  }
-};
-let makergear = {
-  "id" : "XYZ",
-  "type" : "printer-profile",
-  "profile_name" : "Makergear M3",
-  settings:{
-    "cut_filament_position_above_trigger" : {x:1,y:2,z:3},
-    "z_coordinate_pushing_the_trigger" : 4,
-    "distance_between_pushed_trigger_and_gap_between_scissors_blade" : 5,
-    "movement_speed" : 6,
-    "filament_extrusion_length_on_move_offset": 7,
-    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : 8
-  }
-};
-let creality = {
-  "id" : "ABC",
-  "type" : "printer-profile",
-  "profile_name" : "Creality Ender-3",
-  settings:{
-    "cut_filament_position_above_trigger" : {x:1,y:2,z:3},
-    "z_coordinate_pushing_the_trigger" : 4,
-    "distance_between_pushed_trigger_and_gap_between_scissors_blade" : 5,
-    "movement_speed" : 6,
-    "filament_extrusion_length_on_move_offset": 7,
-    "filament_extrusion_length_on_pick_and_put_onto_master_plate_offset" : 8
-  }
-};

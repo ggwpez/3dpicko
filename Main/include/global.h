@@ -6,30 +6,62 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
+#include <functional>
 
+class QCoreApplication;
 class QSslConfiguration;
 namespace c3picko {
+class ResourcePath;
+class Version;
+/**
+ * @return Throws on error.
+ */
+QSslConfiguration* LoadSslConfig(QSettings& settings);
 
-QSslConfiguration *LoadSslConfig(QSettings *settings);
+ResourcePath Root();
+ResourcePath Etc();
+ResourcePath DocRoot();
+QString UploadFolderName();
+ResourcePath UploadFolder();
+ResourcePath reportFolder();
 
-inline QDateTime parseDateTime(QJsonValue obj) {
-  return QDateTime::fromMSecsSinceEpoch(obj.toVariant().toLongLong());
-}
+QString searchConfigFile(QStringList args);
+/**
+ * @brief Must be called in the beginning. Sets up the paths and creates
+ * necessary directories.
+ * @return getConfig()
+ */
+QString Setup(QCoreApplication* app);
 
-inline QString Root() { return "/home/vados/Code/Projects/3cpicko/GUI/"; }
+/**
+ * @return Path to serverconfig.ini. Only works after Setup
+ */
+QString getConfig();
+Version currentVersion();
 
-inline QString Etc() { return Root() + "etc/"; }
+/**
+ * @brief logTextColor
+ * @param type Type of the log message
+ * @return ANSI escape with text color for the specified message type
+ */
+QString logTextColor(QtMsgType type);
 
-inline QString DocRoot() { return Root() + "docroot/"; }
+void startLog();
+void stopLog();
+void setMessageHandler(std::function<void(QString)> const& handler);
 
-inline QString UploadFolderName() { return "uploads"; }
+/**
+ * @brief String format for formatting QDateTime.
+ * See https://doc.qt.io/qt-5/qdatetime.html#toString
+ */
+QString dateTimeFormat();
 
-inline QString UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
+/**
+ * @brief Exit code indicating restart of the application.
+ * I would use a macro aka EXIT_RESTART but no macros since google style
+ * guide...
+ */
+int exitCodeRestart();
 
-inline void Setup() {
-  if (!QDir(UploadFolder()).exists())
-    QDir().mkdir(UploadFolder());
-}
-
-inline char const *defaultImageExtension() { return "jpg"; }
-} // namespace c3picko
+char const* defaultImageExtension();
+}  // namespace c3picko

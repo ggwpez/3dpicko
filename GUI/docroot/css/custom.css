@@ -1,12 +1,46 @@
+body.wait, body.wait * {
+	cursor: progress !important;
+}
 label{
+	display: inline;
 	font-weight: bold;
 	margin-bottom: 0px;
 	margin-right: 5px;
 }
-.nav{
-	white-space: nowrap;
+.heading-box{
+    margin: 20px 5px 0px 5px;
+	border: 1px solid gray;
+    border-radius: 10px;
+    padding-bottom: 15px;
 }
-h4{
+.box-heading{
+    margin-top: -20px;
+    background: white;
+    width: fit-content;
+    width: -moz-fit-content;
+}
+.textLink, .textLink:visited{
+	font-style: inherit;
+	color: inherit;
+	text-decoration: none;
+}
+a[href].textLink:hover, a[href].textLink:active, a[href].textLink:focus, a[href].textLink:active:hover{
+	cursor: help;
+	opacity: 0.5;
+	text-decoration-line: underline;
+}
+.textLink:hover, .textLink:active, .textLink:focus, .textLink:active:hover{
+	cursor: help;
+	opacity: 0.5;
+	text-decoration: none;
+}
+.modal-title {
+	word-break: break-all;
+}
+.next-step{
+	float: right;
+}
+.nav{
 	white-space: nowrap;
 }
 /* close button */
@@ -14,19 +48,22 @@ h4{
 	position: absolute;
 	display: block;
 	font-size: xx-large;
-	top: 5px; 
-	right: 10px;
+	top: 0px;
+	right: 0px;
+}
+.close:hover{
+	color: red;
 }
 #steps{
-  pointer-events: none;
+	pointer-events: none;
 }
 .nav-pills .nav-link{
 	color: #888888;
 	font-weight: bold;
-} 
+}
 .nav-pills .nav-link:hover{
 	color: #888888;
-} 
+}
 .nav-pills .nav-link.active{
 	color: white;
 	/*background-color: #212529;*/
@@ -34,6 +71,10 @@ h4{
 .nav-pills .nav-link.disabled{
 	color: #11d100;
 	background-color: transparent;
+}
+.card-title{
+	display: block;
+	word-break: break-all;
 }
 .card-header{
 	padding-bottom: 0px;
@@ -46,7 +87,7 @@ h4{
 	display: inline-block;
 	vertical-align:top;
 	max-width: 200px;
-	min-height: 250px;
+	min-height: 200px;
 }
 .job-card{
 	display: inline-block;
@@ -57,7 +98,7 @@ h4{
 #alert-window{
 	position: fixed;
 	left: 50%;
-    transform: translateX(-50%);
+	transform: translateX(-50%);
 	top: 15px;
 	z-index: 10;
 	pointer-events: none;
@@ -68,19 +109,20 @@ h4{
 
 /* Image-Upload-Tab */
 #dropZone{
+	position: relative;
 	background-color: transparent;
 	border: none;
-	width: 200px;
-	height: 200px;
 	cursor: pointer;
 }
 #dropZone.empty{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	height: 400px;
 	background-color: #ddd;
 	color: #666;
 	border: 2px dashed #666;
-	text-align: center;
-	vertical-align: middle;
-	line-height: 200px;
 	font-size: 2em;
 	font-weight: bold;
 }
@@ -91,6 +133,40 @@ h4{
 #dropZone.dragover{
 	color: black;
 	border-color: black;
+}
+.spinner-border{
+	border-left-color: transparent;
+}
+.image-card .spinner-border{
+	display: block;
+	margin: 3rem auto;
+}
+#dropZone .spinner-border{
+	width: 3rem;
+	height: 3rem;
+}
+#show-more-images{
+	display: none;
+	margin-top: 1rem;
+	text-align: center;
+}
+
+#overlay{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+	z-index: 10;
+	display: none;
+}
+.overlay-spinner{
+	position: absolute;
+	top: 20%;
+	width: 5rem;
+	height: 5rem;
 }
 
 /* Cut-Tab */
@@ -112,12 +188,79 @@ img {
 .del{
 	cursor: no-drop;
 }
-input[type=range]{
-	height: auto;
-}
 #detection-settings input[type=number]{
 	width: 2ch;
 	min-width: 5ch;
+}
+#detection-settings{
+	position: relative;
+}
+#detection-settings-div{
+	width: 20%;
+	min-width: 200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.form-group{
+	margin-bottom: 0.5rem;
+}
+#selection{
+	min-width: 1000px;
+}
+#colony-layers{
+	min-width: 700px;
+	margin-left: auto;
+}
+#layer_parent{
+	position: relative;
+	cursor: pointer;
+	line-height: 0px;
+}
+#layer-control{
+	display: none;
+	position: absolute;
+	top: -38px;
+	right: 0px;
+	/*transform: rotate(90deg);
+	top: 154px;
+	right: -192px;*/
+}
+#layer3{
+	width: 100%;
+	height: 100%;
+	border-color: black;
+	border-style: solid;
+	opacity: 0.3;
+	pointer-events: none;
+}
+#layer-control label{
+	margin: 0;
+}
+#layer-control .btn-secondary:not(:disabled):not(.disabled).active{
+	background-color: var(--primary);
+	border-color: var(--primary);
+}
+#layer-control .btn-secondary:not(:disabled):not(.disabled).focus{
+	box-shadow: none;
+}
+input[type=color]{
+	margin: 5px;
+	padding: 0px;
+	border: none;
+	width: 23px; 
+}
+
+/* Strategy Tab */
+#strategy input[type=number]{
+	width: 2ch;
+	min-width: 5ch;
+}
+#pickstrategy-canvas{
+	cursor: pointer;
+}
+/* best effect ever */
+.x-ray{
+	filter: invert(100%) grayscale(100%) contrast(10);
 }
 
 /* Profile Settings Page */
@@ -132,17 +275,73 @@ input[type=range]{
 input[type=number]{
 	-moz-appearance:textfield;
 }
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-	-webkit-appearance: none; 
-	margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }
-#group h2 {
+#group h2{
 	text-align: center;
 }
 #nav-settings .card{
+	min-width: 300px;
+}
+#nav-settings .card-body{
 	white-space: nowrap;
 }
 small{
 	white-space: normal;
+}
+#nav-settings .card-header{
+	text-align: center;
+}
+#nav-settings .badge{
+	/*float: left;
+	margin-top: 1em;*/
+	position: absolute;
+	top: 1em;
+	left: 1em;
+}
+
+/* Multirange CSS */
+input[type="range"].multirange {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	vertical-align: top;
+}
+input[type="range"].multirange.original::-webkit-slider-thumb {
+	cursor: inherit;
+	position: relative;
+	z-index: 1;
+}
+input[type="range"].multirange.original::-moz-range-thumb {
+	transform: scale(1); /* FF doesn't apply position it seems */
+	z-index: 1;
+}
+input[type="range"].multirange::-moz-range-track {
+	border-color: transparent; /* needed to switch FF to "styleable" control */
+}
+input[type="range"].multirange.ghost {
+	position: relative;
+	background: var(--track-background);
+	--track-background: linear-gradient(to right,
+		transparent var(--low), var(--range-color) 0,
+		var(--range-color) var(--high), transparent 0
+		) no-repeat 0 45% / 100% 40%;
+	--range-color: var(--blue);
+}
+input[type="range"].multirange.ghost::-webkit-slider-runnable-track {
+	background: var(--track-background);
+	cursor: inherit;
+}
+input[type="range"].multirange.ghost::-moz-range-track {
+	background: var(--track-background);
+	cursor: inherit;
+}
+/* range track for single slider (only FF)*/
+input[type="range"]:not(.multirange)::-moz-range-progress {
+  background-color: var(--primary);
+  height: 8px;
+  border-radius: 4px; 
 }

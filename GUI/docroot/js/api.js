@@ -32,17 +32,18 @@ function connect()
 		ws.onerror = function (errorEvent)
 		{
 	    	cbOnDisconnected_("Die Verbindung wurde unerwartet geschlossen");
-	    	setTimeout(connect, 1000);
+	    	setTimeout(connect, 3000);
 		};
 		ws.onclose = function()
 		{
 			cbOnDisconnected_("Connection closed");
-			setTimeout(connect, 1000);
+			setTimeout(connect, 3000);
 		};
 	}
 }
 
 function api(query, data)
 {
-	ws.send(JSON.stringify({request: /*"/apiv2/" +*/query, data: data}));
+	console.log("Request",JSON.stringify({request: query, data: data}));
+	ws.send(JSON.stringify({request: query, data: data}));
 }

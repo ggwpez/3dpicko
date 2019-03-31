@@ -1,18 +1,20 @@
 #pragma once
 
+#include <signal.h>
 #include <QObject>
 #include <QSet>
 class QSocketNotifier;
 
 namespace c3picko {
 /**
- * @brief Class for intercepting UNIX signals and making them accessible for Qt
+ * @brief Class for intercepting UNIX signals and making them accessible for Qt.
+ * See https://doc.qt.io/qt-5/unix-signals.html
  */
 class SignalDaemon : public QObject {
   Q_OBJECT
 
-public:
-  SignalDaemon(QObject *_parent = 0);
+ public:
+  SignalDaemon(QObject *_parent = nullptr);
 
   // Unix signal handler
   int registerSignal(int signal);
@@ -20,16 +22,16 @@ public:
 
   static void signalProxy(int signal);
 
-private slots:
+ private slots:
   void socketNotify(int socket_fd);
 
-signals:
+ signals:
   void OnSignal(int signal);
 
-private:
+ private:
   static int socketpair_[2];
 
   QSocketNotifier *notifier_;
   QSet<int> registered_;
 };
-}
+}  // namespace c3picko

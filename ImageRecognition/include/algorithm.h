@@ -1,37 +1,38 @@
 #pragma once
 
-#include "include/algo_setting.h"
+#include <QObject>
 #include <QRunnable>
-#include <QStack>
 #include <QVector>
 #include <functional>
+#include <stack>
+#include "include/marshalling.hpp"
 
 namespace c3picko {
+class AlgorithmResult;
 class AlgoSetting;
+class AlgorithmJob;
 /**
- * @brief Algorithm class
+ * @brief Performs calculations stepwise in a pipeline way of excution.
+ * Operations from other Algorithms can be reused.
+ * Needs AlgorithmJob as parent QObject before calling run().
  * @tparam Input data type
  * @tparam Output data type
  */
 class Algorithm : public QObject, public QRunnable {
   Q_OBJECT
-public:
+ public:
   typedef QString ID;
-  typedef void (*AlgoStep)(Algorithm *, const void *, void **);
-  typedef void (*AlgoCleanup)(Algorithm *);
+  typedef void (*AlgoStep)(AlgorithmJob*, AlgorithmResult*);
+  typedef void (*AlgoCleanup)(Algorithm*);
 
   Algorithm(ID id, QString name, QString description, QList<AlgoStep> steps,
-            AlgoCleanup cleanup, QList<AlgoSetting> settings);
+            QList<AlgoSetting> defaultSettings, bool isThreadable,
+            qint64 maxMs);
   virtual ~Algorithm() override;
 
   /**
-   * @brief Call with according input data pointer before run()
-   * @param input
-   */
-  void setInput(const void *input);
-
-  /**
-   * @brief Executes the algorithm. Emits OnFinished() when done.
+   * @brief Executes all steps of algorithm one by one.
+   * Emits OnFinished(void*) when done with the last output pointer.
    */
   virtual void run() override;
 
@@ -42,45 +43,39 @@ public:
    * Used instead of a factory.
    * @return Pointer to instance.
    */
-  virtual Algorithm *cloneEmpty() const = 0;
+  virtual Algorithm* cloneEmpty() const = 0;
 
-signals:
-  void OnFinished(void *);
-
-public:
+ public:
   ID id() const;
   QString name() const;
   QString description() const;
-  QList<AlgoSetting> settings() const;
-
-  AlgoSetting const &settingById(AlgoSetting::ID id) const;
-  AlgoSetting const &settingByName(QString name) const;
-
-  void setSettingsValueByID(AlgoSetting::ID id, QVariant value);
-  void setSettingsValueByName(QString name, QVariant value);
-
-  void setSettings(QJsonObject const &);
+  QList<AlgoSetting> defaultSettings() const;
+  bool isThreadable() const;
 
   /**
    * @brief Abstract classes can not be marshallable.
    */
   QJsonObject baseToJson() const;
 
-  QStack<void *> &stack();
+  qint64 maxMs() const;
 
-protected:
+ protected:
   const ID id_;
   const QString name_, description_;
-  QList<AlgoStep> steps_;
-  AlgoCleanup cleanup_;
-  QList<AlgoSetting> settings_;
-  // Algorithmic data
-  const void *input_;
   /**
-   * @brief Agorithms can use this stack for storing data until deleting in in
-   * the cleanup function
+   * @brief Steps of the algorithm. Consecutively executed.
    */
-  QStack<void *> stack_;
+  QList<AlgoStep> steps_;
+  /**
+   * @brief Settings needed supported by the algorithm.
+   */
+  const QList<AlgoSetting> default_settings_;
+  bool is_threadable_;
+  /**
+   * @brief Estimated maximal time the algorithm should take in ms.
+   * NOTE should this be a function taking a complexity value?
+   */
+  qint64 max_ms_;
 };
 MAKE_SERIALIZABLE(Algorithm);
-}
+}  // namespace c3picko

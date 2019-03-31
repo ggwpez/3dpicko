@@ -1,20 +1,20 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
 
-#include "response.h"
 #include <QHttpMultiPart>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QObject>
 #include <QSet>
 #include <QUrlQuery>
+#include "response.h"
 
 namespace c3picko {
 namespace pi {
 class Command : public QObject {
   Q_OBJECT
 
-public:
+ public:
   enum class HTTPType { GET, POST, PUT, PATCH, DELETE };
   typedef responses::Response Response;
 
@@ -43,11 +43,11 @@ public:
   virtual QString GetContentType() const;
   bool IsQuery() const;
 
-public slots:
+ public slots:
   virtual void OnReplyFinished(QNetworkReply *);
   virtual void OnReplyError(QNetworkReply::NetworkError);
 
-protected slots:
+ protected slots:
   /**
    * @brief Checks whether the status code from the reply is in the
    * Command::status_ok_ set. Emits #OnStatusOk or @p reply
@@ -56,7 +56,7 @@ protected slots:
    */
   void CheckStatusCode(QNetworkReply *reply, Response *response = nullptr);
 
-protected:
+ protected:
   /**
    * @brief Reads all data from @p reply, parses it as JSON and construct a new
    * Object of Type @p T from it. Then passes the Object to Check status code.
@@ -67,9 +67,9 @@ protected:
   template <typename T>
   inline void CheckStatusCodeAndResponse(QNetworkReply *reply);
 
-signals:
+ signals:
   void OnStatusOk(int status, Response *);
-  void OnStatusErr(QVariant status, Response *);
+  void OnStatusErr(QJsonValue status, Response *);
   void OnNetworkErr(QString error);
   /**
    * @brief This will be always emitted after one of the above was raised.
@@ -77,10 +77,10 @@ signals:
    */
   void OnFinished();
 
-private:
+ private:
   void SetupSlots();
 
-protected:
+ protected:
   QString const api_url_;
   // TODO bad style
   QByteArray data_;
@@ -89,7 +89,7 @@ protected:
   HTTPType const type_;
   QString content_type_;
 };
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko
 #include "command.inc.h"
-#endif // COMMAND_H_
+#endif  // COMMAND_H_

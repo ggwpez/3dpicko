@@ -12,11 +12,11 @@ namespace c3picko {
 enum GoalPlateOrientation {
   /** well A1 is at the origin of the cutout */
   kFirstRowFirstColumnAtCutoutOrigin,
-  /** well m1 is at the origin of the cutout,
-                                  where m stands for the last row */
-  // kFirstRowLastColumnAtCutoutOrigin, // makes no sense
   /** well An is at the origin of the cutout,
                                   where n stands for the last column */
+  // kFirstRowLastColumnAtCutoutOrigin, // makes no sense
+  /** well m1 is at the origin of the cutout,
+                                  where m stands for the last row */
   kLastRowFirstColumnAtCutoutOrigin,
   /** well mn is at the origin of the cutout,
                                   where m stands for the last row and
@@ -32,7 +32,7 @@ enum GoalPlateOrientation {
  *
  */
 class PlateSocketProfile {
-public:
+ public:
   explicit PlateSocketProfile(const Point &global_origin_of_source_plate,
                               const Point &global_origin_of_master_plate,
                               const Point &global_origin_of_goal_plate,
@@ -55,7 +55,7 @@ public:
   Point originOfGoalPlate() const;
   GoalPlateOrientation orientationOfGoalPlate() const;
 
-private:
+ private:
   /**
    * @brief global_origin_of_source_plate_ the origin of
    * the slot/cut-out of the source plate given as a point
@@ -122,5 +122,5 @@ private:
    */
   const float socket_origin_offset_z_;
 };
-} // namespace c3picko
-#endif // PLATESOCKETPROFILE_H
+}  // namespace c3picko
+#endif  // PLATESOCKETPROFILE_H

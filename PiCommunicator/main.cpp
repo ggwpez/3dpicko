@@ -1,7 +1,7 @@
-#include "commands/get_all_files.h"
-#include "octoprint.h"
 #include <QCoreApplication>
 #include <QDebug>
+#include "commands/get_all_files.h"
+#include "octoprint.h"
 
 using namespace c3picko;
 using namespace c3picko::commands;
@@ -10,8 +10,7 @@ static void OnStatusOk(int status, Command::Response *answer) {
   auto *rep = static_cast<GetAllFiles::Response *>(answer);
   qDebug() << "Status ok: " << status;
 
-  for (auto const &file : rep->files)
-    qDebug() << "File: " << file.name;
+  for (auto const &file : rep->files) qDebug() << "File: " << file.name;
 }
 
 static void OnStatusErr(QVariant status, Command::Response *answer) {

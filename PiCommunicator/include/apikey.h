@@ -2,9 +2,20 @@
 #define APIKEY_H_
 
 #include <QString>
+#include "include/marshalling.hpp"
 
 namespace c3picko {
-typedef QString ApiKey;
-}
+namespace pi {
+struct ApiKey {
+  ApiKey(QString const& key);
 
-#endif // APIKEY_H_
+  QString key() const;
+
+ private:
+  QString key_;
+};
+}  // namespace pi
+MAKE_MARSHALLABLE(pi::ApiKey);
+}  // namespace c3picko
+
+#endif  // APIKEY_H_

@@ -15,24 +15,22 @@ namespace c3picko {
 namespace pi {
 /**
  * @brief Connect and send GCode to an Octoprint printer.
- *
- * Only use one Instance per printer.
  */
 class PiCommunicator : public QObject {
   Q_OBJECT
 
-public:
+ public:
   enum class State {
     CONNECTING,
     CONNECTED,
     DISCONNECTING,
-    DISCONNECTED, /// Default state, when PiCommunicator is created
+    DISCONNECTED,  /// Default state, when PiCommunicator is created
     ERROR
   };
 
-  PiCommunicator(QString ip, ApiKey key, QObject *_parent = nullptr);
+  PiCommunicator(const OctoConfig &config, QObject *_parent = nullptr);
 
-public slots:
+ public slots:
   void Connect();
   void Disconnect();
 
@@ -48,7 +46,7 @@ public slots:
    */
   void CancelJob(PrintJob *);
 
-signals:
+ signals:
   void OnConnected();
   void OnConnectionError(QString error);
   void OnDisconnected();
@@ -56,7 +54,7 @@ signals:
 
   void OnTransition(State from, State to);
 
-protected:
+ protected:
   /**
    * @brief Generates distinct filenames for naming the uploaded files
    * @return Filename
@@ -64,12 +62,12 @@ protected:
   QString GenerateFilename() const;
   void Transition(State t);
 
-private slots:
+ private slots:
   void Tick();
   void StartNextJob();
   void SendCommand(Command *cmd);
 
-private:
+ private:
   /**
    * @brief OctoPrint only allows one active job at a time
    */
@@ -81,7 +79,7 @@ private:
   QTimer ticker_;
   const int tick_time_ms_ = 1000;
 };
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko
 
-#endif // PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_
+#endif  // PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_

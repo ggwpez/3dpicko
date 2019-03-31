@@ -10,5 +10,5 @@ void PrintJob::UpdateProgress(data::ProgressInfo new_progress) {
     emit OnProgressUpdate(progress);
   }
 }
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko

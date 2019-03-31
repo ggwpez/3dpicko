@@ -6,14 +6,14 @@
 #ifndef HTTPSESSIONSTORE_H
 #define HTTPSESSIONSTORE_H
 
-#include "httpglobal.h"
-#include "httprequest.h"
-#include "httpresponse.h"
-#include "httpsession.h"
 #include <QMap>
 #include <QMutex>
 #include <QObject>
 #include <QTimer>
+#include "httpglobal.h"
+#include "httprequest.h"
+#include "httpresponse.h"
+#include "httpsession.h"
 
 namespace stefanfrings {
 
@@ -35,7 +35,7 @@ namespace stefanfrings {
 class DECLSPEC HttpSessionStore : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(HttpSessionStore)
-public:
+ public:
   /** Constructor. */
   HttpSessionStore(QSettings *settings, QObject *parent = NULL);
 
@@ -80,11 +80,11 @@ public:
   /** Delete a session */
   void removeSession(HttpSession session);
 
-protected:
+ protected:
   /** Storage for the sessions */
   QMap<QByteArray, HttpSession> sessions;
 
-private:
+ private:
   /** Configuration settings */
   QSettings *settings;
 
@@ -100,12 +100,12 @@ private:
   /** Used to synchronize threads */
   QMutex mutex;
 
-private slots:
+ private slots:
 
   /** Called every minute to cleanup expired sessions. */
   void sessionTimerEvent();
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // HTTPSESSIONSTORE_H
+#endif  // HTTPSESSIONSTORE_H

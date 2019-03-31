@@ -18,7 +18,7 @@ namespace c3picko {
  *
  */
 class GcodeGenerator {
-public:
+ public:
   explicit GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
                           const PrinterProfile &printer_profile,
                           const PlateProfile &master_and_goal_plate_profile);
@@ -39,7 +39,7 @@ public:
       int starting_row, int starting_column,
       std::vector<LocalColonyCoordinates> local_colony_coordinates);
 
-private:
+ private:
   /**
    * @brief Creates a gcode instruction for initializing the printer.
    * This includes setting the positioning of nozzle and extrusion
@@ -55,18 +55,30 @@ private:
    * a coordinate of the used socket's coordinate system
    * @return the colony coordinate in the socket's coordinate system
    */
-  GlobalColonyCoordinates
-  MapLocalColonyCoordinateToGlobal(LocalColonyCoordinates &local_colony);
+  GlobalColonyCoordinates MapLocalColonyCoordinateToGlobal(
+      LocalColonyCoordinates &local_colony);
 
   GcodeInstruction CreateGcodeLowerFilamentOntoColony();
   GcodeInstruction CreateGcodeLowerFilamentOntoMaster();
   GcodeInstruction CreateGcodeAlignTipOfNozzleWithTopOfWell();
   GcodeInstruction CreateGcodeExtrudeFilamentUntilBottomOfWell();
-  GcodeInstruction CreateGcodeRaiseFilamentAbovePlate();
+  GcodeInstruction CreateGcodeRaiseFilamentAboveSourcePlate();
+  GcodeInstruction CreateGcodeRaiseFilamentAboveMasterPlate();
+  GcodeInstruction CreateGcodeRaiseFilamentAboveGoalPlate();
+  /**
+   * used for computing the gcode for
+   * raising filaments above plate
+   */
+  float ComputeZCoordinateTipOfNozzleAlignedHighest() const;
   GcodeInstruction CreateGcodeMoveToCutFilemantPositionAboveTrigger();
   GcodeInstruction CreateGcodePushTheTrigger();
   GcodeInstruction CreateGcodeExtrudeFilamentToCutLength();
-  GcodeInstruction CreateGcodeExtrusionLengthOnMove();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMoveCutToPick();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMovePickToMaster();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMoveMasterToGoal();
+  GcodeInstruction CreateGcodeExtrusionLengthOnMoveGoalToCut();
+
+  GcodeInstruction CreateGcodeGaugeFilamentExtrusionLength();
 
   /**
    * @brief See ComputeGlobalWellAndMasterCoordinates().
@@ -84,8 +96,8 @@ private:
    * ComputeGlobalWellCoordinates() and ComputeGlobalMasterCoordinates()
    * call this function providing the necessary arguments.
    */
-  std::vector<Point>
-  ComputeGlobalWellAndMasterCoordinates(const Point &origin_of_plate);
+  std::vector<Point> ComputeGlobalWellAndMasterCoordinates(
+      const Point &origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
@@ -159,11 +171,25 @@ private:
   GcodeInstruction gcode_extrude_filament_until_bottom_of_well_;
 
   /**
-   * @brief gcode_raise_filament_above_plate_ the gcode instruction for raising
-   * the nozzle above all plates so that the extruded filament is not touching
-   * anything while moving on the xy axes.
+   * @brief gcode_raise_filament_above_source_plate_ the gcode instruction for
+   * raising the nozzle above source plate so that the extruded filament is not
+   * touching the borders of the source plate while moving on the xy axes.
    */
-  GcodeInstruction gcode_raise_filament_above_plate_;
+  GcodeInstruction gcode_raise_filament_above_source_plate_;
+
+  /**
+   * @brief gcode_raise_filament_above_master_plate_ the gcode instruction for
+   * raising the nozzle above source plate so that the extruded filament is not
+   * touching the borders of the master plate while moving on the xy axes.
+   */
+  GcodeInstruction gcode_raise_filament_above_master_plate_;
+
+  /**
+   * @brief gcode_raise_filament_above_goal_plate_ the gcode instruction for
+   * raising the nozzle above source plate so that the extruded filament is not
+   * touching the borders of the goal plate while moving on the xy axes.
+   */
+  GcodeInstruction gcode_raise_filament_above_goal_plate_;
 
   /**
    * @brief gcode_move_to_cut_filament_position_above_trigger_ the gcode
@@ -187,10 +213,38 @@ private:
   GcodeInstruction gcode_push_trigger_;
 
   /**
-   * @brief gcode_extrusion_length_on_move_ the gcode instruction for
-   * extruding the filament up to the length it shall have on the move.
+   * @brief gcode_extrusion_length_on_move_cut_to_pick_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * the cut position to the source plate.
    */
-  GcodeInstruction gcode_extrusion_length_on_move_;
+  GcodeInstruction gcode_extrusion_length_on_move_cut_to_pick_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_pick_to_master_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * source to master plate.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_pick_to_master_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_master_to_goal_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * the master to goal plate.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_master_to_goal_;
+
+  /**
+   * @brief gcode_extrusion_length_on_move_goal_to_cut_ the gcode instruction
+   * for extruding the filament up to the length it shall have moving from
+   * the goal plate to cut position.
+   */
+  GcodeInstruction gcode_extrusion_length_on_move_goal_to_cut_;
+
+  /**
+   * @brief gcode_gauge_filament_extrusion_length_ the gcode instruction
+   * for gauging the length of the extruded filament
+   */
+  GcodeInstruction gcode_gauge_filament_extrusion_length_;
 
   /**
    * @brief global_well_xy_coordinates_ the xy coordinates
@@ -207,5 +261,5 @@ private:
    */
   std::vector<GlobalMasterCoordinates> global_master_xy_coordinates_;
 };
-} // namespace c3picko
-#endif // GCODEGENERATOR_H
+}  // namespace c3picko
+#endif  // GCODEGENERATOR_H

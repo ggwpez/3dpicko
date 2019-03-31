@@ -1,12 +1,15 @@
 #include "pi_communicator.h"
-#include "commands/all.h"
 #include <QString>
+#include "commands/all.h"
 
 namespace c3picko {
 namespace pi {
-PiCommunicator::PiCommunicator(QString ip, ApiKey key, QObject *_parent)
-    : QObject(_parent), current_job_(nullptr), state_(State::DISCONNECTED),
-      printer_(ip, key, this), ticker_(this) {
+PiCommunicator::PiCommunicator(OctoConfig const& config, QObject* _parent)
+    : QObject(_parent),
+      current_job_(nullptr),
+      state_(State::DISCONNECTED),
+      printer_(config, this),
+      ticker_(this) {
   QObject::connect(&ticker_, SIGNAL(timeout()), this, SLOT(Tick()));
   ticker_.start(tick_time_ms_);
 }
@@ -16,16 +19,19 @@ void PiCommunicator::Connect() {
     return emit OnConnectionError(
         "Connect() can only be called in State::DISCONNECTED");
 
-  Transition(State::CONNECTING);
-  commands::Connection *cmd = commands::Connection::GetInfo();
+  /*Transition(State::CONNECTING);
+  commands::Connection* cmd = commands::Connection::GetInfo();
 
-  connect(cmd, SIGNAL(OnStatusOk(int, Response *)), this, SIGNAL(OnConnected));
-  connect(cmd, &Command::OnStatusErr, this /* ctx */, [this](QVariant code) {
-    emit OnConnectionError("Wrong status code: " + code.toString());
+  connect(cmd, &Command::OnStatusOk, this, [this, cmd](int status,
+  commands::Connection::Response*) { Transition(State::CONNECTED); emit
+  OnConnected();
   });
-  connect(cmd, SIGNAL(OnNetworkErr()), this, SIGNAL(OnNetworkErr()));
+  connect(cmd, &Command::OnStatusErr, this /* ctx ,
+                  [this](QJsonValue code) { emit OnConnectionError("Wrong status
+  code: " + code.toString()); }); connect(cmd, SIGNAL(OnNetworkErr()), this,
+  SIGNAL(OnNetworkErr()));
   // Delete
-  connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));
+  connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));*/
 }
 
 void PiCommunicator::Disconnect() {
@@ -38,7 +44,7 @@ void PiCommunicator::Disconnect() {
 
 void PiCommunicator::StartNextJob() {}
 
-void PiCommunicator::SendCommand(Command *cmd) { (void)cmd; }
+void PiCommunicator::SendCommand(Command* cmd) { (void)cmd; }
 
 void PiCommunicator::Tick() {
   if (current_job_ && current_job_->state == PrintJob::State::RUNNING) {
@@ -53,8 +59,8 @@ void PiCommunicator::Tick() {
   }
 }
 
-const PrintJob *PiCommunicator::StartJob(GCode gcode) {
-  PrintJob *job = new PrintJob(gcode);
+const PrintJob* PiCommunicator::StartJob(GCode gcode) {
+  PrintJob* job = new PrintJob(gcode);
 
   // We only have to put the job in the waiting queue, the tick function will
   // preempt it for execution
@@ -77,7 +83,7 @@ const PrintJob *PiCommunicator::StartJob(GCode gcode) {
   return job;*/
 }
 
-void PiCommunicator::CancelJob(PrintJob *job) {
+void PiCommunicator::CancelJob(PrintJob* job) {
   Q_ASSERT(job);
 
   if (job->state == PrintJob::State::DONE ||
@@ -95,8 +101,7 @@ void PiCommunicator::CancelJob(PrintJob *job) {
 
 QString PiCommunicator::GenerateFilename() const {
   QByteArray data(16, 0);
-  for (int i = 0; i < data.length(); ++i)
-    data[i] = (qrand() % 26) + 'a';
+  for (int i = 0; i < data.length(); ++i) data[i] = (qrand() % 26) + 'a';
 
   return "_3cpicko-" + QString(data.toHex()) + ".gcode";
 }
@@ -107,5 +112,5 @@ void PiCommunicator::Transition(State t) {
 
   emit OnTransition(old, state_);
 }
-} // namespace pi
-} // namespace c3picko
+}  // namespace pi
+}  // namespace c3picko

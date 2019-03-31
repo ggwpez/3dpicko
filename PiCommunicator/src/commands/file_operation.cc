@@ -32,6 +32,6 @@ void FileOperation::OnReplyFinished(QNetworkReply *reply) {
   else
     CheckStatusCode(reply);
 }
-} // namespace commands
-} // namespace pi
-} // namespace c3picko
+}  // namespace commands
+}  // namespace pi
+}  // namespace c3picko

@@ -6,9 +6,9 @@
 #ifndef HTTPCOOKIE_H
 #define HTTPCOOKIE_H
 
-#include "httpglobal.h"
 #include <QByteArray>
 #include <QList>
+#include "httpglobal.h"
 
 namespace stefanfrings {
 
@@ -19,7 +19,7 @@ namespace stefanfrings {
 */
 
 class DECLSPEC HttpCookie {
-public:
+ public:
   /** Creates an empty cookie */
   HttpCookie();
 
@@ -115,7 +115,7 @@ public:
   /** Returns always 1 */
   int getVersion() const;
 
-private:
+ private:
   QByteArray name;
   QByteArray value;
   QByteArray comment;
@@ -127,6 +127,6 @@ private:
   int version;
 };
 
-} // namespace stefanfrings
+}  // namespace stefanfrings
 
-#endif // HTTPCOOKIE_H
+#endif  // HTTPCOOKIE_H

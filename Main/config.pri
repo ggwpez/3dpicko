@@ -7,6 +7,7 @@ QT = network core websockets gui
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES -= QT_NO_INFO_OUTPUT
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -18,24 +19,11 @@ ROOTPATH = $$PWD/../
 DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
-INCLUDEPATH += $$ROOTPATH/Main
-DEPENDPATH += $$ROOTPATH/Main
-
-INCLUDEPATH += $$ROOTPATH/GUI
-DEPENDPATH += $$ROOTPATH/GUI
-
-INCLUDEPATH += $$ROOTPATH/Gcode
-DEPENDPATH += $$ROOTPATH/Gcode
-
-INCLUDEPATH += $$ROOTPATH/PiCommunicator $$ROOTPATH/PiCommunicator/include
-DEPENDPATH += $$ROOTPATH/PiCommunicator $$ROOTPATH/PiCommunicator/include
-
-INCLUDEPATH += $$ROOTPATH/ImageRecognition
-DEPENDPATH += $$ROOTPATH/ImageRecognition
-
-INCLUDEPATH += $$ROOTPATH/QtWebApp/httpserver/
-DEPENDPATH += $$ROOTPATH/QtWebApp/httpserver/
-
-
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11
+
+INCLUDEPATH += $$ROOTPATH/quazip
+DEPENDPATH += $$ROOTPATH/quazip
+
+# List with all possible defines
+# C3PICKO_API_KEY_CHECK_OFF, C3PICKO_NO_ZLIB, C3PICKO_NO_QUAZIP

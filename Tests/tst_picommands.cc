@@ -16,13 +16,13 @@ using namespace c3picko::pi;
 class PiCommands : public QObject {
   Q_OBJECT
 
-public:
+ public:
   PiCommands();
 
-signals:
+ signals:
   void done();
 
-private slots:
+ private slots:
   void initTestCase();
   void GetAllFiles();
   void UploadFile1();
@@ -34,7 +34,7 @@ private slots:
   void OnStatusErr(QVariant status, Command::Response *response);
   void OnNetworkErr(QString error);
 
-private:
+ private:
   QProcess netcat;
 
   QVector<QString> const file_names_;
@@ -111,16 +111,17 @@ void PiCommands::UploadFile2() {
 }
 
 void PiCommands::Parsing() {
-  QString json = "{   \"current\": {     \"state\": \"Operational\",     "
-                 "\"port\": \"/dev/ttyACM0\",     \"baudrate\": 250000,     "
-                 "\"printerProfile\": \"_default\"   },   \"options\": {     "
-                 "\"ports\": [\"/dev/ttyACM0\", \"VIRTUAL\"],     "
-                 "\"baudrates\": [250000, 230400, 115200, 57600, 38400, 19200, "
-                 "9600],     \"printerProfiles\": [{\"name\": \"Default\", "
-                 "\"id\": \"_default\"}],     \"portPreference\": "
-                 "\"/dev/ttyACM0\",     \"baudratePreference\": 250000,     "
-                 "\"printerProfilePreference\": \"_default\",     "
-                 "\"autoconnect\": true   } }";
+  QString json =
+      "{   \"current\": {     \"state\": \"Operational\",     "
+      "\"port\": \"/dev/ttyACM0\",     \"baudrate\": 250000,     "
+      "\"printerProfile\": \"_default\"   },   \"options\": {     "
+      "\"ports\": [\"/dev/ttyACM0\", \"VIRTUAL\"],     "
+      "\"baudrates\": [250000, 230400, 115200, 57600, 38400, 19200, "
+      "9600],     \"printerProfiles\": [{\"name\": \"Default\", "
+      "\"id\": \"_default\"}],     \"portPreference\": "
+      "\"/dev/ttyACM0\",     \"baudratePreference\": 250000,     "
+      "\"printerProfilePreference\": \"_default\",     "
+      "\"autoconnect\": true   } }";
   QJsonParseError error;
   QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &error);
 

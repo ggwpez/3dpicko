@@ -46,7 +46,7 @@
 #include <unistd.h>
 
 #ifndef SUN_LEN
-#define SUN_LEN(ptr)                                                           \
+#define SUN_LEN(ptr) \
   ((size_t)(((struct sockaddr_un *)0)->sun_path) + strlen((ptr)->sun_path))
 #endif
 
@@ -65,10 +65,9 @@ void QtUnixServerSocket::setPath(const QString &path) {
     struct sockaddr_un addr;
     ::memset(&addr, 0, sizeof(struct sockaddr_un));
     addr.sun_family = AF_UNIX;
-    ::unlink(path.toLatin1().constData()); // ### This might need to be changed
+    ::unlink(path.toLatin1().constData());  // ### This might need to be changed
     unsigned int pathlen = strlen(path.toLatin1().constData());
-    if (pathlen > sizeof(addr.sun_path))
-      pathlen = sizeof(addr.sun_path);
+    if (pathlen > sizeof(addr.sun_path)) pathlen = sizeof(addr.sun_path);
     ::memcpy(addr.sun_path, path.toLatin1().constData(), pathlen);
     if ((::bind(sock, (struct sockaddr *)&addr, SUN_LEN(&addr)) != -1) &&
         (::listen(sock, 5) != -1)) {

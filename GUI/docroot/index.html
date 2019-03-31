@@ -1,6 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,226 +9,280 @@
   <link rel="stylesheet" href="css/bootstrap.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/custom.css">
-  <link rel="stylesheet" href="css/cropper.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
   <title>3CPickO</title>
 </head>
 <body>
+  <div id="overlay"><div class="spinner-border text-primary overlay-spinner"></div></div>
   <nav>
     <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
-      <a class="nav-item nav-link" id="nav-start-tab" data-toggle="tab" href="#nav-start" role="tab" aria-controls="nav-start" aria-selected="false">Start</a>
-      <a class="nav-item nav-link active" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="true">New Job</a>
+      <a class="nav-item nav-link active" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-wiki" aria-selected="true">Wiki</a>
+      <a class="nav-item nav-link" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="false">New Job</a>
       <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">All Jobs</a>
-      <a class="nav-item nav-link" id="nav-historic-jobs-tab" data-toggle="tab" href="#nav-historic-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">History</a>
       <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
-      <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-settings" aria-selected="false">Admin</a>
+      <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-admin" aria-selected="false">Admin</a>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade" id="nav-start" role="tabpanel" aria-labelledby="nav-start-tab">
-      <div class="container justify-content-start">
-        <div class="row ">
-          <div class="col-lg-8">
-            <h1>Intro …</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="tab-pane fade show active" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
+    <div class="tab-pane fade" id="nav-new-job" role="tabpanel" aria-labelledby="nav-new-job-tab">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-4 col-md-3 col-lg-2">
+          <div class="col-auto pr-0">
             <div class="nav flex-column nav-pills mb-2" id="steps">
-              <h4 id ="headertag">Entwurf</h4>
+              <h4 id="headertag">New Job</h4>
               <div class="nav-link active" id="browse-tab" href="#browse">1. Choose Image</div>
-              <div class="nav-link" id="cut-tab" href="#cut">2. Cut Image</div>
-              <div class="nav-link" id="attributes-tab" href="#attributes">3. Set Attributes</div>
-              <!--<div class="nav-link" id="settings-tab" href="#settings" onclick="startImageProcessing()">Parameter anpassen</div>-->
-              <div class="nav-link" id="selection-tab" href="#selection">4. Choose Colonys</div>
-              <div class="nav-link" id="strategy-tab" href="#strategy">5. Choose Plates</div>
-              <div class="nav-link" id="overview-tab" href="#overview">6. Overview</div>
-              <div class="nav-link" id="execute-tab" href="#execute">7. Start Picking</div>
-            </div>
-            <div id="detection-settings-div" style="display: none">
-              <h4>Detection Settings</h4>
-              <div class="form-group">
-                <label for="select-algorithm">Algorithm:</label>
-                <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
-              </div>
-              <form id="detection-settings-form">
-                <div id="detection-settings"></div>
-                <button type="submit" class="btn btn-primary">Apply</button>
-                <button type="reset" class="btn btn-secondary">Reset</button>
-              </form>
+              <div class="nav-link" id="attributes-tab" href="#attributes">2. Set Attributes</div>
+              <div class="nav-link" id="selection-tab" href="#selection">3. Detect Colonies</div>
+              <div class="nav-link" id="strategy-tab" href="#strategy">4. Choose Plates</div>
+              <div class="nav-link" id="overview-tab" href="#overview">5. Overview</div>
+              <!-- <div class="nav-link" id="execute-tab" href="#execute">7. Start Picking</div> -->
             </div>
           </div>
-          <div class="col-sm-8 col-md-9 col-lg-10" >
-            <div class="tab-content" id="tabContent">
-              <div class="tab-pane fade show active" id="browse">
+          <div class="col p-0">
+            <div class="tab-content mb-2" id="tabContent">
+              <div class="tab-pane fade show active col" id="browse">
                 <div class="row mb-4">
-                  <div class="col-md-6 col-lg-4">
-                    <h2>Choose Image</h2>
-                    <form><input id="classicUpload" type="file" multiple style="display: none;"/></form>
-                    <div id="dropZone" class="empty" onclick="$('#classicUpload').trigger('click');">Drop Image</div>
-                    <div id="chosen-image"></div>
+                  <div class="col-md-6 col-lg-4 heading-box" style="min-width: 400px;">
+                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_image')">Choose Image</a></h2>
+                    <h6 id="img-name"></h6>
+                    <form><input id="classicUpload" type="file" style="display: none;"></form>
+                    <div id="dropZone" class="empty"></div>
+                    <div id="chosen-image" style="display: none;">
+                      <div id="selectedimage-description" class="float-left"></div>
+                      <button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button>
+                    </div>
                   </div>
                 </div>
+                <hr>
                 <div class="row">
-                  <div class="col" >
-                    <h2>All Images</h2>
-                    <!-- Horizontal Scrolling: white-space: nowrap; width: 90%; overflow: auto; -->
+                  <div class="col">
                     <div id="all-images" style="display: none;"></div>
+                    <div id="show-more-images"><button type="button" class="btn btn-primary" onclick="ShowMoreImages()">Load more images</button></div>
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade col-md-8" id="cut">
-                <h2>Cut Image</h2>
-                <div class="crop_container">
-                  <div>
-                    <img id="cutImg" src="" alt="Picture">
-                  </div>
-                </div>
-                <br>
-                <button class="btn btn-primary m-2" onclick="attributesTab()">Next Step</button>
-              </div>
-              <div class="tab-pane fade col-md-6" id="attributes">
-                <h2>Pickjob Attributes</h2>
-                <form id="attributes-form" name="attributes-form">
+              <div class="tab-pane fade col-md-6 col-xl-4 heading-box" id="attributes" style="padding-bottom: 50px;">
+                <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('pickjob_attributes')">Pickjob Attributes</a></h2>
+                <form id="attributes-form" name="attributes-form" action="javascript:void(0);">
                   <div class="form-group">
-                    <label for="staticImgName">Image:&nbsp;</label><span id="staticImgName"></span>
+                    <label for="staticImgName">Image:</label><span id="staticImgName"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="date-attribute">Date:</label><span id="date-attribute"></span>
                   </div>
                   <div class="form-group">
                     <label for="inputJobName">Job name</label>
                     <input type="text" class="form-control" id="inputJobName" placeholder="optional">
                   </div>
-                  <div class="form-row">
+                  <!-- remove display:none; to enable manual selection of printer- and socket-profile, else default profiles are used -->
+                  <div class="form-row" style="display: none;">
                     <div class="form-group col-md-6">
-                      <label for="select-printer-profile">Printer</label>
+                      <label for="select-printer-profile">Printer-Profile</label>
                       <select class="form-control" id="select-printer-profile"></select>
                     </div>
-                    <div class="form-group col-md-6">
-                      <label for="select-socket-profile">Socket</label>
+                    <div class="form-group col-md-6" style="display: none;">
+                      <label for="select-socket-profile">Socket-Profile</label>
                       <select class="form-control" id="select-socket-profile"></select>
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="description-input">Description</label>
-                    <textarea class="form-control" id="description-input" rows="3"></textarea>
+                    <textarea class="form-control" id="description-input" rows="5" placeholder="optional"></textarea>
                   </div>
                 </form>
-                <button class="btn btn-primary m-2" onclick="selectionTab()">Next Step</button>
+                <button id="enter-selection-button" class="btn btn-success next-step" onclick="selectionTab()">Continue</button>
               </div>
-              <div class="tab-pane fade col-md-12 col-xl-10" id="selection">
-                <h2>Choose Colonys</h2>
-                <div style="position: relative;">
-                 <canvas id="layer0" style="z-index: 0;"></canvas>
-                 <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
-               </div>
-               <div id="buttons">
-                <button class="btn btn-primary" onclick="getPositions()">Run Colony Detection</button>
-                <button class="btn btn-primary" onclick="editColonyMode('add')">Add Colony</button>
-                <button class="btn btn-primary" onclick="editColonyMode('del')">Delete Colony</button>
-                <button class="btn btn-primary" onclick="strategyTab()">Next Step &gt;</button>
-              </div>
-              <div id="showCoordinates"></div>
-            </div>
-            <div class="tab-pane fade col-md-8" id="strategy">
-              <h2>Goal Plate</h2>
-              <form id="strategy-form" name="strategy-form">
-                <div class="form-group">
-                  <!-- <label for="select-plate-profile">Plates:</label> -->
-                  <select id="select-plate-profile"></select>
-                </div>
-              </form>
-              <h2>Choose Starting Well</h2>
-              <canvas id="pickstrategy-canvas"></canvas>
-              <br>
-              <button class="btn btn-primary m-2" onclick="overviewTab()">Overview ></button>
-            </div>
-            <div class="tab-pane fade col-md-8" id="overview">
-              <h2>Overview</h2>
-              <div id="overview-content"></div>
-              <h2>Check Preconditions</h2>
-              <form id="check-preconditions" class="needs-validation" novalidate>
-                <div class="form-group">
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" value="" id="check-plates" required>
-                    <label class="custom-control-label" for="check-plates">
-                      Plates correctly positioned in colony picker?
-                    </label>
-                    <div class="invalid-feedback">
-                      Check plates and confirm!
+              <div class="tab-pane col-12 fade" id="selection">
+                <div class="row">
+                  <div id="colony-layers">
+                    <h2><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number" class="text-primary">0</span><input id="selected-colony-color" type="color" value="#ffffff">
+                    </h2>
+                    <div id="layer_parent">
+                      <div class="btn-toolbar" id="layer-control">
+                        <h4 class="mr-2">Toggle Layers:</h4>
+                        <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
+                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked>Selected</label>
+                          <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
+                        </div>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray</label>
+                        </div>
+                      </div>
+                      <canvas id="layer0" style="z-index: 0;"></canvas> <!-- For colony image -->
+                      <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas> <!-- For colony circles -->
+                      <canvas id="layer2" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas> <!-- For tooltips -->
+                      <canvas id="layer3" style="position: absolute; left: 0; top: 0; z-index: 3;"></canvas> <!-- For safety-margin -->
                     </div>
+                    <div id="buttons">
+                      <div id="legend" style="display: none; float: left;"><h4>Legend:</h4></div>
+                      <button id="strategy-tab-button" class="btn btn-success next-step mt-1" onclick="strategyTab()" disabled>Continue</button>
+                    </div>
+                    <div id="showCoordinates"></div>
                   </div>
-                  <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" value="" id="invalidCheck" required>
-                    <label class="custom-control-label" for="invalidCheck">
-                      Agree to terms and conditions.
-                    </label>
-                    <div class="invalid-feedback">
-                      You must agree!
+                  <div id="detection-settings-div" class="heading-box" style="padding-left: 15px; padding-right: 15px;">
+                    <h2 class="box-heading">Detection Settings</h2>
+                    <div class="form-group">
+                      <label><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('algorithm')">Algorithm:</a></label>
+                      <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
                     </div>
+                    <div id="detection-settings"></div>
                   </div>
                 </div>
-              </form>
-              <button class="btn btn-primary m-2" onclick="executeTab()">Start picking ></button>
-            </div>
-            <div class="tab-pane fade col-md-8" id="execute">
-              <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->
-              <h1>Picking...</h1>
-              <div class="spinner-border"></div>
-              <br>
-              <button class="btn btn-primary m-2" onclick="">Export pdf</button>
+              </div>
+              <div class="tab-pane fade col" id="strategy">
+                <div class="row">
+                  <div class="col-md-4 col-lg-2 heading-box" style="min-width: 330px;">
+                    <h2 class="box-heading">Choose Target Plate</h2>
+                    <form id="strategy-form" style="margin-bottom: 2em;" action="javascript:void(0);">
+                      <div class="form-group">
+                        <label for="select-plate-profile"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_plates')">Target Plate: </a></label>
+                        <select class="form-control" id="select-plate-profile"></select>
+                      </div>
+                      <div id="number-of-colonies-slider"></div>
+                      <small id="number-of-colonies-warning" class="form-text text-muted mb-2" style="display: none;"><span class="text-danger">Note: Colonies will be chosen randomly.</span></small>
+                    </form>
+                    <button id="enter-overview-button" class="btn btn-success next-step">Continue</button>
+                  </div>
+                  <div class="col-auto heading-box">
+                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_starting_well')">Choose Starting Well: </a><span id="starting-well" class="text-primary"></span></h2>
+                    <canvas id="pickstrategy-canvas"></canvas>
+                    <br>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade col-xl-10" id="overview">
+                <div class="row">
+                  <div class="col heading-box" style="min-width: 500px">
+                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('overview')">Overview</a></h2>
+                    <div class="row">
+                      <div class="col-md-8">
+                        <div id="overview-image" style="position: relative;">
+                          <img id="processed-layer0" style="z-index: 0;">
+                          <img id="processed-layer1" style="position: absolute; left: 0; top: 0; z-index: 1;">
+                        </div>
+                      </div>
+                      <div id="overview-metadata" class="col-md-4"></div>
+                    </div>
+                  </div>
+                </div>
+                <div id="overview-buttons" class="col-md-8 mt-2">
+                  <form id="check-preconditions" class="needs-validation" novalidate>
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" value="" id="check-plates" required>
+                        <label class="custom-control-label" for="check-plates">
+                          Plates correctly positioned in colony picker?
+                        </label>
+                        <div class="invalid-feedback">
+                          Check plates and confirm!
+                        </div>
+                      </div>
+                      <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" value="" id="invalidCheck" required>
+                        <label class="custom-control-label" for="invalidCheck">
+                          Agree to terms and conditions.
+                        </label>
+                        <div class="invalid-feedback">
+                          You must agree!
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                  <button class="btn btn-success m-2" id="execute-button" onclick="executeTab()">Start picking</button>
+                  <button class="btn btn-success m-1" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
+                </div>
+              </div>
+              <div class="tab-pane fade col-md-8" id="execute">
+                <!-- TODO Pickjob pausieren/abbrechen, Protokoll herunterladen -->
+                <h1>Picking...</h1>
+                <div class="spinner-border"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="tab-pane fade" id="nav-all-jobs" role="tabpanel" aria-labelledby="nav-all-jobs-tab">
-    <div class="container">
-      <h1>Pickjobs</h1>
-      <form class="form-inline">
-        <input class="form-control my-2 mr-2" type="search" placeholder="Suchbegriff">
-        <button class="btn btn-primary my-2" type="submit">Filter</button>
-      </form>
-      <div id="allJobList"></div>
+    <div class="tab-pane fade" id="nav-all-jobs" role="tabpanel" aria-labelledby="nav-all-jobs-tab">
+      <div class="container">
+        <h1>Pickjobs</h1>
+        <form class="form-inline">
+          <input class="form-control my-2 mr-2" type="search" placeholder="Suchbegriff">
+          <button class="btn btn-primary my-2" type="submit">Filter</button>
+        </form>
+        <div id="allJobList"></div>
+      </div>
     </div>
-  </div>
-  <div class="tab-pane fade" id="nav-historic-jobs" role="tabpanel" aria-labelledby="nav-historic-jobs-tab">
-    <div class="container">
-      <h1>Job History</h1>
-    </div> 
-  </div>
-  <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
-    <div class="container">
-      <div class="row mb-2" id="group">
-        <div class="col">
-          <h2>Printer Profiles</h2>
-          <div class="accordion" id="printer-profiles"></div>
+    <div class="tab-pane fade" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
+      <div class="container-fluid">
+        <div class="row mb-2" id="group">
+          <div class="col-md-6 col-xl-3">
+            <h2>Octoprint Profile</h2>
+            <div class="accordion" id="octoprint-profiles"></div>
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <h2>Printer Profiles</h2>
+            <div class="accordion" id="printer-profiles"></div>
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <h2>Socket Profiles</h2>
+            <div class="accordion" id="socket-profiles"></div>
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <h2>Plate Profiles</h2>
+            <div class="accordion" id="plate-profiles"></div>
+          </div>
         </div>
-        <div class="col">
-          <h2>Socket Profiles</h2>
-          <div class="accordion" id="socket-profiles"></div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="nav-admin" role="tabpanel" aria-labelledby="nav-admin-tab">
+      <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
+      <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
+      <button type="button" class="btn btn-success" onclick="api('backup')">Backup</button>
+      <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
+      <div id="debug-output"></div>
+    </div>
+    <!-- inserted Wiki -->
+    <div class="tab-pane fade show active" id="nav-wiki" role="tabpanel" aria-labelledby="nav-wiki-tab">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-auto">
+            <div class="sticky-top">
+              <h5 class="py-1">Introduction</h5>
+              <div class="row">
+                <button class="btn btn-primary btn-sm ml-2 wiki-link" id="About" onclick="loadWiki('About','./docs/wiki.html #introduction');document.getElementById('About-Section').scrollIntoView()">About</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Nomenclature" onclick="loadWiki('Nomenclature','./docs/wiki.html #introduction');document.getElementById('Nomenclature-Section').scrollIntoView()">Nomenclature of Hardware</button>
+              </div>
+              <h5 class="py-1"> User Manual</h5>
+              <div class="row">
+               <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
+             </div>
+             <div class="row">
+               <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')" >Guide through the Picking Process</button>
+             </div>
+             <div class="row">
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')" >Advanced Settings</button>
+            </div>
+			      <h5 class="py-1" >Administration</h5>
+            <div class="row">
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')" >Hardware</button>
+            </div>
+            <div class="row">
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')" >Software</button>
+            </div>
+			<div class="row">
+              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Configure-Picker" onclick="loadWiki('Administration-Configure-Picker','./docs/wiki.html #administration_configure-picker')" >Configure Picker</button>
+            </div>
+          </div>
         </div>
-        <div class="col">
-          <h2>Plate Profiles</h2>
-          <div class="accordion" id="plate-profiles"></div>
+        <div class="col col-lg-5">
+          <p id="wiki-content">Error: Page not found</p>
         </div>
       </div>
     </div>
   </div>
-  <div class="tab-pane fade" id="nav-admin" role="tabpanel" aria-labelledby="nav-admin-tab">
-    <button type="button" class="btn btn-danger" onclick="api('shutdown')">Server ausschalten</button>
-    <button type="button" class="btn btn-danger" onclick="api('restart')">Server neustarten</button>
-    <button type="button" class="btn btn-success" onclick="api('backup')">Backup</button>
-    <button type="button" class="btn btn-success" onclick="api('startjob')">Drucken</button>
-    <div id="debug-output"></div>
-  </div>
 </div>
+
 <!-- Info-Dialog -->
 <div class="modal fade" id="info-dialog" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -262,18 +317,33 @@
 <div id="alert-window">
   <div id="global-alert" style="display: none;">Disconnected from server.</div>
 </div>
+<div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="help-body">Error: Help not found </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Bootstrap JS -->
 <script src="js/jquery-3.3.1.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
-<script type="text/javascript" src="js/api.js"></script>
+<script type="text/javascript" src="js/multirange.js"></script>
+<script type="text/javascript" src="js/formgroup.js"></script>
 <script type="text/javascript" src="js/dropzone.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/wiki.js"></script>
 <script type="text/javascript" src="js/colonydetection.js"></script>
-<script type="text/javascript" src="js/config.js"></script>
-<script type="text/javascript" src="js/cropper.js"></script>
-<script type="text/javascript" src="js/mootools-yui-compressed.js"></script>
-<script type="text/javascript" src="js/pickstrategie.js"></script>
+<script type="text/javascript" src="js/pickstrategy.js"></script>
 <script type="text/javascript" src="js/circle.js"></script>
+<script type="text/javascript" src="js/api.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>
