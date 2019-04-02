@@ -32,19 +32,21 @@ git submodule update
 cp -n $SOURCE/GUI/database.json $1
 cp -n $SOURCE/GUI/serverconfig.ini $1
 cp $SOURCE/start.sh $1
+chmod +x $1/start.sh
 DOCROOT=source/GUI/docroot
-sed -i 's/%docroot/${DOCROOT}/g' $1/serverconfig.ini
+sed -i "s#%docroot#${DOCROOT}#g" $1/serverconfig.ini
 # configure it
-echo 'working_dir="$1"' >> $1/serverconfig.ini
+echo "working_dir=\"$1\"" >> $1/serverconfig.ini
 cd $BUILDS
 mkdir $2
 cd $2
 
 # TODO release
 qmake $SOURCE
-#make -j8 > /dev/null
+make -j8 > /dev/null
 
+cd $1
 ln -s builds/$2/Main/Main $1/main
-ln -s builds/0d1be905dc0203cd2ddba0e384b2368694b7f08a/quazip/quazip/libquazip.so.1 $1/libquazip.so.1
+ln -s builds/$2/quazip/quazip/libquazip.so.1 $1/libquazip.so.1
 
 exit 0
