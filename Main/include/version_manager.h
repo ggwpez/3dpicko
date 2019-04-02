@@ -1,0 +1,4 @@
+#ifndef VERSION_MANAGER_H
+#define VERSION_MANAGER_H
+
+#endif // VERSION_MANAGER_H
