@@ -9,9 +9,14 @@ ResourcePath::ResourcePath() {}
 
 ResourcePath ResourcePath::fromSystemAbsolute(QString path) { return path; }
 
+// We have two // now, but the operator+ manages that
 ResourcePath ResourcePath::fromServerAbsolute(QString path) {
   return Root() + path;
-}  // We have two // now, but the operator+ manages that
+}
+
+ResourcePath ResourcePath::fromServerRelative(QString path) {
+  return Root() + "/" + path;
+}
 
 ResourcePath ResourcePath::fromDocRootAbsolute(QString path) {
   return DocRoot() + path;
@@ -57,17 +62,22 @@ bool ResourcePath::isEmpty() const { return system_absolute_.isEmpty(); }
 
 void ResourcePath::clear() { system_absolute_ = ""; }
 
-ResourcePath ResourcePath::operator+(const QString &obj) const {
-  return QString(system_absolute_ + obj).replace("//", "/");
+ResourcePath ResourcePath::operator+(const QString& obj) const {
+  QString infix;
+  if (!obj.startsWith(QDir::separator()) &&
+      system_absolute_.endsWith(QDir::separator()))
+    infix = QDir::separator();
+
+  return QString(system_absolute_ + infix + obj).replace("//", "/");
 }
 
 template <>
-ResourcePath Marshalling::fromJson(const QJsonObject &obj) {
+ResourcePath Marshalling::fromJson(const QJsonObject& obj) {
   return ResourcePath::fromServerAbsolute(obj["server_absolute"].toString());
 }
 
 template <>
-QJsonObject Marshalling::toJson(const ResourcePath &value) {
+QJsonObject Marshalling::toJson(const ResourcePath& value) {
   QJsonObject obj;
 
   obj["server_absolute"] = value.toServerAbsolute();

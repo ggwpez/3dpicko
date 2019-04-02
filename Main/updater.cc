@@ -1,14 +1,24 @@
 #include "include/updater.h"
 #include <QDebug>
+#include <QDir>
 #include <QProcess>
 #include <QRegExp>
 #include <QSettings>
 #include <QThread>
 #include <QTimer>
+#include "include/process.h"
+#include "include/version_manager.h"
 
 namespace c3picko {
-Updater::Updater(const QSettings& settings, Database& db) : db_(db) {
-  worker_ = new QThread(this);
+Updater::Updater(const QSettings& settings, Database& db)
+    : db_(db),
+      repo_url_(settings.value("repo_url").toString()),
+      repo_branch_(settings.value("repo_branch").toString()),
+      mng_(new VersionManager(ResourcePath(), repo_url_, repo_branch_, db,
+                              this)) {
+  if (!db_.versions().exists(currentVersion().id()))
+    db_.versions().add(currentVersion().id(), currentVersion());
+
   // TODO sanity check values
   if (!settings.contains("interval")) {
     qWarning() << "Updater interval not given, using default:"
@@ -17,8 +27,20 @@ Updater::Updater(const QSettings& settings, Database& db) : db_(db) {
   } else
     interval_s_ = settings.value("interval").toInt();
 
+  if (!settings.contains("working_dir"))
+    throw Exception("Updater: Working directory not set");
+  else
+    working_dir_ = ResourcePath::fromSystemAbsolute(
+        settings.value("working_dir").toString());
+
+  if (!QDir(sourceDir().toSystemAbsolute()).exists())
+    throw Exception("Source directory not found");
+  if (!QDir(buildDir().toSystemAbsolute()).exists())
+    throw Exception("Build directory not found");
+  if (!QDir(buildDir(currentVersion().id()).toSystemAbsolute()).exists())
+    throw Exception("Build directory of current version not found");
+
   timer_ = new QTimer(nullptr);
-  timer_->moveToThread(worker_);
   timer_->setInterval(interval_s_ * 1000);
   connect(timer_, &QTimer::timeout, this, &Updater::search);
 
@@ -36,52 +58,105 @@ Updater::Updater(const QSettings& settings, Database& db) : db_(db) {
 
 Updater::~Updater() {
   stopSearch();
-  worker_->quit();
-  worker_->wait(1000);
   // deleted by this
+}
+
+ResourcePath Updater::sourceDir() const { return working_dir_ + "source/"; }
+
+ResourcePath Updater::buildDir(Version::ID id) const {
+  return working_dir_ + "builds/" + id;
+}
+
+Process* Updater::clone() {
+  Process* git(
+      Process::gitClone(repo_url_, sourceDir(), {"-n"}));  // -n for no checkout
+
+  connect(git, &Process::OnStarted, [this]() {
+    qDebug() << "Cloning" << repo_url_ << "into"
+             << sourceDir().toSystemAbsolute() << "...";
+  });
+  connect(git, &Process::OnSuccess, []() { qDebug() << "Cloned"; });
+  connect(git, &Process::OnFailure,
+          [](QString output) { qDebug() << "Cloned error;" << output; });
+  connect(git, &Process::OnFinished, git, &Process::deleteLater);
+
+  return git;
+}
+
+Process* Updater::checkout(Version::ID hash) {
+  Process* git(Process::gitCheckout(hash, sourceDir()));
+
+  connect(git, &Process::OnStarted,
+          [hash]() { qDebug() << "Checkint out" << hash << "..."; });
+  connect(git, &Process::OnSuccess, []() { qDebug() << "Checked out"; });
+  connect(git, &Process::OnFailure,
+          [](QString output) { qDebug() << "Check out error:" << output; });
+  connect(git, &Process::OnFinished, git, &Process::deleteLater);
+
+  return git;
 }
 
 void Updater::startSearch() {
   Q_ASSERT(timer_);
-  // Timer runs in different thread, we better use async calls
-  QMetaObject::invokeMethod(timer_, "start");
-  worker_->start();
+  timer_->start();
 }
 
 void Updater::stopSearch() {
   Q_ASSERT(timer_);
-  QMetaObject::invokeMethod(timer_, "stop");
+  timer_->stop();
 }
 
 void Updater::search() {
-  qDebug() << "Updater search thread id =" << QThread::currentThreadId();
+  timer_->stop();
+  qDebug().nospace() << "Searching for updates... (thread="
+                     << QThread::currentThreadId() << ")";
 
-  QString git_path("git");
-  QProcess git;
-  git.setWorkingDirectory("/home/vados/Code/Projects/3cpicko");
-  git.start(git_path, {"log", "--pretty=format:\"%H#%ad\"", "--date=rfc2822",
-                       "--max-count=5"});
+  Process* git = Process::gitLog(currentVersion().sourceDir());
 
-  if (!git.waitForStarted(3000))
-    qCritical().nospace() << "Could not start git '" << git_path << "' "
-                          << git.errorString();
-  else if (!git.waitForFinished(3000))
-    qCritical().nospace() << "Git timed out (path=" << git_path << ")";
-  else if (git.exitStatus() != QProcess::NormalExit)
-    qCritical().noquote() << "Git crashed (path=" << git_path
-                          << "): " << git.readAllStandardError();
-  else {
-    QString output = git.readAllStandardOutput();
-    QStringList lines =
-        output.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-    qDebug("Detected last %i versions:", lines.size());
+  connect(git, &Process::OnSuccess, this, &Updater::logSuccess);
+  connect(git, &Process::OnFailure, this, &Updater::logFailure);
+  // connect(git, &Git::OnFinished, this, [this]() { timer_->start(); });
+  connect(git, &Process::OnFinished, git, &Process::deleteLater);
 
-    for (QString line : lines) {
-      QStringList splits = line.split('#');
-      Version version(splits[0],
-                      QDateTime::fromString(splits[1], Qt::RFC2822Date));
+  git->start();
+}
+
+void Updater::logSuccess(QString output) {
+  QStringList lines = output.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+  qDebug("origin/%s is %i ahead and 0 behind HEAD", qPrintable(repo_branch_),
+         lines.size());
+  std::stack<Version::ID> newest;
+
+  for (QString line : lines) {
+    QStringList splits = line.split('#');
+    Version::ID id = splits[0];
+    QDateTime date(QDateTime::fromString(splits[1], Qt::RFC2822Date));
+
+    if (date.isNull()) {
+      qWarning() << "Invalid date from 'git log':" << splits[0];
+      continue;
     }
+    if (!QRegExp("^[0-9a-f]{40}$")
+             .exactMatch(id))  // match SHA-1 160 bit hashes
+    {
+      qWarning() << "Invalid id from 'git log':" << splits[1];
+      continue;
+    }
+
+    if (!db_.versions().exists(id)) {
+      qDebug() << "Commit" << id << "is new";
+      // New versions dont have source or build directories yet
+      db_.versions().add(id, Version(id, date));
+      mng_->addVersion(id);
+    } else
+      qWarning() << "Commit" << id << "is known";  // Should not happen, since
+                                                   // we only only log the ones
+                                                   // newer than HEAD
   }
+}
+
+void Updater::logFailure(QString output) {
+  qCritical() << "Git log failed:" << output;
 }
 
 qint32 Updater::defaultInterval = 60;

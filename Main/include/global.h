@@ -24,6 +24,7 @@ ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
 ResourcePath reportFolder();
+ResourcePath updateFolder();
 
 QString searchConfigFile(QStringList args);
 /**
@@ -36,8 +37,9 @@ QString Setup(QCoreApplication* app);
 /**
  * @return Path to serverconfig.ini. Only works after Setup
  */
-QString getConfig();
-Version currentVersion();
+QString getConfigPath();
+const Version& currentVersion();
+int getSubprocessTimeoutMs();
 
 /**
  * @brief logTextColor

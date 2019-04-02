@@ -113,6 +113,8 @@ class Table : public JsonConvertable {
 
   inline MapType const& entries() const { return entries_; }
 
+  inline int size() { return entries_.size(); }
+
  private:
   MapType entries_;
 };

@@ -37,6 +37,7 @@ class Database : public QObject, JsonConvertable {
   ImageTable& deletedImages();  // "
   ProfileTable& profiles();
   VersionTable& versions();
+  VersionTable& versionsOI();
   // AlgoJobTable&		  algoJobs();
   // DetectionResultTable& detectionResults();
 
@@ -69,6 +70,10 @@ class Database : public QObject, JsonConvertable {
   ImageTable deleted_images_;
   ProfileTable profiles_;
   VersionTable versions_;
+  /**
+   * @brief Versions of interest.
+   */
+  VersionTable versions_oi_;
   // AlgoJobTable algo_jobs_;
   /**
    * @brief Saves all past image detection processes.

@@ -7,6 +7,8 @@
 
 class QSettings;
 namespace c3picko {
+class Process;
+class VersionManager;
 /**
  * @brief Searches for new commits on a specific branch on the given git
  * repository and compares then with all known versions. When a new version is
@@ -24,6 +26,12 @@ class Updater : public QObject {
 
   static qint32 defaultInterval;
   static bool defaultEnabled;
+
+  ResourcePath sourceDir() const;
+  ResourcePath buildDir(Version::ID = "") const;
+
+  Process* clone();
+  Process* checkout(Version::ID hash);
 
  signals:
   /**
@@ -49,11 +57,17 @@ class Updater : public QObject {
    */
   void search();
 
+  // Git callbacks
+  void logSuccess(QString);
+  void logFailure(QString);
+
  private:
   Database& db_;
-  ResourcePath repo_;
+  ResourcePath working_dir_;
   qint32 interval_s_;
-  QThread* worker_;
   QTimer* timer_;
+  QString repo_url_;
+  QString repo_branch_;
+  VersionManager* mng_;
 };
 }  // namespace c3picko

@@ -5,6 +5,7 @@
 #include "include/algorithms/helper.h"
 #include "include/exception.h"
 #include "include/resource_path.h"
+#include "include/version.h"
 
 #ifdef Q_OS_UNIX
 #include "include/signal_daemon.h"
@@ -63,6 +64,10 @@ ResourcePath UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
 ResourcePath reportFolder() { return DocRoot() + "reports/"; }
 
+ResourcePath updateFolder() {
+  return ResourcePath::fromSystemAbsolute("/tmp/updates/");
+}
+
 /**
  * Search the configuration file.
  * Aborts the application if not found.
@@ -107,6 +112,7 @@ static void qtTypeSetup() {
       math::rangeToString);
 }
 
+static int subprocess_timeout_ms;
 static QString ini_file_path;
 QString Setup(QCoreApplication* app) {
   setupSignals(app);
@@ -133,6 +139,11 @@ QString Setup(QCoreApplication* app) {
   // Create "report" folder
   if (!QDir(reportFolder().toSystemAbsolute()).exists())
     QDir().mkdir(reportFolder().toSystemAbsolute());
+  if (!QDir(updateFolder().toSystemAbsolute()).exists())
+    QDir().mkdir(updateFolder().toSystemAbsolute());
+
+  subprocess_timeout_ms =
+      settings.value("subprocess_timeout_s", 60 * 1000).toInt() * 1000;
 
   return ini_file_path;
 }
@@ -190,12 +201,21 @@ int exitCodeError() { return 1; }
 
 const char* defaultImageExtension() { return "jpg"; }
 
-QString getConfig() {
+QString getConfigPath() {
   if (ini_file_path.isEmpty())
     throw Exception("Setup must be called before getConfig()");
 
   return ini_file_path;
 }
 
-// Version currentVersion() {}
+Version const& currentVersion() {
+  static Version current(
+      GIT_HASH, QDateTime::fromString(GIT_DATE, Qt::RFC2822Date),
+      ResourcePath::fromSystemAbsolute(SOURCE_DIR),
+      ResourcePath::fromSystemAbsolute(BUILD_DIR), Version::State::READY);
+
+  return current;
+}
+
+int getSubprocessTimeoutMs() { return subprocess_timeout_ms; }
 }  // namespace c3picko
