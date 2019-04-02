@@ -209,10 +209,8 @@ QString getConfigPath() {
 }
 
 Version const& currentVersion() {
-  static Version current(
-      GIT_HASH, QDateTime::fromString(GIT_DATE, Qt::RFC2822Date),
-      ResourcePath::fromSystemAbsolute(SOURCE_DIR),
-      ResourcePath::fromSystemAbsolute(BUILD_DIR), Version::State::READY);
+  static Version current(GIT_HASH,
+                         QDateTime::fromString(GIT_DATE, Qt::RFC2822Date));
 
   return current;
 }
