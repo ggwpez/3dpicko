@@ -31,7 +31,7 @@ git submodule init
 git submodule update
 cp -n $SOURCE/GUI/database.json $1
 cp -n $SOURCE/GUI/serverconfig.ini $1
-cp $SOURCE/GUI/start.sh $1
+cp $SOURCE/start.sh $1
 DOCROOT=source/GUI/docroot
 sed -i 's/%docroot/${DOCROOT}/g' $1/serverconfig.ini
 # configure it
