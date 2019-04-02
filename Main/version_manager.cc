@@ -18,7 +18,7 @@ void VersionManager::addVersion(Version::ID id) {
   if (db_.versionsOI().exists(id))
     return (void)qCritical("New versions should not be already of interest");
 
-  if (db_.versionsOI().size() >= max_interesting_) {
+  if (db_.versionsOI().size() >= max_interesting_ && db_.versionsOI().size()) {
     QList<Version> vois(db_.versionsOI().entries().values());
     std::sort(vois.begin(), vois.end(), [](Version const& a, Version const& b) {
       return (a.date() < b.date());

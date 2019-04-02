@@ -28,10 +28,7 @@ Process* Process::gitClone(QString repo, ResourcePath const& into,
 }
 
 Process* Process::gitLog(const ResourcePath& repo, QStringList arguments) {
-  QStringList args(arguments.empty()
-                       ? QStringList{"--pretty=format:\"%H#%ad\"",
-                                     "--date=rfc2822", "--max-count=5"}
-                       : arguments);
+  QStringList args(arguments);
   args.prepend("log");
 
   return new Process(args, repo);

@@ -65,7 +65,7 @@ void ResourcePath::clear() { system_absolute_ = ""; }
 ResourcePath ResourcePath::operator+(const QString& obj) const {
   QString infix;
   if (!obj.startsWith(QDir::separator()) &&
-      system_absolute_.endsWith(QDir::separator()))
+      !system_absolute_.endsWith(QDir::separator()))
     infix = QDir::separator();
 
   return QString(system_absolute_ + infix + obj).replace("//", "/");

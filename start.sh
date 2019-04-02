@@ -1,6 +1,6 @@
 #!/bin/sh
 
 export LD_LIBRARY_PATH=.
-./main $*
+./main serverconfig.ini $*
 
 exit 0

@@ -34,7 +34,7 @@ class VersionManager : public QObject {
   /**
    * @brief Maximum number of interesting versions.
    */
-  qint32 max_interesting_;
+  qint32 max_interesting_ = 5;
   std::pair<Version::ID, Process*> current_;
 };
 }  // namespace c3picko

@@ -34,11 +34,15 @@ Updater::Updater(const QSettings& settings, Database& db)
         settings.value("working_dir").toString());
 
   if (!QDir(sourceDir().toSystemAbsolute()).exists())
-    throw Exception("Source directory not found");
+    throw Exception("Source directory not found: " +
+                    sourceDir().toSystemAbsolute());
   if (!QDir(buildDir().toSystemAbsolute()).exists())
-    throw Exception("Build directory not found");
-  if (!QDir(buildDir(currentVersion().id()).toSystemAbsolute()).exists())
-    throw Exception("Build directory of current version not found");
+    throw Exception("Build directory not found: " +
+                    sourceDir().toSystemAbsolute());
+  auto currbuild = buildDir(currentVersion().id()).toSystemAbsolute();
+  if (!QDir(currbuild).exists())
+    throw Exception("Build directory of current version not found: " +
+                    currbuild);
 
   timer_ = new QTimer(nullptr);
   timer_->setInterval(interval_s_ * 1000);
@@ -64,7 +68,9 @@ Updater::~Updater() {
 ResourcePath Updater::sourceDir() const { return working_dir_ + "source/"; }
 
 ResourcePath Updater::buildDir(Version::ID id) const {
-  return working_dir_ + "builds/" + id;
+  auto prefix = working_dir_ + "builds/";
+  auto ret = prefix + id;
+  return ret;
 }
 
 Process* Updater::clone() {
@@ -111,7 +117,10 @@ void Updater::search() {
   qDebug().nospace() << "Searching for updates... (thread="
                      << QThread::currentThreadId() << ")";
 
-  Process* git = Process::gitLog(currentVersion().sourceDir());
+  Process* git = Process::gitLog(
+      sourceDir(),
+      {"--pretty=format:\"%H#%ad\"", "--date=rfc2822", "--max-count=5",
+       currentVersion().id() + "...origin/" + repo_branch_});
 
   connect(git, &Process::OnSuccess, this, &Updater::logSuccess);
   connect(git, &Process::OnFailure, this, &Updater::logFailure);
