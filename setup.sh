@@ -29,8 +29,12 @@ git clone -n git@gitlab.com:ggwpez/3cpicko.git $SOURCE
 cd $SOURCE && git checkout $2
 git submodule init
 git submodule update
-cp $SOURCE/GUI/database.json $1
-cp $SOURCE/GUI/serverconfig.ini $1
+cp -n $SOURCE/GUI/database.json $1
+cp -n $SOURCE/GUI/serverconfig.ini $1
+cp $SOURCE/GUI/start.sh $1
+DOCROOT=source/GUI/docroot
+sed -i 's/%docroot/${DOCROOT}/g' $1/serverconfig.ini
+# configure it
 echo 'working_dir="$1"' >> $1/serverconfig.ini
 cd $BUILDS
 mkdir $2
@@ -38,6 +42,9 @@ cd $2
 
 # TODO release
 qmake $SOURCE
-make -j8 > /dev/null
+#make -j8 > /dev/null
 
-ln builds/$2/Main/Main $1/main
+ln -s builds/$2/Main/Main $1/main
+ln -s builds/0d1be905dc0203cd2ddba0e384b2368694b7f08a/quazip/quazip/libquazip.so.1 $1/libquazip.so.1
+
+exit 0
