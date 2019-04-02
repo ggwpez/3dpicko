@@ -13,6 +13,8 @@
 
 namespace c3picko {
 static ResourcePath root_path;
+static ResourcePath doc_root_path;
+static ResourcePath report_path, upload_path;
 static QSslConfiguration* LoadSsl(QString key, QString cert) {
   QSslConfiguration* ssl = new QSslConfiguration;
 
@@ -56,7 +58,7 @@ ResourcePath Root() { return root_path; }
 
 ResourcePath Etc() { return Root() + "etc/"; }
 
-ResourcePath DocRoot() { return Root() + "docroot/"; }
+ResourcePath DocRoot() { return doc_root_path; }
 
 QString UploadFolderName() { return "uploads"; }
 
@@ -124,7 +126,11 @@ QString Setup(QCoreApplication* app) {
   QString path = QFileInfo(ini_file_path).absolutePath() + "/" +
                  settings.value("root").toString();
   if (!path.endsWith('/')) path += '/';
+
   root_path = ResourcePath::fromSystemAbsolute(path);
+  doc_root_path = root_path + settings.value("docroot").toString();
+  upload_path = root_path + settings.value("uploads").toString();
+  report_path = root_path + settings.value("reports").toString();
 
   if (!Root().exists() || !Root().isDir())
     throw Exception("Root '" + Root().toSystemAbsolute() +

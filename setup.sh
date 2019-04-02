@@ -49,4 +49,5 @@ cd $1
 ln -s builds/$2/Main/Main $1/main
 ln -s builds/$2/quazip/quazip/libquazip.so.1 $1/libquazip.so.1
 
+echo "Setup complete, start with ./start.sh"
 exit 0
