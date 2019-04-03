@@ -173,9 +173,6 @@ void Updater::logSuccess(QString output) {
         return;
       }
     } else
-      qWarning() << "Commit" << id << "is known";  // Should not happen, since
-                                                   // we only only log the ones
-                                                   // newer than HEAD
   }
 }
 

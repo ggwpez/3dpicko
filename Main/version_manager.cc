@@ -45,10 +45,11 @@ void VersionManager::remOldestVersion(Version::ID id) {
 
   qDebug() << "Removing old version" << id;
   // Is there a process active right now?
-  if (processes_.find(id) != processes_.end()) {
-    // Kill the process
+  if (processes_.find(id) != processes_.end())  // Kill the process
     processes_.at(id)->kill();
-  }
+
+  // TODO remove build dir
+  emit OnVersionUnInstalled(id);
   db_.versionsOI().pop_front();
 }
 
@@ -112,8 +113,10 @@ void VersionManager::linkVersion(Version::ID id) {
     qDebug() << "Could not create link:" << output;
   });
   connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
-  connect(ln, &Process::OnSuccess,
-          [id] { qDebug() << "Installation competed" << id; });
+  connect(ln, &Process::OnSuccess, [this, id] {
+    qDebug() << "Installation completed" << id;
+    emit this->OnVersionInstalled(id);
+  });
 
   registerProcess(id, ln);
   ln->start();
@@ -166,11 +169,7 @@ void VersionManager::registerProcess(Version::ID id, Process* proc) {
   processes_[id] = proc;
   connect(proc, &Process::OnFinished, this,
           [this, id]() { this->unregisterProcess(id); });
-  // qDebug() << "Registering process:" << id;
 }
 
-void VersionManager::unregisterProcess(Version::ID id) {
-  processes_.erase(id);
-  // qDebug() << "Unregistering process:" << id;
-}
+void VersionManager::unregisterProcess(Version::ID id) { processes_.erase(id); }
 }  // namespace c3picko

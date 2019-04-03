@@ -35,6 +35,8 @@ class VersionManager : public QObject {
 
  signals:
   void OnTransition(Version::ID, Version::State old, Version::State now);
+  void OnVersionInstalled(Version::ID);
+  void OnVersionUnInstalled(Version::ID);
 
  private:
   Database& db_;
