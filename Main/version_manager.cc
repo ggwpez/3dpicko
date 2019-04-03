@@ -99,7 +99,7 @@ void VersionManager::makeVersion(Version::ID id) {
 }
 
 void VersionManager::linkVersion(Version::ID id) {
-  ResourcePath link(working_dir_ + "main_new");
+  ResourcePath link(working_dir_ + "main");
   QString binary("builds/" + id + "/Main/Main");
 
   if (!QFile::link(binary, link.toSystemAbsolute()))
