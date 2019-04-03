@@ -102,9 +102,21 @@ void VersionManager::linkVersion(Version::ID id) {
   ResourcePath link(working_dir_ + "main");
   QString binary("builds/" + id + "/Main/Main");
 
-  if (!QFile::link(binary, link.toSystemAbsolute()))
-    qCritical() << "Could not create soft link";
-  qDebug() << "Update completed";
+  // TODO we would need a transaction here, since when we first delete the link
+  // and than create a new one, the application could crash after the deletion
+  // and the new link would not be created. To emulate a transaction we use an
+  // ln instance that does not listen to HUP
+  Process* ln(Process::ln(binary, link));
+
+  connect(ln, &Process::OnFailure, [](QString output) {
+    qDebug() << "Could not create link:" << output;
+  });
+  connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
+  connect(ln, &Process::OnSuccess,
+          [id] { qDebug() << "Installation competed" << id; });
+
+  registerProcess(id, ln);
+  ln->start();
 }
 
 void VersionManager::checkoutRepo(Version::ID id) {

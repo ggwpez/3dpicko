@@ -29,6 +29,7 @@ class Process : public QObject {
   static Process* qmake(const ResourcePath& build, const ResourcePath& source);
   static Process* make(const ResourcePath& build, QStringList targets = {"all"},
                        int cores = 8);
+  static Process* ln(QString relative_target, ResourcePath const& target);
 
   ~Process();
 

@@ -63,6 +63,11 @@ Process* Process::make(const ResourcePath& build, QStringList targets,
   return new Process("make", targets, build);
 }
 
+Process* Process::ln(QString relative_target, const ResourcePath& name) {
+  // soft, force
+  return new Process("ln", {"-sf", relative_target, name.toSystemAbsolute()});
+}
+
 void Process::start() {
   if (git_) throw Exception("Cant start process twice");
 
