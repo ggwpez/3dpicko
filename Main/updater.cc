@@ -57,6 +57,7 @@ Updater::Updater(const QSettings& settings, Database& db)
     qInfo() << "Updater disabled";
 
   qDebug() << "Updater setup thread id =" << QThread::currentThreadId();
+  qWarning() << "Test update";
 }
 
 Updater::~Updater() {
