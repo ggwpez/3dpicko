@@ -5,15 +5,20 @@
 #include "include/version.h"
 
 namespace c3picko {
-Process::Process(QStringList args, QObject* _parent)
+Process::Process(QString binary, QStringList args, QObject* _parent)
     : QObject(_parent),
+      binary_(binary),
       git_(nullptr),
       args_(args),
       exec_dir_(ResourcePath::fromServerRelative("")) {}
 
-Process::Process(QStringList args, const ResourcePath& exec_dir,
+Process::Process(QString binary, QStringList args, const ResourcePath& exec_dir,
                  QObject* _parent)
-    : QObject(_parent), git_(nullptr), args_(args), exec_dir_(exec_dir) {}
+    : QObject(_parent),
+      binary_(binary),
+      git_(nullptr),
+      args_(args),
+      exec_dir_(exec_dir) {}
 
 Process::~Process() {
   // git_ is deleted by this
@@ -24,31 +29,35 @@ Process* Process::gitClone(QString repo, ResourcePath const& into,
   QStringList args = {"clone", repo, into.toSystemAbsolute()};
   args.append(arguments);
 
-  return new Process(args);
+  return new Process("git", args);
 }
 
 Process* Process::gitLog(const ResourcePath& repo, QStringList arguments) {
   QStringList args(arguments);
   args.prepend("log");
 
-  return new Process(args, repo);
+  return new Process("git", args, repo);
 }
 
 Process* Process::gitFech(const ResourcePath& repo, QStringList arguments) {
   QStringList args(arguments);
   args.prepend("fetch");
 
-  return new Process(args, repo);
+  return new Process("git", args, repo);
 }
 
 Process* Process::gitCheckout(QString branch, const ResourcePath& repo) {
-  return new Process({"checkout", branch}, repo);
+  return new Process("git", {"checkout", branch}, repo);
+}
+
+Process* Process::qmake(const ResourcePath& repo, const ResourcePath& source) {
+  return new Process("qmake", {source.toSystemAbsolute()}, repo);
 }
 
 void Process::start() {
   if (git_) throw Exception("Cant start process twice");
 
-  QString git_path("git");
+  QString git_path(binary_);
   git_ = new QProcess(this);
   git_->setWorkingDirectory(exec_dir_.toSystemAbsolute());
   git_->start(git_path, args_);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <queue>
 #include "include/version.h"
 
 namespace c3picko {
@@ -14,12 +15,12 @@ class VersionManager : public QObject {
 
  public slots:
   void addVersion(Version::ID);
-  void remVersion(Version::ID);
+  void remOldestVersion(Version::ID);
 
  private slots:
   void transition(Version&, Version::State state);
-  Process* enterProcess(Version::ID id, Process* proc);
-  void leaveProcess(Version::ID);
+  void registerProcess(Version::ID id, Process* proc);
+  void unregisterProcess(Version::ID id);
 
   void checkout(Version::ID);
 
@@ -35,6 +36,9 @@ class VersionManager : public QObject {
    * @brief Maximum number of interesting versions.
    */
   qint32 max_interesting_ = 5;
-  std::pair<Version::ID, Process*> current_;
+  /**
+   * @brief the top element is the currently running
+   */
+  std::map<Version::ID, Process*> processes_;
 };
 }  // namespace c3picko

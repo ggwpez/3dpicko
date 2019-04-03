@@ -12,10 +12,12 @@
 namespace c3picko {
 Updater::Updater(const QSettings& settings, Database& db)
     : db_(db),
+      working_dir_(ResourcePath::fromSystemAbsolute(
+          settings.value("working_dir").toString())),
       repo_url_(settings.value("repo_url").toString()),
       repo_branch_(settings.value("repo_branch").toString()),
-      mng_(new VersionManager(ResourcePath(), repo_url_, repo_branch_, db,
-                              this)) {
+      mng_(
+          new VersionManager(working_dir_, repo_url_, repo_branch_, db, this)) {
   if (!db_.versions().exists(currentVersion().id()))
     db_.versions().add(currentVersion().id(), currentVersion());
 
@@ -27,11 +29,8 @@ Updater::Updater(const QSettings& settings, Database& db)
   } else
     interval_s_ = settings.value("interval").toInt();
 
-  if (!settings.contains("working_dir"))
+  if (working_dir_.isEmpty())
     throw Exception("Updater: Working directory not set");
-  else
-    working_dir_ = ResourcePath::fromSystemAbsolute(
-        settings.value("working_dir").toString());
 
   if (!QDir(sourceDir().toSystemAbsolute()).exists())
     throw Exception("Source directory not found: " +
@@ -79,7 +78,7 @@ Process* Updater::clone() {
 
   // connect(git, &Process::OnStarted,
   //	[this]() { qDebug() << "Cloning" << repo_url_ << "into" <<
-  //sourceDir().toSystemAbsolute() << "..."; });
+  // sourceDir().toSystemAbsolute() << "..."; });
   connect(git, &Process::OnSuccess, []() { qDebug() << "Cloned"; });
   connect(git, &Process::OnFailure,
           [](QString output) { qDebug() << "Cloned error;" << output; });
@@ -128,7 +127,7 @@ void Updater::search() {
 
   connect(gitL, &Process::OnSuccess, this, &Updater::logSuccess);
   connect(gitL, &Process::OnFailure, this, &Updater::logFailure);
-  // connect(git, &Git::OnFinished, this, [this]() { timer_->start(); });
+  connect(gitL, &Process::OnFinished, this, [this]() { timer_->start(); });
   connect(gitL, &Process::OnFinished, gitL, &Process::deleteLater);
 
   gitF->start();

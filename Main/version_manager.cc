@@ -22,39 +22,57 @@ void VersionManager::addVersion(Version::ID id) {
     QVector<Version::ID> vois(db_.versionsOI());
 
     while (db_.versionsOI().size() >= max_interesting_) {
-      remVersion(vois.back());
+      remOldestVersion(vois.back());
       vois.pop_back();
     }
   }
 
   qDebug() << "Selecting version" << id;
+  qDebug() << "Working dir:" << working_dir_.toSystemAbsolute();
   db_.versionsOI().push_front(id);
-  Process* git(
-      enterProcess(id, Process::gitCheckout(id, working_dir_ + "source/")));
+  Process* git(Process::gitCheckout(id, working_dir_ + "source/"));
+  Process* qmake(
+      Process::qmake(working_dir_ + "builds/" + id, working_dir_ + "source/"));
+
+  connect(qmake, &Process::OnSuccess,
+          [](QString output) { qDebug() << output; });
+  connect(qmake, &Process::OnFailure,
+          [](QString output) { qDebug() << output; });
+  connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
 
   connect(git, &Process::OnStarted,
-          [id]() { qDebug() << "Checkint out" << id << "..."; });
-  connect(git, &Process::OnSuccess,
-          []() { qDebug() << "Checked out, ready to build"; });
+          [id]() { qDebug() << "Checking out" << id << "..."; });
+  connect(git, &Process::OnSuccess, [this, id, qmake]() {
+    if (!QDir().mkdir((working_dir_ + "builds/" + id).toSystemAbsolute()))
+      return (void)(qCritical()
+                    << "Cant create"
+                    << (working_dir_ + "builds/" + id).toSystemAbsolute());
+
+    registerProcess(id, qmake);
+    qmake->start();
+  });
   connect(git, &Process::OnFailure,
           [](QString output) { qDebug() << "Check out error:" << output; });
-  connect(git, &Process::OnFinished, git,
-          [id, this]() { this->leaveProcess(id); });
+  connect(git, &Process::OnFailure, qmake, &Process::deleteLater);
+  connect(git, &Process::OnFinished, git, &Process::deleteLater);
 
+  registerProcess(id, git);
   git->start();
 }
 
-void VersionManager::remVersion(Version::ID id) {
-  if (!db_.versionsOI().contains(id))
-    throw Exception("Can only remove version of interest");
+void VersionManager::remOldestVersion(Version::ID id) {
+  if (db_.versionsOI().front() != id)
+    throw Exception("Can only remove the oldest version");
   if (db_.versionsOI().size() == 1)
     throw Exception("There must be at least one version of interest");
 
   qDebug() << "Removing old version" << id;
   // Is there a process active right now?
-  if (current_.second && current_.first == id) {
-    current_.second->kill();  // kill() is synchronous
+  if (processes_.find(id) != processes_.end()) {
+    // Kill the process
+    processes_.at(id)->kill();
   }
+  db_.versionsOI().pop_front();
 }
 
 void VersionManager::checkout(Version::ID id) {
@@ -63,8 +81,8 @@ void VersionManager::checkout(Version::ID id) {
   if (version.state() == Version::State::CLONED ||
       version.state() == Version::State::CHECK_OUT_ERROR) {
     transition(version, Version::State::MARKED_FOR_CHECKOUT);
-    Process* git(enterProcess(
-        id, Process::gitCheckout(repo_branch_, working_dir_ + "source/" + id)));
+    Process* git(
+        Process::gitCheckout(repo_branch_, working_dir_ + "source/" + id));
 
     connect(git, &Process::OnStarted, [&version, this]() {
       transition(version, Version::State::CHECKING_OUT);
@@ -77,9 +95,9 @@ void VersionManager::checkout(Version::ID id) {
       transition(version, Version::State::CHECK_OUT_ERROR);
       qDebug() << output;
     });
-    connect(git, &Process::OnFinished,
-            [id, this]() { this->leaveProcess(id); });
+    connect(git, &Process::OnFinished, git, &Process::deleteLater);
 
+    registerProcess(id, git);
     git->start();
   } else {
     qCritical() << "Cant check out in current state (state=" +
@@ -100,22 +118,15 @@ void VersionManager::transition(Version& version, Version::State state) {
   }
 }
 
-Process* VersionManager::enterProcess(Version::ID id, Process* proc) {
-  if (current_.second) {
-    qCritical("More than one process is not permitted right now");
-    return nullptr;
-  }
-
-  current_ = {id, proc};
-  return proc;
+void VersionManager::registerProcess(Version::ID id, Process* proc) {
+  processes_[id] = proc;
+  connect(proc, &Process::OnFinished, this,
+          [this, id]() { this->unregisterProcess(id); });
+  qDebug() << "Registering process:" << id;
 }
 
-void VersionManager::leaveProcess(Version::ID id) {
-  if (!current_.second) return (void)qCritical("Process to cancel was null");
-  if (current_.first != id)
-    return (void)qCritical("Process to cancel had wrong id");
-
-  current_.second->deleteLater();
-  current_ = {Version::ID(), nullptr};
+void VersionManager::unregisterProcess(Version::ID id) {
+  processes_.erase(id);
+  qDebug() << "Unregistering process:" << id;
 }
 }  // namespace c3picko

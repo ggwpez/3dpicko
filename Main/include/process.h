@@ -26,6 +26,8 @@ class Process : public QObject {
   static Process* gitLog(const ResourcePath& repo, QStringList arguments = {});
   static Process* gitFech(const ResourcePath& repo, QStringList arguments = {});
 
+  static Process* qmake(const ResourcePath& repo, const ResourcePath& source);
+
   ~Process();
 
  public slots:
@@ -40,10 +42,11 @@ class Process : public QObject {
   void OnFailure(QString stderr_);
 
  private:
-  Process(QStringList args, QObject* _parent = nullptr);
-  Process(QStringList args, ResourcePath const& execution_dir,
+  Process(QString process, QStringList args, QObject* _parent = nullptr);
+  Process(QString process, QStringList args, ResourcePath const& execution_dir,
           QObject* _parent = nullptr);
 
+  QString binary_;
   QProcess* git_;
   QStringList args_;
   ResourcePath exec_dir_;
