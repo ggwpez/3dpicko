@@ -15,29 +15,45 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
       max_interesting_(0) {}
 
 void VersionManager::addVersion(Version::ID id) {
-  if (db_.versionsOI().exists(id))
-    return (void)qCritical("New versions should not be already of interest");
+  if (db_.versionsOI().contains(id))
+    return (void)qCritical("New versions should not already be of interest");
 
   if (db_.versionsOI().size() >= max_interesting_ && db_.versionsOI().size()) {
-    QList<Version> vois(db_.versionsOI().entries().values());
-    std::sort(vois.begin(), vois.end(), [](Version const& a, Version const& b) {
-      return (a.date() < b.date());
-    });  // ORDER BY would be nice… TODO?
+    QVector<Version::ID> vois(db_.versionsOI());
 
     while (db_.versionsOI().size() >= max_interesting_) {
-      remVersion(vois.back().id());
+      remVersion(vois.back());
+      vois.pop_back();
     }
   }
-  // add
+
+  qDebug() << "Selecting version" << id;
+  db_.versionsOI().push_front(id);
+  Process* git(
+      enterProcess(id, Process::gitCheckout(id, working_dir_ + "source/")));
+
+  connect(git, &Process::OnStarted,
+          [id]() { qDebug() << "Checkint out" << id << "..."; });
+  connect(git, &Process::OnSuccess,
+          []() { qDebug() << "Checked out, ready to build"; });
+  connect(git, &Process::OnFailure,
+          [](QString output) { qDebug() << "Check out error:" << output; });
+  connect(git, &Process::OnFinished, git,
+          [id, this]() { this->leaveProcess(id); });
+
+  git->start();
 }
 
 void VersionManager::remVersion(Version::ID id) {
-  if (!db_.versionsOI().exists(id))
+  if (!db_.versionsOI().contains(id))
     throw Exception("Can only remove version of interest");
+  if (db_.versionsOI().size() == 1)
+    throw Exception("There must be at least one version of interest");
 
+  qDebug() << "Removing old version" << id;
   // Is there a process active right now?
   if (current_.second && current_.first == id) {
-    current_.second->kill();
+    current_.second->kill();  // kill() is synchronous
   }
 }
 

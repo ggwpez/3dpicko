@@ -156,7 +156,18 @@ void Updater::logSuccess(QString output) {
       qDebug() << "Commit" << id << "is new";
       // New versions dont have source or build directories yet
       db_.versions().add(id, Version(id, date));
-      mng_->addVersion(id);
+      try {
+        mng_->addVersion(id);
+      } catch (std::exception const& e) {
+        qCritical() << "VersionManager error:" << e.what();
+        timer_->stop();
+        return;
+      } catch (...) {
+        qCritical() << "VersionManager error:"
+                    << "unknown";
+        timer_->stop();
+        return;
+      }
     } else
       qWarning() << "Commit" << id << "is known";  // Should not happen, since
                                                    // we only only log the ones

@@ -35,6 +35,7 @@ cp $SOURCE/start.sh $1
 chmod +x $1/start.sh
 DOCROOT=source/GUI/docroot
 sed -i "s#%docroot#${DOCROOT}#g" $1/serverconfig.ini
+sed -i "s#%branch#${2}#g" $1/serverconfig.ini
 # configure it
 echo "working_dir=\"$1\"" >> $1/serverconfig.ini
 cd $BUILDS
