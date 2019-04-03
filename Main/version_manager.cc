@@ -69,20 +69,17 @@ void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
 void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
   ResourcePath build_dir(working_dir_ + "builds/" + id);
 
-  if (!QDir().mkdir(build_dir.toSystemAbsolute()))
-    return (void)(qCritical()
-                  << "Cant create build dir" << build_dir.toSystemAbsolute());
+  if (!QDir(build_dir.toSystemAbsolute()).exists())
+    if (!QDir().mkdir(build_dir.toSystemAbsolute()))
+      return (void)(qCritical()
+                    << "Cant create build dir" << build_dir.toSystemAbsolute());
 
   Process* qmake(Process::qmake(build_dir, sourcePath()));
 
   connect(qmake, &Process::OnFailure,
           [](QString output) { qDebug() << output; });
   connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
-  connect(qmake, &Process::OnSuccess, [this, id](QString output) {
-    qDebug() << output;
-
-    this->makeVersion(id);
-  });
+  connect(qmake, &Process::OnSuccess, [this, id]() { this->makeVersion(id); });
 
   registerProcess(id, qmake);
   qmake->start();
@@ -95,14 +92,19 @@ void VersionManager::makeVersion(Version::ID id) {
   connect(make, &Process::OnFailure,
           [](QString output) { qDebug() << output; });
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
-  connect(make, &Process::OnSuccess, [id](QString output) {
-    qDebug().noquote() << output;
-
-    qWarning() << "Version build" << id;
-  });
+  connect(make, &Process::OnSuccess, [this, id]() { this->linkVersion(id); });
 
   registerProcess(id, make);
   make->start();
+}
+
+void VersionManager::linkVersion(Version::ID id) {
+  ResourcePath link(working_dir_ + "main_new");
+  QString binary("builds/" + id + "/Main/Main");
+
+  if (!QFile::link(binary, link.toSystemAbsolute()))
+    qCritical() << "Could not create soft link";
+  qDebug() << "Update completed";
 }
 
 void VersionManager::checkoutRepo(Version::ID id) {
@@ -152,11 +154,11 @@ void VersionManager::registerProcess(Version::ID id, Process* proc) {
   processes_[id] = proc;
   connect(proc, &Process::OnFinished, this,
           [this, id]() { this->unregisterProcess(id); });
-  qDebug() << "Registering process:" << id;
+  // qDebug() << "Registering process:" << id;
 }
 
 void VersionManager::unregisterProcess(Version::ID id) {
   processes_.erase(id);
-  qDebug() << "Unregistering process:" << id;
+  // qDebug() << "Unregistering process:" << id;
 }
 }  // namespace c3picko

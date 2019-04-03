@@ -22,6 +22,10 @@ class VersionManager : public QObject {
   void checkoutAndQmakeVersion(Version::ID);
   void qmakeAmdMakeVersion(Version::ID);
   void makeVersion(Version::ID);
+  /**
+   * @brief Replaces the symlink that points to the current version
+   */
+  void linkVersion(Version::ID);
 
   void transition(Version&, Version::State state);
   void registerProcess(Version::ID id, Process* proc);
