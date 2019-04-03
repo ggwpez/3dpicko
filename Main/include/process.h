@@ -26,7 +26,9 @@ class Process : public QObject {
   static Process* gitLog(const ResourcePath& repo, QStringList arguments = {});
   static Process* gitFech(const ResourcePath& repo, QStringList arguments = {});
 
-  static Process* qmake(const ResourcePath& repo, const ResourcePath& source);
+  static Process* qmake(const ResourcePath& build, const ResourcePath& source);
+  static Process* make(const ResourcePath& build, QStringList targets = {"all"},
+                       int cores = 8);
 
   ~Process();
 

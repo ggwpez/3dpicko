@@ -1,6 +1,7 @@
 #include "include/process.h"
 #include <QCoreApplication>
 #include <QProcess>
+#include <QThread>
 #include "include/exception.h"
 #include "include/version.h"
 
@@ -50,8 +51,16 @@ Process* Process::gitCheckout(QString branch, const ResourcePath& repo) {
   return new Process("git", {"checkout", branch}, repo);
 }
 
-Process* Process::qmake(const ResourcePath& repo, const ResourcePath& source) {
-  return new Process("qmake", {source.toSystemAbsolute()}, repo);
+Process* Process::qmake(const ResourcePath& build, const ResourcePath& source) {
+  return new Process("qmake", {source.toSystemAbsolute()}, build);
+}
+
+Process* Process::make(const ResourcePath& build, QStringList targets,
+                       int cores) {
+  cores = qBound(1, cores, QThread::idealThreadCount());
+  targets.append("-j" + QString::number(cores));
+
+  return new Process("make", targets, build);
 }
 
 void Process::start() {

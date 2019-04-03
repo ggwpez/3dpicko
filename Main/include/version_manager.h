@@ -12,17 +12,22 @@ class VersionManager : public QObject {
  public:
   VersionManager(ResourcePath working_dir, QString repo_url,
                  QString repo_branch, Database& db, QObject* _parent = nullptr);
+  ResourcePath sourcePath() const;
 
  public slots:
   void addVersion(Version::ID);
   void remOldestVersion(Version::ID);
 
  private slots:
+  void checkoutAndQmakeVersion(Version::ID);
+  void qmakeAmdMakeVersion(Version::ID);
+  void makeVersion(Version::ID);
+
   void transition(Version&, Version::State state);
   void registerProcess(Version::ID id, Process* proc);
   void unregisterProcess(Version::ID id);
 
-  void checkout(Version::ID);
+  void checkoutRepo(Version::ID);
 
  signals:
   void OnTransition(Version::ID, Version::State old, Version::State now);

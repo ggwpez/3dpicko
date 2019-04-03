@@ -14,6 +14,10 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
       working_dir_(working_dir),
       max_interesting_(0) {}
 
+ResourcePath VersionManager::sourcePath() const {
+  return working_dir_ + "source/";
+}
+
 void VersionManager::addVersion(Version::ID id) {
   if (db_.versionsOI().contains(id))
     return (void)qCritical("New versions should not already be of interest");
@@ -30,34 +34,7 @@ void VersionManager::addVersion(Version::ID id) {
   qDebug() << "Selecting version" << id;
   qDebug() << "Working dir:" << working_dir_.toSystemAbsolute();
   db_.versionsOI().push_front(id);
-  Process* git(Process::gitCheckout(id, working_dir_ + "source/"));
-  Process* qmake(
-      Process::qmake(working_dir_ + "builds/" + id, working_dir_ + "source/"));
-
-  connect(qmake, &Process::OnSuccess,
-          [](QString output) { qDebug() << output; });
-  connect(qmake, &Process::OnFailure,
-          [](QString output) { qDebug() << output; });
-  connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
-
-  connect(git, &Process::OnStarted,
-          [id]() { qDebug() << "Checking out" << id << "..."; });
-  connect(git, &Process::OnSuccess, [this, id, qmake]() {
-    if (!QDir().mkdir((working_dir_ + "builds/" + id).toSystemAbsolute()))
-      return (void)(qCritical()
-                    << "Cant create"
-                    << (working_dir_ + "builds/" + id).toSystemAbsolute());
-
-    registerProcess(id, qmake);
-    qmake->start();
-  });
-  connect(git, &Process::OnFailure,
-          [](QString output) { qDebug() << "Check out error:" << output; });
-  connect(git, &Process::OnFailure, qmake, &Process::deleteLater);
-  connect(git, &Process::OnFinished, git, &Process::deleteLater);
-
-  registerProcess(id, git);
-  git->start();
+  checkoutAndQmakeVersion(id);
 }
 
 void VersionManager::remOldestVersion(Version::ID id) {
@@ -75,7 +52,60 @@ void VersionManager::remOldestVersion(Version::ID id) {
   db_.versionsOI().pop_front();
 }
 
-void VersionManager::checkout(Version::ID id) {
+void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
+  Process* git(Process::gitCheckout(id, working_dir_ + "source/"));
+
+  connect(git, &Process::OnStarted,
+          [id]() { qDebug() << "Checking out" << id << "..."; });
+  connect(git, &Process::OnSuccess, [this, id]() { qmakeAmdMakeVersion(id); });
+  connect(git, &Process::OnFailure,
+          [](QString output) { qDebug() << "Check out error:" << output; });
+  connect(git, &Process::OnFinished, git, &Process::deleteLater);
+
+  registerProcess(id, git);
+  git->start();
+}
+
+void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
+  ResourcePath build_dir(working_dir_ + "builds/" + id);
+
+  if (!QDir().mkdir(build_dir.toSystemAbsolute()))
+    return (void)(qCritical()
+                  << "Cant create build dir" << build_dir.toSystemAbsolute());
+
+  Process* qmake(Process::qmake(build_dir, sourcePath()));
+
+  connect(qmake, &Process::OnFailure,
+          [](QString output) { qDebug() << output; });
+  connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
+  connect(qmake, &Process::OnSuccess, [this, id](QString output) {
+    qDebug() << output;
+
+    this->makeVersion(id);
+  });
+
+  registerProcess(id, qmake);
+  qmake->start();
+}
+
+void VersionManager::makeVersion(Version::ID id) {
+  ResourcePath build_dir(working_dir_ + "builds/" + id);
+  Process* make(Process::make(build_dir));
+
+  connect(make, &Process::OnFailure,
+          [](QString output) { qDebug() << output; });
+  connect(make, &Process::OnFinished, make, &Process::deleteLater);
+  connect(make, &Process::OnSuccess, [id](QString output) {
+    qDebug().noquote() << output;
+
+    qWarning() << "Version build" << id;
+  });
+
+  registerProcess(id, make);
+  make->start();
+}
+
+void VersionManager::checkoutRepo(Version::ID id) {
   Version& version(db_.versions().get(id));
 
   if (version.state() == Version::State::CLONED ||
