@@ -34,6 +34,13 @@ Process* Process::gitLog(const ResourcePath& repo, QStringList arguments) {
   return new Process(args, repo);
 }
 
+Process* Process::gitFech(const ResourcePath& repo, QStringList arguments) {
+  QStringList args(arguments);
+  args.prepend("fetch");
+
+  return new Process(args, repo);
+}
+
 Process* Process::gitCheckout(QString branch, const ResourcePath& repo) {
   return new Process({"checkout", branch}, repo);
 }
@@ -45,6 +52,7 @@ void Process::start() {
   git_ = new QProcess(this);
   git_->setWorkingDirectory(exec_dir_.toSystemAbsolute());
   git_->start(git_path, args_);
+  qDebug() << git_path << args_;
 
   if (!git_->waitForStarted(3000))
     emit OnFailure("Could not start (path=" + git_path +

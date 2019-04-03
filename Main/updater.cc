@@ -44,7 +44,7 @@ Updater::Updater(const QSettings& settings, Database& db)
     throw Exception("Build directory of current version not found: " +
                     currbuild);
 
-  timer_ = new QTimer(nullptr);
+  timer_ = new QTimer(this);
   timer_->setInterval(interval_s_ * 1000);
   connect(timer_, &QTimer::timeout, this, &Updater::search);
 
@@ -77,10 +77,9 @@ Process* Updater::clone() {
   Process* git(
       Process::gitClone(repo_url_, sourceDir(), {"-n"}));  // -n for no checkout
 
-  connect(git, &Process::OnStarted, [this]() {
-    qDebug() << "Cloning" << repo_url_ << "into"
-             << sourceDir().toSystemAbsolute() << "...";
-  });
+  // connect(git, &Process::OnStarted,
+  //	[this]() { qDebug() << "Cloning" << repo_url_ << "into" <<
+  //sourceDir().toSystemAbsolute() << "..."; });
   connect(git, &Process::OnSuccess, []() { qDebug() << "Cloned"; });
   connect(git, &Process::OnFailure,
           [](QString output) { qDebug() << "Cloned error;" << output; });
@@ -92,8 +91,8 @@ Process* Updater::clone() {
 Process* Updater::checkout(Version::ID hash) {
   Process* git(Process::gitCheckout(hash, sourceDir()));
 
-  connect(git, &Process::OnStarted,
-          [hash]() { qDebug() << "Checkint out" << hash << "..."; });
+  // connect(git, &Process::OnStarted, [hash]() { qDebug() << "Checkint out" <<
+  // hash << "..."; });
   connect(git, &Process::OnSuccess, []() { qDebug() << "Checked out"; });
   connect(git, &Process::OnFailure,
           [](QString output) { qDebug() << "Check out error:" << output; });
@@ -117,17 +116,22 @@ void Updater::search() {
   qDebug().nospace() << "Searching for updates... (thread="
                      << QThread::currentThreadId() << ")";
 
-  Process* git = Process::gitLog(
+  Process* gitF = Process::gitFech(sourceDir(), {"origin"});
+  Process* gitL = Process::gitLog(
       sourceDir(),
       {"--pretty=format:\"%H#%ad\"", "--date=rfc2822", "--max-count=5",
        currentVersion().id() + "...origin/" + repo_branch_});
 
-  connect(git, &Process::OnSuccess, this, &Updater::logSuccess);
-  connect(git, &Process::OnFailure, this, &Updater::logFailure);
-  // connect(git, &Git::OnFinished, this, [this]() { timer_->start(); });
-  connect(git, &Process::OnFinished, git, &Process::deleteLater);
+  connect(gitF, &Process::OnSuccess, gitL, &Process::start);
+  connect(gitF, &Process::OnFinished, gitF, &Process::deleteLater);
+  connect(gitF, &Process::OnFailure, gitL, &Process::deleteLater);
 
-  git->start();
+  connect(gitL, &Process::OnSuccess, this, &Updater::logSuccess);
+  connect(gitL, &Process::OnFailure, this, &Updater::logFailure);
+  // connect(git, &Git::OnFinished, this, [this]() { timer_->start(); });
+  connect(gitL, &Process::OnFinished, gitL, &Process::deleteLater);
+
+  gitF->start();
 }
 
 void Updater::logSuccess(QString output) {

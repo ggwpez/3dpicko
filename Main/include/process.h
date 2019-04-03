@@ -24,6 +24,7 @@ class Process : public QObject {
    * "--date=rfc2822", "--max-count=5"}
    */
   static Process* gitLog(const ResourcePath& repo, QStringList arguments = {});
+  static Process* gitFech(const ResourcePath& repo, QStringList arguments = {});
 
   ~Process();
 
