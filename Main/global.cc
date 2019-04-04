@@ -152,7 +152,7 @@ QString Setup(QCoreApplication* app) {
       settings.value("subprocess_timeout_s", 60 * 1000).toInt() * 1000;
 
   qDebug() << "Version:" << currentVersion().id() << "built on"
-           << currentVersion().date();
+           << currentVersion().date().toString(dateTimeFormat());
 
   return ini_file_path;
 }
