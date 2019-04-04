@@ -23,7 +23,7 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
           });
   connect(this, &VersionManager::OnInstalled, this, [this](Version::ID id) {
     if (!to_be_installed_.size() || to_be_installed_.head() != id)
-      qWarning("OnInstallError error");
+      qWarning("OnInstall error");
     else
       to_be_installed_.dequeue();
     qDebug() << "Installation complete (id=" << id << ")";
@@ -109,7 +109,16 @@ void VersionManager::makeVersion(Version::ID id) {
   Process* make(Process::make(build_dir));
 
   connect(make, &Process::OnFailure, [this, id](QString output) {
-    emit this->OnInstallError("make", output);
+    if (output.contains("internal compiler error")) {
+      if (++make_retries_ < max_make_retries_) {
+        qWarning() << "Compiler crashed (segmentation fault), restarting with"
+                   << (max_make_retries_ - make_retries_) << "tries left";
+        this->makeVersion(id);
+      } else
+        emit this->OnInstallError(
+            id, "Compiler crashed (segmentation fault) too often");
+    } else
+      emit this->OnInstallError("make", output);
   });
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
   connect(make, &Process::OnSuccess, [this, id]() { this->linkVersion(id); });

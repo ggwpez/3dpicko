@@ -68,5 +68,8 @@ class VersionManager : public QObject {
    * track of whats next.
    */
   QQueue<Version::ID> to_be_installed_;
+  // TODO bad style
+  int make_retries_ = 0;
+  int const max_make_retries_ = 3;
 };
 }  // namespace c3picko
