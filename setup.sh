@@ -44,9 +44,9 @@ cd $2
 
 # TODO release
 qmake $SOURCE
-make -j8 > /dev/null
+make -j7 > /dev/null
 # GCC 8 likes to segfault, just try it twice
-make -j8 > /dev/null
+make -j7 > /dev/null
 
 cd $1
 ln -s builds/$2/Main/Main $1/main

@@ -1,12 +1,13 @@
 #pragma once
 
-#include <QObject>
-#include <QTimer>
 #include "include/database.hpp"
 #include "include/resource_path.h"
+#include <QObject>
+#include <QTimer>
 
 class QSettings;
-namespace c3picko {
+namespace c3picko
+{
 class Process;
 class VersionManager;
 /**
@@ -18,56 +19,59 @@ class VersionManager;
  * processes to ensure that the timer does not trigger faster than we can
  * process the triggers.
  */
-class Updater : public QObject {
-  Q_OBJECT
- public:
-  Updater(QSettings const& settings, Database& db);
-  ~Updater();
+class Updater : public QObject
+{
+	Q_OBJECT
+  public:
+	Updater(QSettings const& settings, Database& db, QObject* _parent = nullptr);
+	~Updater();
 
-  static qint32 defaultInterval;
-  static bool defaultEnabled;
+	static qint32 defaultInterval;
+	static bool   defaultEnabled;
 
-  ResourcePath sourceDir() const;
-  ResourcePath buildDir(Version::ID = "") const;
+	ResourcePath sourceDir() const;
+	ResourcePath buildDir(Version::ID = "") const;
 
-  Process* clone();
-  Process* checkout(Version::ID hash);
+	Process* clone();
+	Process* checkout(Version::ID hash);
 
- signals:
-  /**
-   * @brief Emitted when a new update is available.
-   * @param How many updates were found.
-   * @param Last version.
-   */
-  void updateAvailable(QString version);
-  void noUpdateAvailable();
+	VersionManager* mng() const;
 
- private slots:
-  /**
-   * @brief Starts the periodic search for updates.
-   * The interval is specified in settings.updater.interval
-   */
-  void startSearch();
-  /**
-   * @brief Stops the search for updates.
-   */
-  void stopSearch();
-  /**
-   * @brief Searches for an update.
-   */
-  void search();
+  signals:
+	/**
+	 * @brief Emitted when a new update is available.
+	 * @param How many updates were found.
+	 * @param Last version.
+	 */
+	void updateAvailable(QString version);
+	void noUpdateAvailable();
 
-  // Git callbacks
-  void logSuccess(QString);
-  void logFailure(QString);
+  private slots:
+	/**
+	 * @brief Starts the periodic search for updates.
+	 * The interval is specified in settings.updater.interval
+	 */
+	void startSearch();
+	/**
+	 * @brief Stops the search for updates.
+	 */
+	void stopSearch();
+	/**
+	 * @brief Searches for an update.
+	 */
+	void search();
 
- private:
-  Database& db_;
-  ResourcePath working_dir_;
-  qint32 interval_s_;
-  QTimer* timer_;
-  QString repo_url_;
-  QString repo_branch_;
-  VersionManager* mng_;
+	// Git callbacks
+	void logSuccess(QString);
+	void logFailure(QString);
+
+  private:
+	Database&		db_;
+	ResourcePath	working_dir_;
+	qint32			interval_s_;
+	QTimer*			timer_;
+	QString			repo_url_;
+	QString			repo_branch_;
+	VersionManager* mng_;
 };
-}  // namespace c3picko
+} // namespace c3picko
