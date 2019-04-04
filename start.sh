@@ -2,10 +2,11 @@
 
 export LD_LIBRARY_PATH=.
 
-while : ; do
-	./main serverconfig.ini $*
+# Someone pls tell me how to 'do while' works
+./main serverconfig.ini $*
+while [ $? -eq 101 ]; do
 	# 101 is the hardcoded restart exit code
-	[[ $? -eq 101 ]] || break
+	./main serverconfig.ini $*
 done
 
 exit 0
