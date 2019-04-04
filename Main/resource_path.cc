@@ -34,7 +34,7 @@ const QString ResourcePath::toServerAbsolute() const {
     throw Exception(
         "System path outside of Root can not be converted to 'ServerAbsolute'");
 
-  return system_absolute_.mid(root_abs.size() - 1);
+  return system_absolute_.mid(root_abs.size());
 }
 
 const QString ResourcePath::toDocRootAbsolute() const {
@@ -45,7 +45,7 @@ const QString ResourcePath::toDocRootAbsolute() const {
         "System path outside of DocRoot can not be converted to "
         "'DocRootAbsolute'");
 
-  return system_absolute_.mid(droot_abs.size() - 1);
+  return system_absolute_.mid(droot_abs.size());
 }
 
 bool ResourcePath::exists() const {
@@ -68,7 +68,8 @@ ResourcePath ResourcePath::operator+(const QString& obj) const {
       !system_absolute_.endsWith(QDir::separator()))
     infix = QDir::separator();
 
-  return QString(system_absolute_ + infix + obj).replace("//", "/");
+  QString result = system_absolute_ + infix + obj;
+  return QDir::cleanPath(result);
 }
 
 template <>
