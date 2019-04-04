@@ -29,6 +29,8 @@ class APIOutput : public QObject {
 
  protected slots:
   void UnknownRequest(QString request, QObject* client);
+
+  void VersionInfoRequested(QObject* client);
   void ImageListRequested(QObject* client);
   void JobListRequested(QObject* client);
   void ProfileListRequested(QObject* client);
@@ -52,11 +54,14 @@ class APIOutput : public QObject {
   void ProfileUpdateError(Profile::ID, QObject* client);
   void ProfileDeleted(Profile::ID profile, QObject* client);
   void ProfileDeleteError(Profile::ID profile, QObject* client);
+
   void DefaultSettingsProfileSet(Profile::ID profile, QObject* client);
   void DefaultSettingsProfileSetError(QString error, QObject* client);
+
   void SetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
                        QObject* client);
   void SetStartingWellError(QString error, QObject* client);
+
   void SetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
                          QObject* client);
   void SetColoniesToPickError(QString error, QObject* client);
@@ -71,6 +76,8 @@ class APIOutput : public QObject {
    * @brief Always call this from ColonyDetector or derived!
    */
   void ColonyDetectionError(QString error, QObject* client);
+
+  void VersionSwitched(Version::ID);
 
   void Error(QString where, QString what, QObject* client);
 

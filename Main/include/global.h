@@ -24,7 +24,6 @@ ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
 ResourcePath reportFolder();
-ResourcePath updateFolder();
 
 QString searchConfigFile(QStringList args);
 /**

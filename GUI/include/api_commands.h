@@ -9,7 +9,9 @@ namespace c3picko {
 struct APICommands {
   static QString GET_IMAGE_LIST;
   static QString GET_PROFILE_LIST;
+  static QString GET_VERSION_LIST;
   static QString GET_JOB_LIST;
+  static QString VERSION_SWITCHED;
   static QString GET_DETECTION_ALGORITHMS;
   static QString SET_DEFAULT_SETTINGS_PROFILE;
   static QString SET_STARTING_WELL;

@@ -12,6 +12,7 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
       repo_url_(repo_url),
       repo_branch_(repo_branch),
       working_dir_(working_dir),
+      selected_(currentVersion().id()),
       max_interesting_(0) {
   connect(this, &VersionManager::OnInstallError, this,
           [this](Version::ID id, QString error) {
@@ -98,7 +99,10 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
     emit this->OnInstallError("qmake", output);
   });
   connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
-  connect(qmake, &Process::OnSuccess, [this, id]() { this->makeVersion(id); });
+  connect(qmake, &Process::OnSuccess, [this, id]() {
+    make_retries_ = 0;
+    this->makeVersion(id);
+  });
 
   registerProcess(id, qmake);
   qmake->start();
@@ -121,7 +125,10 @@ void VersionManager::makeVersion(Version::ID id) {
       emit this->OnInstallError("make", output);
   });
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
-  connect(make, &Process::OnSuccess, [this, id]() { this->linkVersion(id); });
+  connect(make, &Process::OnSuccess, [this, id]() {
+    emit this->OnInstalled(id);
+    this->linkVersion(id);
+  });
 
   registerProcess(id, make);
   make->start();
@@ -141,7 +148,10 @@ void VersionManager::linkVersion(Version::ID id) {
     emit this->OnInstallError("ln", output);
   });
   connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
-  connect(ln, &Process::OnSuccess, [this, id] { emit this->OnInstalled(id); });
+  connect(ln, &Process::OnSuccess, [this, id] {
+    selected_ = id;
+    emit this->OnSwitched(id);
+  });
 
   registerProcess(id, ln);
   ln->start();

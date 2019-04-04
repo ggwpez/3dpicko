@@ -16,7 +16,9 @@ class VersionManager : public QObject {
  public:
   VersionManager(ResourcePath working_dir, QString repo_url,
                  QString repo_branch, Database& db, QObject* _parent = nullptr);
+
   ResourcePath sourcePath() const;
+  Version::ID selected() const;
 
  public slots:
   void installVersion(Version::ID);
@@ -48,6 +50,12 @@ class VersionManager : public QObject {
   void OnInstalled(Version::ID);
   void OnInstallError(Version::ID, QString error);
   void OnUnInstalled(Version::ID);
+  /**
+   * @brief Emitted when the version was switched and a restart should take
+   * place to commence the changes.
+   * @param now New version.
+   */
+  void OnSwitched(Version::ID now);
 
  private:
   Database& db_;
@@ -68,6 +76,10 @@ class VersionManager : public QObject {
    * track of whats next.
    */
   QQueue<Version::ID> to_be_installed_;
+  /**
+   * @brief The version that will be used after restarting the server.
+   */
+  Version::ID selected_;
   // TODO bad style
   int make_retries_ = 0;
   int const max_make_retries_ = 3;

@@ -66,10 +66,6 @@ ResourcePath UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
 
 ResourcePath reportFolder() { return DocRoot() + "reports/"; }
 
-ResourcePath updateFolder() {
-  return ResourcePath::fromSystemAbsolute("/tmp/updates/");
-}
-
 /**
  * Search the configuration file.
  * Aborts the application if not found.
@@ -145,14 +141,12 @@ QString Setup(QCoreApplication* app) {
   // Create "report" folder
   if (!QDir(reportFolder().toSystemAbsolute()).exists())
     QDir().mkdir(reportFolder().toSystemAbsolute());
-  if (!QDir(updateFolder().toSystemAbsolute()).exists())
-    QDir().mkdir(updateFolder().toSystemAbsolute());
 
   subprocess_timeout_ms =
       settings.value("subprocess_timeout_s", 60 * 1000).toInt() * 1000;
 
-  qDebug() << "Version:" << currentVersion().id() << "built on"
-           << currentVersion().date().toString(dateTimeFormat());
+  qDebug().noquote() << "Version:" << currentVersion().id() << "built on"
+                     << currentVersion().date().toString(dateTimeFormat());
 
   return ini_file_path;
 }
