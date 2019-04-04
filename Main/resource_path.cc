@@ -32,7 +32,9 @@ const QString ResourcePath::toServerAbsolute() const {
 
   if (!system_absolute_.startsWith(root_abs))
     throw Exception(
-        "System path outside of Root can not be converted to 'ServerAbsolute'");
+        "System path outside of Root can not be converted to "
+        "'ServerAbsolute': " +
+        system_absolute_);
 
   return system_absolute_.mid(root_abs.size());
 }
@@ -43,7 +45,8 @@ const QString ResourcePath::toDocRootAbsolute() const {
   if (!system_absolute_.startsWith(droot_abs))
     throw Exception(
         "System path outside of DocRoot can not be converted to "
-        "'DocRootAbsolute'");
+        "'DocRootAbsolute': " +
+        system_absolute_);
 
   return system_absolute_.mid(droot_abs.size());
 }
