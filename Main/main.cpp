@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
       qCritical("Exception: %s", "unknown");
     }
 
-    if (status == exitCodeRestart())
+    if (status == exitCodeSoftRestart())
       qInfo() << "Awaiting restart...";
     else
       break;

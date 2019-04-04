@@ -10,9 +10,16 @@
 namespace c3picko {
 Plate1::Plate1()
     : Algorithm("1", "Plate1", "Detects a plate with red frame attached",
-                {(AlgoStep)Normal1::cvt, (AlgoStep)Plate1::threshold,
+                {(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
                  (AlgoStep)Plate1::detect},
                 {}, true, 5000) {}
+
+void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
+  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
+  cv::Mat& output = result->newMat();
+
+  cv::cvtColor(input, output, CV_BGR2GRAY);
+}
 
 void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
   cv::Mat& input = result->oldMat();
