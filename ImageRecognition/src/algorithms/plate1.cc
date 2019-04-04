@@ -91,13 +91,13 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
     // image size
     if ((edge.size() == 6 || edge.size() == 4)) {
       if (edge.size() == 6) {
-        math::InnerBorder edge;
-        std::copy(edge.begin(), edge.begin() + 6, edge.begin());
-        inner_edges.push_back(edge);
+        math::InnerBorder border;
+        std::copy(edge.begin(), edge.begin() + 6, border.begin());
+        inner_edges.push_back(border);
       } else {
-        math::OuterBorder edge;
-        std::copy(edge.begin(), edge.begin() + 4, edge.begin());
-        outer_edges.push_back(edge);
+        math::OuterBorder border;
+        std::copy(edge.begin(), edge.begin() + 4, border.begin());
+        outer_edges.push_back(border);
       }
     }
   }
