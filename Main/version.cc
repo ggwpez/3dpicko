@@ -5,12 +5,11 @@ namespace c3picko {
 Version::Version(Version::ID id, QDateTime date)
     : id_(id), date_(date), state_(State::NEW) {}
 
-Version::Version(Version::ID id, QDateTime date, ResourcePath source_dir,
-                 ResourcePath build_dir, State type)
+Version::Version(Version::ID id, QDateTime date, State type)
     : id_(id),
       date_(date),
-      source_dir_(source_dir),
-      build_dir_(build_dir),
+      /*source_dir_(source_dir),
+      build_dir_(build_dir),*/
       state_(type) {}
 
 QString Version::id() const { return id_; }
@@ -35,8 +34,8 @@ QJsonObject Marshalling::toJson(const Version& value) {
 
   obj["hash"] = value.id();
   obj["date"] = Marshalling::toJson(value.date());
-  obj["source_dir"] = Marshalling::toJson(value.sourceDir());
-  obj["build_dir"] = Marshalling::toJson(value.buildDir());
+  // obj["source_dir"] = Marshalling::toJson(value.sourceDir());
+  // obj["build_dir"] = Marshalling::toJson(value.buildDir());
   obj["state"] = toString(value.state());
 
   return obj;
@@ -46,8 +45,8 @@ template <>
 Version Marshalling::fromJson(const QJsonObject& obj) {
   return Version(obj["hash"].toString(),
                  Marshalling::fromJson<QDateTime>(obj["date"]),
-                 Marshalling::fromJson<ResourcePath>(obj["source_dir"]),
-                 Marshalling::fromJson<ResourcePath>(obj["build_dir"]),
+                 /*Marshalling::fromJson<ResourcePath>(obj["source_dir"]),
+                 Marshalling::fromJson<ResourcePath>(obj["build_dir"]),*/
                  Marshalling::fromJson<Version::State>(obj["state"]));
 }
 
@@ -57,9 +56,9 @@ Version::State Version::state() const { return state_; }
 
 void Version::setState(const Version::State& state) { state_ = state; }
 
-const ResourcePath& Version::sourceDir() const { return source_dir_; }
+// const ResourcePath& Version::sourceDir() const { return source_dir_; }
 
-const ResourcePath& Version::buildDir() const { return build_dir_; }
+// const ResourcePath& Version::buildDir() const { return build_dir_; }
 
 QString toString(Version::State state) {
   switch (state) {

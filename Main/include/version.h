@@ -35,7 +35,8 @@ class Version {
    * @brief type=Type::NEW
    */
   Version(ID id, QDateTime date);
-  Version(ID id, QDateTime date, ResourcePath sourceDir, ResourcePath buildDir,
+  Version(ID id,
+          QDateTime date, /*ResourcePath sourceDir, ResourcePath buildDir,*/
           State state);
 
   ID id() const;
@@ -43,14 +44,14 @@ class Version {
   State state() const;
   void setState(State const&);
 
-  ResourcePath const& sourceDir() const;
-  ResourcePath const& buildDir() const;
+  // ResourcePath const& sourceDir() const;
+  // ResourcePath const& buildDir() const;
 
  private:
   ID id_;
   QDateTime date_;
-  ResourcePath source_dir_;
-  ResourcePath build_dir_;
+  // ResourcePath source_dir_;
+  // ResourcePath build_dir_;
   State state_;
 };
 QString toString(Version::State state);  // TODO
