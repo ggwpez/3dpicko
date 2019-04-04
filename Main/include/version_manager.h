@@ -1,12 +1,16 @@
 #pragma once
 
 #include <QObject>
-#include <queue>
+#include <QQueue>
 #include "include/version.h"
 
 namespace c3picko {
 class Process;
 class Database;
+/**
+ * @brief This class MUST run in Main thread, it is not designed for
+ * multithreading. Also the database class cant handle that.
+ */
 class VersionManager : public QObject {
   Q_OBJECT
  public:
@@ -15,10 +19,14 @@ class VersionManager : public QObject {
   ResourcePath sourcePath() const;
 
  public slots:
-  void addVersion(Version::ID);
+  void installVersion(Version::ID);
   void remOldestVersion(Version::ID);
 
  private slots:
+  /**
+   * @brief Installes the next version from to_be_installed_ .
+   */
+  void installNext();
   void checkoutAndQmakeVersion(Version::ID);
   void qmakeAmdMakeVersion(Version::ID);
   void makeVersion(Version::ID);
@@ -35,8 +43,11 @@ class VersionManager : public QObject {
 
  signals:
   void OnTransition(Version::ID, Version::State old, Version::State now);
-  void OnVersionInstalled(Version::ID);
-  void OnVersionUnInstalled(Version::ID);
+
+  void OnInstallBegin(Version::ID);
+  void OnInstalled(Version::ID);
+  void OnInstallError(Version::ID, QString error);
+  void OnUnInstalled(Version::ID);
 
  private:
   Database& db_;
@@ -51,5 +62,11 @@ class VersionManager : public QObject {
    * @brief the top element is the currently running
    */
   std::map<Version::ID, Process*> processes_;
+  /**
+   * @brief Queue of versions that should be installed.
+   * Only one version can be installed at a time, thats why this queue keeps
+   * track of whats next.
+   */
+  QQueue<Version::ID> to_be_installed_;
 };
 }  // namespace c3picko

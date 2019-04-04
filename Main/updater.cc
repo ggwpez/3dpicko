@@ -57,7 +57,6 @@ Updater::Updater(const QSettings& settings, Database& db)
     qInfo() << "Updater disabled";
 
   qDebug() << "Updater setup thread id =" << QThread::currentThreadId();
-  qWarning() << "Test update";
 }
 
 Updater::~Updater() {
@@ -138,7 +137,7 @@ void Updater::logSuccess(QString output) {
   QStringList lines = output.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
   qDebug("origin/%s is %i ahead and 0 behind HEAD", qPrintable(repo_branch_),
          lines.size());
-  std::stack<Version::ID> newest;
+  Version::ID to_be_installed;
 
   for (QString line : lines) {
     QStringList splits = line.split('#');
@@ -160,20 +159,24 @@ void Updater::logSuccess(QString output) {
       qDebug() << "Commit" << id << "is new";
       // New versions dont have source or build directories yet
       db_.versions().add(id, Version(id, date));
-      try {
-        mng_->addVersion(id);
-      } catch (std::exception const& e) {
-        qCritical() << "VersionManager error:" << e.what();
-        timer_->stop();
-        return;
-      } catch (...) {
-        qCritical() << "VersionManager error:"
-                    << "unknown";
-        timer_->stop();
-        return;
-      }
-    } else
+      // Set the first (newest) as to be installed
+      if (to_be_installed.isEmpty()) to_be_installed = id;
+    }
   }
+
+  // Is there a new ersion that we should install?
+  // Obviously we could install more than one new version, but we keep it simple
+  // for now
+  if (!to_be_installed.isEmpty()) try {
+      mng_->installVersion(to_be_installed);
+    } catch (std::exception const& e) {
+      qCritical() << "VersionManager error:" << e.what();
+      timer_->stop();
+    } catch (...) {
+      qCritical() << "VersionManager error:"
+                  << "unknown";
+      timer_->stop();
+    }
 }
 
 void Updater::logFailure(QString output) {

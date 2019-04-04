@@ -63,7 +63,9 @@ Database::ProfileTable& Database::profiles() { return profiles_; }
 
 Database::VersionTable& Database::versions() { return versions_; }
 
-Database::VersionIdVector& Database::versionsOI() { return versions_oi_; }
+Database::VersionIdVector& Database::installedVersions() {
+  return versions_oi_;
+}
 
 // Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
 

@@ -38,7 +38,7 @@ class Database : public QObject, JsonConvertable {
   ImageTable& deletedImages();  // "
   ProfileTable& profiles();
   VersionTable& versions();
-  VersionIdVector& versionsOI();
+  VersionIdVector& installedVersions();
   // AlgoJobTable&		  algoJobs();
   // DetectionResultTable& detectionResults();
 

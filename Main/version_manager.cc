@@ -12,35 +12,37 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
       repo_url_(repo_url),
       repo_branch_(repo_branch),
       working_dir_(working_dir),
-      max_interesting_(0) {}
+      max_interesting_(0) {
+  connect(this, &VersionManager::OnInstallError, this,
+          [this](Version::ID id, QString error) {
+            if (!to_be_installed_.size() || to_be_installed_.head() != id)
+              qWarning("OnInstallError error");
+            else
+              to_be_installed_.dequeue();
+            qDebug() << "Installation failed (id=" << id << "):" << error;
+          });
+  connect(this, &VersionManager::OnInstalled, this, [this](Version::ID id) {
+    if (!to_be_installed_.size() || to_be_installed_.head() != id)
+      qWarning("OnInstallError error");
+    else
+      to_be_installed_.dequeue();
+    qDebug() << "Installation complete (id=" << id << ")";
+  });
+}
 
 ResourcePath VersionManager::sourcePath() const {
   return working_dir_ + "source/";
 }
 
-void VersionManager::addVersion(Version::ID id) {
-  if (db_.versionsOI().contains(id))
-    return (void)qCritical("New versions should not already be of interest");
-
-  if (db_.versionsOI().size() >= max_interesting_ && db_.versionsOI().size()) {
-    QVector<Version::ID> vois(db_.versionsOI());
-
-    while (db_.versionsOI().size() >= max_interesting_) {
-      remOldestVersion(vois.back());
-      vois.pop_back();
-    }
-  }
-
-  qDebug() << "Selecting version" << id;
-  qDebug() << "Working dir:" << working_dir_.toSystemAbsolute();
-  db_.versionsOI().push_front(id);
-  checkoutAndQmakeVersion(id);
+void VersionManager::installVersion(Version::ID id) {
+  to_be_installed_.enqueue(id);
+  installNext();
 }
 
 void VersionManager::remOldestVersion(Version::ID id) {
-  if (db_.versionsOI().front() != id)
+  if (db_.installedVersions().front() != id)
     throw Exception("Can only remove the oldest version");
-  if (db_.versionsOI().size() == 1)
+  if (db_.installedVersions().size() == 1)
     throw Exception("There must be at least one version of interest");
 
   qDebug() << "Removing old version" << id;
@@ -49,8 +51,21 @@ void VersionManager::remOldestVersion(Version::ID id) {
     processes_.at(id)->kill();
 
   // TODO remove build dir
-  emit OnVersionUnInstalled(id);
-  db_.versionsOI().pop_front();
+  emit OnUnInstalled(id);
+  db_.installedVersions().pop_front();
+}
+
+void VersionManager::installNext() {
+  if (!to_be_installed_.isEmpty()) {
+    Version::ID id(to_be_installed_.head());
+    emit OnInstallBegin(id);
+
+    if (db_.installedVersions().contains(id))
+      return emit OnInstallError(id, "Cant install version twice");
+
+    qDebug() << "Selecting version" << id;
+    checkoutAndQmakeVersion(id);
+  }
 }
 
 void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
@@ -59,8 +74,9 @@ void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
   connect(git, &Process::OnStarted,
           [id]() { qDebug() << "Checking out" << id << "..."; });
   connect(git, &Process::OnSuccess, [this, id]() { qmakeAmdMakeVersion(id); });
-  connect(git, &Process::OnFailure,
-          [](QString output) { qDebug() << "Check out error:" << output; });
+  connect(git, &Process::OnFailure, [this, id](QString output) {
+    emit this->OnInstallError(id, "git checkout: " + output);
+  });
   connect(git, &Process::OnFinished, git, &Process::deleteLater);
 
   registerProcess(id, git);
@@ -72,13 +88,15 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
 
   if (!QDir(build_dir.toSystemAbsolute()).exists())
     if (!QDir().mkdir(build_dir.toSystemAbsolute()))
-      return (void)(qCritical()
-                    << "Cant create build dir" << build_dir.toSystemAbsolute());
+      return emit OnInstallError(
+          "qmake (setup phase)",
+          "Cant create build dir" + build_dir.toSystemAbsolute());
 
   Process* qmake(Process::qmake(build_dir, sourcePath()));
 
-  connect(qmake, &Process::OnFailure,
-          [](QString output) { qDebug() << output; });
+  connect(qmake, &Process::OnFailure, [this, id](QString output) {
+    emit this->OnInstallError("qmake", output);
+  });
   connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
   connect(qmake, &Process::OnSuccess, [this, id]() { this->makeVersion(id); });
 
@@ -90,8 +108,9 @@ void VersionManager::makeVersion(Version::ID id) {
   ResourcePath build_dir(working_dir_ + "builds/" + id);
   Process* make(Process::make(build_dir));
 
-  connect(make, &Process::OnFailure,
-          [](QString output) { qDebug() << output; });
+  connect(make, &Process::OnFailure, [this, id](QString output) {
+    emit this->OnInstallError("make", output);
+  });
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
   connect(make, &Process::OnSuccess, [this, id]() { this->linkVersion(id); });
 
@@ -109,14 +128,11 @@ void VersionManager::linkVersion(Version::ID id) {
   // ln instance that does not listen to HUP
   Process* ln(Process::ln(binary, link));
 
-  connect(ln, &Process::OnFailure, [](QString output) {
-    qDebug() << "Could not create link:" << output;
+  connect(ln, &Process::OnFailure, [this, id](QString output) {
+    emit this->OnInstallError("ln", output);
   });
   connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
-  connect(ln, &Process::OnSuccess, [this, id] {
-    qDebug() << "Installation completed" << id;
-    emit this->OnVersionInstalled(id);
-  });
+  connect(ln, &Process::OnSuccess, [this, id] { emit this->OnInstalled(id); });
 
   registerProcess(id, ln);
   ln->start();
@@ -171,5 +187,9 @@ void VersionManager::registerProcess(Version::ID id, Process* proc) {
           [this, id]() { this->unregisterProcess(id); });
 }
 
-void VersionManager::unregisterProcess(Version::ID id) { processes_.erase(id); }
+void VersionManager::unregisterProcess(Version::ID id) {
+  processes_.erase(id);
+  if (to_be_installed_.size() && to_be_installed_.head() == id)
+    emit OnInstallError(id, "Canceled");
+}
 }  // namespace c3picko
