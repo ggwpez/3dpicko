@@ -3,7 +3,7 @@
 namespace c3picko {
 QString APICommands::GET_IMAGE_LIST = "getimagelist";
 QString APICommands::GET_PROFILE_LIST = "getprofilelist";
-QString APICommands::GET_VERSION_LIST = "getversioninfo";
+QString APICommands::GET_VERSION_LIST = "getversionlist";
 QString APICommands::GET_JOB_LIST = "getjoblist";
 QString APICommands::VERSION_SWITCHED = "versionswitched";
 QString APICommands::GET_DETECTION_ALGORITHMS = "getdetectionalgorithms";
