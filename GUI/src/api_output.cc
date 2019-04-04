@@ -14,7 +14,7 @@ void APIOutput::UnknownRequest(QString request, QObject* client) {
   Error("Unknown request", request, client);
 }
 
-void APIOutput::VersionInfoRequested(QObject* client) {
+void APIOutput::VersionListRequested(QObject* client) {
   emit op->toClient(client, APICommands::GET_VERSION_LIST,
                     op->createVersionList());
 }
