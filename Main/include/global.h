@@ -57,11 +57,17 @@ void setMessageHandler(std::function<void(QString)> const& handler);
 QString dateTimeFormat();
 
 /**
- * @brief Exit code indicating restart of the application.
- * I would use a macro aka EXIT_RESTART but no macros since google style
- * guide...
+ * @brief Restarts the QCoreApplication but not the process itself.
+ * Static (global) data stays the same.
+ * @return 123
  */
-int exitCodeRestart();
+int exitCodeSoftRestart();
+/**
+ * @brief Stops the process and indicates that start.sh should restart the
+ * program.
+ * @return 101
+ */
+int exitCodeHardRestart();
 
 char const* defaultImageExtension();
 }  // namespace c3picko

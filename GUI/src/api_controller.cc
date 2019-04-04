@@ -511,7 +511,7 @@ void APIController::shutdown(QObject*) {
 
 void APIController::restart(QObject*) {
   qDebug() << "Restart";
-  qApp->exit(exitCodeRestart());
+  qApp->exit(exitCodeHardRestart());
 }
 
 QJsonObject APIController::createImageList() const {
