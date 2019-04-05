@@ -7,19 +7,21 @@ ResourcePath::ResourcePath(QString system_absolute_path)
 
 ResourcePath::ResourcePath() {}
 
-ResourcePath ResourcePath::fromSystemAbsolute(QString path) { return path; }
+ResourcePath ResourcePath::fromSystemAbsolute(QString path) {
+  return QDir::cleanPath(path);
+}
 
 // We have two // now, but the operator+ manages that
 ResourcePath ResourcePath::fromServerAbsolute(QString path) {
-  return Root() + path;
+  return QDir::cleanPath(Root() + path);
 }
 
 ResourcePath ResourcePath::fromServerRelative(QString path) {
-  return Root() + "/" + path;
+  return QDir::cleanPath(Root() + "/" + path);
 }
 
 ResourcePath ResourcePath::fromDocRootAbsolute(QString path) {
-  return DocRoot() + path;
+  return QDir::cleanPath(DocRoot() + path);
 }
 
 const QString ResourcePath::toSystemAbsolute() const {
@@ -46,7 +48,7 @@ const QString ResourcePath::toDocRootAbsolute() const {
     throw Exception(
         "System path outside of DocRoot can not be converted to "
         "'DocRootAbsolute': " +
-        system_absolute_);
+        system_absolute_ + " did not start with " + droot_abs);
 
   return system_absolute_.mid(droot_abs.size());
 }
