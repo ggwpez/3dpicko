@@ -8,7 +8,6 @@ APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
 
 void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
                               QObject* client) {
-  qDebug() << "Thread id" << QThread::currentThreadId();
   QString path = Marshalling::fromJson<QString>(request["request"]).toLower();
   QJsonObject req_data = request["data"].toObject();
 
