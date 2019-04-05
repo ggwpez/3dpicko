@@ -91,9 +91,15 @@ static bool copyRecursively(QString sourceFolder, QString destFolder) {
   bool success = false;
   QDir sourceDir(sourceFolder), destDir(destFolder);
 
-  if (!sourceDir.exists()) return false;
+  if (!sourceDir.exists()) {
+    qWarning() << "Could not find source dirctory";
+    return false;
+  }
 
-  if (!destDir.exists()) return false;
+  if (!destDir.exists()) {
+    qWarning() << "Could not find destination dirctory";
+    return false;
+  }
 
   QStringList files = sourceDir.entryList(QDir::Files);
   for (int i = 0; i < files.count(); i++) {
