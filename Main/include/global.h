@@ -73,6 +73,8 @@ int exitCodeSoftRestart();
  */
 int exitCodeHardRestart();
 
+int exitCodeSuccess();
+
 /**
  * Returns the default image extension for saving images.
  */

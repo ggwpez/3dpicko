@@ -29,6 +29,9 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
       to_be_installed_.dequeue();
     qDebug() << "Installation complete (id=" << id << ")";
     db_.installedVersions().push_back(id);
+
+    if (db_.installedVersions().size() > max_interesting_)
+      remOldestVersion(db_.installedVersions().front());
   });
 }
 
@@ -48,11 +51,18 @@ void VersionManager::remOldestVersion(Version::ID id) {
     throw Exception("Can only remove the oldest version");
   if (db_.installedVersions().size() == 1)
     throw Exception("There must be at least one version of interest");
+  if (currentVersion().id() == id)
+    throw Exception("Cant remove current version");
+  if (selected_ == id) throw Exception("Cant remove selected version");
 
   qDebug() << "Removing old version" << id;
   // Is there a process active right now?
   if (processes_.find(id) != processes_.end())  // Kill the process
     processes_.at(id)->kill();
+
+  ResourcePath build(working_dir_ + "builds/" + id);
+  if (!QDir(build.toSystemAbsolute()).removeRecursively())
+    qWarning() << "Could not remove directory" << build.toSystemAbsolute();
 
   // TODO remove build dir
   emit OnUnInstalled(id);
@@ -196,26 +206,34 @@ void VersionManager::makeVersion(Version::ID id) {
 }
 
 void VersionManager::linkVersion(Version::ID id) {
-  ResourcePath link(working_dir_ + "main");
-  QString binary("builds/" + id + "/Main/Main");
+  ResourcePath s_main(working_dir_ + "main"),
+      s_lqua(working_dir_ + "libquazip.so.1");
+  QString t_main("builds/" + id + "/Main/Main"),
+      t_lqua("builds/" + id + "/quazip/quazip/libquazip.so.1");
 
-  // TODO we would need a transaction here, since when we first delete the
-  // link and than create a new one, the application could crash after the
-  // deletion and the new link would not be created. To emulate a transaction
-  // we use an ln instance that does not listen to HUP
-  Process* ln(Process::ln(binary, link));
-  // FIXME also update the link to libquazip
-  connect(ln, &Process::OnFailure, [this, id](QString output) {
+  Process* ln_main(Process::ln(t_main, s_main));
+  Process* ln_lqua(Process::ln(t_lqua, s_lqua));
+
+  connect(ln_main, &Process::OnFailure, [this, id](QString output) {
     emit this->OnInstallError("ln", output);
   });
-  connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
-  connect(ln, &Process::OnSuccess, [this, id] {
+  connect(ln_main, &Process::OnFinished, ln_main, &Process::deleteLater);
+  connect(ln_main, &Process::OnSuccess, [this, id, ln_lqua]() {
+    registerProcess(id, ln_lqua);
+    ln_lqua->start();
+  });
+
+  connect(ln_lqua, &Process::OnFailure, [this, id](QString output) {
+    emit this->OnInstallError("ln", output);
+  });
+  connect(ln_lqua, &Process::OnFinished, ln_lqua, &Process::deleteLater);
+  connect(ln_lqua, &Process::OnSuccess, [this, id] {
     selected_ = id;
     emit this->OnSwitched(id);
   });
 
-  registerProcess(id, ln);
-  ln->start();
+  registerProcess(id, ln_main);
+  ln_main->start();
 }
 
 void VersionManager::checkoutRepo(Version::ID id) {

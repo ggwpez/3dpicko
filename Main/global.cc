@@ -98,7 +98,12 @@ static void setupSignals(QCoreApplication* app) {
 
   QObject::connect(sigwatch, &SignalDaemon::OnSignal, [&app](int signum) {
     qWarning("Shutdown by signal: %s", ::strsignal(signum));
-    app->quit();
+    if (signum == SIGUSR1)
+      qApp->exit(exitCodeSuccess());
+    else if (signum == SIGUSR2)
+      qApp->exit(exitCodeHardRestart());
+    else
+      app->quit();
   });
 #else
   qInfo() << "UNIX Signal Setup skipped";

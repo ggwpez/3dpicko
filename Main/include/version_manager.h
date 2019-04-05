@@ -64,6 +64,7 @@ class VersionManager : public QObject {
   ResourcePath working_dir_;
   /**
    * @brief Maximum number of interesting versions.
+   * Must be at least 1.
    */
   qint32 max_interesting_ = 3;
   /**
