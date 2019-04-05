@@ -174,7 +174,7 @@ void VersionManager::makeVersion(Version::ID id) {
   connect(make, &Process::OnFailure, [this, id](QString output) {
     if (output.contains("internal compiler error")) {
       if (++make_retries_ < max_make_retries_) {
-        qWarning() << "Compiler crashed (segmentation fault), restarting with"
+        qWarning() << "Compiler crashed (segmentation fault),"
                    << (max_make_retries_ - make_retries_) << "tries left";
         this->makeVersion(id);
       } else
