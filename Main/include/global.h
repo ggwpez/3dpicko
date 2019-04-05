@@ -70,5 +70,8 @@ int exitCodeSoftRestart();
  */
 int exitCodeHardRestart();
 
+/**
+ * Returns the default image extension for saving images.
+ */
 char const* defaultImageExtension();
 }  // namespace c3picko
