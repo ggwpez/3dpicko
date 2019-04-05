@@ -226,7 +226,7 @@ function AddJobToList(job, start = false)
         </p>
         </div>
         <div class="card-footer bg-white">
-        <a href="#" class="btn btn-primary ">Download Report</a>
+        <a href="${job.report}" class="btn btn-primary ">Download Report</a>
         </div>
         </div>`;
 
