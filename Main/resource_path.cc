@@ -34,7 +34,7 @@ const QString ResourcePath::toServerAbsolute() const {
     throw Exception(
         "System path outside of Root can not be converted to "
         "'ServerAbsolute': " +
-        system_absolute_);
+        system_absolute_ + " did not start with " + root_abs);
 
   return system_absolute_.mid(root_abs.size());
 }
