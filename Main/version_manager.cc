@@ -97,182 +97,180 @@ static bool copyRecursively(QString sourceFolder, QString destFolder) {
   }
 
   if (!destDir.exists()) {
-    qWarning() << "Could not find destination dirctory" << destFolder;
-    return false;
+    destDir.mkdir(destFolder);
+
+    // TODO try QDirIterator
+    QStringList files = sourceDir.entryList(QDir::Files);
+    for (int i = 0; i < files.count(); i++) {
+      QString srcName = sourceFolder + QDir::separator() + files[i];
+      QString destName = destFolder + QDir::separator() + files[i];
+      success = QFile::copy(srcName, destName);
+      if (!success) return false;
+    }
+
+    files.clear();
+    files = sourceDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (int i = 0; i < files.count(); i++) {
+      QString srcName = sourceFolder + QDir::separator() + files[i];
+      QString destName = destFolder + QDir::separator() + files[i];
+      success = copyRecursively(srcName, destName);
+      if (!success) return false;
+    }
+
+    return true;
   }
 
-  // TODO try QDirIterator
-  QStringList files = sourceDir.entryList(QDir::Files);
-  for (int i = 0; i < files.count(); i++) {
-    QString srcName = sourceFolder + QDir::separator() + files[i];
-    QString destName = destFolder + QDir::separator() + files[i];
-    success = QFile::copy(srcName, destName);
-    if (!success) return false;
+  void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
+    ResourcePath new_build_dir(working_dir_ + "builds/" + id);
+
+    // Check for the build directory and maybe copy an old build in there, to
+    // speed up make
+    if (!QDir(new_build_dir.toSystemAbsolute()).exists()) {
+      if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
+        return emit OnInstallError(
+            "qmake (setup phase)",
+            "Cant create build dir" + new_build_dir.toSystemAbsolute());
+
+      // Can we get an older build?
+      auto it(std::find(db_.installedVersions().begin(),
+                        db_.installedVersions().end(), id));
+      if (it != db_.installedVersions().begin()) {
+        --it;
+        ResourcePath old_build_dir(working_dir_ + "builds/" + *it);
+        // Copy older build to new directory
+        if (!copyRecursively(old_build_dir.toSystemAbsolute(),
+                             new_build_dir.toSystemAbsolute())) {
+          // If it did not work, delete it and create a new empty directory
+          // (again).
+          qWarning() << "Cold not copy build directories";
+          QDir(new_build_dir.toSystemAbsolute())
+              .removeRecursively();  // dont check return code
+
+          if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
+            return emit OnInstallError(
+                "qmake (setup phase)",
+                "Cant create build dir" + new_build_dir.toSystemAbsolute());
+        } else
+          qDebug() << "Copied build dir";
+      }
+    }
+
+    Process* qmake(Process::qmake(new_build_dir, sourcePath()));
+
+    connect(qmake, &Process::OnFailure, [this, id](QString output) {
+      emit this->OnInstallError("qmake", output);
+    });
+    connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
+    connect(qmake, &Process::OnSuccess, [this, id]() {
+      make_retries_ = 0;
+      this->makeVersion(id);
+    });
+
+    registerProcess(id, qmake);
+    qmake->start();
   }
 
-  files.clear();
-  files = sourceDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-  for (int i = 0; i < files.count(); i++) {
-    QString srcName = sourceFolder + QDir::separator() + files[i];
-    QString destName = destFolder + QDir::separator() + files[i];
-    success = copyRecursively(srcName, destName);
-    if (!success) return false;
-  }
+  void VersionManager::makeVersion(Version::ID id) {
+    ResourcePath build_dir(working_dir_ + "builds/" + id);
+    Process* make(Process::make(build_dir));
 
-  return true;
-}
-
-void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
-  ResourcePath new_build_dir(working_dir_ + "builds/" + id);
-
-  // Check for the build directory and maybe copy an old build in there, to
-  // speed up make
-  if (!QDir(new_build_dir.toSystemAbsolute()).exists()) {
-    if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
-      return emit OnInstallError(
-          "qmake (setup phase)",
-          "Cant create build dir" + new_build_dir.toSystemAbsolute());
-
-    // Can we get an older build?
-    auto it(std::find(db_.installedVersions().begin(),
-                      db_.installedVersions().end(), id));
-    if (it != db_.installedVersions().begin()) {
-      --it;
-      ResourcePath old_build_dir(working_dir_ + "builds/" + *it);
-      // Copy older build to new directory
-      if (!copyRecursively(old_build_dir.toSystemAbsolute(),
-                           new_build_dir.toSystemAbsolute())) {
-        // If it did not work, delete it and create a new empty directory
-        // (again).
-        qWarning() << "Cold not copy build directories";
-        QDir(new_build_dir.toSystemAbsolute())
-            .removeRecursively();  // dont check return code
-
-        if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
-          return emit OnInstallError(
-              "qmake (setup phase)",
-              "Cant create build dir" + new_build_dir.toSystemAbsolute());
+    connect(make, &Process::OnFailure, [this, id](QString output) {
+      if (output.contains("internal compiler error")) {
+        if (++make_retries_ < max_make_retries_) {
+          qWarning() << "Compiler crashed (segmentation fault),"
+                     << (max_make_retries_ - make_retries_) << "tries left";
+          this->makeVersion(id);
+        } else
+          emit this->OnInstallError(
+              id, "Compiler crashed (segmentation fault) too often");
       } else
-        qDebug() << "Copied build dir";
+        emit this->OnInstallError("make", output);
+    });
+    connect(make, &Process::OnFinished, make, &Process::deleteLater);
+    connect(make, &Process::OnSuccess, [this, id]() {
+      emit this->OnInstalled(id);
+      this->linkVersion(id);
+    });
+
+    registerProcess(id, make);
+    make->start();
+  }
+
+  void VersionManager::linkVersion(Version::ID id) {
+    ResourcePath link(working_dir_ + "main");
+    QString binary("builds/" + id + "/Main/Main");
+
+    // TODO we would need a transaction here, since when we first delete the
+    // link and than create a new one, the application could crash after the
+    // deletion and the new link would not be created. To emulate a transaction
+    // we use an ln instance that does not listen to HUP
+    Process* ln(Process::ln(binary, link));
+    // FIXME also update the link to libquazip
+    connect(ln, &Process::OnFailure, [this, id](QString output) {
+      emit this->OnInstallError("ln", output);
+    });
+    connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
+    connect(ln, &Process::OnSuccess, [this, id] {
+      selected_ = id;
+      emit this->OnSwitched(id);
+    });
+
+    registerProcess(id, ln);
+    ln->start();
+  }
+
+  void VersionManager::checkoutRepo(Version::ID id) {
+    Version& version(db_.versions().get(id));
+
+    if (version.state() == Version::State::CLONED ||
+        version.state() == Version::State::CHECK_OUT_ERROR) {
+      transition(version, Version::State::MARKED_FOR_CHECKOUT);
+      Process* git(
+          Process::gitCheckout(repo_branch_, working_dir_ + "source/" + id));
+
+      connect(git, &Process::OnStarted, [&version, this]() {
+        transition(version, Version::State::CHECKING_OUT);
+      });
+      connect(git, &Process::OnSuccess, [&version, this](QString output) {
+        transition(version, Version::State::CHECKED_OUT);
+        qDebug() << output;
+      });
+      connect(git, &Process::OnFailure, [&version, this](QString output) {
+        transition(version, Version::State::CHECK_OUT_ERROR);
+        qDebug() << output;
+      });
+      connect(git, &Process::OnFinished, git, &Process::deleteLater);
+
+      registerProcess(id, git);
+      git->start();
+    } else {
+      qCritical() << "Cant check out in current state (state=" +
+                         toString(version.state()) + ")";
+      version.setState(Version::State::CHECK_OUT_ERROR);
     }
   }
 
-  Process* qmake(Process::qmake(new_build_dir, sourcePath()));
-
-  connect(qmake, &Process::OnFailure, [this, id](QString output) {
-    emit this->OnInstallError("qmake", output);
-  });
-  connect(qmake, &Process::OnFinished, qmake, &Process::deleteLater);
-  connect(qmake, &Process::OnSuccess, [this, id]() {
-    make_retries_ = 0;
-    this->makeVersion(id);
-  });
-
-  registerProcess(id, qmake);
-  qmake->start();
-}
-
-void VersionManager::makeVersion(Version::ID id) {
-  ResourcePath build_dir(working_dir_ + "builds/" + id);
-  Process* make(Process::make(build_dir));
-
-  connect(make, &Process::OnFailure, [this, id](QString output) {
-    if (output.contains("internal compiler error")) {
-      if (++make_retries_ < max_make_retries_) {
-        qWarning() << "Compiler crashed (segmentation fault),"
-                   << (max_make_retries_ - make_retries_) << "tries left";
-        this->makeVersion(id);
-      } else
-        emit this->OnInstallError(
-            id, "Compiler crashed (segmentation fault) too often");
-    } else
-      emit this->OnInstallError("make", output);
-  });
-  connect(make, &Process::OnFinished, make, &Process::deleteLater);
-  connect(make, &Process::OnSuccess, [this, id]() {
-    emit this->OnInstalled(id);
-    this->linkVersion(id);
-  });
-
-  registerProcess(id, make);
-  make->start();
-}
-
-void VersionManager::linkVersion(Version::ID id) {
-  ResourcePath link(working_dir_ + "main");
-  QString binary("builds/" + id + "/Main/Main");
-
-  // TODO we would need a transaction here, since when we first delete the link
-  // and than create a new one, the application could crash after the deletion
-  // and the new link would not be created. To emulate a transaction we use an
-  // ln instance that does not listen to HUP
-  Process* ln(Process::ln(binary, link));
-  // FIXME also update the link to libquazip
-  connect(ln, &Process::OnFailure, [this, id](QString output) {
-    emit this->OnInstallError("ln", output);
-  });
-  connect(ln, &Process::OnFinished, ln, &Process::deleteLater);
-  connect(ln, &Process::OnSuccess, [this, id] {
-    selected_ = id;
-    emit this->OnSwitched(id);
-  });
-
-  registerProcess(id, ln);
-  ln->start();
-}
-
-void VersionManager::checkoutRepo(Version::ID id) {
-  Version& version(db_.versions().get(id));
-
-  if (version.state() == Version::State::CLONED ||
-      version.state() == Version::State::CHECK_OUT_ERROR) {
-    transition(version, Version::State::MARKED_FOR_CHECKOUT);
-    Process* git(
-        Process::gitCheckout(repo_branch_, working_dir_ + "source/" + id));
-
-    connect(git, &Process::OnStarted, [&version, this]() {
-      transition(version, Version::State::CHECKING_OUT);
-    });
-    connect(git, &Process::OnSuccess, [&version, this](QString output) {
-      transition(version, Version::State::CHECKED_OUT);
-      qDebug() << output;
-    });
-    connect(git, &Process::OnFailure, [&version, this](QString output) {
-      transition(version, Version::State::CHECK_OUT_ERROR);
-      qDebug() << output;
-    });
-    connect(git, &Process::OnFinished, git, &Process::deleteLater);
-
-    registerProcess(id, git);
-    git->start();
-  } else {
-    qCritical() << "Cant check out in current state (state=" +
-                       toString(version.state()) + ")";
-    version.setState(Version::State::CHECK_OUT_ERROR);
+  void VersionManager::transition(Version & version, Version::State state) {
+    if (state == version.state())
+      qWarning() << "Ignoring identity transition on version" << version.id();
+    else {
+      Version::State old(version.state());
+      version.setState(state);
+      qDebug() << "State transition: " << toString(old) << "=>"
+               << toString(state);
+      emit OnTransition(version.id(), old, state);
+    }
   }
-}
 
-void VersionManager::transition(Version& version, Version::State state) {
-  if (state == version.state())
-    qWarning() << "Ignoring identity transition on version" << version.id();
-  else {
-    Version::State old(version.state());
-    version.setState(state);
-    qDebug() << "State transition: " << toString(old) << "=>"
-             << toString(state);
-    emit OnTransition(version.id(), old, state);
+  void VersionManager::registerProcess(Version::ID id, Process * proc) {
+    processes_[id] = proc;
+    connect(proc, &Process::OnFinished, this,
+            [this, id]() { this->unregisterProcess(id); });
   }
-}
 
-void VersionManager::registerProcess(Version::ID id, Process* proc) {
-  processes_[id] = proc;
-  connect(proc, &Process::OnFinished, this,
-          [this, id]() { this->unregisterProcess(id); });
-}
-
-void VersionManager::unregisterProcess(Version::ID id) {
-  processes_.erase(id);
-  if (to_be_installed_.size() && to_be_installed_.head() == id)
-    emit OnInstallError(id, "Canceled");
-}
+  void VersionManager::unregisterProcess(Version::ID id) {
+    processes_.erase(id);
+    if (to_be_installed_.size() && to_be_installed_.head() == id)
+      emit OnInstallError(id, "Canceled");
+  }
 }  // namespace c3picko
