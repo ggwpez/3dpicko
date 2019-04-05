@@ -9,6 +9,7 @@
 #include "include/types/profile.hpp"
 
 namespace c3picko {
+class Report;
 class AlgorithmJob;
 /**
  * @brief A pick job, will be filled with data step by step by the use throught
@@ -21,7 +22,7 @@ class Job {
   Job(ID id, Image::ID img_id, QString name, QString description,
       QDateTime created, QStack<AlgorithmResult::ID> results,
       Profile::ID printer, Profile::ID socket, int starting_row,
-      int starting_col, int step);
+      int starting_col, int step, ResourcePath report_path);
 
  public:
   Image::ID imgID() const;
@@ -33,6 +34,8 @@ class Job {
 
   void setId(ID id);
   void setCreationDate(QDateTime);
+  void setReportPath(ResourcePath const&);
+  ResourcePath reportPath() const;
 
   Profile::ID socket() const;
   Profile::ID printer() const;
@@ -78,6 +81,7 @@ class Job {
    * @brief How far is the configuration of this Job?
    */
   qint32 step_ = 0;
+  ResourcePath report_path_;
 };
 MAKE_MARSHALLABLE(Job);
 }  // namespace c3picko

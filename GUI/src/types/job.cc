@@ -5,7 +5,7 @@ namespace c3picko {
 Job::Job(ID id, Image::ID img_id, QString name, QString description,
          QDateTime job_created, QStack<AlgorithmResult::ID> results,
          Profile::ID printer, Profile::ID socket, int starting_row,
-         int starting_col, int step)
+         int starting_col, int step, ResourcePath report_path)
     : id_(id),
       img_id_(img_id),
       name_(name),
@@ -16,13 +16,16 @@ Job::Job(ID id, Image::ID img_id, QString name, QString description,
       socket_(socket),
       starting_row_(starting_row),
       starting_col_(starting_col),
-      step_(step) {}
+      step_(step),
+      report_path_(report_path) {}
 
 Job::ID Job::id() const { return id_; }
 
 void Job::setId(Job::ID id) { id_ = id; }
 
 void Job::setCreationDate(QDateTime when) { created_ = when; }
+
+void Job::setReportPath(const ResourcePath& report) { report_path_ = report; }
 
 Image::ID Job::imgID() const { return img_id_; }
 
@@ -70,6 +73,8 @@ void Job::setcoloniesToPick(const QSet<Colony::ID>& colonies_to_pick) {
   colonies_to_pick_ = colonies_to_pick;
 }
 
+ResourcePath Job::reportPath() const { return report_path_; }
+
 std::shared_ptr<AlgorithmJob> Job::resultJob() const { return result_job_; }
 
 qint32 Job::step() const { return step_; }
@@ -94,6 +99,8 @@ QJsonObject Marshalling::toJson(const Job& value) {
   obj["step"] = value.step();
   obj["starting_row"] = value.startingRow();
   obj["starting_col"] = value.startingCol();
+  if (!value.reportPath().isEmpty())
+    obj["report"] = Marshalling::toJson(value.reportPath());
 
   QJsonArray detections;
   for (auto const& detection : value.resultIDs())
@@ -111,6 +118,10 @@ Job Marshalling::fromJson(const QJsonObject& obj) {
 
   for (auto detection : json_detections) detections.push(detection.toString());
 
+  ResourcePath report_path;
+  if (obj.contains("report"))
+    report_path = Marshalling::fromJson<ResourcePath>(obj["report"]);
+
   return Job(Marshalling::fromJson<QString>(obj["id"]),
              Marshalling::fromJson<QString>(obj["img_id"]),
              Marshalling::fromJson<QString>(obj["name"]),
@@ -119,6 +130,6 @@ Job Marshalling::fromJson(const QJsonObject& obj) {
              detections, Marshalling::fromJson<QString>(obj["printer"]),
              Marshalling::fromJson<QString>(obj["socket"]),
              obj["starting_row"].toInt(), obj["starting_col"].toInt(),
-             obj["step"].toInt());
+             obj["step"].toInt(), report_path);
 }
 }  // namespace c3picko

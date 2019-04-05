@@ -515,6 +515,7 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
                                            pick_positions));
   Report report = reporter.createReport();
+  job.setReportPath(report.data());
 
   qDebug() << "Created report.pdf";
 
