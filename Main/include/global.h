@@ -20,6 +20,9 @@ QSslConfiguration* LoadSslConfig(QSettings& settings);
 
 ResourcePath Root();
 ResourcePath Etc();
+/**
+ * Document Root for the webserver.
+ */
 ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
