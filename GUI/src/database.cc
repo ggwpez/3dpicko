@@ -64,7 +64,7 @@ Database::ProfileTable& Database::profiles() { return profiles_; }
 Database::VersionTable& Database::versions() { return versions_; }
 
 Database::VersionIdVector& Database::installedVersions() {
-  return versions_oi_;
+  return versions_installed_;
 }
 
 // Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
@@ -106,7 +106,7 @@ void Database::read(QJsonObject const& obj) {
 
   QJsonArray const& arr(obj["versions_of_interest"].toArray());
   for (auto e : arr)  // TODO
-    versions_oi_.push_back(e.toString());
+    versions_installed_.push_back(e.toString());
   // versions_oi_.read(obj["versions_of_interest"].toObject());
 
   // TODO read detection*
@@ -134,7 +134,7 @@ void Database::write(QJsonObject& obj) const {
   obj["versions"] = (QJsonObject)versions_;
 
   QJsonArray arr;
-  for (auto e : versions_oi_) arr.push_back(e);
+  for (auto e : versions_installed_) arr.push_back(e);
   obj["versions_of_interest"] = arr;
   // obj["versions_of_interest"] = (QJsonObject)versions_oi_;
 

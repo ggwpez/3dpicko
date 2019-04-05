@@ -123,6 +123,8 @@ void Updater::search() {
        currentVersion().id() + "...origin/" + repo_branch_});
 
   connect(gitF, &Process::OnSuccess, gitL, &Process::start);
+  connect(gitF, &Process::OnFailure, gitF,
+          [](QString output) { qWarning() << "Git fetch:" << output; });
   connect(gitF, &Process::OnFinished, gitF, &Process::deleteLater);
   connect(gitF, &Process::OnFailure, gitL, &Process::deleteLater);
 

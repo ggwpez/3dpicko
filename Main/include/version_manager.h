@@ -65,7 +65,7 @@ class VersionManager : public QObject {
   /**
    * @brief Maximum number of interesting versions.
    */
-  qint32 max_interesting_ = 5;
+  qint32 max_interesting_ = 3;
   /**
    * @brief the top element is the currently running
    */

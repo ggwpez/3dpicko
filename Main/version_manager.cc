@@ -28,6 +28,7 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
     else
       to_be_installed_.dequeue();
     qDebug() << "Installation complete (id=" << id << ")";
+    db_.installedVersions().push_back(id);
   });
 }
 
@@ -86,16 +87,73 @@ void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
   git->start();
 }
 
-void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
-  ResourcePath build_dir(working_dir_ + "builds/" + id);
+// https://forum.qt.io/topic/59245/is-there-any-api-to-recursively-copy-a-directory-and-all-it-s-sub-dirs-and-files/3
+// at 05.04.2019
+static bool copyRecursively(QString sourceFolder, QString destFolder) {
+  bool success = false;
+  QDir sourceDir(sourceFolder), destDir(destFolder);
 
-  if (!QDir(build_dir.toSystemAbsolute()).exists())
-    if (!QDir().mkdir(build_dir.toSystemAbsolute()))
+  if (!sourceDir.exists()) return false;
+
+  if (!destDir.exists()) return false;
+
+  QStringList files = sourceDir.entryList(QDir::Files);
+  for (int i = 0; i < files.count(); i++) {
+    QString srcName = sourceFolder + QDir::separator() + files[i];
+    QString destName = destFolder + QDir::separator() + files[i];
+    success = QFile::copy(srcName, destName);
+    if (!success) return false;
+  }
+
+  files.clear();
+  files = sourceDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+  for (int i = 0; i < files.count(); i++) {
+    QString srcName = sourceFolder + QDir::separator() + files[i];
+    QString destName = destFolder + QDir::separator() + files[i];
+    success = copyRecursively(srcName, destName);
+    if (!success) return false;
+  }
+
+  return true;
+}
+
+void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
+  ResourcePath new_build_dir(working_dir_ + "builds/" + id);
+
+  // Check for the build directory and maybe copy an old build in there, to
+  // speed up make
+  if (!QDir(new_build_dir.toSystemAbsolute()).exists()) {
+    if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
       return emit OnInstallError(
           "qmake (setup phase)",
-          "Cant create build dir" + build_dir.toSystemAbsolute());
+          "Cant create build dir" + new_build_dir.toSystemAbsolute());
 
-  Process* qmake(Process::qmake(build_dir, sourcePath()));
+    // Can we get an older build?
+    auto it(std::find(db_.installedVersions().begin(),
+                      db_.installedVersions().end(), id));
+    if (it != db_.installedVersions().begin()) {
+      --it;
+      ResourcePath old_build_dir(working_dir_ + "builds/" + *it);
+      // Copy older build to new directory
+      if (!copyRecursively(old_build_dir.toSystemAbsolute(),
+                           new_build_dir.toSystemAbsolute())) {
+        // If it did not work, delete it and create a new empty directory
+        // (again).
+        qWarning() << "Could not copy directory"
+                   << old_build_dir.toSystemAbsolute() << "to"
+                   << new_build_dir.toSystemAbsolute();
+        QDir(new_build_dir.toSystemAbsolute())
+            .removeRecursively();  // dont check return code
+
+        if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
+          return emit OnInstallError(
+              "qmake (setup phase)",
+              "Cant create build dir" + new_build_dir.toSystemAbsolute());
+      }
+    }
+  }
+
+  Process* qmake(Process::qmake(new_build_dir, sourcePath()));
 
   connect(qmake, &Process::OnFailure, [this, id](QString output) {
     emit this->OnInstallError("qmake", output);

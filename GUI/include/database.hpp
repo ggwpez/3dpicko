@@ -72,9 +72,10 @@ class Database : public QObject, JsonConvertable {
   ProfileTable profiles_;
   VersionTable versions_;
   /**
-   * @brief Versions of interest.
+   * @brief All installed versions.
+   * Ordered by date; front is old and back is new.
    */
-  VersionIdVector versions_oi_;
+  VersionIdVector versions_installed_;
   // AlgoJobTable algo_jobs_;
   /**
    * @brief Saves all past image detection processes.
