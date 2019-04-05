@@ -25,7 +25,13 @@ void Job::setId(Job::ID id) { id_ = id; }
 
 void Job::setCreationDate(QDateTime when) { created_ = when; }
 
-void Job::setReportPath(const ResourcePath& report) { report_path_ = report; }
+void Job::setReportPath(const ResourcePath& report) {
+  if (report.isEmpty())
+    qDebug() << "Report path unknown";
+  else
+    qDebug() << "Report at" << report.toServerAbsolute();
+  report_path_ = report;
+}
 
 Image::ID Job::imgID() const { return img_id_; }
 

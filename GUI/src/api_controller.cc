@@ -517,8 +517,6 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   Report report = reporter.createReport();
   job.setReportPath(report.data());
 
-  qDebug() << "Created report.pdf";
-
   QFile file("out.gcode");
   if (!file.open(QIODevice::WriteOnly)) qWarning() << "Could not save gcode";
   QTextStream ts(&file);
