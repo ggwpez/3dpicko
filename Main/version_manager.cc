@@ -147,20 +147,23 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
       --it;
       ResourcePath old_build_dir(working_dir_ + "builds/" + *it);
       // Copy older build to new directory
-      if (!copyRecursively(old_build_dir.toSystemAbsolute(),
-                           new_build_dir.toSystemAbsolute())) {
-        // If it did not work, delete it and create a new empty directory
-        // (again).
-        qWarning() << "Cold not copy build directories";
-        QDir(new_build_dir.toSystemAbsolute())
-            .removeRecursively();  // dont check return code
+      /*if (!copyRecursively(old_build_dir.toSystemAbsolute(),
+      new_build_dir.toSystemAbsolute()))
+      {
+              // If it did not work, delete it and create a new empty directory
+              // (again).
+              qWarning() << "Cold not copy build directories";
+              QDir(new_build_dir.toSystemAbsolute()).removeRecursively(); //
+      dont check return code
 
-        if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
-          return emit OnInstallError(
-              "qmake (setup phase)",
-              "Cant create build dir" + new_build_dir.toSystemAbsolute());
-      } else
-        qDebug() << "Copied build dir";
+              if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
+                      return emit OnInstallError("qmake (setup phase)", "Cant
+      create build dir" + new_build_dir.toSystemAbsolute());
+      }
+      else
+              qDebug() << "Copied build dir";*/
+      // Dont copy the building dir, otherwise the git hash from qmake is not
+      // correct anymore
     }
   }
 
