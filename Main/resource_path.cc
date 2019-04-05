@@ -3,25 +3,23 @@
 
 namespace c3picko {
 ResourcePath::ResourcePath(QString system_absolute_path)
-    : system_absolute_(system_absolute_path) {}
+    : system_absolute_(QDir::cleanPath(system_absolute_path)) {}
 
 ResourcePath::ResourcePath() {}
 
-ResourcePath ResourcePath::fromSystemAbsolute(QString path) {
-  return QDir::cleanPath(path);
-}
+ResourcePath ResourcePath::fromSystemAbsolute(QString path) { return path; }
 
 // We have two // now, but the operator+ manages that
 ResourcePath ResourcePath::fromServerAbsolute(QString path) {
-  return QDir::cleanPath(Root() + path);
+  return Root() + path;
 }
 
 ResourcePath ResourcePath::fromServerRelative(QString path) {
-  return QDir::cleanPath(Root() + "/" + path);
+  return Root() + "/" + path;
 }
 
 ResourcePath ResourcePath::fromDocRootAbsolute(QString path) {
-  return QDir::cleanPath(DocRoot() + path);
+  return DocRoot() + path;
 }
 
 const QString ResourcePath::toSystemAbsolute() const {
