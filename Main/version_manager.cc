@@ -30,8 +30,8 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
     qDebug() << "Installation complete (id=" << id << ")";
     db_.installedVersions().push_back(id);
 
-    if (db_.installedVersions().size() > max_interesting_)
-      remOldestVersion(db_.installedVersions().front());
+    // if (db_.installedVersions().size() > max_interesting_)
+    // remOldestVersion(db_.installedVersions().front());
   });
 }
 
