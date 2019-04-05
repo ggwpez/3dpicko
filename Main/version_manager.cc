@@ -92,12 +92,12 @@ static bool copyRecursively(QString sourceFolder, QString destFolder) {
   QDir sourceDir(sourceFolder), destDir(destFolder);
 
   if (!sourceDir.exists()) {
-    qWarning() << "Could not find source dirctory";
+    qWarning() << "Could not find source dirctory" << sourceFolder;
     return false;
   }
 
   if (!destDir.exists()) {
-    qWarning() << "Could not find destination dirctory";
+    qWarning() << "Could not find destination dirctory" << destFolder;
     return false;
   }
 
@@ -110,7 +110,7 @@ static bool copyRecursively(QString sourceFolder, QString destFolder) {
   }
 
   files.clear();
-  files = sourceDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+  files = sourceDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
   for (int i = 0; i < files.count(); i++) {
     QString srcName = sourceFolder + QDir::separator() + files[i];
     QString destName = destFolder + QDir::separator() + files[i];
@@ -143,9 +143,7 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
                            new_build_dir.toSystemAbsolute())) {
         // If it did not work, delete it and create a new empty directory
         // (again).
-        qWarning() << "Could not copy directory"
-                   << old_build_dir.toSystemAbsolute() << "to"
-                   << new_build_dir.toSystemAbsolute();
+        qWarning() << "Cold not copy build directories";
         QDir(new_build_dir.toSystemAbsolute())
             .removeRecursively();  // dont check return code
 
