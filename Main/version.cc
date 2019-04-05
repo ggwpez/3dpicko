@@ -15,20 +15,6 @@ Version::Version(Version::ID id, QDateTime date, State type)
 QString Version::id() const { return id_; }
 
 template <>
-QJsonObject Marshalling::toJson(const Version::State& value) {
-  QJsonObject obj;
-
-  obj["enum"] = toString(value);
-
-  return obj;
-}
-
-template <>
-Version::State Marshalling::fromJson(const QJsonObject& obj) {
-  return fromString(obj["enum"].toString());
-}
-
-template <>
 QJsonObject Marshalling::toJson(const Version& value) {
   QJsonObject obj;
 
@@ -47,7 +33,7 @@ Version Marshalling::fromJson(const QJsonObject& obj) {
                  Marshalling::fromJson<QDateTime>(obj["date"]),
                  /*Marshalling::fromJson<ResourcePath>(obj["source_dir"]),
                  Marshalling::fromJson<ResourcePath>(obj["build_dir"]),*/
-                 Marshalling::fromJson<Version::State>(obj["state"]));
+                 versionStateFromString(obj["state"].toString()));
 }
 
 QDateTime Version::date() const { return date_; }
@@ -102,7 +88,7 @@ QString toString(Version::State state) {
   }
 }
 
-Version::State fromString(QString string) {
+Version::State versionStateFromString(QString string) {
   if (string == "NEW") return Version::State::NEW;
   if (string == "READY") return Version::State::READY;
   if (string == "CORRUPT") return Version::State::CORRUPT;

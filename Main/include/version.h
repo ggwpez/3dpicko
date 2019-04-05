@@ -55,8 +55,7 @@ class Version {
   State state_;
 };
 QString toString(Version::State state);  // TODO
-Version::State fromString(QString string);
+Version::State versionStateFromString(QString string);
 
 MAKE_MARSHALLABLE(Version)
-MAKE_MARSHALLABLE(Version::State)
 }  // namespace c3picko

@@ -75,8 +75,6 @@ void VersionManager::installNext() {
 void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
   Process* git(Process::gitCheckout(id, working_dir_ + "source/"));
 
-  connect(git, &Process::OnStarted,
-          [id]() { qDebug() << "Checking out" << id << "..."; });
   connect(git, &Process::OnSuccess, [this, id]() { qmakeAmdMakeVersion(id); });
   connect(git, &Process::OnFailure, [this, id](QString output) {
     emit this->OnInstallError(id, "git checkout: " + output);
@@ -149,7 +147,8 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
           return emit OnInstallError(
               "qmake (setup phase)",
               "Cant create build dir" + new_build_dir.toSystemAbsolute());
-      }
+      } else
+        qDebug() << "Copied build dir";
     }
   }
 
