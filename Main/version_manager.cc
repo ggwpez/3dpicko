@@ -208,7 +208,7 @@ void VersionManager::linkVersion(Version::ID id) {
   // and the new link would not be created. To emulate a transaction we use an
   // ln instance that does not listen to HUP
   Process* ln(Process::ln(binary, link));
-
+  // FIXME also update the link to libquazip
   connect(ln, &Process::OnFailure, [this, id](QString output) {
     emit this->OnInstallError("ln", output);
   });
