@@ -101,6 +101,7 @@ static bool copyRecursively(QString sourceFolder, QString destFolder) {
     return false;
   }
 
+  // TODO try QDirIterator
   QStringList files = sourceDir.entryList(QDir::Files);
   for (int i = 0; i < files.count(); i++) {
     QString srcName = sourceFolder + QDir::separator() + files[i];
