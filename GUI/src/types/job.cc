@@ -29,7 +29,7 @@ void Job::setReportPath(const ResourcePath& report) {
   if (report.isEmpty())
     qDebug() << "Report path unknown";
   else
-    qDebug() << "Report at" << report.toServerAbsolute();
+    qDebug() << "Report at" << report.toDocRootAbsolute();
   report_path_ = report;
 }
 
@@ -106,7 +106,7 @@ QJsonObject Marshalling::toJson(const Job& value) {
   obj["starting_row"] = value.startingRow();
   obj["starting_col"] = value.startingCol();
   if (!value.reportPath().isEmpty())
-    obj["report"] = Marshalling::toJson(value.reportPath());
+    obj["report"] = value.reportPath().toDocRootAbsolute();
 
   QJsonArray detections;
   for (auto const& detection : value.resultIDs())
@@ -126,7 +126,7 @@ Job Marshalling::fromJson(const QJsonObject& obj) {
 
   ResourcePath report_path;
   if (obj.contains("report"))
-    report_path = Marshalling::fromJson<ResourcePath>(obj["report"]);
+    report_path = ResourcePath::fromDocRootAbsolute(obj["report"].toString());
 
   return Job(Marshalling::fromJson<QString>(obj["id"]),
              Marshalling::fromJson<QString>(obj["img_id"]),
