@@ -9,7 +9,6 @@ SUBDIRS += \
 	GUI \
 	ImageRecognition \
 	TestGcode \
-	Calibration \
 	AlgorithmTest \
 	quazip
 
