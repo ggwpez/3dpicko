@@ -95,10 +95,7 @@ void Normal1::cvt(AlgorithmJob* base, DetectionResult* result) {
   cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
   cv::Mat& output = result->newMat();
 
-  if (input.channels() != 1)
-    cv::cvtColor(input, output, CV_BGR2GRAY);
-  else
-    input.copyTo(output);
+  cv::cvtColor(input, output, CV_BGR2GRAY);
 }
 
 void Normal1::threshold(AlgorithmJob* base, DetectionResult* result) {

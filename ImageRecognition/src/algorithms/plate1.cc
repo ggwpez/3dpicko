@@ -18,10 +18,7 @@ void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
   cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
   cv::Mat& output = result->newMat();
 
-  if (input.channels() != 1)
-    cv::cvtColor(input, output, CV_BGR2GRAY);
-  else
-    input.copyTo(output);
+  cv::cvtColor(input, output, CV_BGR2GRAY);
 }
 
 void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
