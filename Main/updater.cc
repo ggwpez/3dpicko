@@ -110,9 +110,8 @@ void Updater::stopSearch() {
 }
 
 void Updater::search() {
-  timer_->stop();
-  qDebug().nospace() << "Searching for updates... (thread="
-                     << QThread::currentThreadId() << ")";
+  // timer_->stop();
+  qDebug() << "Searching for updates...";
 
   Process* gitF = Process::gitFech(sourceDir(), {"origin"});
   Process* gitL = Process::gitLog(
@@ -128,7 +127,7 @@ void Updater::search() {
 
   connect(gitL, &Process::OnSuccess, this, &Updater::logSuccess);
   connect(gitL, &Process::OnFailure, this, &Updater::logFailure);
-  connect(gitL, &Process::OnFinished, this, [this]() { timer_->start(); });
+  // connect(gitL, &Process::OnFinished, this, [this]() { timer_->start(); });
   connect(gitL, &Process::OnFinished, gitL, &Process::deleteLater);
 
   gitF->start();

@@ -27,7 +27,7 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
       qWarning("OnInstall error");
     else
       to_be_installed_.dequeue();
-    qDebug() << "Installation complete (id=" << id << ")";
+    qDebug().nospace().noquote() << "Installation complete (id=" << id << ")";
     db_.installedVersions().push_back(id);
 
     // if (db_.installedVersions().size() > max_interesting_)
@@ -77,7 +77,7 @@ void VersionManager::installNext() {
     if (db_.installedVersions().contains(id))
       return emit OnInstallError(id, "Cant install version twice");
 
-    qDebug() << "Selecting version" << id;
+    qDebug() << "Installing version" << id;
     checkoutAndQmakeVersion(id);
   }
 }
@@ -150,18 +150,19 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
       /*if (!copyRecursively(old_build_dir.toSystemAbsolute(),
       new_build_dir.toSystemAbsolute()))
       {
-              // If it did not work, delete it and create a new empty directory
-              // (again).
-              qWarning() << "Cold not copy build directories";
-              QDir(new_build_dir.toSystemAbsolute()).removeRecursively(); //
-      dont check return code
+                      // If it did not work, delete it and create a new empty
+      directory
+                      // (again).
+                      qWarning() << "Cold not copy build directories";
+                      QDir(new_build_dir.toSystemAbsolute()).removeRecursively();
+      // dont check return code
 
-              if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
-                      return emit OnInstallError("qmake (setup phase)", "Cant
-      create build dir" + new_build_dir.toSystemAbsolute());
+                      if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
+                                      return emit OnInstallError("qmake (setup
+      phase)", "Cant create build dir" + new_build_dir.toSystemAbsolute());
       }
       else
-              qDebug() << "Copied build dir";*/
+                      qDebug() << "Copied build dir";*/
       // Dont copy the building dir, otherwise the git hash from qmake is not
       // correct anymore
     }

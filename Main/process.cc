@@ -75,7 +75,6 @@ void Process::start() {
   git_ = new QProcess(this);
   git_->setWorkingDirectory(exec_dir_.toSystemAbsolute());
   git_->start(git_path, args_);
-  qDebug() << git_path << args_;
 
   if (!git_->waitForStarted(3000))
     emit OnFailure("Could not start (path=" + git_path +
