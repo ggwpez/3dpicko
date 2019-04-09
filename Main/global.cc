@@ -184,7 +184,8 @@ void stopLog() { qInstallMessageHandler(nullptr); }
 
 QString dateTimeFormat() { return "dd.MM.yy HH:mm:ss"; }
 
-int exitCodeRestart() { return 123; }
+int exitCodeSoftRestart() { return 123; }
+int exitCodeHardRestart() { return 101; }
 int exitCodeSuccess() { return 0; }
 int exitCodeError() { return 1; }
 
