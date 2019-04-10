@@ -156,7 +156,7 @@ QString Setup(QCoreApplication* app) {
   return ini_file_path;
 }
 
-QString logTextColor(QtMsgType type) {
+QString consoleTextColor(QtMsgType type) {
   switch (type) {
     case QtMsgType::QtInfoMsg:
       return "";
@@ -173,6 +173,23 @@ QString logTextColor(QtMsgType type) {
   }
 }
 
+QString htmlTextColor(QtMsgType type) {
+  QString clr = "green";
+
+  switch (type) {
+    case QtMsgType::QtWarningMsg:
+      clr = "orange";  // Orange
+      break;
+    case QtMsgType::QtCriticalMsg:
+    case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
+      clr = "red";               // Red
+    default:
+      break;
+  }
+
+  return "<font color='" + clr + "'>";
+}
+
 static std::function<void(QString)> messageHandler;
 static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
                             const QString& msg) {
@@ -180,14 +197,15 @@ static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
   QString time =
       "[ " + QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate) +
       " ] ";
-  QString color_begin = logTextColor(type), color_end = "\033[0m";
 
-  if (messageHandler) messageHandler(time + message);
+  QString console_string = time + consoleTextColor(type) + message + "\033[0m";
+  QString html_string = time + htmlTextColor(type) + message + "</font>";
+
+  if (messageHandler) messageHandler(html_string);
 
     // TODO bad style to write everything to stderr
 #ifdef Q_OS_LINUX
-  fprintf(stderr, "%s%s%s%s\n", qPrintable(time), qPrintable(color_begin),
-          qPrintable(message), qPrintable(color_end));
+  fprintf(stderr, "%s\n", qPrintable(console_string));
 #else
   fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));
 #endif
