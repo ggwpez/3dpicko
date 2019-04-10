@@ -104,7 +104,10 @@ QJsonObject APIController::createVersionList() const {
   ret["all"] = all;
   ret["installed"] = installed;
   ret["current"] = currentVersion().id();
-  ret["selected"] = version_manager_->selected();
+  if (version_manager_)
+    ret["selected"] = version_manager_->selected();
+  else
+    ret["selected"] = currentVersion().id();
 
   return ret;
 }
@@ -244,7 +247,7 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
     emit OnDefaultSettingsProfileSetError("Profile " + id + " not found",
                                           client);
   } else {
-    Profile& profile = db_->profiles().get(id);
+    Profile const& profile = db_->profiles().get(id);
 
     if (profile.type() == ProfileType::PRINTER)
       db_->setdefaultPrinter(id);
@@ -553,8 +556,8 @@ QJsonObject APIController::createImageList() const {
 
   // Order ids by their matching images upload date
   std::sort(ids.begin(), ids.end(), [this](Image::ID a, Image::ID b) {
-    return this->db_->images().entries()[a].uploaded() <
-           this->db_->images().entries()[b].uploaded();
+    return this->db_->images().get(a).uploaded() <
+           this->db_->images().get(b).uploaded();
   });
 
   for (auto id : ids)

@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 
 namespace c3picko {
-Database::Database(QSettings& settings, QObject* parent)
+Database::Database(const QSettings& settings, QObject* parent)
     : QObject(parent),
       file_path_(Root() + "/database.json"),
       read_only_(!settings.value("saveChanges", true).toBool()),
@@ -20,12 +20,8 @@ Database::Database(QSettings& settings, QObject* parent)
 
     if (error.error)
       throw Exception("Cannot parse JSON database: " + error.errorString());
-    else {
+    else
       read(json);
-      qDebug().nospace() << "Loaded database from file: "
-                         << file_path_.toSystemAbsolute()
-                         << " (saveChanges=" << !read_only_ << ")";
-    }
   } else if (ignore_empty)
     qDebug() << "Database not found, creating new one (ignoreEmpty=true)";
   else
@@ -34,36 +30,88 @@ Database::Database(QSettings& settings, QObject* parent)
 }
 
 void Database::saveToFile() {
-  if (read_only_) {
-    qDebug() << "NOT saving database changes (saveChanges=false)";
-    return;
-  }
+  try {
+    if (read_only_) {
+      qDebug() << "NOT saving database changes (saveChanges=false)";
+      return;
+    }
 
-  QFile file(file_path_.toSystemAbsolute());
+    QFile file(file_path_.toSystemAbsolute());
 
-  if (file.open(QIODevice::WriteOnly)) {
-    QJsonObject json;
-    write(json);
-    QByteArray data = QJsonDocument(json).toJson();
+    if (file.open(QIODevice::WriteOnly)) {
+      QJsonObject json;
+      write(json);
+      QByteArray data = QJsonDocument(json).toJson();
 
-    file.write(data);
-    qDebug() << "Saving database to file:" << file_path_.toSystemAbsolute();
-  } else
+      file.write(data);
+      qDebug() << "Saving database to file:" << file_path_.toSystemAbsolute();
+    } else
+      qCritical() << "Error saving database to file:"
+                  << file_path_.toSystemAbsolute();
+  } catch (...) {
     qCritical() << "Error saving database to file:"
                 << file_path_.toSystemAbsolute();
+  }
 }
 
-Database::JobTable& Database::jobs() { return jobs_; }
+void Database::autosave() {
+  qDebug() << "Autosave";
+  saveToFile();
+}
 
-Database::ImageTable& Database::images() { return images_; }
+void Database::autosaveSkipped() {
+  qDebug() << "Skipped Autosave (no changes)";
+}
 
-Database::ImageTable& Database::deletedImages() { return deleted_images_; }
+Database::JobTable& Database::jobs() {
+  emit OnDataChanged();
+  return jobs_;
+}
 
-Database::ProfileTable& Database::profiles() { return profiles_; }
+const Database::JobTable& Database::jobs() const { return jobs_; }
 
-Database::VersionTable& Database::versions() { return versions_; }
+Database::ImageTable& Database::images() {
+  emit OnDataChanged();
+  return images_;
+}
+
+Database::JobTable& Database::deletedJobs() { return deleted_jobs_; }
+
+const Database::JobTable& Database::deletedJobs() const {
+  return deleted_jobs_;
+}
+
+const Database::ImageTable& Database::images() const { return images_; }
+
+Database::ImageTable& Database::deletedImages() {
+  emit OnDataChanged();
+  return deleted_images_;
+}
+
+const Database::ImageTable& Database::deletedImages() const {
+  return deleted_images_;
+}
+
+Database::ProfileTable& Database::profiles() {
+  emit OnDataChanged();
+  return profiles_;
+}
+
+const Database::ProfileTable& Database::profiles() const { return profiles_; }
+
+Database::VersionTable& Database::versions() {
+  emit OnDataChanged();
+  return versions_;
+}
+
+const Database::VersionTable& Database::versions() const { return versions_; }
 
 Database::VersionIdVector& Database::installedVersions() {
+  emit OnDataChanged();
+  return versions_installed_;
+}
+
+const Database::VersionIdVector& Database::installedVersions() const {
   return versions_installed_;
 }
 
@@ -72,19 +120,30 @@ Database::VersionIdVector& Database::installedVersions() {
 // Database::DetectionResultTable& Database::detectionResults() { return
 // detection_results_; }
 
-Job::ID Database::newJobId() { return QString::number(job_id_++); }
+Job::ID Database::newJobId() {
+  emit OnDataChanged();
+  return QString::number(job_id_++);
+}  // i guess it is ok the emmit first...
 
-Profile::ID Database::newProfileId() { return QString::number(profile_id_++); }
+Profile::ID Database::newProfileId() {
+  emit OnDataChanged();
+  return QString::number(profile_id_++);
+}
 
 AlgorithmResult::ID Database::newResultId() {
+  emit OnDataChanged();
   return QString::number(result_id_++);
 }
 
 AlgorithmJob::ID Database::newResultJobId() {
+  emit OnDataChanged();
   return QString::number(result_job_id_++);
 }
 
-Report::ID Database::newReportId() { return QString::number(report_id_++); }
+Report::ID Database::newReportId() {
+  emit OnDataChanged();
+  return QString::number(report_id_++);
+}
 
 Profile::ID Database::defaultPrinter() const { return default_printer_; }
 
@@ -93,8 +152,6 @@ Profile::ID Database::defaultSocket() const { return default_socket_; }
 Profile::ID Database::defaultPlate() const { return default_plate_; }
 
 Profile::ID Database::defaultOctoconfig() const { return default_octoprint_; }
-
-Database::JobTable& Database::deletedJobs() { return deleted_jobs_; }
 
 void Database::read(QJsonObject const& obj) {
   jobs_.read(obj["jobs"].toObject());
@@ -158,17 +215,21 @@ bool Database::readOnly() const { return read_only_; }
 
 void Database::setdefaultPrinter(const Profile::ID& default_printer) {
   default_printer_ = default_printer;
+  emit OnDataChanged();
 }
 
 void Database::setDefaultSocket(const Profile::ID& default_socket) {
   default_socket_ = default_socket;
+  emit OnDataChanged();
 }
 
 void Database::setDefaultPlate(const Profile::ID& default_plate) {
   default_plate_ = default_plate;
+  emit OnDataChanged();
 }
 
 void Database::setDefaultOctoprint(const Profile::ID& default_octo) {
   default_octoprint_ = default_octo;
+  emit OnDataChanged();
 }
 }  // namespace c3picko

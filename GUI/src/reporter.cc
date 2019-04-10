@@ -15,7 +15,7 @@
 namespace c3picko {
 Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
                    const std::map<Well, Colony::ID>& pick_positions,
-                   Image& image, const DetectionResult* result,
+                   Image const& image, const DetectionResult* result,
                    QSet<Colony::ID> colonies_to_pick, const Profile& plate_,
                    const Profile& printer, const Profile& socket,
                    const Profile& octoprint)
@@ -34,7 +34,7 @@ Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
 }
 
 Reporter Reporter::fromDatabase(
-    Database& db, Report::ID id, Job::ID jid,
+    const Database& db, Report::ID id, Job::ID jid,
     const std::map<Well, Colony::ID>& pick_positions) {
   Job job = db.jobs().get(jid);
   Profile const &plate = db.profiles().get(job.plate()),
@@ -42,7 +42,7 @@ Reporter Reporter::fromDatabase(
                 &socket = db.profiles().get(job.socket()),
                 &octoprint = db.profiles().get(job.octoprint());
 
-  Image& img = db.images().get(job.imgID());
+  Image const& img = db.images().get(job.imgID());
   DetectionResult* result =
       static_cast<DetectionResult*>(job.resultJob()->result().get());
 

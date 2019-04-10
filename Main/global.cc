@@ -204,7 +204,7 @@ static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
   if (messageHandler) messageHandler(html_string);
 
     // TODO bad style to write everything to stderr
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(C3PICKO_TEXT_COLORS_OFF)
   fprintf(stderr, "%s\n", qPrintable(console_string));
 #else
   fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));

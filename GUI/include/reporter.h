@@ -16,7 +16,7 @@ class Reporter {
    * @param pick_sequence The colonies to be picked in correct order
    */
   static Reporter fromDatabase(
-      Database& db, Report::ID id, Job::ID job,
+      Database const& db, Report::ID id, Job::ID job,
       const std::map<Well, Colony::ID>& pick_positions);
 
   /**
@@ -28,7 +28,7 @@ class Reporter {
  private:
   QString createImage(QString url) const;
   Reporter(Report::ID id, Job const& job, QDateTime creation,
-           const std::map<Well, Colony::ID>& pick_positions, Image& image,
+           const std::map<Well, Colony::ID>& pick_positions, const Image& image,
            const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
            Profile const& plate_, Profile const& printer_,
            Profile const& socket_, Profile const& octoprint_);
@@ -77,7 +77,7 @@ class Reporter {
    * @brief Maps the colonies to their wells in the order of them being picked.
    */
   std::map<Well, Colony::ID> pick_positions_;
-  Image& image_;
+  Image const& image_;
   DetectionResult const* result_;
   QSet<Colony::ID> colonies_to_pick_;
   Profile const& plate_;

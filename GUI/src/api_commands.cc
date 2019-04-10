@@ -22,5 +22,5 @@ QString APICommands::SET_COLONIES_TO_PICK = "setcoloniestopick";
 QString APICommands::UPDATE_DETECTION_SETTINGS = "updatedetectionsettings";
 QString APICommands::SHUTDOWN = "shutdown";
 QString APICommands::RESTART = "restart";
-QString APICommands::BACKUP = "restart";
+QString APICommands::BACKUP = "backup";
 }  // namespace c3picko

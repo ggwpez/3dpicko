@@ -96,7 +96,7 @@ void WsServer::ConnectionClosed() {
 }
 
 void WsServer::clientError(QAbstractSocket::SocketError ec) {
-  qDebug() << "WsServer::clientError" << ec;
+  qDebug() << "WsServer::clientError =" << ec;
 }
 
 bool WsServer::StartListen() {
@@ -142,7 +142,11 @@ void WsServer::sslErrors(const QList<QSslError>& errors) {
 }
 
 void WsServer::ToClient(QObject* client, QString type, QJsonObject data) {
-  SendToClient(qobject_cast<QWebSocket*>(client), type, data);
+  // Is the client still valid?
+  if (clients_.contains(reinterpret_cast<QWebSocket*>(client)))
+    SendToClient(qobject_cast<QWebSocket*>(client), type, data);
+  else
+    qWarning() << "Failed to send data to disconnected client";
 }
 
 void WsServer::ToAll(QString type, QJsonObject data) {
@@ -161,9 +165,9 @@ void WsServer::SendToClient(QWebSocket* client, QString type,
   QByteArray data = QJsonDocument({{"type", type}, {"data", packet}}).toJson();
 
   if (!client->isValid())
-    qCritical() << "Send error";
+    qWarning() << "Failed to send data to closed socket";
   else if (client->sendTextMessage(data) != data.size())
-    qCritical() << "Send error";
+    qWarning() << "Failed to send all data to socket";
 }
 
 QString WsServer::defaultHost() { return "0.0.0.0"; }

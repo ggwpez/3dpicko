@@ -48,7 +48,7 @@ int getSubprocessTimeoutMs();
  * @param type Type of the log message
  * @return ANSI escape with text color for the specified message type
  */
-QString logTextColor(QtMsgType type);
+QString consoleTextColor(QtMsgType type);
 
 void startLog();
 void stopLog();

@@ -3,6 +3,7 @@
 #include "include/algorithms/normal1.h"
 #include "include/algorithms/plate1.h"
 #include "include/api_controller.h"
+#include "include/autosaver.h"
 #include "include/database.hpp"
 #include "include/requestmapper.h"
 #include "include/signal_daemon.h"
@@ -37,18 +38,31 @@ static int start(int argc, char** argv) {
 
   settings.beginGroup("database");
   Database* db = new Database(settings, &app);
+  settings.endGroup();
+  settings.beginGroup("database.autosave");
+  Autosaver* dbs = new Autosaver(settings, nullptr);
+  settings.endGroup();
 
+  QObject::connect(db, &Database::OnDataChanged, dbs, &Autosaver::dataChanged);
+  QObject::connect(dbs, &Autosaver::OnAutosaveNeeded, db, &Database::autosave);
+  QObject::connect(dbs, &Autosaver::OnAutosaveSkipp, db,
+                   &Database::autosaveSkipped);
+  dbs->start();
+
+#ifdef UPDATER
   QSettings usettings(ini_file, QSettings::IniFormat);
   usettings.beginGroup("updater");
   Updater updater(usettings, *db, &app);
+#endif
 
-  APIController* api = new APIController(colony_detector, plate_detector,
-                                         updater.mng(), db, &app);
+  APIController* api =
+      new APIController(colony_detector, plate_detector, nullptr, db, &app);
 
   // Static file controller
   settings.beginGroup("files");
   StaticFileController* staticFileController =
       new StaticFileController(settings, DocRoot().toSystemAbsolute(), &app);
+  settings.endGroup();
   qInfo() << "DocRoot is" << DocRoot().toSystemAbsolute();
 
   // SSL

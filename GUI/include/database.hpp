@@ -27,18 +27,24 @@ class Database : public QObject, JsonConvertable {
   // typedef Table<DetectionResult*> DetectionResultTable;
   // typedef Table<AlgorithmJob*>	AlgoJobTable;
 
-  Database(QSettings& settings, QObject* parent);
+  Database(QSettings const& settings, QObject* parent);
 
-  void saveToFile();
   bool readOnly() const;
 
   JobTable& jobs();
+  JobTable const& jobs() const;
   JobTable& deletedJobs();  // Tracks deleted jobs TODO neeeded?
+  JobTable const& deletedJobs() const;
   ImageTable& images();
+  ImageTable const& images() const;
   ImageTable& deletedImages();  // "
+  ImageTable const& deletedImages() const;
   ProfileTable& profiles();
+  ProfileTable const& profiles() const;
   VersionTable& versions();
+  VersionTable const& versions() const;
   VersionIdVector& installedVersions();
+  VersionIdVector const& installedVersions() const;
   // AlgoJobTable&		  algoJobs();
   // DetectionResultTable& detectionResults();
 
@@ -60,6 +66,17 @@ class Database : public QObject, JsonConvertable {
 
   void read(const QJsonObject&) override;
   void write(QJsonObject&) const override;
+
+ signals:
+  /**
+   * @brief Emitted when any data content was changed .
+   */
+  void OnDataChanged();
+
+ public slots:
+  void saveToFile();
+  void autosave();
+  void autosaveSkipped();
 
  private:
   ResourcePath file_path_;

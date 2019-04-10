@@ -1,5 +1,4 @@
 #include "include/api_input.h"
-#include <QThread>
 #include "include/api_commands.h"
 #include "include/api_controller.h"
 
@@ -112,8 +111,7 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     api->db().saveToFile();
   } else {
     qWarning() << "Unknown request" << raw_request;
-    emit api->OnUnknownRequest("", client);
-    // response = {{"error", "unknown request"}};
+    emit api->OnUnknownRequest(path, client);
   }
 }
 }  // namespace c3picko

@@ -69,6 +69,10 @@ class Table : public JsonConvertable {
    * @throws When the object does not exist.
    */
   inline Value& get(Key const& key) {
+    return const_cast<Table<Value> const*>(this)->get(key);
+  }
+
+  inline Value const& get(Key const& key) const {
     auto it = entries_.find(key);
 
     if (it == entries_.end())
@@ -100,6 +104,13 @@ class Table : public JsonConvertable {
   inline typename MapType::iterator begin() { return entries_.begin(); }
   inline typename MapType::iterator end() { return entries_.end(); }
 
+  inline typename MapType::const_iterator begin() const {
+    return entries_.cbegin();
+  }
+  inline typename MapType::const_iterator end() const {
+    return entries_.cend();
+  }
+
  public:
   inline void read(QJsonObject const& obj) override {
     for (auto it = obj.begin(); it != obj.end(); ++it)
@@ -113,7 +124,7 @@ class Table : public JsonConvertable {
 
   inline MapType const& entries() const { return entries_; }
 
-  inline int size() { return entries_.size(); }
+  inline int size() const { return entries_.size(); }
 
  private:
   MapType entries_;

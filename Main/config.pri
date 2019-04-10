@@ -20,10 +20,10 @@ DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11 -save-temps
 
 INCLUDEPATH += $$ROOTPATH/quazip
 DEPENDPATH += $$ROOTPATH/quazip
 
 # List with all possible defines
-# C3PICKO_API_KEY_CHECK_OFF, C3PICKO_NO_ZLIB, C3PICKO_NO_QUAZIP
+# C3PICKO_API_KEY_CHECK_OFF, C3PICKO_NO_ZLIB, C3PICKO_NO_QUAZIP, C3PICKO_TEXT_COLORS_OFF
