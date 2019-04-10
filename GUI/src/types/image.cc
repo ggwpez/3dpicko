@@ -145,7 +145,7 @@ bool Image::decodeCvMat(QByteArray data, cv::Mat& output) {
   if (data.isEmpty()) return false;
 
   output = cv::imdecode(cv::Mat(1, data.size(), CV_8UC1, data.data()),
-                        CV_LOAD_IMAGE_UNCHANGED);
+                        cv::IMREAD_COLOR);
   return (!output.empty());
 }
 
