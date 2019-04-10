@@ -37,8 +37,13 @@ static int start(int argc, char** argv) {
 
   settings.beginGroup("database");
   Database* db = new Database(settings, &app);
-  APIController* api =
-      new APIController(colony_detector, plate_detector, db, &app);
+
+  QSettings usettings(ini_file, QSettings::IniFormat);
+  usettings.beginGroup("updater");
+  Updater updater(usettings, *db, &app);
+
+  APIController* api = new APIController(colony_detector, plate_detector,
+                                         updater.mng(), db, &app);
 
   // Static file controller
   settings.beginGroup("files");
@@ -75,9 +80,6 @@ static int start(int argc, char** argv) {
   });
 
   if (!ws_server->StartListen()) return 1;
-  /*QSettings usettings(ini_file, QSettings::IniFormat);
-  usettings.beginGroup("updater");
-  Updater updater(usettings, *db);*/
 
   // copy logging output to ws_server
   setMessageHandler([&ws_server](QString msg) {

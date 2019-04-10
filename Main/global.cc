@@ -5,6 +5,7 @@
 #include "include/algorithms/helper.h"
 #include "include/exception.h"
 #include "include/resource_path.h"
+#include "include/version.h"
 
 #ifdef Q_OS_UNIX
 #include "include/signal_daemon.h"
@@ -12,6 +13,8 @@
 
 namespace c3picko {
 static ResourcePath root_path;
+static ResourcePath doc_root_path;
+static ResourcePath report_path, upload_path;
 static QSslConfiguration* LoadSsl(QString key, QString cert) {
   QSslConfiguration* ssl = new QSslConfiguration;
 
@@ -55,7 +58,7 @@ ResourcePath Root() { return root_path; }
 
 ResourcePath Etc() { return Root() + "etc/"; }
 
-ResourcePath DocRoot() { return Root() + "docroot/"; }
+ResourcePath DocRoot() { return doc_root_path; }
 
 QString UploadFolderName() { return "uploads"; }
 
@@ -95,7 +98,12 @@ static void setupSignals(QCoreApplication* app) {
 
   QObject::connect(sigwatch, &SignalDaemon::OnSignal, [&app](int signum) {
     qWarning("Shutdown by signal: %s", ::strsignal(signum));
-    app->quit();
+    if (signum == SIGUSR1)
+      qApp->exit(exitCodeSuccess());
+    else if (signum == SIGUSR2)
+      qApp->exit(exitCodeHardRestart());
+    else
+      app->quit();
   });
 #else
   qInfo() << "UNIX Signal Setup skipped";
@@ -107,6 +115,7 @@ static void qtTypeSetup() {
       math::rangeToString);
 }
 
+static int subprocess_timeout_ms;
 static QString ini_file_path;
 QString Setup(QCoreApplication* app) {
   setupSignals(app);
@@ -118,7 +127,11 @@ QString Setup(QCoreApplication* app) {
   QString path = QFileInfo(ini_file_path).absolutePath() + "/" +
                  settings.value("root").toString();
   if (!path.endsWith('/')) path += '/';
+
   root_path = ResourcePath::fromSystemAbsolute(path);
+  doc_root_path = root_path + settings.value("docroot").toString();
+  upload_path = root_path + settings.value("uploads").toString();
+  report_path = root_path + settings.value("reports").toString();
 
   if (!Root().exists() || !Root().isDir())
     throw Exception("Root '" + Root().toSystemAbsolute() +
@@ -133,6 +146,12 @@ QString Setup(QCoreApplication* app) {
   // Create "report" folder
   if (!QDir(reportFolder().toSystemAbsolute()).exists())
     QDir().mkdir(reportFolder().toSystemAbsolute());
+
+  subprocess_timeout_ms =
+      settings.value("subprocess_timeout_s", 60 * 1000).toInt() * 1000;
+
+  qDebug().noquote() << "Version:" << currentVersion().id() << "built on"
+                     << currentVersion().date().toString(dateTimeFormat());
 
   return ini_file_path;
 }
@@ -191,12 +210,19 @@ int exitCodeError() { return 1; }
 
 const char* defaultImageExtension() { return "jpg"; }
 
-QString getConfig() {
+QString getConfigPath() {
   if (ini_file_path.isEmpty())
     throw Exception("Setup must be called before getConfig()");
 
   return ini_file_path;
 }
 
-// Version currentVersion() {}
+Version const& currentVersion() {
+  static Version current(GIT_HASH,
+                         QDateTime::fromString(GIT_DATE, Qt::RFC2822Date));
+
+  return current;
+}
+
+int getSubprocessTimeoutMs() { return subprocess_timeout_ms; }
 }  // namespace c3picko

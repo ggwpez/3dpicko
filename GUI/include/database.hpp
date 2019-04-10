@@ -23,6 +23,7 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Image> ImageTable;
   typedef Table<Profile> ProfileTable;
   typedef Table<Version> VersionTable;
+  typedef QVector<Version::ID> VersionIdVector;
   // typedef Table<DetectionResult*> DetectionResultTable;
   // typedef Table<AlgorithmJob*>	AlgoJobTable;
 
@@ -37,6 +38,7 @@ class Database : public QObject, JsonConvertable {
   ImageTable& deletedImages();  // "
   ProfileTable& profiles();
   VersionTable& versions();
+  VersionIdVector& installedVersions();
   // AlgoJobTable&		  algoJobs();
   // DetectionResultTable& detectionResults();
 
@@ -69,6 +71,11 @@ class Database : public QObject, JsonConvertable {
   ImageTable deleted_images_;
   ProfileTable profiles_;
   VersionTable versions_;
+  /**
+   * @brief All installed versions.
+   * Ordered by date; front is old and back is new.
+   */
+  VersionIdVector versions_installed_;
   // AlgoJobTable algo_jobs_;
   /**
    * @brief Saves all past image detection processes.

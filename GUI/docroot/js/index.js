@@ -26,6 +26,7 @@ $(function Setup()
             api("getimagelist");
             api("getjoblist");
             api("getprofilelist");
+            api("getversionlist");
             connected = true;
             EnableDropzone();
         },
@@ -64,6 +65,13 @@ $(function Setup()
                     }
                     else AddImageToList(chosen_image);
                 }
+            }
+            else if (type == "getversionlist")
+            {
+            }
+            else if (type == "versionswitched")
+            {
+                alert("New vesion is: " +data.id);
             }
             else if (type == "uploadimage")
             {

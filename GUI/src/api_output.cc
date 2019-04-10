@@ -14,6 +14,11 @@ void APIOutput::UnknownRequest(QString request, QObject* client) {
   Error("Unknown request", request, client);
 }
 
+void APIOutput::VersionListRequested(QObject* client) {
+  emit op->toClient(client, APICommands::GET_VERSION_LIST,
+                    op->createVersionList());
+}
+
 void APIOutput::ImageListRequested(QObject* client) {
   emit op->toClient(client, APICommands::GET_IMAGE_LIST, op->createImageList());
 }
@@ -158,6 +163,10 @@ void APIOutput::ColonyDetected(Job::ID job, const std::vector<Colony>* colonies,
 
 void APIOutput::ColonyDetectionError(QString error, QObject* client) {
   Error(APICommands::GET_POSITIONS, error, client);
+}
+
+void APIOutput::VersionSwitched(Version::ID id) {
+  emit op->toAll("versionswitched", {{"id", id}});
 }
 
 void APIOutput::Error(QString where, QString what, QObject* client) {

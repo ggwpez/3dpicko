@@ -1,5 +1,6 @@
 #include "include/database.hpp"
 #include <QDebug>
+#include <QJsonArray>
 #include <QJsonDocument>
 
 namespace c3picko {
@@ -62,6 +63,10 @@ Database::ProfileTable& Database::profiles() { return profiles_; }
 
 Database::VersionTable& Database::versions() { return versions_; }
 
+Database::VersionIdVector& Database::installedVersions() {
+  return versions_installed_;
+}
+
 // Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
 
 // Database::DetectionResultTable& Database::detectionResults() { return
@@ -99,6 +104,11 @@ void Database::read(QJsonObject const& obj) {
   profiles_.read(obj["profiles"].toObject());
   versions_.read(obj["versions"].toObject());
 
+  QJsonArray const& arr(obj["versions_of_interest"].toArray());
+  for (auto e : arr)  // TODO
+    versions_installed_.push_back(e.toString());
+  // versions_oi_.read(obj["versions_of_interest"].toObject());
+
   // TODO read detection*
 
   job_id_ = obj["job_id"].toInt();
@@ -122,6 +132,11 @@ void Database::write(QJsonObject& obj) const {
   obj["deleted_images"] = (QJsonObject)deleted_images_;
   obj["profiles"] = (QJsonObject)profiles_;
   obj["versions"] = (QJsonObject)versions_;
+
+  QJsonArray arr;
+  for (auto e : versions_installed_) arr.push_back(e);
+  obj["versions_of_interest"] = arr;
+  // obj["versions_of_interest"] = (QJsonObject)versions_oi_;
 
   // obj["detection_jobs"] = (QJsonObject)detection_jobs_;
   // obj["detection_results"] = (QJsonObject)detection_results_;

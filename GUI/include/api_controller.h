@@ -14,6 +14,7 @@
 class QThreadPool;
 class ColonyDetector;
 namespace c3picko {
+class VersionManager;
 class AlgorithmJob;
 namespace pi {
 class Command;
@@ -32,9 +33,18 @@ class APIController : public QObject {
   friend class APIOutput;
 
  public:
+  /**
+   * @brief APIController
+   * @param colony_detector
+   * @param plate_detector
+   * @param version_manager Must run in the same thread as this . Argument can
+   * be null.
+   * @param db
+   * @param parent
+   */
   APIController(AlgorithmManager* colony_detector,
-                AlgorithmManager* plate_detector, Database* db,
-                QObject* parent);
+                AlgorithmManager* plate_detector,
+                VersionManager* version_manager, Database* db, QObject* parent);
 
   // Forwarded to APIInput
   void request(QJsonObject request, QString raw_request, QObject* client);
@@ -98,11 +108,35 @@ class APIController : public QObject {
   void restart(QObject* client);
 
  private slots:
+  /**
+   * @brief Catches and logs all incoming signals.
+   */
   void defaultSignalHandler();
+  /**
+   * @brief VersioManager::OnInstallBegin
+   */
+  // void versionInstallBegin(Version::ID);
+  /**
+   * @brief VersioManager::OnInstalled
+   */
+  // void versionInstalled(Version::ID);
+  /**
+   * @brief VersioManager::OnInstallError
+   */
+  // void versionInstallError(Version::ID, QString error);
+  /**
+   * @brief VersioManager::OnUnInstalled
+   */
+  // void versionUnInstalled(Version::ID);
+  /**
+   * @brief VersioManager::OnSwitched
+   */
+  // void versionSwitched(Version::ID);
 
  signals:
   void OnUnknownRequest(QString request, QObject* client);
 
+  void OnVersionListRequested(QObject* client);
   void OnImageListRequested(QObject* client);
   void OnJobListRequested(QObject* client);
   void OnProfileListRequested(QObject* client);
@@ -149,7 +183,10 @@ class APIController : public QObject {
                         QObject* client);
   void OnColonyDetectionError(QString error, QObject* client);
 
+  void OnVersionSwitched(Version::ID);
+
  private:
+  QJsonObject createVersionList() const;
   QJsonObject createImageList() const;
   QJsonObject createImageList(Image);  // TODO const
   QJsonObject createJobList();
@@ -165,6 +202,7 @@ class APIController : public QObject {
 
  protected:
   AlgorithmManager *colony_detector_, *plate_detector_;
+  VersionManager* version_manager_;
   Database* db_;
 
   // Deleted by this

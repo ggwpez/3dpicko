@@ -10,6 +10,7 @@
 #include "include/plate_result.h"
 #include "include/reporter.h"
 #include "include/types/well.h"
+#include "include/version_manager.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -22,11 +23,13 @@
 using namespace c3picko::pi;
 namespace c3picko {
 APIController::APIController(AlgorithmManager* colony_detector,
-                             AlgorithmManager* plate_detector, Database* db,
+                             AlgorithmManager* plate_detector,
+                             VersionManager* version_manager, Database* db,
                              QObject* parent)
     : QObject(parent),
       colony_detector_(colony_detector),
       plate_detector_(plate_detector),
+      version_manager_(version_manager),
       db_(db),
       input_(new APIInput(this)),
       output_(new APIOutput(this)) {
@@ -57,14 +60,26 @@ APIController::APIController(AlgorithmManager* colony_detector,
       int slot_index =
           output_->metaObject()->indexOfSlot(qPrintable(slot_name));
       if (slot_index == -1)
-        qDebug("Could not find slot APIOutput::%s", qPrintable(slot_name));
+        throw Exception("No such slot APIOutput::" + slot_name);
       else {
         QMetaMethod slot = output_->metaObject()->method(slot_index);
-
         QObject::connect(this, signal, output_, slot);
-        // qDebug("Connecting APIOutput::%s", qPrintable(slot_name));
       }
     }
+  }
+
+  // Connect the signals from version_manager_ to our slots, in order to be able
+  // to inform the client, when new updates are ready
+  if (version_manager) {
+    /*connect(version_manager, &VersionManager::OnInstallBegin, this,
+    &APIController::versionInstallBegin); connect(version_manager,
+    &VersionManager::OnInstalled, this, &APIController::versionInstalled);
+    connect(version_manager, &VersionManager::OnUnInstalled, this,
+    &APIController::versionUnInstalled); connect(version_manager,
+    &VersionManager::OnInstallError, this,
+    &APIController::versionInstallError);*/
+    connect(version_manager, &VersionManager::OnSwitched, this,
+            &APIController::OnVersionSwitched);
   }
 }
 
@@ -74,6 +89,24 @@ void APIController::defaultSignalHandler() {
       meta_sender->method(QObject::senderSignalIndex()).name());
   qDebug("Event %s::%s", qPrintable(meta_sender->className()),
          qPrintable(signal_name));
+}
+
+QJsonObject APIController::createVersionList() const {
+  QJsonObject ret;
+
+  QJsonArray all;
+  for (Version const& version : db_->versions())
+    all.push_back(Marshalling::toJson(version));
+
+  QJsonArray installed;
+  for (Version::ID id : db_->installedVersions()) installed.push_back(id);
+
+  ret["all"] = all;
+  ret["installed"] = installed;
+  ret["current"] = currentVersion().id();
+  ret["selected"] = version_manager_->selected();
+
+  return ret;
 }
 
 void APIController::DeleteImage(Image::ID id, QObject* client) {
@@ -451,7 +484,6 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
       db_->profiles().get(job.octoprint()).operator c3picko::pi::OctoConfig*();
 
   OctoPrint* printer = new OctoPrint(*octoprint, this);
-
   GcodeGenerator gen(*socket, *printerp, *plate);
 
   // Order the colonies by their top left position
@@ -483,8 +515,7 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
                                            pick_positions));
   Report report = reporter.createReport();
-
-  qDebug() << "Created report.pdf";
+  job.setReportPath(report.data());
 
   QFile file("out.gcode");
   if (!file.open(QIODevice::WriteOnly)) qWarning() << "Could not save gcode";
@@ -601,10 +632,10 @@ void APIController::request(QJsonObject request, QString raw_request,
   try {
     input_->serviceRequest(request, raw_request, client);
   } catch (Exception const& e) {
-    output_->Error("std::exception", e.what(), client);
-    qWarning("std::exception %s", e.what());
+    output_->Error("c3picko::exception", e.what(), client);
+    qWarning("c3picko::exception %s", e.what());
   } catch (std::exception const& e) {
-    output_->Error("Exception", e.what(), client);
+    output_->Error("std::exception", e.what(), client);
     qWarning("std::exception %s", e.what());
   } catch (...) {
     output_->Error("Exception", "unknown", client);

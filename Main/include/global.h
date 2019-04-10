@@ -20,6 +20,9 @@ QSslConfiguration* LoadSslConfig(QSettings& settings);
 
 ResourcePath Root();
 ResourcePath Etc();
+/**
+ * Document Root for the webserver.
+ */
 ResourcePath DocRoot();
 QString UploadFolderName();
 ResourcePath UploadFolder();
@@ -36,8 +39,9 @@ QString Setup(QCoreApplication* app);
 /**
  * @return Path to serverconfig.ini. Only works after Setup
  */
-QString getConfig();
-Version currentVersion();
+QString getConfigPath();
+const Version& currentVersion();
+int getSubprocessTimeoutMs();
 
 /**
  * @brief logTextColor
@@ -69,5 +73,10 @@ int exitCodeSoftRestart();
  */
 int exitCodeHardRestart();
 
+int exitCodeSuccess();
+
+/**
+ * Returns the default image extension for saving images.
+ */
 char const* defaultImageExtension();
 }  // namespace c3picko

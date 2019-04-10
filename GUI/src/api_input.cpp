@@ -1,9 +1,9 @@
 #include "include/api_input.h"
+#include <QThread>
 #include "include/api_commands.h"
 #include "include/api_controller.h"
 
 namespace c3picko {
-
 APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
 
 void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
@@ -18,6 +18,8 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     emit api->OnImageListRequested(client);
   } else if (path == APICommands::GET_PROFILE_LIST) {
     emit api->OnProfileListRequested(client);
+  } else if (path == APICommands::GET_VERSION_LIST) {
+    emit api->OnVersionListRequested(client);
   } else if (path == APICommands::GET_JOB_LIST) {
     emit api->OnJobListRequested(client);
   } else if (path == APICommands::GET_DETECTION_ALGORITHMS) {

@@ -54,8 +54,8 @@ Reporter Reporter::fromDatabase(
 Report Reporter::createReport() const {
   QString name = "report_" + id_ + "-" + job_.name() + "-" +
                  job_.created().toString("dd.MM.yy");
-  ResourcePath output = reportFolder() + name + ".zip";
-  ResourcePath htm_path = reportFolder() + name + ".html";
+  ResourcePath output = reportFolder() + (name + ".zip");
+  ResourcePath htm_path = reportFolder() + (name + ".html");
   cv::Mat img_data = result_->first();
 
   // Render the colonies and their ids

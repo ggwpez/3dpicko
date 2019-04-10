@@ -4,10 +4,7 @@ namespace c3picko {
 MatrixResult::MatrixResult(AlgorithmResult&& base)
     : AlgorithmResult(std::move(base)) {}
 
-MatrixResult::~MatrixResult() {
-  qDebug() << "MatrixResult::~MatrixResult()";
-  cleanup();
-}
+MatrixResult::~MatrixResult() { cleanup(); }
 
 cv::Mat& MatrixResult::first() {
   if (!stack_.size()) throw Exception("Assertion failure: Stack empty");
@@ -47,10 +44,7 @@ const cv::Mat& MatrixResult::oldMat() const {
   return stack_.back();
 }
 
-void MatrixResult::cleanup() {
-  qDebug() << "MatrixResult::cleanup()" << this;
-  stack_.clear();
-}
+void MatrixResult::cleanup() { stack_.clear(); }
 
 const std::list<cv::Mat>& MatrixResult::stack() const { return stack_; }
 }  // namespace c3picko

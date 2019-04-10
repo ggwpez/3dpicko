@@ -46,28 +46,32 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../ImageRecognition/libImageRecognition.a
 
 SOURCES += main.cpp \
-    global.cc \
-    marshalling.cc \
-    exception.cc \
-    setting.cc \
-    resource_path.cc \
-    updater.cc \
-    version.cc
+	global.cc \
+	marshalling.cc \
+	exception.cc \
+	setting.cc \
+	resource_path.cc \
+	updater.cc \
+	version.cc \
+	version_manager.cc \
+	process.cc
 
 HEADERS += \
-    include/json_constructable.hpp \
-    include/json_convertable.h \
-    include/global.h \
-    include/marshalling.hpp \
-    include/exception.h \
-    include/setting.h \
-    include/resource_path.h \
-    include/updater.h \
-    include/version.h
+	include/json_constructable.hpp \
+	include/json_convertable.h \
+	include/global.h \
+	include/marshalling.hpp \
+	include/exception.h \
+	include/setting.h \
+	include/resource_path.h \
+	include/updater.h \
+	include/version.h \
+	include/version_manager.h \
+	include/process.h
 
 unix {
-    HEADERS += include/signal_daemon.h
-    SOURCES += signal_daemon.cc
+	HEADERS += include/signal_daemon.h
+	SOURCES += signal_daemon.cc
 }
 
 INCLUDEPATH += $$ROOTPATH/Main $$ROOTPATH/GUI $$ROOTPATH/ImageRecognition $$ROOTPATH/Gcode $$ROOTPATH/PiCommunicator $$ROOTPATH/PiCommunicator/include $$ROOTPATH/QtWebApp/httpserver/
@@ -76,10 +80,17 @@ DEPENDPATH += $$ROOTPATH/Main $$ROOTPATH/GUI $$ROOTPATH/ImageRecognition $$ROOTP
 INCLUDEPATH += /usr/local/include/opencv
 
 LIBS += -L/usr/local/lib/ \
-        -lopencv_core \
-        -lopencv_imgproc \
-        -lopencv_highgui \
-        -lopencv_imgcodecs
+		-lopencv_core \
+		-lopencv_imgproc \
+		-lopencv_highgui \
+		-lopencv_imgcodecs
+
+# Updater defines
+DEFINES += GIT_HASH="'\"$$system('git log --pretty=format:\'%H\' --max-count=1')\"'"
+DEFINES += GIT_DATE="'\"$$system('git log --pretty=format:\'%H\' --pretty=format:\'%ad\' --date=rfc2822 --max-count=1')\"'"
+#DEFINES += SOURCE_DIR="'\"$$ROOTPATH\"'"
+#DEFINES += BUILD_DIR="'\"$$shadowed($$ROOTPATH)\"'"
+message($$DEFINES)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -89,9 +100,3 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/quazip/release/ -lquazip
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/quazip/debug/ -lquazip
 else:unix: LIBS += -L$$OUT_PWD/../quazip/quazip/ -lquazip
-
-GIT_HASH = $$system("git log --pretty=format:\"%H\" --max-count=1")
-GIT_DATE = $$system("git log --pretty=format:\"%H\" --pretty=format:\"%ad\" --date=rfc2822 --max-count=1")
-
-message($$GIT_HASH)
-message($$GIT_DATE)

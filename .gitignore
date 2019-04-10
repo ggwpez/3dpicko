@@ -6,4 +6,7 @@ bin/
 build*/
 GUI/docroot/uploads/
 GUI/docroot/files/
+GUI/docroot/reports/
+GUI/serverconfig.ini
+GUI/database.json
 quazip/
