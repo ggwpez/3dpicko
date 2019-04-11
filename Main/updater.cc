@@ -117,7 +117,7 @@ void Updater::search() {
   Process* gitL = Process::gitLog(
       sourceDir(),
       {"--pretty=format:\"%H#%ad\"", "--date=rfc2822", "--max-count=5",
-       currentVersion().id() + "...origin/" + repo_branch_});
+       mng_->selected() + "...origin/" + repo_branch_});
 
   connect(gitF, &Process::OnSuccess, gitL, &Process::start);
   connect(gitF, &Process::OnFailure, gitF,
