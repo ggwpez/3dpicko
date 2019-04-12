@@ -94,10 +94,6 @@ class APIController : public QObject {
   void createJob(Job& job_wo_id, QObject* client);
 
   /**
-   * @brief Calls detectColonies with default parameters.
-   */
-  void getPositions(Image::ID id, QObject* client);
-  /**
    * @brief Calls detectColonies with the parameters given by the client.
    */
   void updateDetectionSettings(Job::ID job, QString algo_id,

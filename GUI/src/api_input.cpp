@@ -76,9 +76,6 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
     Job job_wo_id(Marshalling::fromJson<Job>(req_data));
 
     api->createJob(job_wo_id, client);
-  } else if (path == APICommands::GET_POSITIONS) {
-    QString img_id = Marshalling::fromJson<QString>(req_data["id"]);
-    api->getPositions(img_id, client);
   } else if (path == APICommands::SET_COLONIES_TO_PICK) {
     Job::ID job = Marshalling::fromJson<Job::ID>(req_data["job"]);
     quint32 number = req_data["number"].toInt();

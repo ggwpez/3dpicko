@@ -381,13 +381,6 @@ void APIController::createJob(Job& job, QObject* client) {
   //}
 }
 
-void APIController::getPositions(Image::ID id, QObject* client) {
-  // AlgorithmJob* job = detectColonies(job_id, defaultAlgo(), {}, client);
-
-  // if (job)
-  // job->start(true, true);
-}
-
 std::shared_ptr<AlgorithmJob> APIController::detectColonies(
     Job::ID job_id, QString algo_id, QJsonObject settings, QObject* client) {
   if (!db_->jobs().exists(job_id)) {
