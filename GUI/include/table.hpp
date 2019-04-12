@@ -69,7 +69,12 @@ class Table : public JsonConvertable {
    * @throws When the object does not exist.
    */
   inline Value& get(Key const& key) {
-    return const_cast<Table<Value> const*>(this)->get(key);
+    auto it = entries_.find(key);
+
+    if (it == entries_.end())
+      throw Exception("Table", "Key not found");
+    else
+      return it.value();
   }
 
   inline Value const& get(Key const& key) const {
