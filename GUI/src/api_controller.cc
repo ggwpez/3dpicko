@@ -509,26 +509,22 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
                                                 job.startingCol(), coords);
 
   Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
-                                           pick_positions));
+                                           pick_positions, code));
   Report report = reporter.createReport();
   job.setReportPath(report.data());
 
-  QFile file("out.gcode");
-  if (!file.open(QIODevice::WriteOnly)) qWarning() << "Could not save gcode";
-  QTextStream ts(&file);
-
+  // Convert gcode to octoprint commands
   QStringList gcode_list;
-  for (auto const& c : code) {
-    ts << QString::fromStdString(c.ToString()) << endl;
-    gcode_list << QString::fromStdString(c.ToString());
-  }
-  file.flush();
-  file.close();
+  for (auto const& c : code) gcode_list << QString::fromStdString(c.ToString());
 
   emit OnJobStarted(report, client);
   Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-  printer->SendCommand(cmd);  // TODO inform client
+  connect(cmd, &Command::OnStatusErr,
+          [](QJsonValue status) { qWarning() << status.toString(); });
+  connect(cmd, &Command::OnNetworkErr,
+          [](QString error) { qWarning() << error; });
   connect(cmd, &Command::OnFinished, printer, &OctoPrint::deleteLater);
+  printer->SendCommand(cmd);  // TODO inform client
 }
 
 void APIController::shutdown(QObject*) {

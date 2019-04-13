@@ -19,8 +19,8 @@ Autosaver::Autosaver(const QSettings& settings, QObject* _parent)
 
   QString str = settings.value("interval").toString().trimmed().toLower();
   int index = str.lastIndexOf(QRegularExpression("\\d"));
-  QString number = str.leftRef(index + 1),
-          unit = str.rightRef(str.size() - index - 1);
+  QString number = str.left(index + 1),
+          unit = str.right(str.size() - index - 1);
 
   bool ok = false;
   double v = number.toDouble(&ok);

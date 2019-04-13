@@ -3,11 +3,10 @@
     "default_plate": "304",
     "default_printer": "302",
     "default_socket": "303",
+    "default_version": "",
     "deleted_images": {
     },
     "deleted_jobs": {
-    },
-    "detection_results": {
     },
     "images": {
     },
@@ -110,7 +109,7 @@
             "id": "306",
             "profile_name": "Creatily Ender v3",
             "settings": {
-                "address": "192.168.2.181",
+                "address": "10.14.0.150",
                 "api_key": "F866D6261972458CACAE9CB56E484758",
                 "port": 80,
                 "protocol": "http"
@@ -118,6 +117,11 @@
             "type": "octoprint-profile"
         }
     },
+    "report_id": 0,
     "result_id": 19,
-    "result_job_id": 13
+    "result_job_id": 13,
+    "versions": {
+    },
+    "versions_of_interest": [
+    ]
 }

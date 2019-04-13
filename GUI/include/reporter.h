@@ -3,6 +3,7 @@
 #include "include/types/report.h"
 
 namespace c3picko {
+class GcodeInstruction;
 class Profile;
 class Well;
 /**
@@ -15,9 +16,9 @@ class Reporter {
    * with it.
    * @param pick_sequence The colonies to be picked in correct order
    */
-  static Reporter fromDatabase(
-      Database const& db, Report::ID id, Job::ID job,
-      const std::map<Well, Colony::ID>& pick_positions);
+  static Reporter fromDatabase(Database const& db, Report::ID id, Job::ID job,
+                               const std::map<Well, Colony::ID>& pick_positions,
+                               const std::vector<GcodeInstruction>& gcode);
 
   /**
    * @brief Creates a report with the data read from the fromData call.
@@ -31,7 +32,8 @@ class Reporter {
            const std::map<Well, Colony::ID>& pick_positions, const Image& image,
            const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
            Profile const& plate_, Profile const& printer_,
-           Profile const& socket_, Profile const& octoprint_);
+           Profile const& socket_, Profile const& octoprint_,
+           const std::vector<GcodeInstruction>& gcode);
 
   void writeHtmlReport(cv::Mat const& img_data, QString& html) const;
 
@@ -84,5 +86,6 @@ class Reporter {
   Profile const& printer_;
   Profile const& socket_;
   Profile const& octoprint_;
+  std::vector<GcodeInstruction> gcode_;
 };
 }  // namespace c3picko

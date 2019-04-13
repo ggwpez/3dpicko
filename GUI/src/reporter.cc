@@ -1,6 +1,7 @@
 #include "include/reporter.h"
 #include "include/algorithm.h"
 #include "include/database.hpp"
+#include "include/gcodeinstruction.h"
 #include "include/types/well.h"
 #ifndef C3PICKO_NO_QUAZIP
 #include "quazip/JlCompress.h"
@@ -18,7 +19,8 @@ Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
                    Image const& image, const DetectionResult* result,
                    QSet<Colony::ID> colonies_to_pick, const Profile& plate_,
                    const Profile& printer, const Profile& socket,
-                   const Profile& octoprint)
+                   const Profile& octoprint,
+                   std::vector<GcodeInstruction> const& gcode)
     : id_(id),
       job_(job),
       creation_(creation),
@@ -29,13 +31,15 @@ Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
       plate_(plate_),
       printer_(printer),
       socket_(socket),
-      octoprint_(octoprint) {
+      octoprint_(octoprint),
+      gcode_(gcode) {
   if (!job.resultJob()) throw Exception("Job cant have empty result");
 }
 
 Reporter Reporter::fromDatabase(
     const Database& db, Report::ID id, Job::ID jid,
-    const std::map<Well, Colony::ID>& pick_positions) {
+    const std::map<Well, Colony::ID>& pick_positions,
+    std::vector<GcodeInstruction> const& gcode) {
   Job job = db.jobs().get(jid);
   Profile const &plate = db.profiles().get(job.plate()),
                 &printer = db.profiles().get(job.printer()),
@@ -48,7 +52,7 @@ Reporter Reporter::fromDatabase(
 
   return Reporter(id, job, QDateTime::currentDateTime(), pick_positions, img,
                   result, job.coloniesToPick(), plate, printer, socket,
-                  octoprint);
+                  octoprint, gcode);
 }
 
 Report Reporter::createReport() const {
@@ -56,6 +60,7 @@ Report Reporter::createReport() const {
                  job_.created().toString("dd.MM.yy");
   ResourcePath output = reportFolder() + (name + ".zip");
   ResourcePath htm_path = reportFolder() + (name + ".html");
+  ResourcePath gcode_path = reportFolder() + (name + ".gcode");
   cv::Mat img_data = result_->first();
 
   // Render the colonies and their ids
@@ -88,10 +93,24 @@ Report Reporter::createReport() const {
     file.write(html.toUtf8());
   }
 
+  // Write gcode to file
+  {
+    QFile file(gcode_path.toSystemAbsolute());
+
+    if (!file.open(QIODevice::WriteOnly))
+      throw Exception("Could not write gcode to: " +
+                      gcode_path.toSystemAbsolute());
+
+    QTextStream ts(&file);
+    for (GcodeInstruction const& ins : gcode_)
+      ts << QString::fromStdString(ins.ToString()) << "\r\n";
+  }
+
 #ifndef C3PICKO_NO_ZLIB
   // Compress the html + gcode
-  JlCompress::compressFiles(output.toSystemAbsolute(),
-                            {/* TODO add gcode */ htm_path.toSystemAbsolute()});
+  JlCompress::compressFiles(
+      output.toSystemAbsolute(),
+      {gcode_path.toSystemAbsolute(), htm_path.toSystemAbsolute()});
 #else
   // Let the client only download the html
   output = htm_path;
