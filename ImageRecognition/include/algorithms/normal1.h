@@ -1,7 +1,7 @@
 #pragma once
 
 #include <opencv2/core.hpp>
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 #include "include/algorithm.h"
 #include "include/detection_result.h"

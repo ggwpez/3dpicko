@@ -23,7 +23,6 @@ SOURCES += \
     src/algorithm_manager.cc
 
 HEADERS += \
-	include/colony.hpp \
 	include/algo_setting.h \
 	include/algorithm.h \
 	include/algorithm_manager.h \
@@ -39,7 +38,8 @@ HEADERS += \
 	include/matrix_result.h \
 	include/algorithms/plate2.h \
     include/plates/rect_plate.h \
-    include/plates/round_plate.h
+    include/plates/round_plate.h \
+    include/colony.h
 
 INCLUDEPATH += $$ROOTPATH/Main
 DEPENDPATH += $$ROOTPATH/Main

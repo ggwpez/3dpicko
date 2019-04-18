@@ -3,7 +3,7 @@
 
 #include <QList>
 #include <QString>
-#include "database.hpp"
+#include "database.h"
 #include "httprequesthandler.h"
 #include "include/global.h"
 #include "include/types/job.h"

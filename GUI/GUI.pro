@@ -26,8 +26,6 @@ SOURCES += \
 
 HEADERS += \
 	include/requestmapper.h \
-	include/table.hpp \
-	include/database.hpp \
 	include/api_output.h \
 	include/api_input.h \
 	include/api_controller.h \
@@ -41,7 +39,9 @@ HEADERS += \
     include/types/image.h \
     include/types/job.h \
     include/types/profile.h \
-    include/ws_server.h
+    include/ws_server.h \
+    include/table.h \
+    include/database.h
 
 OTHER_FILES += serverconfig.ini
 

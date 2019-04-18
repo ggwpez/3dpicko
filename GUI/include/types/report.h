@@ -1,6 +1,6 @@
 #pragma once
 
-#include "include/colony.hpp"
+#include "include/colony.h"
 #include "include/detection_result.h"
 #include "include/resource_path.h"
 #include "include/types/job.h"

@@ -1,6 +1,6 @@
 #include "include/reporter.h"
 #include "include/algorithm.h"
-#include "include/database.hpp"
+#include "include/database.h"
 #include "include/gcodeinstruction.h"
 #include "include/types/well.h"
 #ifndef C3PICKO_NO_QUAZIP

@@ -2,7 +2,7 @@
 
 #include "include/algorithm_job.h"
 #include "include/detection_result.h"
-#include "include/table.hpp"
+#include "include/table.h"
 #include "include/types/image.h"
 #include "include/types/job.h"
 #include "include/types/report.h"

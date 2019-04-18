@@ -20,9 +20,9 @@ class Job {
   typedef QString ID;
   Job() = default;
   Job(ID id, Image::ID img_id, QString name, QString description,
-	  QDateTime created, QStack<AlgorithmResult::ID> results,
-	  Profile::ID printer, Profile::ID socket, int starting_row,
-	  int starting_col, int step, ResourcePath report_path);
+      QDateTime created, QStack<AlgorithmResult::ID> results,
+      Profile::ID printer, Profile::ID socket, int starting_row,
+      int starting_col, int step, ResourcePath report_path);
 
  public:
   Image::ID imgID() const;

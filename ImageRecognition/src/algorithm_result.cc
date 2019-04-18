@@ -3,7 +3,7 @@
 #include <QThread>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
-#include "include/colony.hpp"
+#include "include/colony.h"
 #include "include/exception.h"
 
 namespace c3picko {

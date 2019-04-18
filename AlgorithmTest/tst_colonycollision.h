@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <QObject>
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 struct TestData {
   std::vector<c3picko::Colony> colonies_;

@@ -1,4 +1,4 @@
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 namespace c3picko {
 template <>

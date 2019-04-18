@@ -1,4 +1,4 @@
-#include "include/database.hpp"
+#include "include/database.h"
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>

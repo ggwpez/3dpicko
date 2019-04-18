@@ -4,7 +4,7 @@
 #include <QTextDocument>
 #include <QtTest>
 #include "include/algorithms/helper.h"
-#include "include/database.hpp"
+#include "include/database.h"
 
 using namespace c3picko;
 

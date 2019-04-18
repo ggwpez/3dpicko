@@ -4,7 +4,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include "include/algorithms/helper.h"
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 using namespace c3picko;
 

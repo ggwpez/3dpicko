@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include "include/database.hpp"
+#include "include/database.h"
 #include "include/resource_path.h"
 
 class QSettings;

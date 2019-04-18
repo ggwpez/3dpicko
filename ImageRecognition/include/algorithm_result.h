@@ -2,7 +2,7 @@
 
 #include <QString>
 #include <vector>
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 namespace cv {
 class Mat;

@@ -1,5 +1,5 @@
 #include "include/version_manager.h"
-#include "include/database.hpp"
+#include "include/database.h"
 #include "include/exception.h"
 #include "include/process.h"
 

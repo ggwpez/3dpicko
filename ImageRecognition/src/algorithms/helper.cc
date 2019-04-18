@@ -1,5 +1,5 @@
 #include "include/algorithms/helper.h"
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 #include <QByteArray>
 #include <QDebug>

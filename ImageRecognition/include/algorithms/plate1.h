@@ -1,7 +1,7 @@
 #pragma once
 
 #include "include/algorithm.h"
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 namespace c3picko {
 class PlateResult;

@@ -6,7 +6,7 @@
 #include <random>
 #include <unordered_map>
 #include <vector>
-#include "include/colony.hpp"
+#include "include/colony.h"
 
 namespace c3picko {
 class Colony;
