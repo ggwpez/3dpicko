@@ -1,4 +1,4 @@
-#include "include/ws_server.hpp"
+#include "include/ws_server.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>

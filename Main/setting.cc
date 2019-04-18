@@ -1,6 +1,6 @@
 #include "include/setting.h"
 #include "include/exception.h"
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 #include "include/point.h"
 
 namespace c3picko {

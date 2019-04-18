@@ -7,7 +7,6 @@ SOURCES += \
 	src/colony.cc \
 	src/algo_setting.cc \
 	src/algorithm.cc \
-	src/algorithm_manager.cpp \
 	src/algorithm_job.cc \
 	src/algorithms/helper.cc \
 	src/algorithm_result.cc \
@@ -20,7 +19,8 @@ SOURCES += \
 	src/matrix_result.cc \
 	src/algorithms/plate2.cc \
 	src/plates/round_plate.cc \
-	src/plates/rect_plate.cc
+	src/plates/rect_plate.cc \
+    src/algorithm_manager.cc
 
 HEADERS += \
 	include/colony.hpp \

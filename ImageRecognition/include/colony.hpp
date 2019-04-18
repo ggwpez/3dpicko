@@ -2,7 +2,7 @@
 
 #include "include/algo_setting.h"
 #include "include/global.h"
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 
 namespace c3picko {
 

@@ -6,7 +6,7 @@
 #include "database.hpp"
 #include "httprequesthandler.h"
 #include "include/global.h"
-#include "include/types/job.hpp"
+#include "include/types/job.h"
 
 using namespace stefanfrings;
 

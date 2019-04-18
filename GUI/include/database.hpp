@@ -3,13 +3,13 @@
 #include "include/algorithm_job.h"
 #include "include/detection_result.h"
 #include "include/table.hpp"
-#include "include/types/image.hpp"
-#include "include/types/job.hpp"
+#include "include/types/image.h"
+#include "include/types/job.h"
 #include "include/types/report.h"
 #include "include/version.h"
 
 // Cant forward declare bc type traits check in class Table<typename T>
-#include "include/types/profile.hpp"
+#include "include/types/profile.h"
 
 namespace c3picko {
 /**

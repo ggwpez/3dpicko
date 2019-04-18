@@ -1,6 +1,6 @@
 #pragma once
 
-#include "include/types/job.hpp"
+#include "include/types/job.h"
 #include "include/types/report.h"
 
 namespace c3picko {

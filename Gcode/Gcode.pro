@@ -3,12 +3,12 @@ CONFIG += staticlib
 
 SOURCES += \
    # source/main.cpp \
-	source/gcodeinstruction.cpp \
-	source/gcodegenerator.cpp \
-	source/point.cpp \
-	source/platesocketprofile.cpp \
-	source/printerprofile.cpp \
-	source/plateprofile.cpp
+    source/gcodegenerator.cc \
+    source/gcodeinstruction.cc \
+    source/plateprofile.cc \
+    source/platesocketprofile.cc \
+    source/point.cc \
+    source/printerprofile.cc
 
 HEADERS += \
 	include/gcodeinstruction.h \

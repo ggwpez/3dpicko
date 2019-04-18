@@ -6,8 +6,8 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += \ 
-    tst_gcodeinstruction.cpp
+SOURCES += \  
+    tst_gcodeinstruction.cc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Gcode/release/ -lGcode
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Gcode/debug/ -lGcode

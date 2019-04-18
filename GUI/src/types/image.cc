@@ -1,4 +1,4 @@
-#include "include/types/image.hpp"
+#include "include/types/image.h"
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <QDebug>
@@ -9,29 +9,29 @@
 namespace c3picko {
 
 Image::Image(Image::ID id, QString original_name, QString description,
-             ResourcePath path, QDateTime uploaded, int width, int height)
-    : original_name_(original_name),
-      description_(description),
-      path_(path),
-      uploaded_(uploaded),
-      width_(width),
-      height_(height),
-      id_(id) {
+			 ResourcePath path, QDateTime uploaded, int width, int height)
+	: original_name_(original_name),
+	  description_(description),
+	  path_(path),
+	  uploaded_(uploaded),
+	  width_(width),
+	  height_(height),
+	  id_(id) {
   Q_ASSERT(!id_.isEmpty());
   if (path_.isEmpty()) qWarning() << "Image path was empty, image lost";
   Q_ASSERT(width_ && height_);
 }
 
 Image::Image(QByteArray data, QString original_name, QString description,
-             QDateTime uploaded)
-    : original_name_(original_name),
-      description_(description),
-      path_(),
-      uploaded_(uploaded) {
+			 QDateTime uploaded)
+	: original_name_(original_name),
+	  description_(description),
+	  path_(),
+	  uploaded_(uploaded) {
   // Calculate size
   if (!decodeCvMat(data, image_)) {
-    qWarning() << "Loading image failed:" << original_name;
-    return;
+	qWarning() << "Loading image failed:" << original_name;
+	return;
   }
   width_ = image_.cols;
   height_ = image_.rows;
@@ -42,14 +42,14 @@ Image::Image(QByteArray data, QString original_name, QString description,
 }
 
 Image::Image(cv::Mat image, QString original_name, QString description,
-             QDateTime uploaded)
-    : original_name_(original_name),
-      description_(description),
-      uploaded_(uploaded),
-      image_(image),
-      width_(image.cols),
-      height_(image.rows),
-      id_(calculateId(image_)) {
+			 QDateTime uploaded)
+	: original_name_(original_name),
+	  description_(description),
+	  uploaded_(uploaded),
+	  image_(image),
+	  width_(image.cols),
+	  height_(image.rows),
+	  id_(calculateId(image_)) {
   Q_ASSERT(!id_.isEmpty());
   Q_ASSERT(path_.isEmpty());
   Q_ASSERT(width_ && height_);
@@ -57,37 +57,37 @@ Image::Image(cv::Mat image, QString original_name, QString description,
 
 bool Image::writeToFile() {
   if (image_.empty() ||
-      !path_.isEmpty())  // path_ should be empty, otherwise we may create two
-                         // files with the same content
-    return false;
+	  !path_.isEmpty())  // path_ should be empty, otherwise we may create two
+						 // files with the same content
+	return false;
 
   QTemporaryFile file((UploadFolder() + "XXXXXXXX").toSystemAbsolute());
   file.setAutoRemove(false);  // TODO
 
   if (!file.open()) {
-    qCritical() << "Could not write image to drive:" << file.errorString()
-                << "Directory:" << UploadFolder().toSystemAbsolute();
-    return false;
+	qCritical() << "Could not write image to drive:" << file.errorString()
+				<< "Directory:" << UploadFolder().toSystemAbsolute();
+	return false;
   } else {
-    std::vector<uint8_t> raw;
-    cv::imencode(".jpg", image_, raw);  // TODO use extension
+	std::vector<uint8_t> raw;
+	cv::imencode(".jpg", image_, raw);  // TODO use extension
 
-    if (!file.write(reinterpret_cast<char const*>(raw.data()), raw.size())) {
-      qCritical() << "Could not write image" << id_ << "(" << file.errorString()
-                  << ")";
-      return false;
-    }
+	if (!file.write(reinterpret_cast<char const*>(raw.data()), raw.size())) {
+	  qCritical() << "Could not write image" << id_ << "(" << file.errorString()
+				  << ")";
+	  return false;
+	}
 
-    path_ = UploadFolder() + QFileInfo(file).fileName();
-    clearCache();  // TODO make optional
-    return true;
+	path_ = UploadFolder() + QFileInfo(file).fileName();
+	clearCache();  // TODO make optional
+	return true;
   }
 }
 
 bool Image::deleteFile() {
   if (QDir().remove(path_.toSystemAbsolute())) {
-    path_.clear();
-    return true;
+	path_.clear();
+	return true;
   }
   return false;
 }
@@ -101,8 +101,8 @@ bool Image::crop(int x, int y, int w, int h, Image& output, QString& error) {
   h = qBound(1, h, height_ - y);  // TODO is this correct?
 
   if (std::max(w, h) < 100) {
-    error = "Cropped image to small";
-    return false;
+	error = "Cropped image to small";
+	return false;
   }
 
   QString desc, name;
@@ -132,9 +132,9 @@ bool Image::readData(QByteArray& output) const {
   QFile file(path_.toSystemAbsolute());
 
   if (!file.open(QIODevice::ReadOnly)) {
-    qWarning() << "Could not open file:" << path_.toSystemAbsolute() << ":"
-               << file.errorString();
-    return false;
+	qWarning() << "Could not open file:" << path_.toSystemAbsolute() << ":"
+			   << file.errorString();
+	return false;
   }
 
   output = file.readAll();
@@ -145,7 +145,7 @@ bool Image::decodeCvMat(QByteArray data, cv::Mat& output) {
   if (data.isEmpty()) return false;
 
   output = cv::imdecode(cv::Mat(1, data.size(), CV_8UC1, data.data()),
-                        cv::IMREAD_COLOR);
+						cv::IMREAD_COLOR);
   return (!output.empty());
 }
 
@@ -158,8 +158,8 @@ Image::ID Image::calculateId(cv::Mat const& image) {
 
   std::vector<char> data;  // TODO this is not gud
   for (int i = 0; i < image.rows; ++i)
-    data.insert(data.end(), image.ptr<uint8_t>(i),
-                image.ptr<uint8_t>(i) + image.cols);
+	data.insert(data.end(), image.ptr<uint8_t>(i),
+				image.ptr<uint8_t>(i) + image.cols);
 
   hasher.addData(data.data(), data.size());
   return hasher.result().toHex();
@@ -193,10 +193,10 @@ QJsonObject Marshalling::toJson(const Image& value) {
 template <>
 Image Marshalling::fromJson(const QJsonObject& obj) {
   return Image(Marshalling::fromJson<QString>(obj["id"]),
-               Marshalling::fromJson<QString>(obj["original_name"]),
-               Marshalling::fromJson<QString>(obj["description"]),
-               ResourcePath::fromDocRootAbsolute(obj["path"].toString()),
-               Marshalling::fromJson<QDateTime>(obj["uploaded"].toObject()),
-               obj["width"].toInt(), obj["height"].toInt());
+			   Marshalling::fromJson<QString>(obj["original_name"]),
+			   Marshalling::fromJson<QString>(obj["description"]),
+			   ResourcePath::fromDocRootAbsolute(obj["path"].toString()),
+			   Marshalling::fromJson<QDateTime>(obj["uploaded"].toObject()),
+			   obj["width"].toInt(), obj["height"].toInt());
 }
 }  // namespace c3picko

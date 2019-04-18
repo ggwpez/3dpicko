@@ -1,7 +1,7 @@
-#include "include/types/profile.hpp"
+#include "include/types/profile.h"
 #include <QDebug>
 #include <QJsonArray>
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 #include "include/octoconfig.h"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"

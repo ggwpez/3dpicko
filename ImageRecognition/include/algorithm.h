@@ -5,7 +5,7 @@
 #include <QVector>
 #include <functional>
 #include <stack>
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 
 namespace c3picko {
 class AlgorithmResult;

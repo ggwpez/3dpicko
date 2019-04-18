@@ -2,7 +2,7 @@
 #define OCTO_PROFILE_H
 
 #include "include/apikey.h"
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 
 namespace c3picko {
 namespace pi {

@@ -1,10 +1,10 @@
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 #include <QJsonArray>
 #include "include/octoconfig.h"
 #include "include/plateprofile.h"
 #include "include/platesocketprofile.h"
 #include "include/printerprofile.h"
-#include "include/types/profile.hpp"
+#include "include/types/profile.h"
 
 namespace c3picko {
 template <>

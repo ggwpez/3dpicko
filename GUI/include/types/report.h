@@ -3,7 +3,7 @@
 #include "include/colony.hpp"
 #include "include/detection_result.h"
 #include "include/resource_path.h"
-#include "include/types/job.hpp"
+#include "include/types/job.h"
 
 class QPdfWriter;
 namespace c3picko {

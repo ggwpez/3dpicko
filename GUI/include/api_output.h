@@ -3,7 +3,7 @@
 #include <QString>
 #include "database.hpp"
 #include "include/global.h"
-#include "include/types/job.hpp"
+#include "include/types/job.h"
 
 #include <QObject>
 
@@ -59,11 +59,11 @@ class APIOutput : public QObject {
   void DefaultSettingsProfileSetError(QString error, QObject* client);
 
   void SetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
-                       QObject* client);
+					   QObject* client);
   void SetStartingWellError(QString error, QObject* client);
 
   void SetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
-                         QObject* client);
+						 QObject* client);
   void SetColoniesToPickError(QString error, QObject* client);
 
   void ColonyDetectionStarted(Job::ID, QObject* client);
@@ -71,7 +71,7 @@ class APIOutput : public QObject {
    * @brief Always call this from ColonyDetector or derived!
    */
   void ColonyDetected(Job::ID job, std::vector<Colony> const* detector,
-                      QObject* client);
+					  QObject* client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */

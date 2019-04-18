@@ -1,6 +1,6 @@
 #pragma once
 
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 #include "include/resource_path.h"
 
 namespace c3picko {

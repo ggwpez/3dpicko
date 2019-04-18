@@ -1,4 +1,4 @@
-﻿#include "minimumcutproblemsolver.hpp"
+﻿#include "minimumcutproblemsolver.h"
 
 #include <algorithm>
 #include <limits>

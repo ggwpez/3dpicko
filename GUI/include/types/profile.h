@@ -2,7 +2,7 @@
 #define PROFILE_HPP
 
 #include <memory>
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 #include "include/types/profile_type.h"
 
 namespace c3picko {

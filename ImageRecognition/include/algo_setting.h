@@ -7,7 +7,7 @@
 #include <QVariant>
 #include "include/algorithms/helper.h"
 #include "include/exception.h"
-#include "include/marshalling.hpp"
+#include "include/marshalling.h"
 
 namespace c3picko {
 /**

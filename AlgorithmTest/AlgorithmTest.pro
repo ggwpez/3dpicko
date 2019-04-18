@@ -10,14 +10,14 @@ TEMPLATE = app
 SOURCES +=  tst_colonycollision.cc \
     tst_platedetection.cc \
     main.cc \
-    minimumcutproblemsolver.cpp \
-    tst_report.cc
+    tst_report.cc \
+    minimumcutproblemsolver.cc
 
 HEADERS += \
     tst_colonycollision.h \
     tst_platedetection.h \
-    minimumcutproblemsolver.hpp \
-    tst_report.h
+    tst_report.h \
+    minimumcutproblemsolver.h
 
 INCLUDEPATH += $$ROOTPATH/Main $$ROOTPATH/ImageRecognition $$ROOTPATH/GUI
 DEPENDPATH += $$ROOTPATH/Main $$ROOTPATH/ImageRecognition $$ROOTPATH/GUI
