@@ -1,37 +1,34 @@
 #pragma once
 
-#include "include/algorithms/helper.h"
+#include "include/plates/plate.h"
 
 namespace c3picko {
 /**
- * @brief Represents a detected plate.
- *
- * Can be used to cut an image to the clipping of the detected plate.
+ * @brief Represents a rectangular plate.
  */
-class Plate {
+class RectPlate : public Plate {
  public:
-  Plate() = default;
+  typedef std::array<cv::Point, 4> OuterBorder;
+  typedef std::array<cv::Point, 6> InnerBorder;
+
+  RectPlate() = default;
   /**
    * @brief Calculates the well positions A1 and H1, the angle and
    * rotation_matrix_
    */
-  Plate(math::OuterBorder const& outerBorder,
-        math::InnerBorder const& inner_border);
-  Plate(math::OuterBorder const& outerBorder,
-        math::InnerBorder const& inner_border, std::size_t a1, std::size_t h1,
-        cv::Point2d inner_center, cv::Point2d outer_center, cv::Point2d center,
-        math::UnitValue center_error, double angle, cv::Mat rotation_matrix);
+  RectPlate(OuterBorder const& outer_border, InnerBorder const& inner_border);
+  RectPlate(OuterBorder const& outer_border, InnerBorder const& inner_border,
+            std::size_t a1, std::size_t h1, cv::Point2d inner_center,
+            cv::Point2d outer_center, cv::Point2d center,
+            math::UnitValue center_error, double angle, cv::Rect aabb);
 
-  /**
-   * @brief Rotates the plate by the negative current angle and rotates/cuts the
-   * out cv::Mat such that the plate is centered and straight.
-   */
-  Plate normalized(cv::Mat const& in, cv::Mat& out) const;
+  virtual RectPlate* rotated() const override;
+  virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
 
   std::size_t a1() const;
   std::size_t h1() const;
 
-  math::OuterBorder outerBorder() const;
+  OuterBorder outerBorder() const;
 
  private:
   /**
@@ -40,25 +37,25 @@ class Plate {
    * mirrored.
    */
   static std::pair<std::size_t, std::size_t> findA1H1(
-      const math::OuterBorder& outer_border,
-      const math::InnerBorder& inner_border);
+      const OuterBorder& outer_border, const InnerBorder& inner_border);
+  void findAndSetA1H1();
   /**
    * @brief Calculates the rotation of a quasi rectangle, only works counter
    * clockwise
    * @return Angle [0,360]°. I know that a two closed interval makes no sense,
    * but it comes from std::arg .
    */
-  static double calculateRotation(const math::OuterBorder& cont, std::size_t a1,
+  static double calculateRotation(const OuterBorder& cont, std::size_t a1,
                                   std::size_t h1);
 
   /**
    * @brief Outer border of the plate, approximated as rectangle
    */
-  math::OuterBorder outer_border_;
+  OuterBorder outer_border_;
   /**
    * @brief Inner border of the plate, approximated as hexagon
    */
-  math::InnerBorder inner_border_;
+  InnerBorder inner_border_;
 
   /**
    * @brief A1 well index in outer_center_
@@ -68,14 +65,6 @@ class Plate {
    * @brief H1 well index in outer_center_
    */
   std::size_t h1_;
-
-  /**
-   * The unweighted average of all outer borders' angle.
-   * Complex angle, 0 degree is from left to right aka (1,0).
-   *
-   * TODO weight?
-   */
-  double angle_;
 
   /**
    * @brief Relative error to the optimal bb side ratio of the plate-frame.
@@ -90,17 +79,11 @@ class Plate {
    * @brief Center of the outer_border_
    */
   cv::Point2d outer_center_;
-  /**
-   * @brief Average of inner_center_ and outer_center_
-   */
-  cv::Point2d center_;
 
   /**
    * @brief Relative error between the inner and outer center, |delta_x| +
    * |delta_y|
    */
   math::UnitValue center_error_;
-
-  cv::Mat rotation_matrix_;
 };
 }  // namespace c3picko

@@ -37,7 +37,8 @@ void APIOutput::AlgorithmListRequested(QObject* client) {
                     op->CreateAlgorithmList());
 }
 
-void APIOutput::JobCreated(Job job, QObject* client) {
+void APIOutput::JobCreated(Job::ID id, QObject* client) {
+  Job const& job(op->db().jobs().get(id));
   QJsonObject json(Marshalling::toJson(job));
 
   emit op->toClient(client, APICommands::CREATE_JOB, json);
@@ -48,8 +49,8 @@ void APIOutput::JobCreateError(QString id, QObject* client) {
   Error(APICommands::CREATE_JOB, id, client);
 }
 
-void APIOutput::JobDeleted(Job job, QObject*) {
-  emit op->toAll(APICommands::DELETE_JOB, {{"id", job.id()}});
+void APIOutput::JobDeleted(Job::ID id, QObject*) {
+  emit op->toAll(APICommands::DELETE_JOB, {{"id", id}});
 }
 
 void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
@@ -66,16 +67,19 @@ void APIOutput::JobStartError(QString error, QObject* client) {
   Error(APICommands::START_JOB, error, client);
 }
 
-void APIOutput::ImageCreated(Image image, QObject*) {
-  emit op->toAll(APICommands::UPLOAD_IMAGE, Marshalling::toJson(image));
+void APIOutput::ImageCreated(Image::ID id, QObject*) {
+  Image const& image(op->db().images().get(id));
+  QJsonObject json(Marshalling::toJson(image));
+
+  emit op->toAll(APICommands::UPLOAD_IMAGE, json);
 }
 
 void APIOutput::ImageCreateError(QString path, QObject* client) {
   Error(APICommands::UPLOAD_IMAGE, "path=" + path, client);
 }
 
-void APIOutput::ImageDeleted(Image image, QObject*) {
-  emit op->toAll(APICommands::DELETE_IMAGE, {{"id", image.id()}});
+void APIOutput::ImageDeleted(Image::ID id, QObject*) {
+  emit op->toAll(APICommands::DELETE_IMAGE, {{"id", id}});
 }
 
 void APIOutput::ImageDeleteError(QString path, QObject* client) {

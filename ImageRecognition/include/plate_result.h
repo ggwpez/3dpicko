@@ -1,7 +1,8 @@
 #pragma once
 
+#include <memory>
 #include "include/matrix_result.h"
-#include "include/plate.h"
+#include "include/plates/plate.h"
 
 namespace c3picko {
 /**
@@ -15,12 +16,12 @@ class PlateResult : public MatrixResult {
   /**
    * @brief Plate as detected by the algorithm
    */
-  Plate original_;
+  std::unique_ptr<Plate> original_;
   /**
    * @brief Plate after rotating it against its rotation angle, such that it is
    * straight horizontal
    */
-  Plate rotated_;
+  std::unique_ptr<Plate> rotated_;
 
   const cv::Mat* rotatedImage() const;
 };

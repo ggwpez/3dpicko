@@ -134,7 +134,7 @@ void APIController::DeleteImage(Image::ID id, QObject* client) {
     db_->images().remove(
         id);  // Carefull here, if we use a reference to image instead, it will
     // go out of scope after deletion
-    emit OnImageDeleted(image, client);
+    emit OnImageDeleted(image.id(), client);
   } else {
     emit OnImageDeleteError(image.path().toSystemAbsolute(), client);
   }
@@ -149,24 +149,27 @@ void APIController::DeleteJob(Job::ID id, QObject* client) {
     db_->jobs().remove(id);
     db_->deletedJobs().add(id, job);
 
-    emit OnJobDeleted(job, client);
+    emit OnJobDeleted(id, client);
   }
 }
 
 void APIController::UploadImage(Image image, QObject* client) {
-  cv::Mat raw;
-  if (!image.readCvMat(raw)) {
+  std::shared_ptr<cv::Mat> raw(std::make_shared<cv::Mat>());
+  if (!image.readCvMat(*raw)) {
     emit OnImageCreateError("Could not read/find image", client);
     return;
   }
 
+  // Default detection algorithm used, TODO should be dictated by the plate
+  // profile
   Algorithm::ID aid("1");
   AlgorithmJob::ID jid = db_->newResultJobId();
   std::shared_ptr<PlateResult> result(
       std::make_shared<PlateResult>(db_->newResultId()));
 
   AlgorithmJob* ajob =
-      plate_detector_->createJob(raw, aid, jid, result, QJsonObject());
+      plate_detector_->createJob(aid, jid, result, QJsonObject());
+  ajob->pushInput(raw.get());
 
   if (!ajob)
     emit OnImageCreateError("Internal Error: Algorithm not found (" + aid + ")",
@@ -195,12 +198,13 @@ void APIController::UploadImage(Image image, QObject* client) {
               else
                 db_->images().add(cropped.id(), cropped);
 
-              emit this->OnImageCreated(cropped, client);
+              emit this->OnImageCreated(cropped.id(), client);
               qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
             });
     connect(ajob, &AlgorithmJob::OnAlgoFailed, ajob, [this, ajob, client] {
       emit OnImageCreateError(ajob->result()->stageError(), client);
     });
+    connect(ajob, &AlgorithmJob::OnFinished, ajob, [raw] {});
 
     ajob->start(true, true);
   }
@@ -377,7 +381,7 @@ void APIController::createJob(Job& job, QObject* client) {
   // else {
   job.setId(id);
   db_->jobs().add(id, job);
-  emit OnJobCreated(job, client);
+  emit OnJobCreated(job.id(), client);
   //}
 }
 
@@ -398,9 +402,9 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
     } else {
       Image& img = db_->images().get(
           img_id);  // Non const& bc readCvMat() can set the cache
-      cv::Mat image;
+      std::shared_ptr<cv::Mat> image(std::make_shared<cv::Mat>());
 
-      if (!img.readCvMat(image)) {
+      if (!img.readCvMat(*image)) {
         qCritical() << "CV could not read image"
                     << img.path().toSystemAbsolute();
         emit OnColonyDetectionError("Image not readable or empty", client);
@@ -410,7 +414,8 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
         std::shared_ptr<DetectionResult> result(
             std::make_shared<DetectionResult>(result_id));
         std::shared_ptr<AlgorithmJob> algo_job(colony_detector_->createJob(
-            image, algo_id, algo_job_id, result, settings));
+            algo_id, algo_job_id, result, settings));
+        algo_job->pushInput(image.get());
         AlgorithmJob* raw = algo_job.get();
 
         if (!algo_job) {
@@ -424,11 +429,12 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
                     qDebug() << "Detected" << result->colonies().size() << "in"
                              << raw->tookMs() << "ms";
                   });
-          connect(algo_job.get(), &AlgorithmJob::OnAlgoFailed, raw,
-                  [this, raw, client] {
-                    emit OnColonyDetectionError(raw->result()->stageError(),
-                                                client);
-                  });
+          connect(raw, &AlgorithmJob::OnAlgoFailed, raw, [this, raw, client] {
+            emit OnColonyDetectionError(raw->result()->stageError(), client);
+          });
+          // Keep the shared pointer until the job is done. I doubt that this is
+          // good style...
+          connect(raw, &AlgorithmJob::OnFinished, raw, [image] {});
 
           return algo_job;
         }
@@ -555,7 +561,7 @@ QJsonObject APIController::createImageList() const {
   return {{"images", json_images}};
 }
 
-QJsonObject APIController::createImageList(Image img) {
+QJsonObject APIController::createImageList(Image const& img) {
   QJsonArray json_images;
 
   json_images.append(Marshalling::toJson(img));
@@ -572,7 +578,7 @@ QJsonObject APIController::createJobList() {
   return {{"jobs", json_jobs}};
 }
 
-QJsonObject APIController::createJobList(Job job) {
+QJsonObject APIController::createJobList(const Job& job) {
   QJsonArray json_jobs;
 
   json_jobs.append(Marshalling::toJson(job));
@@ -611,11 +617,11 @@ QJsonObject APIController::CreateAlgorithmList() {
   return json;
 }
 
-QJsonObject APIController::createDeleteImage(Image img) {
+QJsonObject APIController::createDeleteImage(Image const& img) {
   return {{"id", img.id()}};
 }
 
-QJsonObject APIController::createDeleteJob(Job job) {
+QJsonObject APIController::createDeleteJob(Job const& job) {
   return {{"id", job.id()}};
 }
 

@@ -23,21 +23,14 @@ AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
 }
 
 AlgorithmJob* AlgorithmManager::createJob(
-    cv::Mat source, Algorithm::ID algo_id, AlgorithmJob::ID job_id,
+    Algorithm::ID algo_id, AlgorithmJob::ID job_id,
     std::shared_ptr<AlgorithmResult> result, QJsonObject settings) {
   for (Algorithm* algo : algos_) {
     if (algo->id() == algo_id) {
-      cv::Mat* input = new cv::Mat(source.clone());  // TODO needed?
       Algorithm* new_algo = algo->cloneEmpty();
 
-      AlgorithmJob* job =
-          new AlgorithmJob(job_id, new_algo, settings, input, result, pool_,
-                           new_algo->maxMs(), nullptr);
-      connect(job, &AlgorithmJob::OnFinished, job,
-              [input]() {  // TODO do we need a context object here?
-                delete input;
-              });
-
+      AlgorithmJob* job = new AlgorithmJob(job_id, new_algo, settings, result,
+                                           pool_, new_algo->maxMs(), nullptr);
       return job;
     }
   }

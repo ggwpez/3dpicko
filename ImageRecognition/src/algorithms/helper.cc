@@ -108,9 +108,9 @@ std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const& colonies,
   return ret;
 }
 
-void findConnectedComponentEdges(cv::Mat const& input,
-                                 std::vector<std::vector<cv::Point>>& contours,
-                                 math::Range<int> const& area) {
+std::vector<std::vector<cv::Point>> findConnectedComponentEdges(
+    cv::Mat const& input, std::vector<std::vector<cv::Point>>& contours,
+    math::Range<int> const& area, double rel_eps) {
   std::vector<std::vector<cv::Point>> components;
   // TODO filter area with stats
   cv::Mat stats, centers, labels(input.rows, input.cols, CV_32S);
@@ -118,41 +118,34 @@ void findConnectedComponentEdges(cv::Mat const& input,
   cv::connectedComponentsWithStats(input, labels, stats, centers, 8);
   auto it(std::max_element(labels.begin<int>(), labels.end<int>()));
   // Is the matrix empty?
-  if (it == labels.end<int>() || *it < 2) return;
+  if (it == labels.end<int>() || *it < 1) return {};
   components.resize(std::size_t(*it));
 
   for (int r = 0; r < input.rows; ++r) {
     for (int c = 0; c < input.cols; ++c) {
       int label = labels.at<int>(r, c);
-      // Label 0 is the background
+      // 0 is the background label
       if (!label--) continue;
-      // FIXME
-      // int a = stats.at<int>(label, cv::CC_STAT_AREA);
-      // if (a < 100)
-      // continue;
 
       // Save the contour point
       components[label].emplace_back(c, r);
     }
   }
 
+  std::vector<std::vector<cv::Point>> ret;
   // Approximate the contours with a variable epsilon
-  contours.resize(components.size());
   for (std::size_t i = 0; i < components.size(); ++i) {
     std::vector<cv::Point> hull;
     cv::convexHull(components[i], hull, true);
-    double eps = .005 * cv::arcLength(hull, true);
-    cv::approxPolyDP(hull, contours[i], eps, true);
+    if (area.excludes(cv::contourArea(hull))) continue;
+
+    double abs_eps = rel_eps * cv::arcLength(hull, true);
+    contours.emplace_back();
+    cv::approxPolyDP(hull, contours.back(), abs_eps, true);
+    ret.emplace_back(std::move(components[i]));
   }
-}
 
-// Strict include, points on the edge are considered outside
-bool polyIncludesPoly(std::vector<cv::Point> const& poly1,
-                      std::vector<cv::Point> const& poly2) {
-  for (int i = 0; i < poly2.size(); ++i)
-    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
-
-  return true;
+  return ret;
 }
 
 cv::Point2d gravityCenter(std::vector<cv::Point> const& poly) {

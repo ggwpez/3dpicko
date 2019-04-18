@@ -2,6 +2,7 @@
 #include "include/algorithms/fluro1.h"
 #include "include/algorithms/normal1.h"
 #include "include/algorithms/plate1.h"
+#include "include/algorithms/plate2.h"
 #include "include/api_controller.h"
 #include "include/autosaver.h"
 #include "include/database.hpp"
@@ -34,7 +35,7 @@ static int start(int argc, char** argv) {
   AlgorithmManager* colony_detector =
       new AlgorithmManager(algo_pool, {new Normal1(), new Fluro1()}, &app);
   AlgorithmManager* plate_detector =
-      new AlgorithmManager(algo_pool, {new Plate1()}, &app);
+      new AlgorithmManager(algo_pool, {new Plate1(), new Plate2()}, &app);
 
   settings.beginGroup("database");
   Database* db = new Database(settings, &app);

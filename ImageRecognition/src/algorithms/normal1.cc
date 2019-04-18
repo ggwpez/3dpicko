@@ -6,37 +6,38 @@
 #include "include/algorithm_result.h"
 #include "include/algorithms/helper.h"
 #include "include/colony.hpp"
+#include "include/plates/plate.h"
 
 namespace c3picko {
 
 Normal1::Normal1()
-	: Algorithm(
-		  "1", "Normal1", "Detects colonies with standard illumination",
-		  {(AlgoStep)Normal1::cvt, (AlgoStep)Normal1::threshold,
-		   (AlgoStep)Normal1::erodeAndDilate, (AlgoStep)Normal1::label,
-		   (AlgoStep)Normal1::safetyMargin /*,
+    : Algorithm(
+          "1", "Normal1", "Detects colonies with standard illumination",
+          {(AlgoStep)Normal1::cvt, (AlgoStep)Normal1::mask,
+           (AlgoStep)Normal1::threshold, (AlgoStep)Normal1::erodeAndDilate,
+           (AlgoStep)Normal1::label, (AlgoStep)Normal1::safetyMargin /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
-		  {AlgoSetting::make_rangeslider_double("area", "Area", "lel", 50, 2000,
-												1, {120, 1000}),
-		   AlgoSetting::make_rangeslider_double("safety_margin_lt",
-												"Safety Margin LeftTop", "", 0,
-												1, .01, {.1, .1}, Qt::gray),
-		   AlgoSetting::make_rangeslider_double("safety_margin_rb",
-												"Safety Margin RightBot", "", 0,
-												1, .01, {.9, .9}, Qt::gray),
-		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
-												"", 0, 1, .001, {.7, 1},
-												Qt::cyan),
-		   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
-												0, 1, .001, {.7, 1},
-												Qt::magenta),
-		   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
-												1, .001, {.8, 1}, Qt::green),
-		   AlgoSetting::make_rangeslider_double(
-			   "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-		   //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
-		   // plate", "", true),
-		   /*AlgoSetting::make_checkbox(
+          {AlgoSetting::make_rangeslider_double("area", "Area", "lel", 50, 2000,
+                                                1, {120, 1000}),
+           AlgoSetting::make_rangeslider_double("safety_margin_lt",
+                                                "Safety Margin LeftTop", "", 0,
+                                                1, .01, {.1, .1}, Qt::gray),
+           AlgoSetting::make_rangeslider_double("safety_margin_rb",
+                                                "Safety Margin RightBot", "", 0,
+                                                1, .01, {.9, .9}, Qt::gray),
+           AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+                                                "", 0, 1, .001, {.7, 1},
+                                                Qt::cyan),
+           AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+                                                0, 1, .001, {.7, 1},
+                                                Qt::magenta),
+           AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+                                                1, .001, {.8, 1}, Qt::green),
+           AlgoSetting::make_rangeslider_double(
+               "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+           //	 AlgoSetting::make_checkbox("plate_detection", "Detect the
+           // plate", "", true),
+           /*AlgoSetting::make_checkbox(
 			   "filter_relative", "Filter detected colonies", "", false,
 			   {AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
 										   "Select an attribute to filter",
@@ -49,11 +50,7 @@ Normal1::Normal1()
 					"rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01,
 					{-5, 5})},
 			   Qt::red)*/},
-		  true, 3000)
-{
-}
-
-Normal1::~Normal1() {}
+          true, 3000) {}
 
 /**
  * @brief Checks the roundness of the given contour.
@@ -92,10 +89,23 @@ static AlgoSetting::ID roundness(int area, int w, int h,
 }
 
 void Normal1::cvt(AlgorithmJob* base, DetectionResult* result) {
-  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
+  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input().front());
   cv::Mat& output = result->newMat();
 
   cv::cvtColor(input, output, CV_BGR2GRAY);
+}
+
+void Normal1::mask(AlgorithmJob* base, DetectionResult* result) {
+  if (base->input().size() < 2) {
+    qWarning("Colony detection missing plate, skipping crop");
+    return;
+  }
+
+  cv::Mat& input = result->oldMat();
+  cv::Mat& output = result->newMat();
+
+  Plate const* plate((Plate*)base->input()[2]);
+  plate->mask(input, output);
 }
 
 void Normal1::threshold(AlgorithmJob* base, DetectionResult* result) {
@@ -205,7 +215,7 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
         // NOTE Brightness only works on unmasked original image contours,
         // otherwise they need conversion
         double br = math::brightness(
-            contours[0], *reinterpret_cast<cv::Mat*>(base->input()));
+            contours[0], *reinterpret_cast<cv::Mat*>(base->input().front()));
         colonies.emplace_back(center.x / double(input.cols),
                               center.y / double(input.rows), area, circ,
                               circ / (2 * M_PI), br, id++, "");

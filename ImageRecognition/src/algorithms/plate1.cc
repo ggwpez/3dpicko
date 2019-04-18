@@ -6,6 +6,7 @@
 #include "include/algorithm_job.h"
 #include "include/algorithms/normal1.h"
 #include "include/plate_result.h"
+#include "include/plates/rect_plate.h"
 
 namespace c3picko {
 Plate1::Plate1()
@@ -15,7 +16,7 @@ Plate1::Plate1()
                 {}, true, 5000) {}
 
 void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input());
+  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input().front());
   cv::Mat& output = result->newMat();
 
   cv::cvtColor(input, output, CV_BGR2GRAY);
@@ -39,16 +40,6 @@ void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
   cv::dilate(tmp, output, kernel);
 }
 
-// Strict include, points on the edge are considered outside
-template <std::size_t s1, std::size_t s2>
-bool polyIncludesPoly(std::array<cv::Point, s1> const& poly1,
-                      std::array<cv::Point, s2> const& poly2) {
-  for (std::size_t i = 0; i < poly2.size(); ++i)
-    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
-
-  return true;
-}
-
 void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   // This code was written very quickly, it is therefore quite messy and needs
   // to be reworked
@@ -70,14 +61,14 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
    *    in the center.
    */
 
-  cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input());
+  cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input().front());
   cv::Mat const& erroded = result->oldMat();
 
   math::Range<int> area((original.rows * original.cols) / 32,
                         std::numeric_limits<int>::max());
   cv::Mat& ret(result->newMat(original));
-  std::vector<math::OuterBorder> outer_edges;
-  std::vector<math::InnerBorder> inner_edges;
+  std::vector<RectPlate::OuterBorder> outer_edges;
+  std::vector<RectPlate::InnerBorder> inner_edges;
   std::vector<std::vector<cv::Point>> edges;
 
   // Step 1
@@ -87,22 +78,16 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   // Step 2
   for (std::size_t i = 0; i < edges.size(); ++i) {
     auto edge = edges[i];
-    /*std::vector<cv::Point> curve;
-    double				   eps = 0.05 *
-    cv::arcLength(contours[i], true);
-    // good? cv::approxPolyDP(contours[i], curve, eps, true);*/
-    double a = cv::contourArea(edge);
 
-    if (area.excludes(a)) continue;
     // Filter out all curves with 4 or 6 points and size atleast 1/16 or the
     // image size
     if ((edge.size() == 6 || edge.size() == 4)) {
       if (edge.size() == 6) {
-        math::InnerBorder border;
+        RectPlate::InnerBorder border;
         std::copy(edge.begin(), edge.begin() + 6, border.begin());
         inner_edges.push_back(border);
       } else {
-        math::OuterBorder border;
+        RectPlate::OuterBorder border;
         std::copy(edge.begin(), edge.begin() + 4, border.begin());
         outer_edges.push_back(border);
       }
@@ -121,7 +106,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
 
   // Step 3
   for (auto it = outer_edges.begin(); it != outer_edges.end();) {
-    auto polygon(*it);
+    auto const& polygon(*it);
 
     double w =
         math::distance(polygon[0].x, polygon[0].y, polygon[1].x, polygon[1].y);
@@ -148,7 +133,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
     auto inner(inner_edges[i]);
 
     for (std::size_t j = 0; j < outer_edges.size(); ++j) {
-      auto outer(outer_edges[j]);
+      auto const& outer(outer_edges[j]);
       // Sum of Squared error TODO right now its only the distance, but it
       // should be an error therefore the optimal width of the frame must be
       // calculated and compared to the current width
@@ -158,7 +143,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
       // It would mean, that the 6p is outside the 4p, which is not how a plate
       // looks like NOTE if we kick out a correct 4p here, try to decrease the
       // eps for the approxPolyDP
-      if (!polyIncludesPoly(outer, inner)) continue;
+      if (!math::polyIncludesPoly(outer, inner)) continue;
 
       // Step 5
       for (std::size_t c = 0; c < outer.size(); ++c) {
@@ -195,13 +180,15 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
   if (it == corner_distances.end())
     throw std::runtime_error("Could detect rotation of inner edges");
 
-  int i = std::get<0>(*it), j = std::get<1>(*it);
-  auto inner_edge = inner_edges[std::get<0>(*it)];
-  auto outer_edge = outer_edges[std::get<1>(*it)];
-  double best_dist = std::get<2>(*it);
+  auto const& inner_edge = inner_edges[std::get<0>(*it)];
+  auto const& outer_edge = outer_edges[std::get<1>(*it)];
 
   // Step 7
-  result->original_ = Plate(outer_edge, inner_edge);
-  result->rotated_ = result->original_.normalized(ret, ret);
+  result->original_ = std::unique_ptr<RectPlate>(
+      new RectPlate(outer_edge, inner_edge));  // NOTE C++14
+  qDebug() << result->original_->angle();
+  result->rotated_ = std::unique_ptr<RectPlate>(
+      static_cast<RectPlate*>(result->original_->rotated()));
+  Plate::crop(*result->original_, *result->rotated_, ret, ret);
 }
 }  // namespace c3picko

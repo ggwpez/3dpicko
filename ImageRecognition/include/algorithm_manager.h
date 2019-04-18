@@ -17,8 +17,7 @@ class AlgorithmManager : public QObject {
                    QObject* _parent = nullptr);
 
  public:
-  AlgorithmJob* createJob(cv::Mat source, Algorithm::ID id,
-                          AlgorithmJob::ID job_id,
+  AlgorithmJob* createJob(Algorithm::ID id, AlgorithmJob::ID job_id,
                           std::shared_ptr<AlgorithmResult> result,
                           QJsonObject settings);
   /**

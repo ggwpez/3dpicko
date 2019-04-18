@@ -6,7 +6,7 @@
 
 namespace c3picko {
 AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
-                           QJsonObject settings, void* input,
+                           QJsonObject settings,
                            std::shared_ptr<AlgorithmResult> result,
                            QThreadPool* pool, qint64 max_ms, QObject* _parent)
     : QObject(_parent),
@@ -14,7 +14,6 @@ AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
       created_(QDateTime::currentDateTime()),
       algo_(algo),
       pool_(pool),
-      input_(input),
       result_(result),
       result_id_(result->id()),
       max_ms_(max_ms),
@@ -33,7 +32,11 @@ AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
 AlgorithmJob::~AlgorithmJob() { /* algo_ deleted as child element */
 }
 
-void* AlgorithmJob::input() { return input_; }
+void AlgorithmJob::pushInput(void* input) { input_.push_back(input); }
+
+const AlgorithmJob::InputData& AlgorithmJob::input() const { return input_; }
+
+AlgorithmJob::InputData& AlgorithmJob::input() { return input_; }
 
 void AlgorithmJob::start(bool threaded, bool delete_when_done) {
   if (delete_when_done)

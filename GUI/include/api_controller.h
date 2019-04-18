@@ -138,17 +138,19 @@ class APIController : public QObject {
   void OnProfileListRequested(QObject* client);
   void OnAlgorithmListRequested(QObject* client);
 
-  void OnJobCreated(Job, QObject* client);
+  // Passing job as signal arg should not work, bc Job is not registered as a
+  // QMetaType but it still does, as long as all runs in the same thread FIXME
+  void OnJobCreated(Job::ID, QObject* client);
   void OnJobCreateError(QString, QObject*);
-  void OnJobDeleted(Job, QObject* client);
+  void OnJobDeleted(Job::ID, QObject* client);
   void OnJobDeleteError(Job::ID id, QObject* client);
 
   void OnJobStarted(Report, QObject* client);
   void OnJobStartError(QString error, QObject* client);
 
-  void OnImageCreated(Image, QObject* client);
+  void OnImageCreated(Image::ID, QObject* client);
   void OnImageCreateError(QString path, QObject* client);
-  void OnImageDeleted(Image, QObject* client);
+  void OnImageDeleted(Image::ID, QObject* client);
   void OnImageDeleteError(QString path, QObject* client);
 
   void OnProfileCreated(Profile profile, QObject* client);
@@ -184,11 +186,11 @@ class APIController : public QObject {
  private:
   QJsonObject createVersionList() const;
   QJsonObject createImageList() const;
-  QJsonObject createImageList(Image);  // TODO const
+  static QJsonObject createImageList(Image const&);
   QJsonObject createJobList();
-  QJsonObject createJobList(Job);
-  QJsonObject createDeleteImage(Image);
-  QJsonObject createDeleteJob(Job job);
+  QJsonObject createJobList(Job const&);
+  QJsonObject createDeleteImage(const Image&);
+  QJsonObject createDeleteJob(const Job& job);
   QJsonObject createProfileList();
   QJsonObject CreateAlgorithmList();
 

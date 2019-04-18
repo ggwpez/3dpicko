@@ -2,6 +2,7 @@
 
 #include <complex>
 #include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 
 /**
  * This file is the collecting pond for all that needs to find a permanent home.
@@ -13,8 +14,6 @@ namespace c3picko {
 class Colony;
 namespace math {
 typedef double UnitValue;  // value in range [0,1]
-typedef std::array<cv::Point, 4> OuterBorder;
-typedef std::array<cv::Point, 6> InnerBorder;
 
 /**
  * @brief Represents a 2D interval in the mathematical sense.
@@ -109,6 +108,24 @@ inline T distance(T x1, T y1, T x2, T y2) {
   return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
 }
 
+// Strict include, points on the edge are considered outside
+template <std::size_t s1, std::size_t s2>
+inline bool polyIncludesPoly(std::array<cv::Point, s1> const& poly1,
+                             std::array<cv::Point, s2> const& poly2) {
+  for (std::size_t i = 0; i < poly2.size(); ++i)
+    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
+
+  return true;
+}
+
+inline bool polyIncludesPoly(std::vector<cv::Point> const& poly1,
+                             std::vector<cv::Point> const& poly2) {
+  for (std::size_t i = 0; i < poly2.size(); ++i)
+    if (cv::pointPolygonTest(poly1, poly2[i], false) <= 0) return false;
+
+  return true;
+}
+
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat);
 
 /**
@@ -126,10 +143,11 @@ std::vector<Colony> filterByMinDistanceSlow(const std::vector<Colony>& colonies,
 
 /**
  * @brief Used for edge detection in the plate algorithm
+ * @return Raw components, non approximated
  */
-void findConnectedComponentEdges(const cv::Mat& input,
-                                 std::vector<std::vector<cv::Point>>& contours,
-                                 math::Range<int> const& area);
+std::vector<std::vector<cv::Point>> findConnectedComponentEdges(
+    const cv::Mat& input, std::vector<std::vector<cv::Point>>& contours,
+    math::Range<int> const& area, double eps = .005);
 
 /**
  * @brief Draws @a string on @a out at position @pos with font @color, font

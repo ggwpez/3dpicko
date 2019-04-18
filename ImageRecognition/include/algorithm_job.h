@@ -22,16 +22,20 @@ class AlgorithmJob : public QObject {
 
  public:
   typedef QString ID;
+  typedef std::vector<void*> InputData;
 
- private:
-  AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings, void* input,
+ protected:
+  AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings,
                std::shared_ptr<AlgorithmResult> result, QThreadPool* pool,
                qint64 maxMs, QObject* _parent);
 
  public:
   ~AlgorithmJob();
 
-  void* input();
+  void pushInput(void*);
+  InputData const& input() const;
+  InputData& input();
+
   std::shared_ptr<AlgorithmResult> result() const;
 
   AlgoSetting const& settingById(AlgoSetting::ID id) const;
@@ -82,7 +86,7 @@ class AlgorithmJob : public QObject {
   Algorithm* algo_ = nullptr;
   QThreadPool* pool_;
   QList<AlgoSetting> settings_;
-  void* input_;
+  InputData input_;
   /**
    * @brief This pointer is only valid during the call of start(...)
    * It will not be de/serialised. TODO
