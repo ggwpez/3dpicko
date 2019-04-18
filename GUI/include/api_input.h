@@ -22,7 +22,7 @@ class APIInput : public QObject {
 
   // WS Version
   void serviceRequest(QJsonObject &request, const QString &raw_request,
-					  QObject *client);
+                      QObject *client);
 
  signals:
   /**

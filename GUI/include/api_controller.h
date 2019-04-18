@@ -43,8 +43,8 @@ class APIController : public QObject {
    * @param parent
    */
   APIController(AlgorithmManager* colony_detector,
-				AlgorithmManager* plate_detector,
-				VersionManager* version_manager, Database* db, QObject* parent);
+                AlgorithmManager* plate_detector,
+                VersionManager* version_manager, Database* db, QObject* parent);
 
   // Forwarded to APIInput
   void request(QJsonObject request, QString raw_request, QObject* client);
@@ -80,10 +80,10 @@ class APIController : public QObject {
   void deleteSettingsProfile(Profile::ID id, QObject* client);
   void setDefaultSettingsProfile(Profile::ID id, QObject* client);
   void setStartingWell(Job::ID id, Profile::ID plate_id, int row, int col,
-					   QObject* client);
+                       QObject* client);
   void setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
-						 QSet<Colony::ID> in_user, quint32 number,
-						 QObject* client);
+                         QSet<Colony::ID> in_user, quint32 number,
+                         QObject* client);
 
   /**
    * @brief createJob
@@ -97,7 +97,7 @@ class APIController : public QObject {
    * @brief Calls detectColonies with the parameters given by the client.
    */
   void updateDetectionSettings(Job::ID job, QString algo_id,
-							   QJsonObject settings, QObject* client);
+                               QJsonObject settings, QObject* client);
   void startJob(Job::ID id, Profile::ID octoprint, QObject* client);
 
   void shutdown(QObject* client);
@@ -163,11 +163,11 @@ class APIController : public QObject {
   void OnDefaultSettingsProfileSetError(QString error, QObject* client);
 
   void OnSetStartingWell(Job::ID job, Profile::ID plate, int row, int col,
-						 QObject* client);
+                         QObject* client);
   void OnSetStartingWellError(QString error, QObject* client);
 
   void OnSetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
-						   QObject* client);
+                           QObject* client);
   void OnSetColoniesToPickError(QString error, QObject* client);
 
   void OnColonyDetectionStarted(Job::ID, QObject* client);
@@ -178,7 +178,7 @@ class APIController : public QObject {
    * @param client
    */
   void OnColonyDetected(Job::ID job, std::vector<Colony> const* colonies,
-						QObject* client);
+                        QObject* client);
   void OnColonyDetectionError(QString error, QObject* client);
 
   void OnVersionSwitched(Version::ID);
@@ -195,8 +195,8 @@ class APIController : public QObject {
   QJsonObject CreateAlgorithmList();
 
   std::shared_ptr<AlgorithmJob> detectColonies(Job::ID job_id, QString algo_id,
-											   QJsonObject settings,
-											   QObject* client);
+                                               QJsonObject settings,
+                                               QObject* client);
 
  protected:
   AlgorithmManager *colony_detector_, *plate_detector_;

@@ -20,7 +20,7 @@ class WsServer : public QObject {
   Q_OBJECT
  public:
   WsServer(QSettings& settings, QSslConfiguration* ssl,
-		   QObject* _parent = nullptr);
+           QObject* _parent = nullptr);
   ~WsServer();
 
  public slots:

@@ -8,7 +8,7 @@
 
 namespace c3picko {
 APIOutput::APIOutput(APIController* parent)
-	: QObject((QObject*)parent), op(parent) {}
+    : QObject((QObject*)parent), op(parent) {}
 
 void APIOutput::UnknownRequest(QString request, QObject* client) {
   Error("Unknown request", request, client);
@@ -16,7 +16,7 @@ void APIOutput::UnknownRequest(QString request, QObject* client) {
 
 void APIOutput::VersionListRequested(QObject* client) {
   emit op->toClient(client, APICommands::GET_VERSION_LIST,
-					op->createVersionList());
+                    op->createVersionList());
 }
 
 void APIOutput::ImageListRequested(QObject* client) {
@@ -29,12 +29,12 @@ void APIOutput::JobListRequested(QObject* client) {
 
 void APIOutput::ProfileListRequested(QObject* client) {
   emit op->toClient(client, APICommands::GET_PROFILE_LIST,
-					op->createProfileList());
+                    op->createProfileList());
 }
 
 void APIOutput::AlgorithmListRequested(QObject* client) {
   emit op->toClient(client, APICommands::GET_DETECTION_ALGORITHMS,
-					op->CreateAlgorithmList());
+                    op->CreateAlgorithmList());
 }
 
 void APIOutput::JobCreated(Job::ID id, QObject* client) {
@@ -59,8 +59,8 @@ void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
 
 void APIOutput::JobStarted(Report report, QObject*) {
   emit op->toAll(
-	  APICommands::START_JOB,
-	  {{"id", report.job()}, {"report", report.data().toDocRootAbsolute()}});
+      APICommands::START_JOB,
+      {{"id", report.job()}, {"report", report.data().toDocRootAbsolute()}});
 }
 
 void APIOutput::JobStartError(QString error, QObject* client) {
@@ -88,7 +88,7 @@ void APIOutput::ImageDeleteError(QString path, QObject* client) {
 
 void APIOutput::ProfileCreated(Profile profile, QObject*) {
   emit op->toAll(APICommands::CREATE_SETTINGS_PROFILE,
-				 Marshalling::toJson(profile));
+                 Marshalling::toJson(profile));
 }
 
 void APIOutput::ProfileCreateError(QString error, QObject* client) {
@@ -97,7 +97,7 @@ void APIOutput::ProfileCreateError(QString error, QObject* client) {
 
 void APIOutput::ProfileUpdated(Profile profile, QObject*) {
   emit op->toAll(APICommands::UPDATE_SETTINGS_PROFILE,
-				 Marshalling::toJson(profile));
+                 Marshalling::toJson(profile));
 }
 
 void APIOutput::ProfileUpdateError(Profile::ID id, QObject* client) {
@@ -110,7 +110,7 @@ void APIOutput::ProfileDeleted(Profile::ID profile, QObject*) {
 
 void APIOutput::ProfileDeleteError(Profile::ID profile, QObject* client) {
   Error(APICommands::DELETE_SETTINGS_PROFILE,
-		"Could not delete profile #" + profile, client);
+        "Could not delete profile #" + profile, client);
 }
 
 void APIOutput::DefaultSettingsProfileSet(Profile::ID profile, QObject*) {
@@ -119,14 +119,14 @@ void APIOutput::DefaultSettingsProfileSet(Profile::ID profile, QObject*) {
 
 void APIOutput::DefaultSettingsProfileSetError(QString error, QObject* client) {
   Error(APICommands::SET_DEFAULT_SETTINGS_PROFILE,
-		"Could not set profile as default: " + error, client);
+        "Could not set profile as default: " + error, client);
 }
 
 void APIOutput::SetStartingWell(Job::ID job, Profile::ID plate, int row,
-								int col, QObject*) {
+                                int col, QObject*) {
   emit op->toAll(
-	  APICommands::SET_STARTING_WELL,
-	  {{"job_id", job}, {"plate_id", plate}, {"row", row}, {"col", col}});
+      APICommands::SET_STARTING_WELL,
+      {{"job_id", job}, {"plate_id", plate}, {"row", row}, {"col", col}});
 }
 
 void APIOutput::SetStartingWellError(QString error, QObject* client) {
@@ -134,15 +134,15 @@ void APIOutput::SetStartingWellError(QString error, QObject* client) {
 }
 
 void APIOutput::SetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
-								  QObject* client) {
+                                  QObject* client) {
   // TODO send to all
   QJsonArray cols;
 
   for (auto it = colonies.begin(); it != colonies.end(); ++it)
-	cols << QJsonValue::fromVariant(QVariant::fromValue(*it));  // Qt pls
+    cols << QJsonValue::fromVariant(QVariant::fromValue(*it));  // Qt pls
 
   emit op->toClient(client, APICommands::SET_COLONIES_TO_PICK,
-					{{"job", job}, {"ids", cols}});
+                    {{"job", job}, {"ids", cols}});
 }
 
 void APIOutput::SetColoniesToPickError(QString error, QObject* client) {
@@ -150,18 +150,18 @@ void APIOutput::SetColoniesToPickError(QString error, QObject* client) {
 }
 
 void APIOutput::ColonyDetectionStarted(
-	Job::ID, QObject*) { /* TODO inform client, maybe add a loading animtion */
+    Job::ID, QObject*) { /* TODO inform client, maybe add a loading animtion */
 }
 
 void APIOutput::ColonyDetected(Job::ID job, const std::vector<Colony>* colonies,
-							   QObject* client) {
+                               QObject* client) {
   QJsonArray json_coords;
 
   for (Colony const& colony : *colonies)
-	json_coords.push_back(Marshalling::toJson(colony));
+    json_coords.push_back(Marshalling::toJson(colony));
 
   emit op->toClient(client, APICommands::GET_POSITIONS,
-					{{"job", job}, {"colonies", json_coords}});
+                    {{"job", job}, {"colonies", json_coords}});
   //	delete colonies;
 }
 
