@@ -1,5 +1,4 @@
-#ifndef WS_SERVER_HPP
-#define WS_SERVER_HPP
+#pragma once
 
 #include <qwebsocketprotocol.h>
 #include <QObject>
@@ -21,7 +20,7 @@ class WsServer : public QObject {
   Q_OBJECT
  public:
   WsServer(QSettings& settings, QSslConfiguration* ssl,
-           QObject* _parent = nullptr);
+		   QObject* _parent = nullptr);
   ~WsServer();
 
  public slots:
@@ -109,5 +108,3 @@ class WsServer : public QObject {
 };
 
 }  // namespace c3picko
-
-#endif  // WS_SERVER_HPP

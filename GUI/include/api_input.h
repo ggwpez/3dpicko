@@ -1,5 +1,4 @@
-#ifndef APICONTROLLER_HPP
-#define APICONTROLLER_HPP
+#pragma once
 
 #include <QList>
 #include <QString>
@@ -23,7 +22,7 @@ class APIInput : public QObject {
 
   // WS Version
   void serviceRequest(QJsonObject &request, const QString &raw_request,
-                      QObject *client);
+					  QObject *client);
 
  signals:
   /**
@@ -45,4 +44,3 @@ class APIInput : public QObject {
   APIController *api;
 };
 }  // namespace c3picko
-#endif  // APICONTROLLER_HPP
