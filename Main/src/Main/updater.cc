@@ -48,14 +48,7 @@ Updater::Updater(const QSettings& settings, Database& db, QObject* _parent)
   timer_->setInterval(interval_s_ * 1000);
   connect(timer_, &QTimer::timeout, this, &Updater::search);
 
-  if (!settings.contains("enabled")) {
-	qWarning() << "Updater enabled not given, using default:" << defaultEnabled
-			   << "s";
-	startSearch();
-  } else if (settings.value("enabled").toBool())
-	startSearch();
-  else
-	qInfo() << "Updater disabled";
+  startSearch();
 }
 
 Updater::~Updater() {

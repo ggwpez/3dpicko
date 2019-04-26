@@ -50,11 +50,13 @@ static int start(int argc, char** argv) {
 				   &Database::autosaveSkipped);
   dbs->start();
 
-#ifdef UPDATER
-  QSettings usettings(ini_file, QSettings::IniFormat);
-  usettings.beginGroup("updater");
-  Updater updater(usettings, *db, &app);
-#endif
+  QSettings upd_settings(ini_file, QSettings::IniFormat);
+  upd_settings.beginGroup("updater");
+  if (upd_settings.value("enabled").toBool()) {
+	new Updater(upd_settings, *db, &app);
+	qDebug("Updater enabled");
+  } else
+	qDebug("Updater disabled");
 
   APIController* api =
 	  new APIController(colony_detector, plate_detector, nullptr, db, &app);

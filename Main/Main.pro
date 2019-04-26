@@ -167,6 +167,8 @@ unix {
 	SOURCES += src/Main/signal_daemon.cc
 }
 
+DISTFILES += ../server/serverconfig.ini
+
 INCLUDEPATH += /usr/local/include/include/opencv
 INCLUDEPATH += include/ depend/
 DEPENDPATH += include/ depend/
