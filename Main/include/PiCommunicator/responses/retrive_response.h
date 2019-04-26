@@ -14,7 +14,7 @@ namespace responses {
  * [API](http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse)
  */
 struct RetriveResponse : public Response {
-  RetriveResponse(QJsonObject const &);
+  RetriveResponse(QJsonObject const&);
 
   QVector<FileOrFolderInfo> files;
   /**

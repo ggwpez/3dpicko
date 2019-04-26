@@ -22,15 +22,15 @@ class Connection : public Command {
  public:
   typedef responses::ConnectionInfo Response;
 
-  static Connection *GetInfo();
-  static Connection *Connect(QString port, qint32 baudrate = -1,
+  static Connection* GetInfo();
+  static Connection* Connect(QString port, qint32 baudrate = -1,
 							 QString printer_profile = "", bool save = false,
 							 bool autoconnect = false);
-  static Connection *Disconnect();
-  static Connection *FakeAck();
+  static Connection* Disconnect();
+  static Connection* FakeAck();
 
  public slots:
-  virtual void OnReplyFinished(QNetworkReply *reply) override;
+  virtual void OnReplyFinished(QNetworkReply* reply) override;
 
  private:
   static QJsonObject CreateConnectJson(QString port, qint32 baudrate,

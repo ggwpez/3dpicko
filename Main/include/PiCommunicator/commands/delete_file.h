@@ -22,7 +22,7 @@ class DeleteFile : public Command {
    * @param location SdCard or Local
    * @param path Path to the file to delete
    */
-  static DeleteFile *Delete(data::Location location, QString path);
+  static DeleteFile* Delete(data::Location location, QString path);
 };
 }  // namespace commands
 }  // namespace pi

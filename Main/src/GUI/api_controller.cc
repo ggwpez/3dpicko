@@ -1,16 +1,16 @@
 #include "GUI/api_controller.h"
+#include "GUI/reporter.h"
+#include "GUI/types/well.h"
+#include "Gcode/gcodegenerator.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_manager.h"
 #include "ImageRecognition/algorithm_result.h"
-#include "PiCommunicator/commands/arbitrary_command.h"
 #include "ImageRecognition/detection_result.h"
-#include "Main/exception.h"
-#include "Gcode/gcodegenerator.h"
-#include "PiCommunicator/octoprint.h"
 #include "ImageRecognition/plate_result.h"
-#include "GUI/reporter.h"
-#include "GUI/types/well.h"
+#include "Main/exception.h"
 #include "Main/version_manager.h"
+#include "PiCommunicator/commands/arbitrary_command.h"
+#include "PiCommunicator/octoprint.h"
 
 #include <QCoreApplication>
 #include <QDebug>

@@ -9,9 +9,9 @@
 namespace c3picko {
 namespace pi {
 namespace commands {
-UploadFile *UploadFile::CreateFile(QByteArray content, data::Location location,
+UploadFile* UploadFile::CreateFile(QByteArray content, data::Location location,
 								   QString file_name, bool select, bool print) {
-  QHttpMultiPart *query =
+  QHttpMultiPart* query =
 	  BuildFileUploadPacket(content, file_name, select, print);
 
   return new UploadFile(
@@ -20,9 +20,9 @@ UploadFile *UploadFile::CreateFile(QByteArray content, data::Location location,
 	  "multipart/form-data; boundary=" + QString(query->boundary()));
 }
 
-UploadFile *UploadFile::CreateFolder(QString folder_name, QString path,
+UploadFile* UploadFile::CreateFolder(QString folder_name, QString path,
 									 data::Location location) {
-  QHttpMultiPart *query = BuildFolderCreatePacket(folder_name, path);
+  QHttpMultiPart* query = BuildFolderCreatePacket(folder_name, path);
 
   return new UploadFile(
 	  "files/" + data::ToString(location), query, {201},
@@ -30,10 +30,10 @@ UploadFile *UploadFile::CreateFolder(QString folder_name, QString path,
 	  "multipart/form-data; boundary=" + QString(query->boundary()));
 }
 
-QHttpMultiPart *UploadFile::BuildFileUploadPacket(QByteArray data,
+QHttpMultiPart* UploadFile::BuildFileUploadPacket(QByteArray data,
 												  QString file_name,
 												  bool select, bool print) {
-  QHttpMultiPart *query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  QHttpMultiPart* query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
   QHttpPart file_part, select_part, print_part;
 
   {
@@ -60,9 +60,9 @@ QHttpMultiPart *UploadFile::BuildFileUploadPacket(QByteArray data,
   return query;
 }
 
-QHttpMultiPart *UploadFile::BuildFolderCreatePacket(QString folder_name,
+QHttpMultiPart* UploadFile::BuildFolderCreatePacket(QString folder_name,
 													QString path) {
-  QHttpMultiPart *query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  QHttpMultiPart* query = new QHttpMultiPart(QHttpMultiPart::FormDataType);
   QHttpPart file_part, select_part;
 
   {
@@ -83,7 +83,7 @@ QHttpMultiPart *UploadFile::BuildFolderCreatePacket(QString folder_name,
   return query;
 }
 
-void UploadFile::OnReplyFinished(QNetworkReply *reply) {
+void UploadFile::OnReplyFinished(QNetworkReply* reply) {
   CheckStatusCodeAndResponse<Response>(reply);
 }
 }  // namespace commands

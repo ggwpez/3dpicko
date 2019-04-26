@@ -4,40 +4,40 @@ namespace c3picko {
 namespace pi {
 namespace commands {
 
-JobOperation *JobOperation::GetInfo() {
+JobOperation* JobOperation::GetInfo() {
   return new JobOperation("job", {200}, HTTPType::GET);
 }
 
-JobOperation *JobOperation::Start() {
+JobOperation* JobOperation::Start() {
   return new JobOperation("job", {{"command", "start"}}, {204}, HTTPType::POST);
 }
 
-JobOperation *JobOperation::Cancel() {
+JobOperation* JobOperation::Cancel() {
   return new JobOperation("job", {{"command", "cancel"}}, {204},
 						  HTTPType::POST);
 }
 
-JobOperation *JobOperation::Restart() {
+JobOperation* JobOperation::Restart() {
   return new JobOperation("job", {{"command", "restart"}}, {204},
 						  HTTPType::POST);
 }
 
-JobOperation *JobOperation::Pause() {
+JobOperation* JobOperation::Pause() {
   return new JobOperation("job", {{"command", "pause"}, {"action", "pause"}},
 						  {204}, HTTPType::POST);
 }
 
-JobOperation *JobOperation::Resume() {
+JobOperation* JobOperation::Resume() {
   return new JobOperation("job", {{"command", "pause"}, {"action", "resume"}},
 						  {204}, HTTPType::POST);
 }
 
-JobOperation *JobOperation::TogglePause() {
+JobOperation* JobOperation::TogglePause() {
   return new JobOperation("job", {{"command", "pause"}, {"action", "toggle"}},
 						  {204}, HTTPType::POST);
 }
 
-void JobOperation::OnReplyFinished(QNetworkReply *reply) {
+void JobOperation::OnReplyFinished(QNetworkReply* reply) {
   if (type_ == HTTPType::GET)
 	CheckStatusCodeAndResponse<Response>(reply);
   else

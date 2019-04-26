@@ -165,9 +165,9 @@ QString consoleTextColor(QtMsgType type) {
 	case QtMsgType::QtWarningMsg:
 	  return "\x1B[33m";  // Orange
 	case QtMsgType::QtCriticalMsg:
-	  return "\x1B[31m";         // Red
+	  return "\x1B[31m";		 // Red
 	case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
-	  return "\x1B[31;1m";       // Red, Fat
+	  return "\x1B[31;1m";		 // Red, Fat
 	default:
 	  Q_UNREACHABLE();
   }
@@ -182,7 +182,7 @@ QString htmlTextColor(QtMsgType type) {
 	  break;
 	case QtMsgType::QtCriticalMsg:
 	case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
-	  clr = "red";               // Red
+	  clr = "red";				 // Red
 	default:
 	  break;
   }

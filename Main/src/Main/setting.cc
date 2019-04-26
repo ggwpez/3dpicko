@@ -1,7 +1,7 @@
 #include "Main/setting.h"
+#include "Gcode/point.h"
 #include "Main/exception.h"
 #include "Main/marshalling.h"
-#include "Gcode/point.h"
 
 namespace c3picko {
 
@@ -19,7 +19,7 @@ Setting::Setting(Setting::ID id, QString name, Setting::Type type,
 				 QString description, QVariant default_value,
 				 QString placeholder, QVariant min, QVariant max, QVariant step,
 				 ValueType value_type, QVariantMap options, int max_str_len,
-				 int min_str_len, const std::vector<Setting> &sub_settings)
+				 int min_str_len, const std::vector<Setting>& sub_settings)
 	: id_(id),
 	  name_(name),
 	  type_(type),
@@ -35,7 +35,7 @@ Setting::Setting(Setting::ID id, QString name, Setting::Type type,
 	  min_str_len_(min_str_len),
 	  sub_settings_(sub_settings) {}
 
-void Setting::setValue(const QJsonValue &value) {
+void Setting::setValue(const QJsonValue& value) {
   switch (type_) {
 	case Type::TEXT:
 	  value_ = Marshalling::fromJson<QString>(value);

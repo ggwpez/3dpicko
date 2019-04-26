@@ -18,10 +18,10 @@ class RoundPlate : public Plate {
    * rotation_matrix_
    */
   RoundPlate(OuterBorder const& outer_border, InnerBorder const& innerBorder,
-             Markers const& markers);
+			 Markers const& markers);
   RoundPlate(OuterBorder const& outer_border, InnerBorder const& innerBorder,
-             Markers const& markers, std::size_t m1, cv::Point2d center,
-             double angle, cv::Rect aabb);
+			 Markers const& markers, std::size_t m1, cv::Point2d center,
+			 double angle, cv::Rect aabb);
 
   virtual RoundPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
@@ -37,7 +37,7 @@ class RoundPlate : public Plate {
    * @return [0,360]
    */
   static double calculateRotation(Markers const& markers,
-                                  std::size_t start_marker, cv::Point center);
+								  std::size_t start_marker, cv::Point center);
 
   /**
    * @brief Outer border of the plate, approximated as rectangle

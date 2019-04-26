@@ -6,18 +6,18 @@
 
 namespace c3picko {
 AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
-                           QJsonObject settings,
-                           std::shared_ptr<AlgorithmResult> result,
-                           QThreadPool* pool, qint64 max_ms, QObject* _parent)
-    : QObject(_parent),
-      id_(id),
-      created_(QDateTime::currentDateTime()),
-      algo_(algo),
-      pool_(pool),
-      result_(result),
-      result_id_(result->id()),
-      max_ms_(max_ms),
-      took_ms_(0) {
+						   QJsonObject settings,
+						   std::shared_ptr<AlgorithmResult> result,
+						   QThreadPool* pool, qint64 max_ms, QObject* _parent)
+	: QObject(_parent),
+	  id_(id),
+	  created_(QDateTime::currentDateTime()),
+	  algo_(algo),
+	  pool_(pool),
+	  result_(result),
+	  result_id_(result->id()),
+	  max_ms_(max_ms),
+	  took_ms_(0) {
   algo_->setParent(this);
   algo_->setAutoDelete(false);
 
@@ -40,12 +40,12 @@ AlgorithmJob::InputData& AlgorithmJob::input() { return input_; }
 
 void AlgorithmJob::start(bool threaded, bool delete_when_done) {
   if (delete_when_done)
-    connect(this, SIGNAL(OnFinished()), this, SLOT(deleteLater()));
+	connect(this, SIGNAL(OnFinished()), this, SLOT(deleteLater()));
 
   if (threaded && algo_->isThreadable())
-    pool_->start(algo_);
+	pool_->start(algo_);
   else
-    algo_->run();
+	algo_->run();
 }
 
 void AlgorithmJob::timeStart() { start_ = QDateTime::currentDateTime(); }
@@ -75,7 +75,7 @@ const QList<AlgoSetting>& AlgorithmJob::settings() const { return settings_; }
 
 const AlgoSetting& AlgorithmJob::settingById(AlgoSetting::ID id) const {
   for (AlgoSetting const& setting : settings_) {
-    if (setting.id() == id) return setting;
+	if (setting.id() == id) return setting;
   }
 
   throw Exception("Could not find AlgoSetting (id=" + id + ")");
@@ -83,7 +83,7 @@ const AlgoSetting& AlgorithmJob::settingById(AlgoSetting::ID id) const {
 
 const AlgoSetting& AlgorithmJob::settingByName(QString name) const {
   for (AlgoSetting const& setting : settings_) {
-    if (setting.name() == name) return setting;
+	if (setting.name() == name) return setting;
   }
 
   throw Exception("Could not find AlgoSetting (name=" + name + ")");
@@ -91,10 +91,10 @@ const AlgoSetting& AlgorithmJob::settingByName(QString name) const {
 
 void AlgorithmJob::setSettingsValueByID(AlgoSetting::ID id, QJsonValue value) {
   for (AlgoSetting& setting : settings_) {
-    if (setting.id() == id) {
-      setting.setValue(value);
-      return;
-    }
+	if (setting.id() == id) {
+	  setting.setValue(value);
+	  return;
+	}
   }
 
   qWarning() << "Ignoring AlgoSetting id=" << id;
@@ -102,10 +102,10 @@ void AlgorithmJob::setSettingsValueByID(AlgoSetting::ID id, QJsonValue value) {
 
 void AlgorithmJob::setSettingsValueByName(QString name, QJsonValue value) {
   for (AlgoSetting& setting : settings_) {
-    if (setting.name() == name) {
-      setting.setValue(value);
-      return;
-    }
+	if (setting.name() == name) {
+	  setting.setValue(value);
+	  return;
+	}
   }
 
   qWarning() << "Ignoring AlgoSetting name=" << name;

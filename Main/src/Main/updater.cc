@@ -11,51 +11,51 @@
 
 namespace c3picko {
 Updater::Updater(const QSettings& settings, Database& db, QObject* _parent)
-    : QObject(_parent),
-      db_(db),
-      working_dir_(ResourcePath::fromSystemAbsolute(
-          settings.value("working_dir").toString())),
-      repo_url_(settings.value("repo_url").toString()),
-      repo_branch_(settings.value("repo_branch").toString()),
-      mng_(
-          new VersionManager(working_dir_, repo_url_, repo_branch_, db, this)) {
+	: QObject(_parent),
+	  db_(db),
+	  working_dir_(ResourcePath::fromSystemAbsolute(
+		  settings.value("working_dir").toString())),
+	  repo_url_(settings.value("repo_url").toString()),
+	  repo_branch_(settings.value("repo_branch").toString()),
+	  mng_(
+		  new VersionManager(working_dir_, repo_url_, repo_branch_, db, this)) {
   if (!db_.versions().exists(currentVersion().id()))
-    db_.versions().add(currentVersion().id(), currentVersion());
+	db_.versions().add(currentVersion().id(), currentVersion());
 
   // TODO sanity check values
   if (!settings.contains("interval")) {
-    qWarning() << "Updater interval not given, using default:"
-               << defaultInterval << "s";
-    interval_s_ = defaultInterval;
+	qWarning() << "Updater interval not given, using default:"
+			   << defaultInterval << "s";
+	interval_s_ = defaultInterval;
   } else
-    interval_s_ = settings.value("interval").toInt();
+	interval_s_ = settings.value("interval").toInt();
 
   if (working_dir_.isEmpty())
-    throw Exception("Updater: Working directory not set");
+	throw Exception("Updater: Working directory not set");
 
   if (!QDir(sourceDir().toSystemAbsolute()).exists())
-    throw Exception("Source directory not found: " +
-                    sourceDir().toSystemAbsolute());
+	throw Exception("Source directory not found: " +
+					sourceDir().toSystemAbsolute());
   if (!QDir(buildDir().toSystemAbsolute()).exists())
-    throw Exception("Build directory not found: " +
-                    sourceDir().toSystemAbsolute());
+	throw Exception("Build directory not found: " +
+					sourceDir().toSystemAbsolute());
   auto currbuild = buildDir(currentVersion().id()).toSystemAbsolute();
   if (!QDir(currbuild).exists())
-    throw Exception("Build directory of current version not found: " +
-                    currbuild);
+	throw Exception("Build directory of current version not found: " +
+					currbuild);
 
   timer_ = new QTimer(this);
   timer_->setInterval(interval_s_ * 1000);
   connect(timer_, &QTimer::timeout, this, &Updater::search);
 
   if (!settings.contains("enabled")) {
-    qWarning() << "Updater enabled not given, using default:" << defaultEnabled
-               << "s";
-    startSearch();
+	qWarning() << "Updater enabled not given, using default:" << defaultEnabled
+			   << "s";
+	startSearch();
   } else if (settings.value("enabled").toBool())
-    startSearch();
+	startSearch();
   else
-    qInfo() << "Updater disabled";
+	qInfo() << "Updater disabled";
 }
 
 Updater::~Updater() {
@@ -73,14 +73,14 @@ ResourcePath Updater::buildDir(Version::ID id) const {
 
 Process* Updater::clone() {
   Process* git(
-      Process::gitClone(repo_url_, sourceDir(), {"-n"}));  // -n for no checkout
+	  Process::gitClone(repo_url_, sourceDir(), {"-n"}));  // -n for no checkout
 
   // connect(git, &Process::OnStarted,
   //	[this]() { qDebug() << "Cloning" << repo_url_ << "into" <<
   // sourceDir().toSystemAbsolute() << "..."; });
   connect(git, &Process::OnSuccess, []() { qDebug() << "Cloned"; });
   connect(git, &Process::OnFailure,
-          [](QString output) { qDebug() << "Cloned error;" << output; });
+		  [](QString output) { qDebug() << "Cloned error;" << output; });
   connect(git, &Process::OnFinished, git, &Process::deleteLater);
 
   return git;
@@ -93,7 +93,7 @@ Process* Updater::checkout(Version::ID hash) {
   // hash << "..."; });
   connect(git, &Process::OnSuccess, []() { qDebug() << "Checked out"; });
   connect(git, &Process::OnFailure,
-          [](QString output) { qDebug() << "Check out error:" << output; });
+		  [](QString output) { qDebug() << "Check out error:" << output; });
   connect(git, &Process::OnFinished, git, &Process::deleteLater);
 
   return git;
@@ -115,13 +115,13 @@ void Updater::search() {
 
   Process* gitF = Process::gitFech(sourceDir(), {"origin"});
   Process* gitL = Process::gitLog(
-      sourceDir(),
-      {"--pretty=format:\"%H#%ad\"", "--date=rfc2822", "--max-count=5",
-       mng_->selected() + "...origin/" + repo_branch_});
+	  sourceDir(),
+	  {"--pretty=format:\"%H#%ad\"", "--date=rfc2822", "--max-count=5",
+	   mng_->selected() + "...origin/" + repo_branch_});
 
   connect(gitF, &Process::OnSuccess, gitL, &Process::start);
   connect(gitF, &Process::OnFailure, gitF,
-          [](QString output) { qWarning() << "Git fetch:" << output; });
+		  [](QString output) { qWarning() << "Git fetch:" << output; });
   connect(gitF, &Process::OnFinished, gitF, &Process::deleteLater);
   connect(gitF, &Process::OnFailure, gitL, &Process::deleteLater);
 
@@ -136,47 +136,47 @@ void Updater::search() {
 void Updater::logSuccess(QString output) {
   QStringList lines = output.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
   qDebug("origin/%s is %i ahead and 0 behind HEAD", qPrintable(repo_branch_),
-         lines.size());
+		 lines.size());
   Version::ID to_be_installed;
 
   for (QString line : lines) {
-    QStringList splits = line.split('#');
-    Version::ID id = splits[0];
-    QDateTime date(QDateTime::fromString(splits[1], Qt::RFC2822Date));
+	QStringList splits = line.split('#');
+	Version::ID id = splits[0];
+	QDateTime date(QDateTime::fromString(splits[1], Qt::RFC2822Date));
 
-    if (date.isNull()) {
-      qWarning() << "Invalid date from 'git log':" << splits[0];
-      continue;
-    }
-    if (!QRegExp("^[0-9a-f]{40}$")
-             .exactMatch(id))  // match SHA-1 160 bit hashes
-    {
-      qWarning() << "Invalid id from 'git log':" << splits[1];
-      continue;
-    }
+	if (date.isNull()) {
+	  qWarning() << "Invalid date from 'git log':" << splits[0];
+	  continue;
+	}
+	if (!QRegExp("^[0-9a-f]{40}$")
+			 .exactMatch(id))  // match SHA-1 160 bit hashes
+	{
+	  qWarning() << "Invalid id from 'git log':" << splits[1];
+	  continue;
+	}
 
-    if (!db_.versions().exists(id)) {
-      qDebug() << "Commit" << id << "is new";
-      // New versions dont have source or build directories yet
-      db_.versions().add(id, Version(id, date));
-      // Set the first (newest) as to be installed
-      if (to_be_installed.isEmpty()) to_be_installed = id;
-    }
+	if (!db_.versions().exists(id)) {
+	  qDebug() << "Commit" << id << "is new";
+	  // New versions dont have source or build directories yet
+	  db_.versions().add(id, Version(id, date));
+	  // Set the first (newest) as to be installed
+	  if (to_be_installed.isEmpty()) to_be_installed = id;
+	}
   }
 
   // Is there a new ersion that we should install?
   // Obviously we could install more than one new version, but we keep it simple
   // for now
   if (!to_be_installed.isEmpty()) try {
-      mng_->installVersion(to_be_installed);
-    } catch (std::exception const& e) {
-      qCritical() << "VersionManager error:" << e.what();
-      timer_->stop();
-    } catch (...) {
-      qCritical() << "VersionManager error:"
-                  << "unknown";
-      timer_->stop();
-    }
+	  mng_->installVersion(to_be_installed);
+	} catch (std::exception const& e) {
+	  qCritical() << "VersionManager error:" << e.what();
+	  timer_->stop();
+	} catch (...) {
+	  qCritical() << "VersionManager error:"
+				  << "unknown";
+	  timer_->stop();
+	}
 }
 
 void Updater::logFailure(QString output) {

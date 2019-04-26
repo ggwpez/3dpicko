@@ -17,8 +17,8 @@ class Reporter {
    * @param pick_sequence The colonies to be picked in correct order
    */
   static Reporter fromDatabase(Database const& db, Report::ID id, Job::ID job,
-                               const std::map<Well, Colony::ID>& pick_positions,
-                               const std::vector<GcodeInstruction>& gcode);
+							   const std::map<Well, Colony::ID>& pick_positions,
+							   const std::vector<GcodeInstruction>& gcode);
 
   /**
    * @brief Creates a report with the data read from the fromData call.
@@ -29,11 +29,11 @@ class Reporter {
  private:
   QString createImage(QString url) const;
   Reporter(Report::ID id, Job const& job, QDateTime creation,
-           const std::map<Well, Colony::ID>& pick_positions, const Image& image,
-           const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
-           Profile const& plate_, Profile const& printer_,
-           Profile const& socket_, Profile const& octoprint_,
-           const std::vector<GcodeInstruction>& gcode);
+		   const std::map<Well, Colony::ID>& pick_positions, const Image& image,
+		   const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
+		   Profile const& plate_, Profile const& printer_,
+		   Profile const& socket_, Profile const& octoprint_,
+		   const std::vector<GcodeInstruction>& gcode);
 
   void writeHtmlReport(cv::Mat const& img_data, QString& html) const;
 
@@ -70,7 +70,7 @@ class Reporter {
    * @param data is row wise.
    */
   QString createTable(QString title, QVector<QString> col_name,
-                      QVector<QVector<QString>> data) const;
+					  QVector<QVector<QString>> data) const;
 
   Report::ID id_;
   Job job_;

@@ -3,10 +3,10 @@
 #include <QDateTime>
 #include <QStack>
 #include <QString>
-#include "ImageRecognition/algorithm_result.h"
-#include "Main/marshalling.h"
 #include "GUI/types/image.h"
 #include "GUI/types/profile.h"
+#include "ImageRecognition/algorithm_result.h"
+#include "Main/marshalling.h"
 
 namespace c3picko {
 class Report;

@@ -66,16 +66,16 @@ typedef qintptr tSocketDescriptor;
 typedef int tSocketDescriptor;
 #endif
 
-static QString encodeName(const QString &name, bool allowUpper = false) {
+static QString encodeName(const QString& name, bool allowUpper = false) {
   QString n = name.toLower();
   QString legal = QLatin1String("abcdefghijklmnopqrstuvwxyz1234567890");
   if (allowUpper) legal += QLatin1String("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   int pos = 0;
   while (pos < n.size()) {
-    if (legal.indexOf(n[pos]) == -1)
-      n.remove(pos, 1);
-    else
-      ++pos;
+	if (legal.indexOf(n[pos]) == -1)
+	  n.remove(pos, 1);
+	else
+	  ++pos;
   }
   return n;
 }
@@ -83,56 +83,56 @@ static QString encodeName(const QString &name, bool allowUpper = false) {
 static QString login() {
   QString l;
   uid_t uid = getuid();
-  passwd *pw = getpwuid(uid);
+  passwd* pw = getpwuid(uid);
   if (pw) l = QString(pw->pw_name);
   return l;
 }
 
-static QString socketPath(const QString &serviceName) {
+static QString socketPath(const QString& serviceName) {
   QString sn = encodeName(serviceName);
   return QString(QLatin1String("/var/tmp/") + sn + QLatin1String(".") +
-                 login());
+				 login());
 }
 
-static bool sendCmd(const QString &serviceName, const QString &cmd) {
+static bool sendCmd(const QString& serviceName, const QString& cmd) {
   bool retValue = false;
   QtUnixSocket sock;
   if (sock.connectTo(socketPath(serviceName))) {
-    sock.write(QString(cmd + "\r\n").toLatin1().constData());
-    sock.flush();
-    sock.waitForReadyRead(-1);
-    QString reply = sock.readAll();
-    if (reply == QLatin1String("true")) retValue = true;
-    sock.close();
+	sock.write(QString(cmd + "\r\n").toLatin1().constData());
+	sock.flush();
+	sock.waitForReadyRead(-1);
+	QString reply = sock.readAll();
+	if (reply == QLatin1String("true")) retValue = true;
+	sock.close();
   }
   return retValue;
 }
 
-static QString absPath(const QString &path) {
+static QString absPath(const QString& path) {
   QString ret;
   if (path[0] != QChar('/')) {  // Not an absolute path
-    int slashpos;
-    if ((slashpos = path.lastIndexOf('/')) != -1) {  // Relative path
-      QDir dir = QDir::current();
-      dir.cd(path.left(slashpos));
-      ret = dir.absolutePath();
-    } else {  // Need to search $PATH
-      char *envPath = ::getenv("PATH");
-      if (envPath) {
-        QStringList envPaths = QString::fromLocal8Bit(envPath).split(':');
-        for (int i = 0; i < envPaths.size(); ++i) {
-          if (QFile::exists(envPaths.at(i) + QLatin1String("/") +
-                            QString(path))) {
-            QDir dir(envPaths.at(i));
-            ret = dir.absolutePath();
-            break;
-          }
-        }
-      }
-    }
+	int slashpos;
+	if ((slashpos = path.lastIndexOf('/')) != -1) {  // Relative path
+	  QDir dir = QDir::current();
+	  dir.cd(path.left(slashpos));
+	  ret = dir.absolutePath();
+	} else {  // Need to search $PATH
+	  char* envPath = ::getenv("PATH");
+	  if (envPath) {
+		QStringList envPaths = QString::fromLocal8Bit(envPath).split(':');
+		for (int i = 0; i < envPaths.size(); ++i) {
+		  if (QFile::exists(envPaths.at(i) + QLatin1String("/") +
+							QString(path))) {
+			QDir dir(envPaths.at(i));
+			ret = dir.absolutePath();
+			break;
+		  }
+		}
+	  }
+	}
   } else {
-    QFileInfo fi(path);
-    ret = fi.absolutePath();
+	QFileInfo fi(path);
+	ret = fi.absolutePath();
   }
   return ret;
 }
@@ -195,16 +195,16 @@ bool QtServiceController::uninstall() {
 
   QSettings::Status ret = settings.status();
   if (ret == QSettings::AccessError) {
-    fprintf(
-        stderr,
-        "Cannot uninstall \"%s\". Cannot write to: %s. Check permissions.\n",
-        serviceName().toLatin1().constData(),
-        settings.fileName().toLatin1().constData());
+	fprintf(
+		stderr,
+		"Cannot uninstall \"%s\". Cannot write to: %s. Check permissions.\n",
+		serviceName().toLatin1().constData(),
+		settings.fileName().toLatin1().constData());
   }
   return (ret == QSettings::NoError);
 }
 
-bool QtServiceController::start(const QStringList &arguments) {
+bool QtServiceController::start(const QStringList& arguments) {
   if (!isInstalled()) return false;
   if (isRunning()) return false;
   return QProcess::startDetached(serviceFilePath(), arguments);
@@ -224,7 +224,7 @@ bool QtServiceController::resume() {
 
 bool QtServiceController::sendCommand(int code) {
   return sendCmd(serviceName(),
-                 QString(QLatin1String("num:") + QString::number(code)));
+				 QString(QLatin1String("num:") + QString::number(code)));
 }
 
 bool QtServiceController::isInstalled() const {
@@ -237,7 +237,7 @@ bool QtServiceController::isInstalled() const {
 
   QStringListIterator it(list);
   while (it.hasNext()) {
-    if (it.next() == serviceName()) return true;
+	if (it.next() == serviceName()) return true;
   }
 
   return false;
@@ -257,7 +257,7 @@ class QtServiceSysPrivate : public QtUnixServerSocket {
   QtServiceSysPrivate();
   ~QtServiceSysPrivate();
 
-  char *ident;
+  char* ident;
 
   QtServiceBase::ServiceFlags serviceFlags;
 
@@ -269,76 +269,76 @@ class QtServiceSysPrivate : public QtUnixServerSocket {
   void slotClosed();
 
  private:
-  QString getCommand(const QTcpSocket *socket);
-  QMap<const QTcpSocket *, QString> cache;
+  QString getCommand(const QTcpSocket* socket);
+  QMap<const QTcpSocket*, QString> cache;
 };
 
 QtServiceSysPrivate::QtServiceSysPrivate()
-    : QtUnixServerSocket(), ident(0), serviceFlags(0) {}
+	: QtUnixServerSocket(), ident(0), serviceFlags(0) {}
 
 QtServiceSysPrivate::~QtServiceSysPrivate() {
   if (ident) delete[] ident;
 }
 
 void QtServiceSysPrivate::incomingConnection(
-    tSocketDescriptor socketDescriptor) {
-  QTcpSocket *s = new QTcpSocket(this);
+	tSocketDescriptor socketDescriptor) {
+  QTcpSocket* s = new QTcpSocket(this);
   s->setSocketDescriptor(socketDescriptor);
   connect(s, SIGNAL(readyRead()), this, SLOT(slotReady()));
   connect(s, SIGNAL(disconnected()), this, SLOT(slotClosed()));
 }
 
 void QtServiceSysPrivate::slotReady() {
-  QTcpSocket *s = (QTcpSocket *)sender();
+  QTcpSocket* s = (QTcpSocket*)sender();
   cache[s] += QString(s->readAll());
   QString cmd = getCommand(s);
   while (!cmd.isEmpty()) {
-    bool retValue = false;
-    if (cmd == QLatin1String("terminate")) {
-      if (!(serviceFlags & QtServiceBase::CannotBeStopped)) {
-        QtServiceBase::instance()->stop();
-        QCoreApplication::instance()->quit();
-        retValue = true;
-      }
-    } else if (cmd == QLatin1String("pause")) {
-      if (serviceFlags & QtServiceBase::CanBeSuspended) {
-        QtServiceBase::instance()->pause();
-        retValue = true;
-      }
-    } else if (cmd == QLatin1String("resume")) {
-      if (serviceFlags & QtServiceBase::CanBeSuspended) {
-        QtServiceBase::instance()->resume();
-        retValue = true;
-      }
-    } else if (cmd == QLatin1String("alive")) {
-      retValue = true;
-    } else if (cmd.length() > 4 && cmd.left(4) == QLatin1String("num:")) {
-      cmd = cmd.mid(4);
-      QtServiceBase::instance()->processCommand(cmd.toInt());
-      retValue = true;
-    }
-    QString retString;
-    if (retValue)
-      retString = QLatin1String("true");
-    else
-      retString = QLatin1String("false");
-    s->write(retString.toLatin1().constData());
-    s->flush();
-    cmd = getCommand(s);
+	bool retValue = false;
+	if (cmd == QLatin1String("terminate")) {
+	  if (!(serviceFlags & QtServiceBase::CannotBeStopped)) {
+		QtServiceBase::instance()->stop();
+		QCoreApplication::instance()->quit();
+		retValue = true;
+	  }
+	} else if (cmd == QLatin1String("pause")) {
+	  if (serviceFlags & QtServiceBase::CanBeSuspended) {
+		QtServiceBase::instance()->pause();
+		retValue = true;
+	  }
+	} else if (cmd == QLatin1String("resume")) {
+	  if (serviceFlags & QtServiceBase::CanBeSuspended) {
+		QtServiceBase::instance()->resume();
+		retValue = true;
+	  }
+	} else if (cmd == QLatin1String("alive")) {
+	  retValue = true;
+	} else if (cmd.length() > 4 && cmd.left(4) == QLatin1String("num:")) {
+	  cmd = cmd.mid(4);
+	  QtServiceBase::instance()->processCommand(cmd.toInt());
+	  retValue = true;
+	}
+	QString retString;
+	if (retValue)
+	  retString = QLatin1String("true");
+	else
+	  retString = QLatin1String("false");
+	s->write(retString.toLatin1().constData());
+	s->flush();
+	cmd = getCommand(s);
   }
 }
 
 void QtServiceSysPrivate::slotClosed() {
-  QTcpSocket *s = (QTcpSocket *)sender();
+  QTcpSocket* s = (QTcpSocket*)sender();
   s->deleteLater();
 }
 
-QString QtServiceSysPrivate::getCommand(const QTcpSocket *socket) {
+QString QtServiceSysPrivate::getCommand(const QTcpSocket* socket) {
   int pos = cache[socket].indexOf("\r\n");
   if (pos >= 0) {
-    QString ret = cache[socket].left(pos);
-    cache[socket].remove(0, pos + 2);
-    return ret;
+	QString ret = cache[socket].left(pos);
+	cache[socket].remove(0, pos + 2);
+	return ret;
   }
   return "";
 }
@@ -360,16 +360,16 @@ void QtServiceBasePrivate::sysSetPath() {
 
 void QtServiceBasePrivate::sysCleanup() {
   if (sysd) {
-    sysd->close();
-    delete sysd;
-    sysd = 0;
+	sysd->close();
+	delete sysd;
+	sysd = 0;
   }
 }
 
 bool QtServiceBasePrivate::start() {
   if (sendCmd(controller.serviceName(), "alive")) {
-    // Already running
-    return false;
+	// Already running
+	return false;
   }
   // Could just call controller.start() here, but that would fail if
   // we're not installed. We do not want to strictly require installation.
@@ -377,8 +377,8 @@ bool QtServiceBasePrivate::start() {
   return QProcess::startDetached(filePath(), args.mid(1), "/");
 }
 
-bool QtServiceBasePrivate::install(const QString &account,
-                                   const QString &password) {
+bool QtServiceBasePrivate::install(const QString& account,
+								   const QString& password) {
   Q_UNUSED(account)
   Q_UNUSED(password)
   QSettings settings(QSettings::SystemScope, "QtSoftware");
@@ -396,39 +396,39 @@ bool QtServiceBasePrivate::install(const QString &account,
 
   QSettings::Status ret = settings.status();
   if (ret == QSettings::AccessError) {
-    fprintf(stderr,
-            "Cannot install \"%s\". Cannot write to: %s. Check permissions.\n",
-            controller.serviceName().toLatin1().constData(),
-            settings.fileName().toLatin1().constData());
+	fprintf(stderr,
+			"Cannot install \"%s\". Cannot write to: %s. Check permissions.\n",
+			controller.serviceName().toLatin1().constData(),
+			settings.fileName().toLatin1().constData());
   }
   return (ret == QSettings::NoError);
 }
 
-void QtServiceBase::logMessage(const QString &message,
-                               QtServiceBase::MessageType type, int, uint,
-                               const QByteArray &) {
+void QtServiceBase::logMessage(const QString& message,
+							   QtServiceBase::MessageType type, int, uint,
+							   const QByteArray&) {
   if (!d_ptr->sysd) return;
   int st;
   switch (type) {
-    case QtServiceBase::Error:
-      st = LOG_ERR;
-      break;
-    case QtServiceBase::Warning:
-      st = LOG_WARNING;
-      break;
-    default:
-      st = LOG_INFO;
+	case QtServiceBase::Error:
+	  st = LOG_ERR;
+	  break;
+	case QtServiceBase::Warning:
+	  st = LOG_WARNING;
+	  break;
+	default:
+	  st = LOG_INFO;
   }
   if (!d_ptr->sysd->ident) {
-    QString tmp = encodeName(serviceName(), true);
-    int len = tmp.toLocal8Bit().size();
-    d_ptr->sysd->ident = new char[len + 1];
-    d_ptr->sysd->ident[len] = '\0';
-    ::memcpy(d_ptr->sysd->ident, tmp.toLocal8Bit().constData(), len);
+	QString tmp = encodeName(serviceName(), true);
+	int len = tmp.toLocal8Bit().size();
+	d_ptr->sysd->ident = new char[len + 1];
+	d_ptr->sysd->ident[len] = '\0';
+	::memcpy(d_ptr->sysd->ident, tmp.toLocal8Bit().constData(), len);
   }
   openlog(d_ptr->sysd->ident, LOG_PID, LOG_DAEMON);
   foreach (QString line, message.split('\n'))
-    syslog(st, "%s", line.toLocal8Bit().constData());
+	syslog(st, "%s", line.toLocal8Bit().constData());
   closelog();
 }
 

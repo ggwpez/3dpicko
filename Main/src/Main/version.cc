@@ -3,14 +3,14 @@
 
 namespace c3picko {
 Version::Version(Version::ID id, QDateTime date)
-    : id_(id), date_(date), state_(State::NEW) {}
+	: id_(id), date_(date), state_(State::NEW) {}
 
 Version::Version(Version::ID id, QDateTime date, State type)
-    : id_(id),
-      date_(date),
-      /*source_dir_(source_dir),
-      build_dir_(build_dir),*/
-      state_(type) {}
+	: id_(id),
+	  date_(date),
+	  /*source_dir_(source_dir),
+	  build_dir_(build_dir),*/
+	  state_(type) {}
 
 QString Version::id() const { return id_; }
 
@@ -30,10 +30,10 @@ QJsonObject Marshalling::toJson(const Version& value) {
 template <>
 Version Marshalling::fromJson(const QJsonObject& obj) {
   return Version(obj["hash"].toString(),
-                 Marshalling::fromJson<QDateTime>(obj["date"]),
-                 /*Marshalling::fromJson<ResourcePath>(obj["source_dir"]),
-                 Marshalling::fromJson<ResourcePath>(obj["build_dir"]),*/
-                 versionStateFromString(obj["state"].toString()));
+				 Marshalling::fromJson<QDateTime>(obj["date"]),
+				 /*Marshalling::fromJson<ResourcePath>(obj["source_dir"]),
+				 Marshalling::fromJson<ResourcePath>(obj["build_dir"]),*/
+				 versionStateFromString(obj["state"].toString()));
 }
 
 QDateTime Version::date() const { return date_; }
@@ -48,43 +48,43 @@ void Version::setState(const Version::State& state) { state_ = state; }
 
 QString toString(Version::State state) {
   switch (state) {
-    case Version::State::NEW:
-      return "NEW";
-    case Version::State::READY:
-      return "READY";
-    case Version::State::CORRUPT:
-      return "CORRUPT";
+	case Version::State::NEW:
+	  return "NEW";
+	case Version::State::READY:
+	  return "READY";
+	case Version::State::CORRUPT:
+	  return "CORRUPT";
 
-    case Version::State::MARKED_FOR_CLONE:
-      return "MARKED_FOR_CLONE";
-    case Version::State::CLONING:
-      return "CLONING";
-    case Version::State::CLONED:
-      return "CLONED";
-    case Version::State::CLONE_ERROR:
-      return "CLONE_ERROR";
+	case Version::State::MARKED_FOR_CLONE:
+	  return "MARKED_FOR_CLONE";
+	case Version::State::CLONING:
+	  return "CLONING";
+	case Version::State::CLONED:
+	  return "CLONED";
+	case Version::State::CLONE_ERROR:
+	  return "CLONE_ERROR";
 
-    case Version::State::MARKED_FOR_CHECKOUT:
-      return "MARKED_FOR_CHECKOUT";
-    case Version::State::CHECKING_OUT:
-      return "CHECKING_OUT";
-    case Version::State::CHECKED_OUT:
-      return "CHECKED_OUT";
-    case Version::State::CHECK_OUT_ERROR:
-      return "CHECK_OUT_ERROR";
+	case Version::State::MARKED_FOR_CHECKOUT:
+	  return "MARKED_FOR_CHECKOUT";
+	case Version::State::CHECKING_OUT:
+	  return "CHECKING_OUT";
+	case Version::State::CHECKED_OUT:
+	  return "CHECKED_OUT";
+	case Version::State::CHECK_OUT_ERROR:
+	  return "CHECK_OUT_ERROR";
 
-    case Version::State::MARKED_FOR_BUILD:
-      return "MARKED_FOR_BUILD";
-    case Version::State::BUILDING:
-      return "BUILDING";
-    case Version::State::BUILT:
-      return "BUILT";
-    case Version::State::BUILD_ERROR:
-      return "BUILD_ERROR";
+	case Version::State::MARKED_FOR_BUILD:
+	  return "MARKED_FOR_BUILD";
+	case Version::State::BUILDING:
+	  return "BUILDING";
+	case Version::State::BUILT:
+	  return "BUILT";
+	case Version::State::BUILD_ERROR:
+	  return "BUILD_ERROR";
 
-    default:
-      throw Exception("Unknown enum value '" + QString::number(int(state)) +
-                      " for enum of type Version::Type");
+	default:
+	  throw Exception("Unknown enum value '" + QString::number(int(state)) +
+					  " for enum of type Version::Type");
   }
 }
 
@@ -99,7 +99,7 @@ Version::State versionStateFromString(QString string) {
   if (string == "CLONE_ERROR") return Version::State::CLONE_ERROR;
 
   if (string == "MARKED_FOR_CHECKOUT")
-    return Version::State::MARKED_FOR_CHECKOUT;
+	return Version::State::MARKED_FOR_CHECKOUT;
   if (string == "CHECKING_OUT") return Version::State::CHECKING_OUT;
   if (string == "CHECKED_OUT") return Version::State::CHECKED_OUT;
   if (string == "CHECK_OUT_ERROR") return Version::State::CHECK_OUT_ERROR;

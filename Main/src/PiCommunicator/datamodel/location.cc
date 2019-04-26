@@ -5,7 +5,7 @@
 namespace c3picko {
 namespace pi {
 namespace data {
-Location LocationFromString(const QString &str) {
+Location LocationFromString(const QString& str) {
   if (str == "local") return Location::LOCAL;
   if (str == "sdcard")
 	return Location::SD_CARD;

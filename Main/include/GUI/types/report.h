@@ -1,9 +1,9 @@
 #pragma once
 
+#include "GUI/types/job.h"
 #include "ImageRecognition/colony.h"
 #include "ImageRecognition/detection_result.h"
 #include "Main/resource_path.h"
-#include "GUI/types/job.h"
 
 class QPdfWriter;
 namespace c3picko {

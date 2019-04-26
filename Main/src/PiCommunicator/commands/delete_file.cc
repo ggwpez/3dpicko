@@ -3,7 +3,7 @@
 namespace c3picko {
 namespace pi {
 namespace commands {
-DeleteFile *DeleteFile::Delete(data::Location location, QString path) {
+DeleteFile* DeleteFile::Delete(data::Location location, QString path) {
   return new DeleteFile("files/" + data::ToString(location) + '/' + path, {204},
 						HTTPType::DELETE);
 }

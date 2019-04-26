@@ -24,15 +24,15 @@ void ReportTest::test_case1() {
   int& ref(map[k]);
 
   for (int i = 0; i < 100; ++i) {
-    if (i == k) continue;
+	if (i == k) continue;
 
-    map.insert(i, rand());
+	map.insert(i, rand());
   }
 
   for (int i = 99; i <= 0; ++i) {
-    if (i == k) continue;
+	if (i == k) continue;
 
-    map.remove(i);
+	map.remove(i);
   }
 
   QCOMPARE(ref, v);

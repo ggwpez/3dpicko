@@ -15,7 +15,7 @@ namespace responses {
  * [API](http://docs.octoprint.org/en/master/api/files.html#sec-api-fileops-datamodel-retrieveresponse)
  */
 struct UploadResponse : public Response {
-  UploadResponse(QJsonObject const &obj);
+  UploadResponse(QJsonObject const& obj);
 
   data::AbridgedFileInfo local, sdcard, folder;
   bool done;

@@ -15,7 +15,7 @@ class Process : public QObject {
    * @param Directory to clone into.
    */
   static Process* gitClone(QString repo, const ResourcePath& into,
-                           QStringList arguments = {});
+						   QStringList arguments = {});
   static Process* gitCheckout(QString branch, const ResourcePath& repo);
   /**
    * @brief Git log command.
@@ -28,7 +28,7 @@ class Process : public QObject {
 
   static Process* qmake(const ResourcePath& build, const ResourcePath& source);
   static Process* make(const ResourcePath& build, QStringList targets = {"all"},
-                       int cores = 8);
+					   int cores = 8);
   static Process* ln(QString relative_target, ResourcePath const& target);
 
   ~Process();
@@ -47,7 +47,7 @@ class Process : public QObject {
  private:
   Process(QString process, QStringList args, QObject* _parent = nullptr);
   Process(QString process, QStringList args, ResourcePath const& execution_dir,
-          QObject* _parent = nullptr);
+		  QObject* _parent = nullptr);
 
   QString binary_;
   QProcess* git_;

@@ -6,11 +6,11 @@ namespace c3picko {
 template <>
 QJsonObject Marshalling::toJson(const DetectionResult& value) {
   QJsonObject obj = Marshalling::toJson<AlgorithmResult>(
-      static_cast<AlgorithmResult const&>(value));
+	  static_cast<AlgorithmResult const&>(value));
   QJsonArray colonies;
 
   /*for (Colony const& colony : value.colonies())
-                  colonies.push_back(Marshalling::toJson(colony));
+				  colonies.push_back(Marshalling::toJson(colony));
 
   obj["colonies"] = colonies;*/
 
@@ -22,13 +22,13 @@ DetectionResult Marshalling::fromJson(const QJsonObject& obj) {
   // DetectionResult ret(Marshalling::fromJson<AlgorithmResult>(obj));
 
   /*for (QJsonValueRef e : obj["colonies"].toArray())
-                  ret.colonies().push_back(Marshalling::fromJson<Colony>(e));*/
+				  ret.colonies().push_back(Marshalling::fromJson<Colony>(e));*/
   throw Exception("Not implemented");
   // return ret;
 }
 
 DetectionResult::DetectionResult(AlgorithmResult&& base)
-    : MatrixResult(std::move(base)) {}
+	: MatrixResult(std::move(base)) {}
 
 DetectionResult::~DetectionResult() {}
 
@@ -36,7 +36,7 @@ void DetectionResult::finalize() {
   AlgorithmResult::finalize();
 
   auto it = std::partition(colonies_.begin(), colonies_.end(),
-                           std::bind(&Colony::included, std::placeholders::_1));
+						   std::bind(&Colony::included, std::placeholders::_1));
   included_end_ = std::distance(colonies_.begin(), it);
 }
 

@@ -1,8 +1,8 @@
 #ifndef OCTO_PROFILE_H
 #define OCTO_PROFILE_H
 
-#include "PiCommunicator/apikey.h"
 #include "Main/marshalling.h"
+#include "PiCommunicator/apikey.h"
 
 namespace c3picko {
 namespace pi {
@@ -17,7 +17,7 @@ class OctoConfig {
    * @param protocol Default is http. Can be set to https, if octoprint
    * will _eventually_ support https.
    */
-  OctoConfig(QString address, ApiKey const &key, QString protocol = "http",
+  OctoConfig(QString address, ApiKey const& key, QString protocol = "http",
 			 quint16 port = 80);
 
   QString address() const;

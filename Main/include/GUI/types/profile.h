@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "Main/marshalling.h"
 #include "GUI/types/profile_type.h"
+#include "Main/marshalling.h"
 
 namespace c3picko {
 class PrinterProfile;

@@ -38,32 +38,32 @@ class DECLSPEC LogMessage {
   Q_DISABLE_COPY(LogMessage)
  public:
   /**
-    Constructor. All parameters are copied, so that later changes to them do not
-    affect this object.
-    @param type Type of the message
-    @param message Message text
-    @param logVars Logger variables, 0 is allowed
-    @param file Name of the source file where the message was generated
-    @param function Name of the function where the message was generated
-    @param line Line Number of the source file, where the message was generated
+	Constructor. All parameters are copied, so that later changes to them do not
+	affect this object.
+	@param type Type of the message
+	@param message Message text
+	@param logVars Logger variables, 0 is allowed
+	@param file Name of the source file where the message was generated
+	@param function Name of the function where the message was generated
+	@param line Line Number of the source file, where the message was generated
   */
-  LogMessage(const QtMsgType type, const QString &message,
-             QHash<QString, QString> *logVars, const QString &file,
-             const QString &function, const int line);
+  LogMessage(const QtMsgType type, const QString& message,
+			 QHash<QString, QString>* logVars, const QString& file,
+			 const QString& function, const int line);
 
   /**
-    Returns the log message as decorated string.
-    @param msgFormat Format of the decoration. May contain variables and static
-    text, e.g. "{timestamp} {type} thread={thread}: {msg}".
-    @param timestampFormat Format of timestamp, e.g. "dd.MM.yyyy hh:mm:ss.zzz",
-    see QDateTime::toString().
-    @see QDatetime for a description of the timestamp format pattern
+	Returns the log message as decorated string.
+	@param msgFormat Format of the decoration. May contain variables and static
+	text, e.g. "{timestamp} {type} thread={thread}: {msg}".
+	@param timestampFormat Format of timestamp, e.g. "dd.MM.yyyy hh:mm:ss.zzz",
+	see QDateTime::toString().
+	@see QDatetime for a description of the timestamp format pattern
   */
-  QString toString(const QString &msgFormat,
-                   const QString &timestampFormat) const;
+  QString toString(const QString& msgFormat,
+				   const QString& timestampFormat) const;
 
   /**
-    Get the message type.
+	Get the message type.
   */
   QtMsgType getType() const;
 

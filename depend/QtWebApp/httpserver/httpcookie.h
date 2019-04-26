@@ -24,30 +24,30 @@ class DECLSPEC HttpCookie {
   HttpCookie();
 
   /**
-    Create a cookie and set name/value pair.
-    @param name name of the cookie
-    @param value value of the cookie
-    @param maxAge maximum age of the cookie in seconds. 0=discard immediately
-    @param path Path for that the cookie will be sent, default="/" which means
-    the whole domain
-    @param comment Optional comment, may be displayed by the web browser
-    somewhere
-    @param domain Optional domain for that the cookie will be sent. Defaults to
-    the current domain
-    @param secure If true, the cookie will be sent by the browser to the server
-    only on secure connections
-    @param httpOnly If true, the browser does not allow client-side scripts to
-    access the cookie
+	Create a cookie and set name/value pair.
+	@param name name of the cookie
+	@param value value of the cookie
+	@param maxAge maximum age of the cookie in seconds. 0=discard immediately
+	@param path Path for that the cookie will be sent, default="/" which means
+	the whole domain
+	@param comment Optional comment, may be displayed by the web browser
+	somewhere
+	@param domain Optional domain for that the cookie will be sent. Defaults to
+	the current domain
+	@param secure If true, the cookie will be sent by the browser to the server
+	only on secure connections
+	@param httpOnly If true, the browser does not allow client-side scripts to
+	access the cookie
   */
   HttpCookie(const QByteArray name, const QByteArray value, const int maxAge,
-             const QByteArray path = "/",
-             const QByteArray comment = QByteArray(),
-             const QByteArray domain = QByteArray(), const bool secure = false,
-             const bool httpOnly = false);
+			 const QByteArray path = "/",
+			 const QByteArray comment = QByteArray(),
+			 const QByteArray domain = QByteArray(), const bool secure = false,
+			 const bool httpOnly = false);
 
   /**
-    Create a cookie from a string.
-    @param source String as received in a HTTP Cookie2 header.
+	Create a cookie from a string.
+	@param source String as received in a HTTP Cookie2 header.
   */
   HttpCookie(const QByteArray source);
 
@@ -56,8 +56,8 @@ class DECLSPEC HttpCookie {
   QByteArray toByteArray() const;
 
   /**
-    Split a string list into parts, where each part is delimited by semicolon.
-    Semicolons within double quotes are skipped. Double quotes are removed.
+	Split a string list into parts, where each part is delimited by semicolon.
+	Semicolons within double quotes are skipped. Double quotes are removed.
   */
   static QList<QByteArray> splitCSV(const QByteArray source);
 

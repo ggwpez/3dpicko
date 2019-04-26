@@ -1,11 +1,11 @@
 #include "PiCommunicator/octoprint.h"
-#include "PiCommunicator/command.h"
 #include <QHostAddress>
 #include <QJsonArray>
 #include <QMetaEnum>
 #include <QUrlQuery>
 #include <functional>
 #include <utility>
+#include "PiCommunicator/command.h"
 
 namespace c3picko {
 namespace pi {
@@ -18,8 +18,8 @@ OctoPrint::OctoPrint(OctoConfig const& config, QObject* _parent)
    QHostAddress add(config.address());
 
    if (add.protocol() == QAbstractSocket::IPv4Protocol ||
-								   add.protocol() ==
-   QAbstractSocket::IPv6Protocol) url.setHost(config.address()); else
+																   add.protocol()
+   == QAbstractSocket::IPv6Protocol) url.setHost(config.address()); else
    {
 
    }	 */

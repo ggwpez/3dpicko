@@ -4,7 +4,7 @@
 namespace c3picko {
 namespace pi {
 namespace responses {
-ConnectionInfo::ConnectionInfo(const QJsonObject &obj) : Response(obj) {
+ConnectionInfo::ConnectionInfo(const QJsonObject& obj) : Response(obj) {
   QJsonObject current_json = obj["current"].toObject(),
 			  options_json = obj["options"].toObject();
 

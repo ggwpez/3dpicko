@@ -20,18 +20,18 @@ class FileOperation : public Command {
  public:
   typedef responses::AbridgedFileInfo Response;
 
-  static FileOperation *select(data::Location location, QString path,
+  static FileOperation* select(data::Location location, QString path,
 							   bool print = false);
   // Omitted
   // static FileOperation slice(data::Location location, QString path, QString
   // slicer, QString gcode, );
-  static FileOperation *copy(data::Location location, QString origin,
+  static FileOperation* copy(data::Location location, QString origin,
 							 QString destination);
-  static FileOperation *move(data::Location location, QString origin,
+  static FileOperation* move(data::Location location, QString origin,
 							 QString destination);
 
  public slots:
-  virtual void OnReplyFinished(QNetworkReply *reply) override;
+  virtual void OnReplyFinished(QNetworkReply* reply) override;
 };
 }  // namespace commands
 }  // namespace pi

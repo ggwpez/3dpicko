@@ -13,7 +13,7 @@ namespace data {
  */
 struct Reference {
   Reference() = default;
-  Reference(QJsonObject const &obj);
+  Reference(QJsonObject const& obj);
 
   QUrl resource, download, model;
 };

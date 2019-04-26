@@ -1,6 +1,6 @@
 #include "GUI/types/profile_type.h"
-#include "Main/exception.h"
 #include <QtGlobal>
+#include "Main/exception.h"
 
 namespace c3picko {
 QString profileToString(ProfileType val) {

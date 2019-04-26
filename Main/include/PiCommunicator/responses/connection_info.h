@@ -17,7 +17,7 @@ namespace responses {
  *
  */
 struct ConnectionInfo : public Response {
-  ConnectionInfo(QJsonObject const &obj);
+  ConnectionInfo(QJsonObject const& obj);
 
   struct {
 	/**

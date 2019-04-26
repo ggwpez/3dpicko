@@ -24,15 +24,15 @@ namespace stefanfrings {
  Hello {username}, how are you?
 
  {if locked}
-     Your account is locked.
+	 Your account is locked.
  {else locked}
-     Welcome on our system.
+	 Welcome on our system.
  {end locked}
 
  The following users are on-line:
-     Username       Time
+	 Username       Time
  {loop user}
-     {user.name}    {user.time}
+	 {user.name}    {user.time}
  {end user}
  </pre></code></p>
  <p>
@@ -53,11 +53,11 @@ namespace stefanfrings {
  <p><code><pre>
  &lt;table&gt;
  {loop row}
-     &lt;tr&gt;
-     {loop row.column}
-         &lt;td&gt;{row.column.value}&lt;/td&gt;
-     {end row.column}
-     &lt;/tr&gt;
+	 &lt;tr&gt;
+	 {loop row.column}
+		 &lt;td&gt;{row.column.value}&lt;/td&gt;
+	 {end row.column}
+	 &lt;/tr&gt;
  {end row}
  &lt;/table&gt;
  </pre></code></p>
@@ -91,45 +91,45 @@ namespace stefanfrings {
 class DECLSPEC Template : public QString {
  public:
   /**
-    Constructor that reads the template from a string.
-    @param source The template source text
-    @param sourceName Name of the source file, used for logging
+	Constructor that reads the template from a string.
+	@param source The template source text
+	@param sourceName Name of the source file, used for logging
   */
   Template(QString source, QString sourceName);
 
   /**
-    Constructor that reads the template from a file. Note that this class does
-    not cache template files by itself, so using this constructor is only
-    recommended to be used on local filesystem.
-    @param file File that provides the source text
-    @param textCodec Encoding of the source
-    @see TemplateLoader
-    @see TemplateCache
+	Constructor that reads the template from a file. Note that this class does
+	not cache template files by itself, so using this constructor is only
+	recommended to be used on local filesystem.
+	@param file File that provides the source text
+	@param textCodec Encoding of the source
+	@see TemplateLoader
+	@see TemplateCache
   */
-  Template(QFile &file, QTextCodec *textCodec);
+  Template(QFile& file, QTextCodec* textCodec);
 
   /**
-    Replace a variable by the given value.
-    Affects tags with the syntax
+	Replace a variable by the given value.
+	Affects tags with the syntax
 
-    - {name}
+	- {name}
 
-    After settings the
-    value of a variable, the variable does not exist anymore,
-    it it cannot be changed multiple times.
-    @param name name of the variable
-    @param value new value
-    @return The count of variables that have been processed
+	After settings the
+	value of a variable, the variable does not exist anymore,
+	it it cannot be changed multiple times.
+	@param name name of the variable
+	@param value new value
+	@return The count of variables that have been processed
   */
   int setVariable(QString name, QString value);
 
   /**
-    Set a condition. This affects tags with the syntax
+	Set a condition. This affects tags with the syntax
 
-    - {if name}...{end name}
-    - {if name}...{else name}...{end name}
-    - {ifnot name}...{end name}
-    - {ifnot name}...{else name}...{end name}
+	- {if name}...{end name}
+	- {if name}...{else name}...{end name}
+	- {ifnot name}...{end name}
+	- {ifnot name}...{else name}...{end name}
 
    @param name Name of the condition
    @param value Value of the condition

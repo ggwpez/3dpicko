@@ -5,7 +5,7 @@
 namespace c3picko {
 namespace pi {
 namespace data {
-AbridgedFileInfo::AbridgedFileInfo(const QJsonObject &obj)
+AbridgedFileInfo::AbridgedFileInfo(const QJsonObject& obj)
 	: responses::Response(obj) {
   name = obj["name"].toString();
   display = obj["display"].toString();

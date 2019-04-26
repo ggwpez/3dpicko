@@ -5,7 +5,7 @@
 namespace c3picko {
 namespace pi {
 namespace data {
-JobGeneralInfo::JobGeneralInfo(QJsonObject const &obj) {
+JobGeneralInfo::JobGeneralInfo(QJsonObject const& obj) {
   file = AbridgedFileInfo(obj["file"].toObject());
 
   if (obj.contains("estimatedPrintTime"))

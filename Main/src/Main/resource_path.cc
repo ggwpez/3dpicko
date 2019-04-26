@@ -3,7 +3,7 @@
 
 namespace c3picko {
 ResourcePath::ResourcePath(QString system_absolute_path)
-    : system_absolute_(QDir::cleanPath(system_absolute_path)) {}
+	: system_absolute_(QDir::cleanPath(system_absolute_path)) {}
 
 ResourcePath::ResourcePath() {}
 
@@ -31,10 +31,10 @@ const QString ResourcePath::toServerAbsolute() const {
   QString root_abs = Root().toSystemAbsolute();
 
   if (!system_absolute_.startsWith(root_abs))
-    throw Exception(
-        "System path outside of Root can not be converted to "
-        "'ServerAbsolute': " +
-        system_absolute_ + " did not start with " + root_abs);
+	throw Exception(
+		"System path outside of Root can not be converted to "
+		"'ServerAbsolute': " +
+		system_absolute_ + " did not start with " + root_abs);
 
   return system_absolute_.mid(root_abs.size());
 }
@@ -43,10 +43,10 @@ const QString ResourcePath::toDocRootAbsolute() const {
   QString droot_abs = DocRoot().toSystemAbsolute();
 
   if (!system_absolute_.startsWith(droot_abs))
-    throw Exception(
-        "System path outside of DocRoot can not be converted to "
-        "'DocRootAbsolute': " +
-        system_absolute_ + " did not start with " + droot_abs);
+	throw Exception(
+		"System path outside of DocRoot can not be converted to "
+		"'DocRootAbsolute': " +
+		system_absolute_ + " did not start with " + droot_abs);
 
   return system_absolute_.mid(droot_abs.size());
 }
@@ -68,8 +68,8 @@ void ResourcePath::clear() { system_absolute_ = ""; }
 ResourcePath ResourcePath::operator+(const QString& obj) const {
   QString infix;
   if (!obj.startsWith(QDir::separator()) &&
-      !system_absolute_.endsWith(QDir::separator()))
-    infix = QDir::separator();
+	  !system_absolute_.endsWith(QDir::separator()))
+	infix = QDir::separator();
 
   QString result = system_absolute_ + infix + obj;
   return QDir::cleanPath(result);

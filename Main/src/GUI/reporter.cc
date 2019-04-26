@@ -1,8 +1,8 @@
 #include "GUI/reporter.h"
-#include "ImageRecognition/algorithm.h"
 #include "GUI/database.h"
-#include "Gcode/gcodeinstruction.h"
 #include "GUI/types/well.h"
+#include "Gcode/gcodeinstruction.h"
+#include "ImageRecognition/algorithm.h"
 #ifndef C3PICKO_NO_QUAZIP
 #include <JlCompress.h>
 #endif

@@ -28,7 +28,7 @@ class PiCommunicator : public QObject {
 	ERROR
   };
 
-  PiCommunicator(const OctoConfig &config, QObject *_parent = nullptr);
+  PiCommunicator(const OctoConfig& config, QObject* _parent = nullptr);
 
  public slots:
   void Connect();
@@ -40,11 +40,11 @@ class PiCommunicator : public QObject {
    * Status updates by @link OnStartedJob and @link OnStartingJobError
    * @return The created job, DONT DELETE IT
    */
-  PrintJob const *StartJob(GCode gcode);
+  PrintJob const* StartJob(GCode gcode);
   /**
    * @brief TODO rethink this, not optimal
    */
-  void CancelJob(PrintJob *);
+  void CancelJob(PrintJob*);
 
  signals:
   void OnConnected();
@@ -65,14 +65,14 @@ class PiCommunicator : public QObject {
  private slots:
   void Tick();
   void StartNextJob();
-  void SendCommand(Command *cmd);
+  void SendCommand(Command* cmd);
 
  private:
   /**
    * @brief OctoPrint only allows one active job at a time
    */
-  PrintJob *current_job_;
-  QQueue<PrintJob *> waiting_jobs_;
+  PrintJob* current_job_;
+  QQueue<PrintJob*> waiting_jobs_;
 
   State state_;
   OctoPrint const printer_;

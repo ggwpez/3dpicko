@@ -19,9 +19,9 @@ namespace c3picko {
  */
 class GcodeGenerator {
  public:
-  explicit GcodeGenerator(const PlateSocketProfile &plate_socket_profile,
-                          const PrinterProfile &printer_profile,
-                          const PlateProfile &master_and_goal_plate_profile);
+  explicit GcodeGenerator(const PlateSocketProfile& plate_socket_profile,
+						  const PrinterProfile& printer_profile,
+						  const PlateProfile& master_and_goal_plate_profile);
 
   /**
    * @brief Creates the gcode for an entire picking process.
@@ -36,8 +36,8 @@ class GcodeGenerator {
    * @return The gcode for the entire picking process.
    */
   std::vector<GcodeInstruction> CreateGcodeForTheEntirePickingProcess(
-      int starting_row, int starting_column,
-      std::vector<LocalColonyCoordinates> local_colony_coordinates);
+	  int starting_row, int starting_column,
+	  std::vector<LocalColonyCoordinates> local_colony_coordinates);
 
  private:
   /**
@@ -56,7 +56,7 @@ class GcodeGenerator {
    * @return the colony coordinate in the socket's coordinate system
    */
   GlobalColonyCoordinates MapLocalColonyCoordinateToGlobal(
-      LocalColonyCoordinates &local_colony);
+	  LocalColonyCoordinates& local_colony);
 
   GcodeInstruction CreateGcodeLowerFilamentOntoColony();
   GcodeInstruction CreateGcodeLowerFilamentOntoMaster();
@@ -97,7 +97,7 @@ class GcodeGenerator {
    * call this function providing the necessary arguments.
    */
   std::vector<Point> ComputeGlobalWellAndMasterCoordinates(
-      const Point &origin_of_plate);
+	  const Point& origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
@@ -108,7 +108,7 @@ class GcodeGenerator {
    * global xy coordinates of the wells.
    */
   void ComputeGlobalCoordinatesFirstRowFirstColumnOrientation(
-      std::vector<Point> &global_well_coordintes, const Point &origin_of_plate);
+	  std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
 
   /**
    * @brief Compute the xy coordinates of the goal plate's wells represented in
@@ -119,7 +119,7 @@ class GcodeGenerator {
    * global xy coordinates of the wells.
    */
   void ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
-      std::vector<Point> &global_well_coordintes, const Point &origin_of_plate);
+	  std::vector<Point>& global_well_coordintes, const Point& origin_of_plate);
 
   /**
    * @brief ComputeStartingWell computes the first well

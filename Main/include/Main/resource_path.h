@@ -57,7 +57,7 @@ class ResourcePath {
 
   bool isEmpty() const;
   void clear();
-  ResourcePath operator+(QString const &) const;
+  ResourcePath operator+(QString const&) const;
 
  private:
   QString system_absolute_;

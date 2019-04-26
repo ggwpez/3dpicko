@@ -4,13 +4,13 @@
 namespace c3picko {
 namespace pi {
 namespace responses {
-FileOrFolderInfo::FileOrFolderInfo(const QJsonObject &obj) : Response(obj) {
+FileOrFolderInfo::FileOrFolderInfo(const QJsonObject& obj) : Response(obj) {
   name = obj["name"].toString();
   display = obj["display"].toString();
   path = obj["path"].toString();
   type = data::FileTypeFromString(obj["type"].toString());
 
-  for (QJsonValue const &value : obj["typePath"].toArray())
+  for (QJsonValue const& value : obj["typePath"].toArray())
 	type_path.append(value.toString());
 
   if (type == data::FileType::FOLDER)
@@ -19,7 +19,7 @@ FileOrFolderInfo::FileOrFolderInfo(const QJsonObject &obj) : Response(obj) {
 	ReadFileMember(obj);
 }
 
-void FileOrFolderInfo::ReadFileMember(QJsonObject const &obj) {
+void FileOrFolderInfo::ReadFileMember(QJsonObject const& obj) {
   if (obj.contains("hash")) hash = obj["hash"].toString();
 
   if (obj.contains("size")) size = obj["size"].toInt();
@@ -34,9 +34,9 @@ void FileOrFolderInfo::ReadFileMember(QJsonObject const &obj) {
 	gcode_analysis = obj["gcodeAnalysis"].toString();
 }
 
-void FileOrFolderInfo::ReadFolderMember(const QJsonObject &obj) {
+void FileOrFolderInfo::ReadFolderMember(const QJsonObject& obj) {
   if (obj.contains("children")) {
-	for (QJsonValue const &value : obj["children"].toArray()) {
+	for (QJsonValue const& value : obj["children"].toArray()) {
 	  children.append(FileOrFolderInfo(value.toObject()));
 	}
   }

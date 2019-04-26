@@ -8,11 +8,11 @@
 
 namespace c3picko {
 AlgorithmResult::AlgorithmResult(ID id)
-    : id_(id),
-      created_(QDateTime::currentDateTime()),
-      stages_succeeded_(false),
-      cleanup_succeeded_(false),
-      is_finalized_(false) {}
+	: id_(id),
+	  created_(QDateTime::currentDateTime()),
+	  stages_succeeded_(false),
+	  cleanup_succeeded_(false),
+	  is_finalized_(false) {}
 
 AlgorithmResult::~AlgorithmResult() {}
 

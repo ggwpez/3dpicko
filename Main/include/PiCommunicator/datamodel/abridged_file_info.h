@@ -19,7 +19,7 @@ namespace data {
  */
 struct AbridgedFileInfo : public responses::Response {
   AbridgedFileInfo() = default;
-  AbridgedFileInfo(QJsonObject const &obj);
+  AbridgedFileInfo(QJsonObject const& obj);
 
   QString name, display, path;
   data::Location origin;

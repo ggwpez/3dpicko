@@ -23,7 +23,7 @@ Command::Command(QString api_url, QByteArray data, QSet<int> status_ok,
   SetupSlots();
 }
 
-Command::Command(QString api_url, QHttpMultiPart *query, QSet<int> status_ok,
+Command::Command(QString api_url, QHttpMultiPart* query, QSet<int> status_ok,
 				 HTTPType type, QString content_type)
 	: api_url_(api_url),
 	  query_(query),
@@ -51,9 +51,8 @@ Command::Command(QString api_url, QJsonObject data, QSet<int> status_ok,
 }
 
 void Command::SetupSlots() {
-  connect(this, SIGNAL(OnStatusOk(int, Response *)), this,
-		  SIGNAL(OnFinished()));
-  connect(this, SIGNAL(OnStatusErr(QJsonValue, Response *)), this,
+  connect(this, SIGNAL(OnStatusOk(int, Response*)), this, SIGNAL(OnFinished()));
+  connect(this, SIGNAL(OnStatusErr(QJsonValue, Response*)), this,
 		  SIGNAL(OnFinished()));
   connect(this, SIGNAL(OnNetworkErr(QString)), this, SIGNAL(OnFinished()));
 }
@@ -62,13 +61,13 @@ QString Command::GetApiUrl() const { return api_url_; }
 
 QByteArray Command::GetPostData() const { return data_; }
 
-QHttpMultiPart *Command::GetPostQuery() const { return query_; }
+QHttpMultiPart* Command::GetPostQuery() const { return query_; }
 
 QString Command::GetContentType() const { return content_type_; }
 
 bool Command::IsQuery() const { return query_; }
 
-void Command::CheckStatusCode(QNetworkReply *reply, Command::Response *answer) {
+void Command::CheckStatusCode(QNetworkReply* reply, Command::Response* answer) {
   // Hhe Webserver can return various types as status code
   QVariant status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
@@ -87,7 +86,7 @@ void Command::CheckStatusCode(QNetworkReply *reply, Command::Response *answer) {
 
 Command::HTTPType Command::type() const { return type_; }
 
-void Command::OnReplyFinished(QNetworkReply *reply) {
+void Command::OnReplyFinished(QNetworkReply* reply) {
   CheckStatusCode(reply);
 
   // The default case is that commands dont have Reply data, so we just

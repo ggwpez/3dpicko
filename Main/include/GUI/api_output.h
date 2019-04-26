@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QString>
-#include "Main/global.h"
 #include "GUI/types/job.h"
 #include "GUI/types/report.h"
+#include "Main/global.h"
 #include "Main/version.h"
 
 #include <QObject>

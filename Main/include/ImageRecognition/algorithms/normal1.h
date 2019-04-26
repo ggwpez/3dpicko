@@ -25,7 +25,7 @@ class Normal1 : public Algorithm {
   static void relativeFiltering(AlgorithmJob* base, DetectionResult* result);
 
   virtual inline Algorithm* cloneEmpty() const override {
-    return new Normal1();
+	return new Normal1();
   }
 
   static void safetyMargin(AlgorithmJob* base, DetectionResult* result);

@@ -17,21 +17,21 @@ class OctoPrint : public QObject {
   Q_OBJECT
 
  public:
-  OctoPrint(const OctoConfig &config, QObject *_parent = nullptr);
+  OctoPrint(const OctoConfig& config, QObject* _parent = nullptr);
 
  signals:
   void OnResolved();
 
  public slots:
-  void SendCommand(Command *cmd);
+  void SendCommand(Command* cmd);
 
  private slots:
-  void SendCommandTo(Command *cmd, QUrl to);
+  void SendCommandTo(Command* cmd, QUrl to);
   void Resolve();
 
  private:
   OctoConfig config_;
-  QNetworkAccessManager *network_;
+  QNetworkAccessManager* network_;
   enum class ResolveStatus {
 	UNRESOLVED,
 	RESOLVING,

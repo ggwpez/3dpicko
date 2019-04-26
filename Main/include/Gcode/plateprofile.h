@@ -16,11 +16,11 @@ namespace c3picko {
 class PlateProfile {
  public:
   PlateProfile(int number_of_rows, int number_of_columns, float a1_row_offset,
-               float a1_column_offset, float well_spacing_center_to_center,
-               float height_source_plate, float height_master_plate,
-               float height_goal_plate, float well_depth,
-               float culture_medium_thickness_source_plate,
-               float culture_medium_thickness_master_plate);
+			   float a1_column_offset, float well_spacing_center_to_center,
+			   float height_source_plate, float height_master_plate,
+			   float height_goal_plate, float well_depth,
+			   float culture_medium_thickness_source_plate,
+			   float culture_medium_thickness_master_plate);
 
   int numberOfRows() const;
   int numberOfColumns() const;

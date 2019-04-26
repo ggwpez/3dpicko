@@ -9,9 +9,9 @@
 #include <iostream>
 
 namespace c3picko {
-SignalDaemon::SignalDaemon(QObject *_parent) : QObject(_parent) {
+SignalDaemon::SignalDaemon(QObject* _parent) : QObject(_parent) {
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, socketpair_))
-    qFatal("Couldn't create HUP socketpair");
+	qFatal("Couldn't create HUP socketpair");
 
   notifier_ = new QSocketNotifier(socketpair_[1], QSocketNotifier::Read, this);
   connect(notifier_, SIGNAL(activated(int)), this, SLOT(socketNotify(int)));
@@ -20,8 +20,8 @@ SignalDaemon::SignalDaemon(QObject *_parent) : QObject(_parent) {
 
 int SignalDaemon::registerSignal(int signal) {
   if (registered_.contains(signal)) {
-    qWarning() << "Cant register signal" << signal << "twice";
-    return 1;
+	qWarning() << "Cant register signal" << signal << "twice";
+	return 1;
   }
 
   struct sigaction sa;
@@ -31,18 +31,18 @@ int SignalDaemon::registerSignal(int signal) {
   sa.sa_flags |= SA_RESTART;
 
   if (::sigaction(signal, &sa, nullptr)) {
-    qWarning() << "Cant register signal" << signal
-               << "(sigaction=" << ::strerror(errno) << ")";
-    return 1;
+	qWarning() << "Cant register signal" << signal
+			   << "(sigaction=" << ::strerror(errno) << ")";
+	return 1;
   } else {
-    registered_.insert(signal);
-    return 0;
+	registered_.insert(signal);
+	return 0;
   }
 }
 
 int SignalDaemon::registerSignals(QVector<int> signal) {
   for (int sig : signal) {
-    if (registerSignal(sig)) return 1;
+	if (registerSignal(sig)) return 1;
   }
 
   return 0;

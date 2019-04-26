@@ -42,35 +42,35 @@ class DECLSPEC HttpRequest {
  public:
   /** Values for getStatus() */
   enum RequestStatus {
-    waitForRequest,
-    waitForHeader,
-    waitForBody,
-    complete,
-    abort
+	waitForRequest,
+	waitForHeader,
+	waitForBody,
+	complete,
+	abort
   };
 
   /**
-    Constructor.
-    @param settings Configuration settings
+	Constructor.
+	@param settings Configuration settings
   */
-  HttpRequest(QSettings *settings);
+  HttpRequest(QSettings* settings);
 
   /**
-    Destructor.
+	Destructor.
   */
   virtual ~HttpRequest();
 
   /**
-    Read the HTTP request from a socket.
-    This method is called by the connection handler repeatedly
-    until the status is RequestStatus::complete or RequestStatus::abort.
-    @param socket Source of the data
+	Read the HTTP request from a socket.
+	This method is called by the connection handler repeatedly
+	until the status is RequestStatus::complete or RequestStatus::abort.
+	@param socket Source of the data
   */
-  void readFromSocket(QTcpSocket *socket);
+  void readFromSocket(QTcpSocket* socket);
 
   /**
-    Get the status of this reqeust.
-    @see RequestStatus
+	Get the status of this reqeust.
+	@see RequestStatus
   */
   RequestStatus getStatus() const;
 
@@ -82,24 +82,24 @@ class DECLSPEC HttpRequest {
 
   /** Get the raw path of the HTTP request (e.g. "/file%20with%20spaces.html")
    */
-  const QByteArray &getRawPath() const;
+  const QByteArray& getRawPath() const;
 
   /** Get the version of the HTPP request (e.g. "HTTP/1.1") */
   QByteArray getVersion() const;
 
   /**
-    Get the value of a HTTP request header.
-    @param name Name of the header, not case-senitive.
-    @return If the header occurs multiple times, only the last
-    one is returned.
+	Get the value of a HTTP request header.
+	@param name Name of the header, not case-senitive.
+	@return If the header occurs multiple times, only the last
+	one is returned.
   */
-  QByteArray getHeader(const QByteArray &name) const;
+  QByteArray getHeader(const QByteArray& name) const;
 
   /**
-    Get the values of a HTTP request header.
-    @param name Name of the header, not case-senitive.
+	Get the values of a HTTP request header.
+	@param name Name of the header, not case-senitive.
   */
-  QList<QByteArray> getHeaders(const QByteArray &name) const;
+  QList<QByteArray> getHeaders(const QByteArray& name) const;
 
   /**
    * Get all HTTP request headers. Note that the header names
@@ -108,18 +108,18 @@ class DECLSPEC HttpRequest {
   QMultiMap<QByteArray, QByteArray> getHeaderMap() const;
 
   /**
-    Get the value of a HTTP request parameter.
-    @param name Name of the parameter, case-sensitive.
-    @return If the parameter occurs multiple times, only the last
-    one is returned.
+	Get the value of a HTTP request parameter.
+	@param name Name of the parameter, case-sensitive.
+	@return If the parameter occurs multiple times, only the last
+	one is returned.
   */
-  QByteArray getParameter(const QByteArray &name) const;
+  QByteArray getParameter(const QByteArray& name) const;
 
   /**
-    Get the values of a HTTP request parameter.
-    @param name Name of the parameter, case-sensitive.
+	Get the values of a HTTP request parameter.
+	@param name Name of the parameter, case-sensitive.
   */
-  QList<QByteArray> getParameters(const QByteArray &name) const;
+  QList<QByteArray> getParameters(const QByteArray& name) const;
 
   /** Get all HTTP request parameters. */
   QMultiMap<QByteArray, QByteArray> getParameterMap() const;
@@ -128,36 +128,36 @@ class DECLSPEC HttpRequest {
   QByteArray getBody() const;
 
   /**
-    Decode an URL parameter.
-    E.g. replace "%23" by '#' and replace '+' by ' '.
-    @param source The url encoded strings
-    @see QUrl::toPercentEncoding for the reverse direction
+	Decode an URL parameter.
+	E.g. replace "%23" by '#' and replace '+' by ' '.
+	@param source The url encoded strings
+	@see QUrl::toPercentEncoding for the reverse direction
   */
   static QByteArray urlDecode(const QByteArray source);
 
   /**
-    Get an uploaded file. The file is already open. It will
-    be closed and deleted by the destructor of this HttpRequest
-    object (after processing the request).
-    <p>
-    For uploaded files, the method getParameters() returns
-    the original fileName as provided by the calling web browser.
+	Get an uploaded file. The file is already open. It will
+	be closed and deleted by the destructor of this HttpRequest
+	object (after processing the request).
+	<p>
+	For uploaded files, the method getParameters() returns
+	the original fileName as provided by the calling web browser.
   */
-  QTemporaryFile *getUploadedFile(const QByteArray fieldName) const;
+  QTemporaryFile* getUploadedFile(const QByteArray fieldName) const;
 
   /**
-    Get the value of a cookie.
-    @param name Name of the cookie
+	Get the value of a cookie.
+	@param name Name of the cookie
   */
-  QByteArray getCookie(const QByteArray &name) const;
+  QByteArray getCookie(const QByteArray& name) const;
 
   /** Get all cookies. */
-  QMap<QByteArray, QByteArray> &getCookieMap();
+  QMap<QByteArray, QByteArray>& getCookieMap();
 
   /**
-    Get the address of the connected client.
-    Note that multiple clients may have the same IP address, if they
-    share an internet connection (which is very common).
+	Get the address of the connected client.
+	Note that multiple clients may have the same IP address, if they
+	share an internet connection (which is very common).
    */
   QHostAddress getPeerAddress() const;
 
@@ -169,7 +169,7 @@ class DECLSPEC HttpRequest {
   QMultiMap<QByteArray, QByteArray> parameters;
 
   /** Uploaded files of the request, key is the field name. */
-  QMap<QByteArray, QTemporaryFile *> uploadedFiles;
+  QMap<QByteArray, QTemporaryFile*> uploadedFiles;
 
   /** Received cookies */
   QMap<QByteArray, QByteArray> cookies;
@@ -187,8 +187,8 @@ class DECLSPEC HttpRequest {
   QByteArray version;
 
   /**
-    Status of this request. For the state engine.
-    @see RequestStatus
+	Status of this request. For the state engine.
+	@see RequestStatus
   */
   RequestStatus status;
 
@@ -214,19 +214,19 @@ class DECLSPEC HttpRequest {
   QByteArray boundary;
 
   /** Temp file, that is used to store the multipart/form-data body */
-  QTemporaryFile *tempFile;
+  QTemporaryFile* tempFile;
 
   /** Parse the multipart body, that has been stored in the temp file. */
   void parseMultiPartFile();
 
   /** Sub-procedure of readFromSocket(), read the first line of a request. */
-  void readRequest(QTcpSocket *socket);
+  void readRequest(QTcpSocket* socket);
 
   /** Sub-procedure of readFromSocket(), read header lines. */
-  void readHeader(QTcpSocket *socket);
+  void readHeader(QTcpSocket* socket);
 
   /** Sub-procedure of readFromSocket(), read the request body. */
-  void readBody(QTcpSocket *socket);
+  void readBody(QTcpSocket* socket);
 
   /** Sub-procedure of readFromSocket(), extract and decode request parameters.
    */

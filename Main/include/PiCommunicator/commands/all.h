@@ -7,4 +7,3 @@
 #include "PiCommunicator/commands/get_all_files.h"
 #include "PiCommunicator/commands/job_operation.h"
 #include "PiCommunicator/commands/upload_file.h"
-

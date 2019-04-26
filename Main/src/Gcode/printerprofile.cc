@@ -3,34 +3,34 @@
 namespace c3picko {
 
 PrinterProfile::PrinterProfile(
-    int movement_speed, const Point &cut_filament_position_above_trigger,
-    float z_coordinate_pushing_the_trigger,
-    float filament_extrusion_length_on_move_cut_to_pick,
-    float filament_extrusion_length_on_move_pick_to_master,
-    float filament_extrusion_length_on_move_master_to_goal,
-    float filament_extrusion_length_on_move_goal_to_cut,
-    float filament_extrusion_length_on_pick,
-    float filament_extrusion_length_on_put_onto_master,
-    float filament_extrusion_length_after_cut, float length_of_removed_filament,
-    float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move)
-    : movement_speed_(movement_speed),
-      cut_filament_position_above_trigger_(cut_filament_position_above_trigger),
-      z_coordinate_pushing_the_trigger_(z_coordinate_pushing_the_trigger),
-      length_of_removed_filament_(length_of_removed_filament),
-      filament_extrusion_length_on_move_cut_to_pick_(
-          filament_extrusion_length_on_move_cut_to_pick),
-      filament_extrusion_length_on_move_pick_to_master_(
-          filament_extrusion_length_on_move_pick_to_master),
-      filament_extrusion_length_on_move_master_to_goal_(
-          filament_extrusion_length_on_move_master_to_goal),
-      filament_extrusion_length_on_move_goal_to_cut_(
-          filament_extrusion_length_on_move_goal_to_cut),
-      filament_extrusion_length_on_pick_(filament_extrusion_length_on_pick),
-      filament_extrusion_length_on_put_onto_master_(
-          filament_extrusion_length_on_put_onto_master),
-      filament_extrusion_length_after_cut_(filament_extrusion_length_after_cut),
-      safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(
-          safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move) {
+	int movement_speed, const Point& cut_filament_position_above_trigger,
+	float z_coordinate_pushing_the_trigger,
+	float filament_extrusion_length_on_move_cut_to_pick,
+	float filament_extrusion_length_on_move_pick_to_master,
+	float filament_extrusion_length_on_move_master_to_goal,
+	float filament_extrusion_length_on_move_goal_to_cut,
+	float filament_extrusion_length_on_pick,
+	float filament_extrusion_length_on_put_onto_master,
+	float filament_extrusion_length_after_cut, float length_of_removed_filament,
+	float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move)
+	: movement_speed_(movement_speed),
+	  cut_filament_position_above_trigger_(cut_filament_position_above_trigger),
+	  z_coordinate_pushing_the_trigger_(z_coordinate_pushing_the_trigger),
+	  length_of_removed_filament_(length_of_removed_filament),
+	  filament_extrusion_length_on_move_cut_to_pick_(
+		  filament_extrusion_length_on_move_cut_to_pick),
+	  filament_extrusion_length_on_move_pick_to_master_(
+		  filament_extrusion_length_on_move_pick_to_master),
+	  filament_extrusion_length_on_move_master_to_goal_(
+		  filament_extrusion_length_on_move_master_to_goal),
+	  filament_extrusion_length_on_move_goal_to_cut_(
+		  filament_extrusion_length_on_move_goal_to_cut),
+	  filament_extrusion_length_on_pick_(filament_extrusion_length_on_pick),
+	  filament_extrusion_length_on_put_onto_master_(
+		  filament_extrusion_length_on_put_onto_master),
+	  filament_extrusion_length_after_cut_(filament_extrusion_length_after_cut),
+	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(
+		  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move) {
 }
 
 int PrinterProfile::movementSpeed() const { return movement_speed_; }
@@ -76,7 +76,7 @@ float PrinterProfile::filamentExtrusionLengthAfterCut() const {
 }
 
 float PrinterProfile::
-    safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const {
+	safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const {
   return safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 }
 

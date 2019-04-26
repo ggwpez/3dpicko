@@ -45,24 +45,24 @@ class DECLSPEC TemplateCache : public TemplateLoader {
   Q_DISABLE_COPY(TemplateCache)
  public:
   /**
-    Constructor.
-    @param settings configurations settings
-    @param parent Parent object
+	Constructor.
+	@param settings configurations settings
+	@param parent Parent object
   */
-  TemplateCache(QSettings *settings, QObject *parent = 0);
+  TemplateCache(QSettings* settings, QObject* parent = 0);
 
  protected:
   /**
-    Try to get a file from cache or filesystem.
-    @param localizedName Name of the template with locale to find
-    @return The template document, or empty string if not found
+	Try to get a file from cache or filesystem.
+	@param localizedName Name of the template with locale to find
+	@return The template document, or empty string if not found
   */
   virtual QString tryFile(QString localizedName);
 
  private:
   struct CacheEntry {
-    QString document;
-    qint64 created;
+	QString document;
+	qint64 created;
   };
 
   /** Timeout for each cached file */

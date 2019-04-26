@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ImageRecognition/algorithm_job.h"
-#include "ImageRecognition/detection_result.h"
 #include "GUI/table.h"
 #include "GUI/types/image.h"
 #include "GUI/types/job.h"
 #include "GUI/types/report.h"
+#include "ImageRecognition/algorithm_job.h"
+#include "ImageRecognition/detection_result.h"
 #include "Main/version.h"
 
 // Cant forward declare bc type traits check in class Table<typename T>

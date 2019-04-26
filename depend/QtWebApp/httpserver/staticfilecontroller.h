@@ -43,11 +43,11 @@ class DECLSPEC StaticFileController : public HttpRequestHandler {
   Q_DISABLE_COPY(StaticFileController)
  public:
   /** Constructor */
-  StaticFileController(QSettings &settings, QString docroot_absolute,
-                       QObject *parent = NULL);
+  StaticFileController(QSettings& settings, QString docroot_absolute,
+					   QObject* parent = NULL);
 
   /** Generates the response */
-  void service(HttpRequest &request, HttpResponse &response);
+  void service(HttpRequest& request, HttpResponse& response);
 
  private:
   /** Encoding of text files */
@@ -60,9 +60,9 @@ class DECLSPEC StaticFileController : public HttpRequestHandler {
   int maxAge;
 
   struct CacheEntry {
-    QByteArray document;
-    qint64 created;
-    QByteArray filename;
+	QByteArray document;
+	qint64 created;
+	QByteArray filename;
   };
 
   /** Timeout for each cached file */
@@ -79,7 +79,7 @@ class DECLSPEC StaticFileController : public HttpRequestHandler {
 
   /** Set a content-type header in the response depending on the ending of the
    * filename */
-  void setContentType(QString file, HttpResponse &response) const;
+  void setContentType(QString file, HttpResponse& response) const;
 };
 
 }  // namespace stefanfrings

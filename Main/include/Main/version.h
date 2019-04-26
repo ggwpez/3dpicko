@@ -7,27 +7,27 @@ namespace c3picko {
 class Version {
  public:
   enum class State {
-    // Version is newly retrived from the server
-    NEW,
-    // Built and rdy to use
-    READY,
-    // Something beside the cloning or building went wrong
-    CORRUPT,
+	// Version is newly retrived from the server
+	NEW,
+	// Built and rdy to use
+	READY,
+	// Something beside the cloning or building went wrong
+	CORRUPT,
 
-    MARKED_FOR_CLONE,
-    CLONING,
-    CLONED,
-    CLONE_ERROR,
+	MARKED_FOR_CLONE,
+	CLONING,
+	CLONED,
+	CLONE_ERROR,
 
-    MARKED_FOR_CHECKOUT,
-    CHECKING_OUT,
-    CHECKED_OUT,
-    CHECK_OUT_ERROR,
+	MARKED_FOR_CHECKOUT,
+	CHECKING_OUT,
+	CHECKED_OUT,
+	CHECK_OUT_ERROR,
 
-    MARKED_FOR_BUILD,
-    BUILDING,
-    BUILT,
-    BUILD_ERROR
+	MARKED_FOR_BUILD,
+	BUILDING,
+	BUILT,
+	BUILD_ERROR
   };
 
   typedef QString ID;
@@ -36,8 +36,8 @@ class Version {
    */
   Version(ID id, QDateTime date);
   Version(ID id,
-          QDateTime date, /*ResourcePath sourceDir, ResourcePath buildDir,*/
-          State state);
+		  QDateTime date, /*ResourcePath sourceDir, ResourcePath buildDir,*/
+		  State state);
 
   ID id() const;
   QDateTime date() const;

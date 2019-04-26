@@ -1,8 +1,8 @@
 #ifndef REQUESTMAPPER_H
 #define REQUESTMAPPER_H
 
-#include "httprequesthandler.h"
 #include "GUI/api_controller.h"
+#include "httprequesthandler.h"
 #include "staticfilecontroller.h"
 
 using namespace stefanfrings;
@@ -16,7 +16,7 @@ class RequestMapper : public HttpRequestHandler {
   Q_OBJECT
  public:
   RequestMapper(StaticFileController* file_controller,
-                QObject* parent = nullptr);
+				QObject* parent = nullptr);
   void service(HttpRequest& request, HttpResponse& response);
 
  private:

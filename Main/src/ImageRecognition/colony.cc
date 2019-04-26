@@ -20,23 +20,23 @@ QJsonObject Marshalling::toJson(const Colony& value) {
 template <>
 Colony Marshalling::fromJson(const QJsonObject& obj) {
   return Colony(obj["x"].toDouble(), obj["y"].toDouble(),
-                obj["area"].toDouble(), obj["circumference"].toDouble(),
-                obj["major_length"].toDouble(), obj["brightness"].toDouble(),
-                obj["id"].toInt(),
-                obj["excluded_by"].toString());  // no HTML-escape needed
+				obj["area"].toDouble(), obj["circumference"].toDouble(),
+				obj["major_length"].toDouble(), obj["brightness"].toDouble(),
+				obj["id"].toInt(),
+				obj["excluded_by"].toString());  // no HTML-escape needed
 }
 
 Colony::Colony(double x, double y, double area, double circumference,
-               double major_length, double brightness, Colony::ID id,
-               AlgoSetting::ID excluded_by)
-    : x_(x),
-      y_(y),
-      area_(area),
-      circumference_(circumference),
-      major_length_(major_length),
-      brightness_(brightness),
-      id_(id),
-      excluded_by_(excluded_by) {}
+			   double major_length, double brightness, Colony::ID id,
+			   AlgoSetting::ID excluded_by)
+	: x_(x),
+	  y_(y),
+	  area_(area),
+	  circumference_(circumference),
+	  major_length_(major_length),
+	  brightness_(brightness),
+	  id_(id),
+	  excluded_by_(excluded_by) {}
 
 double Colony::x() const { return x_; }
 

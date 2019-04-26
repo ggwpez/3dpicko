@@ -1,10 +1,10 @@
 #include "Main/marshalling.h"
 #include <QJsonArray>
-#include "PiCommunicator/octoconfig.h"
+#include "GUI/types/profile.h"
 #include "Gcode/plateprofile.h"
 #include "Gcode/platesocketprofile.h"
 #include "Gcode/printerprofile.h"
-#include "GUI/types/profile.h"
+#include "PiCommunicator/octoconfig.h"
 
 namespace c3picko {
 template <>

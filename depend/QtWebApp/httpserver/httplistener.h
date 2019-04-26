@@ -45,24 +45,24 @@ class DECLSPEC HttpListener : public QTcpServer {
   Q_DISABLE_COPY(HttpListener)
  public:
   /**
-    Constructor.
-    Creates a connection pool and starts listening on the configured host and
-    port.
-    @param settings Configuration settings for the HTTP server. Must not be 0.
-    @param requestHandler Processes each received HTTP request, usually by
-    dispatching to controller classes.
-    @param parent Parent object.
-    @warning Ensure to close or delete the listener before deleting the request
-    handler.
+	Constructor.
+	Creates a connection pool and starts listening on the configured host and
+	port.
+	@param settings Configuration settings for the HTTP server. Must not be 0.
+	@param requestHandler Processes each received HTTP request, usually by
+	dispatching to controller classes.
+	@param parent Parent object.
+	@warning Ensure to close or delete the listener before deleting the request
+	handler.
   */
-  HttpListener(QSettings *settings, QSslConfiguration *ssl,
-               HttpRequestHandler *requestHandler, QObject *parent = nullptr);
+  HttpListener(QSettings* settings, QSslConfiguration* ssl,
+			   HttpRequestHandler* requestHandler, QObject* parent = nullptr);
 
   /** Destructor */
   virtual ~HttpListener();
 
   /**
-    Restart listeing after close().
+	Restart listeing after close().
   */
   void listen();
 
@@ -78,21 +78,21 @@ class DECLSPEC HttpListener : public QTcpServer {
 
  private:
   /** Configuration settings for the HTTP server */
-  QSettings *settings;
+  QSettings* settings;
 
   /** Point to the reuqest handler which processes all HTTP requests */
-  HttpRequestHandler *requestHandler;
+  HttpRequestHandler* requestHandler;
 
   /** Pool of connection handlers */
-  HttpConnectionHandlerPool *pool;
+  HttpConnectionHandlerPool* pool;
 
-  QSslConfiguration *ssl_;
+  QSslConfiguration* ssl_;
 
  signals:
 
   /**
-    Sent to the connection handler to process a new incoming connection.
-    @param socketDescriptor references the accepted connection.
+	Sent to the connection handler to process a new incoming connection.
+	@param socketDescriptor references the accepted connection.
   */
 
   void handleConnection(tSocketDescriptor socketDescriptor);

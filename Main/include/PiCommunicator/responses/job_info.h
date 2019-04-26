@@ -14,7 +14,7 @@ namespace responses {
  */
 struct JobInfo : public Response {
   JobInfo() = default;
-  JobInfo(QJsonObject const &);
+  JobInfo(QJsonObject const&);
 
   data::JobGeneralInfo job;
   data::ProgressInfo progress;

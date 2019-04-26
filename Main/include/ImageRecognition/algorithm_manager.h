@@ -14,12 +14,12 @@ class AlgorithmManager : public QObject {
   Q_OBJECT
  public:
   AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
-                   QObject* _parent = nullptr);
+				   QObject* _parent = nullptr);
 
  public:
   AlgorithmJob* createJob(Algorithm::ID id, AlgorithmJob::ID job_id,
-                          std::shared_ptr<AlgorithmResult> result,
-                          QJsonObject settings);
+						  std::shared_ptr<AlgorithmResult> result,
+						  QJsonObject settings);
   /**
    * @brief Always cloneEmpty() the result algorithm that you want to use.
    */

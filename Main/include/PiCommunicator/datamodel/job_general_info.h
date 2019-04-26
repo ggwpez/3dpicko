@@ -14,7 +14,7 @@ namespace data {
  */
 struct JobGeneralInfo {
   JobGeneralInfo() = default;
-  JobGeneralInfo(QJsonObject const &);
+  JobGeneralInfo(QJsonObject const&);
 
   AbridgedFileInfo file;
   qint32 estimated_print_time;

@@ -2,7 +2,7 @@
 
 namespace c3picko {
 MatrixResult::MatrixResult(AlgorithmResult&& base)
-    : AlgorithmResult(std::move(base)) {}
+	: AlgorithmResult(std::move(base)) {}
 
 MatrixResult::~MatrixResult() { cleanup(); }
 

@@ -11,8 +11,8 @@ class Colony {
   typedef qint32 ID;
 
   Colony(double x, double y, double area, double circumference,
-         double major_length, double brightness, ID id,
-         AlgoSetting::ID excluded_by);
+		 double major_length, double brightness, ID id,
+		 AlgoSetting::ID excluded_by);
 
   /**
    * @brief x position relative to image [0,1]

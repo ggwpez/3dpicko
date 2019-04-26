@@ -3,11 +3,11 @@
 namespace c3picko {
 namespace pi {
 namespace commands {
-Connection *Connection::GetInfo() {
+Connection* Connection::GetInfo() {
   return new Connection{"connection", {200}, HTTPType::GET};
 }
 
-Connection *Connection::Connect(QString port, qint32 baudrate,
+Connection* Connection::Connect(QString port, qint32 baudrate,
 								QString printer_profile, bool save,
 								bool autoconnect) {
   return new Connection{
@@ -17,17 +17,17 @@ Connection *Connection::Connect(QString port, qint32 baudrate,
 	  HTTPType::POST};
 }
 
-Connection *Connection::Disconnect() {
+Connection* Connection::Disconnect() {
   return new Connection{
 	  "connection", {{"command", "disconnect"}}, {204}, HTTPType::POST};
 }
 
-Connection *Connection::FakeAck() {
+Connection* Connection::FakeAck() {
   return new Connection{
 	  "connection", {{"command", "fake_ack"}}, {204}, HTTPType::POST};
 }
 
-void Connection::OnReplyFinished(QNetworkReply *reply) {
+void Connection::OnReplyFinished(QNetworkReply* reply) {
   if (type_ == HTTPType::GET)  // Are we waiting for a response ?
 	CheckStatusCodeAndResponse<Response>(reply);
   else if (type_ == HTTPType::POST)  // No response in POST

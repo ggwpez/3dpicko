@@ -3,21 +3,21 @@
 
 namespace c3picko {
 Job::Job(ID id, Image::ID img_id, QString name, QString description,
-         QDateTime job_created, QStack<AlgorithmResult::ID> results,
-         Profile::ID printer, Profile::ID socket, int starting_row,
-         int starting_col, int step, ResourcePath report_path)
-    : id_(id),
-      img_id_(img_id),
-      name_(name),
-      description_(description),
-      created_(job_created),
-      result_ids_(results),
-      printer_(printer),
-      socket_(socket),
-      starting_row_(starting_row),
-      starting_col_(starting_col),
-      step_(step),
-      report_path_(report_path) {}
+		 QDateTime job_created, QStack<AlgorithmResult::ID> results,
+		 Profile::ID printer, Profile::ID socket, int starting_row,
+		 int starting_col, int step, ResourcePath report_path)
+	: id_(id),
+	  img_id_(img_id),
+	  name_(name),
+	  description_(description),
+	  created_(job_created),
+	  result_ids_(results),
+	  printer_(printer),
+	  socket_(socket),
+	  starting_row_(starting_row),
+	  starting_col_(starting_col),
+	  step_(step),
+	  report_path_(report_path) {}
 
 Job::ID Job::id() const { return id_; }
 
@@ -27,9 +27,9 @@ void Job::setCreationDate(QDateTime when) { created_ = when; }
 
 void Job::setReportPath(const ResourcePath& report) {
   if (report.isEmpty())
-    qDebug() << "Report path unknown";
+	qDebug() << "Report path unknown";
   else
-    qDebug() << "Report at" << report.toDocRootAbsolute();
+	qDebug() << "Report at" << report.toDocRootAbsolute();
   report_path_ = report;
 }
 
@@ -46,9 +46,9 @@ Profile::ID Job::octoprint() const { return octoprint_; }
 // FIXME this assumed, that the last result was the one picked !
 AlgorithmResult::ID Job::resultID() const {
   if (result_ids_.empty())
-    throw Exception("No result avaiable for job " + id_);
+	throw Exception("No result avaiable for job " + id_);
   else
-    return result_ids_.top();
+	return result_ids_.top();
 }
 
 QStack<AlgorithmResult::ID> Job::resultIDs() const { return result_ids_; }
@@ -106,11 +106,11 @@ QJsonObject Marshalling::toJson(const Job& value) {
   obj["starting_row"] = value.startingRow();
   obj["starting_col"] = value.startingCol();
   if (!value.reportPath().isEmpty())
-    obj["report"] = value.reportPath().toDocRootAbsolute();
+	obj["report"] = value.reportPath().toDocRootAbsolute();
 
   QJsonArray detections;
   for (auto const& detection : value.resultIDs())
-    detections.push_back(detection);
+	detections.push_back(detection);
 
   obj["detections"] = detections;
 
@@ -126,16 +126,16 @@ Job Marshalling::fromJson(const QJsonObject& obj) {
 
   ResourcePath report_path;
   if (obj.contains("report"))
-    report_path = ResourcePath::fromDocRootAbsolute(obj["report"].toString());
+	report_path = ResourcePath::fromDocRootAbsolute(obj["report"].toString());
 
   return Job(Marshalling::fromJson<QString>(obj["id"]),
-             Marshalling::fromJson<QString>(obj["img_id"]),
-             Marshalling::fromJson<QString>(obj["name"]),
-             Marshalling::fromJson<QString>(obj["description"]),
-             Marshalling::fromJson<QDateTime>(obj["created"].toObject()),
-             detections, Marshalling::fromJson<QString>(obj["printer"]),
-             Marshalling::fromJson<QString>(obj["socket"]),
-             obj["starting_row"].toInt(), obj["starting_col"].toInt(),
-             obj["step"].toInt(), report_path);
+			 Marshalling::fromJson<QString>(obj["img_id"]),
+			 Marshalling::fromJson<QString>(obj["name"]),
+			 Marshalling::fromJson<QString>(obj["description"]),
+			 Marshalling::fromJson<QDateTime>(obj["created"].toObject()),
+			 detections, Marshalling::fromJson<QString>(obj["printer"]),
+			 Marshalling::fromJson<QString>(obj["socket"]),
+			 obj["starting_row"].toInt(), obj["starting_col"].toInt(),
+			 obj["step"].toInt(), report_path);
 }
 }  // namespace c3picko

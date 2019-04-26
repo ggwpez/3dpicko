@@ -1,13 +1,13 @@
-#include "ImageRecognition/algorithm_manager.h"
-#include "ImageRecognition/algorithms/fluro1.h"
-#include "ImageRecognition/algorithms/normal1.h"
-#include "ImageRecognition/algorithms/plate1.h"
-#include "ImageRecognition/algorithms/plate2.h"
 #include "GUI/api_controller.h"
 #include "GUI/autosaver.h"
 #include "GUI/database.h"
 #include "GUI/requestmapper.h"
 #include "GUI/ws_server.h"
+#include "ImageRecognition/algorithm_manager.h"
+#include "ImageRecognition/algorithms/fluro1.h"
+#include "ImageRecognition/algorithms/normal1.h"
+#include "ImageRecognition/algorithms/plate1.h"
+#include "ImageRecognition/algorithms/plate2.h"
 #include "Main/signal_daemon.h"
 #include "Main/updater.h"
 
@@ -91,7 +91,7 @@ static int start(int argc, char** argv) {
 
   QObject::connect(&app, &QCoreApplication::aboutToQuit, [db] {
 	db->saveToFile();  // save database
-	stopLog();         // reset message handlers
+	stopLog();		   // reset message handlers
   });
 
   if (!ws_server->StartListen()) return 1;

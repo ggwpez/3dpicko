@@ -12,16 +12,16 @@ class Setting {
  public:
   typedef QString ID;
   enum class Type {
-    TEXT,
-    CHECKBOX,
-    DROPDOWN,
+	TEXT,
+	CHECKBOX,
+	DROPDOWN,
 
-    NUMBER,
-    POINT2,
-    POINT3,
+	NUMBER,
+	POINT2,
+	POINT3,
 
-    SINGLE_SLIDER,
-    DOUBLE_SLIDER
+	SINGLE_SLIDER,
+	DOUBLE_SLIDER
   };
 
   enum class ValueType { INT, DOUBLE };
@@ -33,10 +33,10 @@ class Setting {
   ValueType value_type() const;
 
   Setting(Setting::ID id, QString name, Type type, QString description,
-          QVariant default_value, QString placeholder, QVariant min,
-          QVariant max, QVariant step, ValueType value_type,
-          QVariantMap options, int max_str_len, int min_str_len,
-          const std::vector<Setting>& sub_settings);
+		  QVariant default_value, QString placeholder, QVariant min,
+		  QVariant max, QVariant step, ValueType value_type,
+		  QVariantMap options, int max_str_len, int min_str_len,
+		  const std::vector<Setting>& sub_settings);
 
   void setValue(QJsonValue const& value);
 

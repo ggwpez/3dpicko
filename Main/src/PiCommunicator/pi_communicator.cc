@@ -1,6 +1,6 @@
 #include "PiCommunicator/pi_communicator.h"
-#include "PiCommunicator/commands/all.h"
 #include <QString>
+#include "PiCommunicator/commands/all.h"
 
 namespace c3picko {
 namespace pi {
@@ -27,9 +27,9 @@ void PiCommunicator::Connect() {
   OnConnected();
   });
   connect(cmd, &Command::OnStatusErr, this /* ctx ,
-				  [this](QJsonValue code) { emit OnConnectionError("Wrong status
-  code: " + code.toString()); }); connect(cmd, SIGNAL(OnNetworkErr()), this,
-  SIGNAL(OnNetworkErr()));
+								  [this](QJsonValue code) { emit
+  OnConnectionError("Wrong status code: " + code.toString()); }); connect(cmd,
+  SIGNAL(OnNetworkErr()), this, SIGNAL(OnNetworkErr()));
   // Delete
   connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));*/
 }

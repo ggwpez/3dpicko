@@ -26,8 +26,8 @@ class AlgorithmJob : public QObject {
 
  protected:
   AlgorithmJob(ID id, Algorithm* algo, QJsonObject settings,
-               std::shared_ptr<AlgorithmResult> result, QThreadPool* pool,
-               qint64 maxMs, QObject* _parent);
+			   std::shared_ptr<AlgorithmResult> result, QThreadPool* pool,
+			   qint64 maxMs, QObject* _parent);
 
  public:
   ~AlgorithmJob();

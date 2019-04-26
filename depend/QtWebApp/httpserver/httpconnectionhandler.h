@@ -51,13 +51,13 @@ class DECLSPEC HttpConnectionHandler : public QThread {
 
  public:
   /**
-    Constructor.
-    @param settings Configuration settings of the HTTP webserver
-    @param requestHandler Handler that will process each incoming HTTP request
-    @param sslConfiguration SSL (HTTPS) will be used if not NULL
+	Constructor.
+	@param settings Configuration settings of the HTTP webserver
+	@param requestHandler Handler that will process each incoming HTTP request
+	@param sslConfiguration SSL (HTTPS) will be used if not NULL
   */
-  HttpConnectionHandler(QSettings *settings, HttpRequestHandler *requestHandler,
-                        QSslConfiguration *sslConfiguration = NULL);
+  HttpConnectionHandler(QSettings* settings, HttpRequestHandler* requestHandler,
+						QSslConfiguration* sslConfiguration = NULL);
 
   /** Destructor */
   virtual ~HttpConnectionHandler();
@@ -70,25 +70,25 @@ class DECLSPEC HttpConnectionHandler : public QThread {
 
  private:
   /** Configuration settings */
-  QSettings *settings;
+  QSettings* settings;
 
   /** TCP socket of the current connection  */
-  QTcpSocket *socket;
+  QTcpSocket* socket;
 
   /** Time for read timeout detection */
   QTimer readTimer;
 
   /** Storage for the current incoming HTTP request */
-  HttpRequest *currentRequest;
+  HttpRequest* currentRequest;
 
   /** Dispatches received requests to services */
-  HttpRequestHandler *requestHandler;
+  HttpRequestHandler* requestHandler;
 
   /** This shows the busy-state from a very early time */
   bool busy;
 
   /** Configuration for SSL */
-  QSslConfiguration *sslConfiguration;
+  QSslConfiguration* sslConfiguration;
 
   /** Executes the threads own event loop */
   void run();
@@ -99,9 +99,9 @@ class DECLSPEC HttpConnectionHandler : public QThread {
  public slots:
 
   /**
-    Received from from the listener, when the handler shall start processing a
-    new connection.
-    @param socketDescriptor references the accepted connection.
+	Received from from the listener, when the handler shall start processing a
+	new connection.
+	@param socketDescriptor references the accepted connection.
   */
   void handleConnection(tSocketDescriptor socketDescriptor);
 

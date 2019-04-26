@@ -56,35 +56,35 @@ class DECLSPEC FileLogger : public Logger {
   Q_DISABLE_COPY(FileLogger)
  public:
   /**
-    Constructor.
-    @param settings Configuration settings, usually stored in an INI file. Must
-    not be 0. Settings are read from the current group, so the caller must have
-    called settings->beginGroup(). Because the group must not change during
-    runtime, it is recommended to provide a separate QSettings instance to the
-    logger that is not used by other parts of the program.
-    @param refreshInterval Interval of checking for changed config settings in
-    msec, or 0=disabled
-    @param parent Parent object
+	Constructor.
+	@param settings Configuration settings, usually stored in an INI file. Must
+	not be 0. Settings are read from the current group, so the caller must have
+	called settings->beginGroup(). Because the group must not change during
+	runtime, it is recommended to provide a separate QSettings instance to the
+	logger that is not used by other parts of the program.
+	@param refreshInterval Interval of checking for changed config settings in
+	msec, or 0=disabled
+	@param parent Parent object
   */
-  FileLogger(QSettings *settings, const int refreshInterval = 10000,
-             QObject *parent = 0);
+  FileLogger(QSettings* settings, const int refreshInterval = 10000,
+			 QObject* parent = 0);
 
   /**
-    Destructor. Closes the file.
+	Destructor. Closes the file.
   */
   virtual ~FileLogger();
 
   /** Write a message to the log file */
-  virtual void write(const LogMessage *logMessage);
+  virtual void write(const LogMessage* logMessage);
 
  protected:
   /**
-    Handler for timer events.
-    Refreshes config settings or synchronizes I/O buffer, depending on the
-    event. This method is thread-safe.
-    @param event used to distinguish between the two timers.
+	Handler for timer events.
+	Refreshes config settings or synchronizes I/O buffer, depending on the
+	event. This method is thread-safe.
+	@param event used to distinguish between the two timers.
   */
-  void timerEvent(QTimerEvent *event);
+  void timerEvent(QTimerEvent* event);
 
  private:
   /** Configured name of the log file */
@@ -97,10 +97,10 @@ class DECLSPEC FileLogger : public Logger {
   int maxBackups;
 
   /** Pointer to the configuration settings */
-  QSettings *settings;
+  QSettings* settings;
 
   /** Output file, or 0=disabled */
-  QFile *file;
+  QFile* file;
 
   /** Timer for refreshing configuration settings */
   QBasicTimer refreshTimer;
@@ -118,8 +118,8 @@ class DECLSPEC FileLogger : public Logger {
   void rotate();
 
   /**
-    Refreshes the configuration settings.
-    This method is thread-safe.
+	Refreshes the configuration settings.
+	This method is thread-safe.
   */
   void refreshSettings();
 };

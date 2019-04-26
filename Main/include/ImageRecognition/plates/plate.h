@@ -24,7 +24,7 @@ class Plate {
    * @param out Output Image
    */
   static void crop(Plate const& original, Plate const& rotated,
-                   cv::Mat const& in, cv::Mat& out);
+				   cv::Mat const& in, cv::Mat& out);
   /**
    * @brief Turns all pixel black, that are outside of the area of interest .
    * @param in

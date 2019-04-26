@@ -15,7 +15,7 @@ class VersionManager : public QObject {
   Q_OBJECT
  public:
   VersionManager(ResourcePath working_dir, QString repo_url,
-                 QString repo_branch, Database& db, QObject* _parent = nullptr);
+				 QString repo_branch, Database& db, QObject* _parent = nullptr);
 
   ResourcePath sourcePath() const;
   Version::ID selected() const;

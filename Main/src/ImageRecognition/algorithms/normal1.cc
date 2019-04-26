@@ -58,11 +58,11 @@ Normal1::Normal1()
  * or empty.
  */
 static AlgoSetting::ID roundness(int area, int w, int h,
-                                 std::vector<cv::Point> const& contour,
-                                 math::Range<double> aabb_ratio,
-                                 math::Range<double> bb_ratio,
-                                 math::Range<double> circularity,
-                                 math::Range<double> convexity) {
+								 std::vector<cv::Point> const& contour,
+								 math::Range<double> aabb_ratio,
+								 math::Range<double> bb_ratio,
+								 math::Range<double> circularity,
+								 math::Range<double> convexity) {
   double ratio = (std::min(w, h) / double(std::max(w, h)));
 
   if (aabb_ratio.excludes(ratio)) return "aabb_ratio";
@@ -72,12 +72,12 @@ static AlgoSetting::ID roundness(int area, int w, int h,
   cv::RotatedRect rrect = cv::minAreaRect(contour);
 
   ratio = (std::min(rrect.size.width, rrect.size.height) /
-           double(std::max(rrect.size.width, rrect.size.height)));
+		   double(std::max(rrect.size.width, rrect.size.height)));
   if (bb_ratio.excludes(ratio)) return "bb_ratio";
 
   double circ((4 * M_PI * area) / std::pow(cv::arcLength(contour, true), 2));
   if (circularity.excludes(circ))  // flouro .8
-    return "circularity";
+	return "circularity";
   std::vector<cv::Point> hull, hull_contour;
 
   cv::convexHull(contour, hull, false, false);
@@ -97,8 +97,8 @@ void Normal1::cvt(AlgorithmJob* base, DetectionResult* result) {
 
 void Normal1::mask(AlgorithmJob* base, DetectionResult* result) {
   if (base->input().size() < 2) {
-    qWarning("Colony detection missing plate, skipping crop");
-    return;
+	qWarning("Colony detection missing plate, skipping crop");
+	return;
   }
 
   cv::Mat& input = result->oldMat();
@@ -115,7 +115,8 @@ void Normal1::threshold(AlgorithmJob* base, DetectionResult* result) {
 
   cv::Scalar mean, stddev;
   cv::adaptiveThreshold(input, output, 255, cv::ADAPTIVE_THRESH_MEAN_C,
-                        cv::THRESH_BINARY_INV, 51, 1);  // non flour
+						cv::THRESH_BINARY_INV, 51,
+						1);  // non flour
 }
 
 void Normal1::erodeAndDilate(AlgorithmJob* base, DetectionResult* result) {
@@ -125,8 +126,8 @@ void Normal1::erodeAndDilate(AlgorithmJob* base, DetectionResult* result) {
   int erosion_type = cv::MORPH_ELLIPSE;
   int erosion_size = 2;
   cv::Mat kernel = getStructuringElement(
-      erosion_type, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
-      cv::Point(erosion_size, erosion_size));
+	  erosion_type, cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
+	  cv::Point(erosion_size, erosion_size));
 
   cv::erode(input, output, kernel);
   cv::dilate(output, output, kernel);
@@ -138,17 +139,17 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
 
   Colony::ID id = 0;
   math::Range<double> _area =
-      base->settingById("area").value<math::Range<double>>();
+	  base->settingById("area").value<math::Range<double>>();
   math::Range<double> _aabb_ratio =
-      base->settingById("aabb_ratio").value<math::Range<double>>();
+	  base->settingById("aabb_ratio").value<math::Range<double>>();
   math::Range<double> _bb_ratio =
-      base->settingById("bb_ratio").value<math::Range<double>>();
+	  base->settingById("bb_ratio").value<math::Range<double>>();
   math::Range<double> _circularity =
-      base->settingById("circularity").value<math::Range<double>>();
+	  base->settingById("circularity").value<math::Range<double>>();
   math::Range<double> _convexity =
-      base->settingById("convexity").value<math::Range<double>>();
+	  base->settingById("convexity").value<math::Range<double>>();
   bool show_excluded =
-      false;  // base->settingById("show_excluded_by_algo").value<bool>();
+	  false;  // base->settingById("show_excluded_by_algo").value<bool>();
 
   cv::Mat stats, labeled, centers;
 
@@ -157,92 +158,92 @@ void Normal1::label(AlgorithmJob* base, DetectionResult* result) {
   cv::connectedComponentsWithStats(input, labeled, stats, centers);
 
   for (int i = 0; i < centers.rows; ++i) {
-    // In this much quicker approach we assume, that the center always lies
-    // ontop of a pixel of the component.
-    // Should be no problem with convex colonies.
-    auto center =
-        cv::Point2d(centers.at<double>(i, 0), centers.at<double>(i, 1));
-    int r = int(center.y), c = int(center.x);
-    int label = labeled.at<int>(r, c);
+	// In this much quicker approach we assume, that the center always lies
+	// ontop of a pixel of the component.
+	// Should be no problem with convex colonies.
+	auto center =
+		cv::Point2d(centers.at<double>(i, 0), centers.at<double>(i, 1));
+	int r = int(center.y), c = int(center.x);
+	int label = labeled.at<int>(r, c);
 
-    if (!label) {
-      if (show_excluded)
-        colonies.emplace_back(center.x / double(input.cols),
-                              center.y / double(input.rows), 0, 0, 10, 0, id++,
-                              "show_excluded_by_algo");
-      continue;
-    }
+	if (!label) {
+	  if (show_excluded)
+		colonies.emplace_back(center.x / double(input.cols),
+							  center.y / double(input.rows), 0, 0, 10, 0, id++,
+							  "show_excluded_by_algo");
+	  continue;
+	}
 
-    int area = stats.at<int>(label, cv::CC_STAT_AREA);
-    int w = stats.at<int>(label, cv::CC_STAT_WIDTH);
-    int h = stats.at<int>(label, cv::CC_STAT_HEIGHT);
-    int top = stats.at<int>(label, cv::CC_STAT_TOP);
-    int left = stats.at<int>(label, cv::CC_STAT_LEFT);
+	int area = stats.at<int>(label, cv::CC_STAT_AREA);
+	int w = stats.at<int>(label, cv::CC_STAT_WIDTH);
+	int h = stats.at<int>(label, cv::CC_STAT_HEIGHT);
+	int top = stats.at<int>(label, cv::CC_STAT_TOP);
+	int left = stats.at<int>(label, cv::CC_STAT_LEFT);
 
-    if (!_area.contains(area)) {
-      colonies.emplace_back(center.x / double(input.cols),
-                            center.y / double(input.rows), area, 0,
-                            std::sqrt(area / M_PI), 0, id++, "area");
-      continue;
-    }
-    // Filter by roundness
-    else {
-      std::vector<std::vector<cv::Point>> contours;
+	if (!_area.contains(area)) {
+	  colonies.emplace_back(center.x / double(input.cols),
+							center.y / double(input.rows), area, 0,
+							std::sqrt(area / M_PI), 0, id++, "area");
+	  continue;
+	}
+	// Filter by roundness
+	else {
+	  std::vector<std::vector<cv::Point>> contours;
 
-      // We check the AABB_RATIO twice for speed NOTE look into this in
-      // benchmark phase
-      if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h)))) {
-        colonies.emplace_back(
-            Colony(center.x / double(input.cols), center.y / double(input.rows),
-                   area, 0, std::sqrt(area / M_PI), 0, id++, "aabb_ratio"));
-      }
+	  // We check the AABB_RATIO twice for speed NOTE look into this in
+	  // benchmark phase
+	  if (_aabb_ratio.excludes(std::min(w, h) / double(std::max(w, h)))) {
+		colonies.emplace_back(
+			Colony(center.x / double(input.cols), center.y / double(input.rows),
+				   area, 0, std::sqrt(area / M_PI), 0, id++, "aabb_ratio"));
+	  }
 
-      cv::Mat submat(input, cv::Rect(left, top, w, h));
-      cv::findContours(submat, contours, cv::RETR_EXTERNAL,
-                       cv::CHAIN_APPROX_SIMPLE);
+	  cv::Mat submat(input, cv::Rect(left, top, w, h));
+	  cv::findContours(submat, contours, cv::RETR_EXTERNAL,
+					   cv::CHAIN_APPROX_SIMPLE);
 
-      AlgoSetting::ID excluded_by =
-          roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio,
-                    _circularity, _convexity);
+	  AlgoSetting::ID excluded_by =
+		  roundness(area, w, h, contours[0], _aabb_ratio, _bb_ratio,
+					_circularity, _convexity);
 
-      if (!excluded_by.isEmpty())
-        colonies.emplace_back(
-            Colony(center.x / double(input.cols), center.y / double(input.rows),
-                   area, 0, std::sqrt(area / M_PI), 0, id++, excluded_by));
-      else {
-        double circ = cv::arcLength(contours[0], true);
+	  if (!excluded_by.isEmpty())
+		colonies.emplace_back(
+			Colony(center.x / double(input.cols), center.y / double(input.rows),
+				   area, 0, std::sqrt(area / M_PI), 0, id++, excluded_by));
+	  else {
+		double circ = cv::arcLength(contours[0], true);
 
-        // NOTE Brightness only works on unmasked original image contours,
-        // otherwise they need conversion
-        double br = math::brightness(
-            contours[0], *reinterpret_cast<cv::Mat*>(base->input().front()));
-        colonies.emplace_back(center.x / double(input.cols),
-                              center.y / double(input.rows), area, circ,
-                              circ / (2 * M_PI), br, id++, "");
-      }
-    }
+		// NOTE Brightness only works on unmasked original image contours,
+		// otherwise they need conversion
+		double br = math::brightness(
+			contours[0], *reinterpret_cast<cv::Mat*>(base->input().front()));
+		colonies.emplace_back(center.x / double(input.cols),
+							  center.y / double(input.rows), area, circ,
+							  circ / (2 * M_PI), br, id++, "");
+	  }
+	}
   }
 }
 
 void Normal1::safetyMargin(AlgorithmJob* base, DetectionResult* result) {
   std::vector<Colony>& input = result->colonies();
   auto margin_lt =
-      base->settingById("safety_margin_lt").value<math::Range<double>>();
+	  base->settingById("safety_margin_lt").value<math::Range<double>>();
   auto margin_rb =
-      base->settingById("safety_margin_rb").value<math::Range<double>>();
+	  base->settingById("safety_margin_rb").value<math::Range<double>>();
   cv::Point2d lt(margin_lt.lower_, margin_lt.upper_),
-      rb(margin_rb.lower_, margin_rb.upper_);
+	  rb(margin_rb.lower_, margin_rb.upper_);
 
   for (auto it = input.begin(); it != input.end(); ++it) {
-    Colony const& c = *it;
-    cv::Point2d cp(c.x(), c.y());
+	Colony const& c = *it;
+	cv::Point2d cp(c.x(), c.y());
 
-    if (!c.included()) continue;
+	if (!c.included()) continue;
 
-    if (cp.y < lt.y || cp.x < lt.x)
-      it->setExcluded_by("safety_margin_lt");
-    else if (cp.y > rb.y || cp.x > rb.x)
-      it->setExcluded_by("safety_margin_rb");
+	if (cp.y < lt.y || cp.x < lt.x)
+	  it->setExcluded_by("safety_margin_lt");
+	else if (cp.y > rb.y || cp.x > rb.x)
+	  it->setExcluded_by("safety_margin_rb");
   }
 }
 
@@ -252,10 +253,10 @@ void Normal1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   // Should we skip the step?
   if (!base->settingById("filter_relative").value<bool>()) return;
   QString option =
-      base->settingById("relative_filter").option<QString>().toLower();
+	  base->settingById("relative_filter").option<QString>().toLower();
 
   math::Range<double> _rel =
-      base->settingById("rel").value<math::Range<double>>();
+	  base->settingById("rel").value<math::Range<double>>();
 
   cv::Scalar mean, stddev;
   std::vector<cv::Scalar> values(input->size(), 0);
@@ -263,16 +264,16 @@ void Normal1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   double (Colony::*get_data)(void) const = nullptr;
 
   if (option == "area")
-    get_data = &Colony::area;
+	get_data = &Colony::area;
   else if (option == "circumference")
-    get_data = &Colony::circumference;
+	get_data = &Colony::circumference;
   else if (option == "brightness")
-    get_data = &Colony::brightness;
+	get_data = &Colony::brightness;
   else
-    throw Exception("Unknown dropdown option " + option);
+	throw Exception("Unknown dropdown option " + option);
 
   for (std::size_t i = 0; i < input->size(); ++i)
-    values[i] = (input->at(i).*get_data)();
+	values[i] = (input->at(i).*get_data)();
 
   cv::meanStdDev(values, mean, stddev);
   double meand = cv::sum(mean)[0];
@@ -282,10 +283,10 @@ void Normal1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   double rel_max = meand + _rel.upper_ * stddefd;
 
   for (auto it = input->begin(); it != input->end();) {
-    if ((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max)
-      input->erase(it);
-    else
-      ++it;
+	if ((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max)
+	  input->erase(it);
+	else
+	  ++it;
   }
 }
 }  // namespace c3picko

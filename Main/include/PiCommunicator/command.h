@@ -20,13 +20,13 @@ class Command : public QObject {
 
   Command(QString api_url, QSet<int> status_ok, HTTPType type);
   Command(QString api_url, QByteArray data, QSet<int> status_ok, HTTPType type_,
-          QString content_type = "application/json; charset=utf-8");
+		  QString content_type = "application/json; charset=utf-8");
   Command(QString api_url, QJsonObject data, QSet<int> status_ok,
-          HTTPType type_,
-          QString content_type = "application/json; charset=utf-8");
-  Command(QString api_url, QHttpMultiPart *query, QSet<int> status_ok,
-          HTTPType type_,
-          QString content_type = "application/json; charset=utf-8");
+		  HTTPType type_,
+		  QString content_type = "application/json; charset=utf-8");
+  Command(QString api_url, QHttpMultiPart* query, QSet<int> status_ok,
+		  HTTPType type_,
+		  QString content_type = "application/json; charset=utf-8");
   ~Command();
 
   /**
@@ -39,12 +39,12 @@ class Command : public QObject {
   HTTPType type() const;
 
   QByteArray GetPostData() const;
-  QHttpMultiPart *GetPostQuery() const;
+  QHttpMultiPart* GetPostQuery() const;
   virtual QString GetContentType() const;
   bool IsQuery() const;
 
  public slots:
-  virtual void OnReplyFinished(QNetworkReply *);
+  virtual void OnReplyFinished(QNetworkReply*);
   virtual void OnReplyError(QNetworkReply::NetworkError);
 
  protected slots:
@@ -54,7 +54,7 @@ class Command : public QObject {
    * @param reply Network reply received by Command::OnReplyFinished()
    * @param response Response or nothing if the command has no response
    */
-  void CheckStatusCode(QNetworkReply *reply, Response *response = nullptr);
+  void CheckStatusCode(QNetworkReply* reply, Response* response = nullptr);
 
  protected:
   /**
@@ -65,11 +65,11 @@ class Command : public QObject {
    *
    */
   template <typename T>
-  inline void CheckStatusCodeAndResponse(QNetworkReply *reply);
+  inline void CheckStatusCodeAndResponse(QNetworkReply* reply);
 
  signals:
-  void OnStatusOk(int status, Response *);
-  void OnStatusErr(QJsonValue status, Response *);
+  void OnStatusOk(int status, Response*);
+  void OnStatusErr(QJsonValue status, Response*);
   void OnNetworkErr(QString error);
   /**
    * @brief This will be always emitted after one of the above was raised.
@@ -84,7 +84,7 @@ class Command : public QObject {
   QString const api_url_;
   // TODO bad style
   QByteArray data_;
-  QHttpMultiPart *query_ = nullptr;
+  QHttpMultiPart* query_ = nullptr;
   QSet<int> const status_ok_;
   HTTPType const type_;
   QString content_type_;

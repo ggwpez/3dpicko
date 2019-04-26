@@ -19,8 +19,8 @@ class ArbitraryCommand : public Command {
   using Command::Command;
 
  public:
-  static ArbitraryCommand *SingleCommand(QString command);
-  static ArbitraryCommand *MultiCommand(QStringList commands);
+  static ArbitraryCommand* SingleCommand(QString command);
+  static ArbitraryCommand* MultiCommand(QStringList commands);
 };
 }  // namespace commands
 }  // namespace pi

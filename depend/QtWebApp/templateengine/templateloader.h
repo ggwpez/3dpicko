@@ -43,33 +43,33 @@ class DECLSPEC TemplateLoader : public QObject {
   Q_DISABLE_COPY(TemplateLoader)
  public:
   /**
-    Constructor.
-    @param settings configurations settings
-    @param parent parent object
+	Constructor.
+	@param settings configurations settings
+	@param parent parent object
   */
-  TemplateLoader(QSettings *settings, QObject *parent = 0);
+  TemplateLoader(QSettings* settings, QObject* parent = 0);
 
   /** Destructor */
   virtual ~TemplateLoader();
 
   /**
-    Get a template for a given locale.
-    This method is thread safe.
-    @param templateName base name of the template file, without suffix and
-    without locale
-    @param locales Requested locale(s), e.g. "de_DE, en_EN". Strings in the
-    format of the HTTP header Accept-Locale may be used. Badly formatted parts
-    in the string are silently ignored.
-    @return If the template cannot be loaded, an error message is logged and an
-    empty template is returned.
+	Get a template for a given locale.
+	This method is thread safe.
+	@param templateName base name of the template file, without suffix and
+	without locale
+	@param locales Requested locale(s), e.g. "de_DE, en_EN". Strings in the
+	format of the HTTP header Accept-Locale may be used. Badly formatted parts
+	in the string are silently ignored.
+	@return If the template cannot be loaded, an error message is logged and an
+	empty template is returned.
   */
   Template getTemplate(QString templateName, QString locales = QString());
 
  protected:
   /**
-    Try to get a file from cache or filesystem.
-    @param localizedName Name of the template with locale to find
-    @return The template document, or empty string if not found
+	Try to get a file from cache or filesystem.
+	@param localizedName Name of the template with locale to find
+	@return The template document, or empty string if not found
   */
   virtual QString tryFile(QString localizedName);
 
@@ -80,7 +80,7 @@ class DECLSPEC TemplateLoader : public QObject {
   QString fileNameSuffix;
 
   /** Codec for decoding the files */
-  QTextCodec *textCodec;
+  QTextCodec* textCodec;
 };
 
 }  // namespace stefanfrings

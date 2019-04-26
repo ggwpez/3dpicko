@@ -29,7 +29,7 @@ class UploadFile : public Command {
    * @param select Should the file be selected?
    * @param print Should the file be printed?
    */
-  static UploadFile *CreateFile(QByteArray content, data::Location location,
+  static UploadFile* CreateFile(QByteArray content, data::Location location,
 								QString file_name, bool select = false,
 								bool print = false);
 
@@ -39,18 +39,18 @@ class UploadFile : public Command {
    * [API](http://docs.octoprint.org/en/master/api/files.html#upload-file-or-create-folder)
    * @param folder_name Name of the folder to create
    */
-  static UploadFile *CreateFolder(QString folder_name, QString path,
+  static UploadFile* CreateFolder(QString folder_name, QString path,
 								  data::Location location);
 
  protected:
-  static QHttpMultiPart *BuildFileUploadPacket(QByteArray data,
+  static QHttpMultiPart* BuildFileUploadPacket(QByteArray data,
 											   QString file_name, bool select,
 											   bool print);
-  static QHttpMultiPart *BuildFolderCreatePacket(QString folder_name,
+  static QHttpMultiPart* BuildFolderCreatePacket(QString folder_name,
 												 QString path);
 
  public slots:
-  virtual void OnReplyFinished(QNetworkReply *reply) override;
+  virtual void OnReplyFinished(QNetworkReply* reply) override;
 
  private:
 };

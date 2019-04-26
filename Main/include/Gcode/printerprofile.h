@@ -15,18 +15,18 @@ namespace c3picko {
 class PrinterProfile {
  public:
   explicit PrinterProfile(
-      int movement_speed, const Point &cut_filament_position_above_trigger,
-      float z_coordinate_pushing_the_trigger,
-      float filament_extrusion_length_on_move_cut_to_pick,
-      float filament_extrusion_length_on_move_pick_to_master,
-      float filament_extrusion_length_on_move_master_to_goal,
-      float filament_extrusion_length_on_move_goal_to_cut,
-      float filament_extrusion_length_on_pick,
-      float filament_extrusion_length_on_put_onto_master,
-      float filament_extrusion_length_after_cut,
-      float length_of_removed_filament,
-      float
-          safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move);
+	  int movement_speed, const Point& cut_filament_position_above_trigger,
+	  float z_coordinate_pushing_the_trigger,
+	  float filament_extrusion_length_on_move_cut_to_pick,
+	  float filament_extrusion_length_on_move_pick_to_master,
+	  float filament_extrusion_length_on_move_master_to_goal,
+	  float filament_extrusion_length_on_move_goal_to_cut,
+	  float filament_extrusion_length_on_pick,
+	  float filament_extrusion_length_on_put_onto_master,
+	  float filament_extrusion_length_after_cut,
+	  float length_of_removed_filament,
+	  float
+		  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move);
 
   int movementSpeed() const;
   Point cutFilamentPosition() const;
@@ -133,7 +133,7 @@ class PrinterProfile {
    * 3mm sufficient (determined by manual testing)
    */
   const float
-      safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
+	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 };
 }  // namespace c3picko
 #endif  // PRINTERPROFILE_H

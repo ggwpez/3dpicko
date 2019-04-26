@@ -33,7 +33,7 @@ class Marshalling {
 
   template <typename T>
   static inline T fromJson(QJsonValue const& val) {
-    return fromJson<T>(val.toObject());
+	return fromJson<T>(val.toObject());
   }
 };
 

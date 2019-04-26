@@ -8,7 +8,7 @@ namespace pi {
 namespace responses {
 struct Response {
   Response() = default;
-  Response(QJsonObject const &obj);
+  Response(QJsonObject const& obj);
   virtual QString ToString();
 
   virtual inline ~Response() {}

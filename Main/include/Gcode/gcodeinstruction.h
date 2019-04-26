@@ -53,8 +53,8 @@ class GcodeInstruction {
    * actual values
    */
   static GcodeInstruction MoveToXYZ(const float x_coordinate,
-                                    const float y_coordinate,
-                                    const float z_coordinate);
+									const float y_coordinate,
+									const float z_coordinate);
 
   /**
    * @brief Creates a gcode instruction for moving the nozzle
@@ -66,7 +66,7 @@ class GcodeInstruction {
    * x_coordinate, y_coordinate standing for the actual values
    */
   static GcodeInstruction MoveToXY(const float x_coordinate,
-                                   const float y_coordinate);
+								   const float y_coordinate);
 
   /**
    * @brief Creates a gcode instruction for moving the nozzle
@@ -88,7 +88,7 @@ class GcodeInstruction {
    * e_filament_extrusion_length standing for the actual value
    */
   static GcodeInstruction ExtrudeFilament(
-      const float e_filament_extrusion_length);
+	  const float e_filament_extrusion_length);
 
   /**
    * @brief Creates a gcode instruction for changing the movement speed
@@ -124,7 +124,7 @@ class GcodeInstruction {
    * @return a gcode instruction of the form "G92 E0"
    */
   static GcodeInstruction GaugeFilamentExtrusionLength(
-      const float current_extrusion_length);
+	  const float current_extrusion_length);
 
   /**
    * Returns a string representation of
@@ -140,36 +140,36 @@ class GcodeInstruction {
    */
   class GcodeField {
    public:
-    /**
-     * @brief Class for creating g-code command fields in RepRap style.
-     */
-    class Command;
+	/**
+	 * @brief Class for creating g-code command fields in RepRap style.
+	 */
+	class Command;
 
-    /**
-     * @brief Class for creating g-code parameter fields.
-     */
-    class Parameter;
+	/**
+	 * @brief Class for creating g-code parameter fields.
+	 */
+	class Parameter;
 
-    /**
-     * Returns a string representation of this single field,
-     * a concatination of letter_ and number_,
-     * such as "G1" or "X32.4"
-     */
-    std::string ToString() const;
+	/**
+	 * Returns a string representation of this single field,
+	 * a concatination of letter_ and number_,
+	 * such as "G1" or "X32.4"
+	 */
+	std::string ToString() const;
 
    private:
-    explicit GcodeField(char letter, float number);
-    /**
-     * @brief letter_ the letter of this field
-     */
-    const char letter_;
-    /**
-     * @brief number_ the number of this field,
-     * can be an integer or floating point number,
-     * depending on what is allowed for a certain
-     * letter.
-     */
-    const float number_;
+	explicit GcodeField(char letter, float number);
+	/**
+	 * @brief letter_ the letter of this field
+	 */
+	const char letter_;
+	/**
+	 * @brief number_ the number of this field,
+	 * can be an integer or floating point number,
+	 * depending on what is allowed for a certain
+	 * letter.
+	 */
+	const float number_;
   };
 
   /**

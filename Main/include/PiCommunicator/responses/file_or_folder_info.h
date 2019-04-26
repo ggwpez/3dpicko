@@ -18,7 +18,7 @@ namespace responses {
  */
 struct FileOrFolderInfo : public Response {
   FileOrFolderInfo() = default;
-  FileOrFolderInfo(QJsonObject const &obj);
+  FileOrFolderInfo(QJsonObject const& obj);
 
   QString name, display, path;
   data::FileType type;
@@ -38,8 +38,8 @@ struct FileOrFolderInfo : public Response {
   qint64 size;
 
  private:
-  void ReadFileMember(QJsonObject const &obj);
-  void ReadFolderMember(QJsonObject const &obj);
+  void ReadFileMember(QJsonObject const& obj);
+  void ReadFolderMember(QJsonObject const& obj);
 };
 }  // namespace responses
 }  // namespace pi

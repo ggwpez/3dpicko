@@ -3,7 +3,7 @@
 namespace c3picko {
 namespace pi {
 namespace responses {
-UploadResponse::UploadResponse(const QJsonObject &obj) : Response(obj) {
+UploadResponse::UploadResponse(const QJsonObject& obj) : Response(obj) {
   is_folder = false;
 
   if (obj.contains("files")) {

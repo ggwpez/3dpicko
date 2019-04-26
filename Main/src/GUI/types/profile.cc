@@ -1,11 +1,11 @@
 #include "GUI/types/profile.h"
-#include "Main/marshalling.h"
-#include "PiCommunicator/octoconfig.h"
+#include <QDebug>
+#include <QJsonArray>
 #include "Gcode/plateprofile.h"
 #include "Gcode/platesocketprofile.h"
 #include "Gcode/printerprofile.h"
-#include <QDebug>
-#include <QJsonArray>
+#include "Main/marshalling.h"
+#include "PiCommunicator/octoconfig.h"
 
 namespace c3picko {
 Profile::Profile(ProfileType type, QString name, ID id,
