@@ -193,6 +193,8 @@ class APIController : public QObject {
   QJsonObject createDeleteJob(const Job& job);
   QJsonObject createProfileList();
   QJsonObject CreateAlgorithmList();
+  bool isProfileUsedByJob(Profile::ID);
+  bool isProfileDefault(Profile::ID profile);
 
   std::shared_ptr<AlgorithmJob> detectColonies(Job::ID job_id, QString algo_id,
 											   QJsonObject settings,

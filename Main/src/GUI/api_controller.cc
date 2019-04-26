@@ -238,7 +238,11 @@ void APIController::updateSettingsProfile(Profile& profile, QObject* client) {
 void APIController::deleteSettingsProfile(Profile::ID id, QObject* client) {
   if (!db_->profiles().exists(id)) {
 	emit OnProfileDeleteError(id, client);
-  } else {
+  } else if (isProfileUsedByJob(id))
+	emit OnProfileDeleteError("used by a job", client);
+  else if (isProfileDefault(id))
+	emit OnProfileDeleteError("is default", client);
+  else {
 	// FIXME cant delete profiles used by jobs
 	emit OnProfileDeleted(id, client);
 	db_->profiles().remove(id);
@@ -622,6 +626,21 @@ QJsonObject APIController::createDeleteImage(Image const& img) {
 
 QJsonObject APIController::createDeleteJob(Job const& job) {
   return {{"id", job.id()}};
+}
+
+bool APIController::isProfileUsedByJob(Profile::ID profile) {
+  for (Job const& job : db_->jobs())
+	if (job.plate() == profile || job.printer() == profile ||
+		job.socket() == profile || job.octoprint() == profile)
+	  return true;
+
+  return false;
+}
+
+bool APIController::isProfileDefault(Profile::ID profile) {
+  return (db_->defaultPlate() == profile || db_->defaultSocket() == profile ||
+		  db_->defaultPrinter() == profile ||
+		  db_->defaultOctoconfig() == profile);
 }
 
 void APIController::request(QJsonObject request, QString raw_request,
