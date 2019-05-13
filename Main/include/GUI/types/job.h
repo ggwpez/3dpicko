@@ -70,11 +70,11 @@ class Job {
    * @brief Saves a history of all past detections.
    * .top() is the current result.
    */
-  QStack<AlgorithmResult::ID> result_ids_;
   std::shared_ptr<AlgorithmJob> result_job_;
   QString name_, description_;
   QDateTime created_;
-  Profile::ID plate_, printer_, socket_, octoprint_;
+  QStack<AlgorithmResult::ID> result_ids_;
+  Profile::ID printer_, socket_, plate_, octoprint_;
   int starting_row_, starting_col_;
   QSet<Colony::ID> colonies_to_pick_;
   /**

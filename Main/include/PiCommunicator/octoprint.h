@@ -26,7 +26,6 @@ class OctoPrint : public QObject {
   void SendCommand(Command* cmd);
 
  private slots:
-  void SendCommandTo(Command* cmd, QUrl to);
   void Resolve();
 
  private:

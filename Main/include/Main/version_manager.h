@@ -63,6 +63,10 @@ class VersionManager : public QObject {
   QString repo_branch_;
   ResourcePath working_dir_;
   /**
+   * @brief The version that will be used after restarting the server.
+   */
+  Version::ID selected_;
+  /**
    * @brief Maximum number of interesting versions.
    * Must be at least 1.
    */
@@ -77,10 +81,6 @@ class VersionManager : public QObject {
    * track of whats next.
    */
   QQueue<Version::ID> to_be_installed_;
-  /**
-   * @brief The version that will be used after restarting the server.
-   */
-  Version::ID selected_;
   // TODO bad style
   int make_retries_ = 0;
   int const max_make_retries_ = 3;

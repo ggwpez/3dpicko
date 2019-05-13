@@ -58,6 +58,7 @@ void drawText(cv::Mat& output, cv::Point pos, QString string, cv::Scalar color,
 std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const& colonies,
 											const int r, const int d,
 											const int min_dist) {
+  (void)min_dist;
   const std::size_t n = colonies.size();
   std::vector<Colony> ret;
 

@@ -32,7 +32,7 @@ RectPlate::RectPlate(const OuterBorder& outer_border,
 	  center_error_(center_error) {}
 
 double RectPlate::calculateRotation(const OuterBorder& cont, std::size_t a1,
-									std::size_t h1) {
+									std::size_t) {
   cv::Point p1 = cont[(a1 + 1) % 4] - cont[a1];
   double v1 = std::atan2(p1.y, p1.x);
 
@@ -56,7 +56,7 @@ double RectPlate::calculateRotation(const OuterBorder& cont, std::size_t a1,
 std::pair<std::size_t, std::size_t> RectPlate::findA1H1(
 	const OuterBorder& outer_border, const InnerBorder& inner_border) {
   // index of the outer_border points
-  int ia1 = -1, ih1 = -1;
+  std::size_t ia1 = 100, ih1 = 100;
   // the length of the two diagonal edges
   double ia1_min = std::numeric_limits<double>::max(),
 		 ih1_min = std::numeric_limits<double>::max();
@@ -81,12 +81,12 @@ std::pair<std::size_t, std::size_t> RectPlate::findA1H1(
 	}
 
   // NOTE Try to increase eps
-  if (ia1 == -1 || ih1 == -1 || ia1 == ih1)
+  if (ia1 == 100 || ih1 == 100 || ia1 == ih1)
 	throw std::runtime_error("Could not detect diagonal edges");
 
   double a1_min = std::numeric_limits<double>::max(),
 		 h1_min = std::numeric_limits<double>::max();
-  int a1 = -1, h1 = -1;
+  std::size_t a1 = 100, h1 = 100;
   for (std::size_t i = 0; i < outer_border.size(); ++i) {
 	double dist_a1 = cv::norm(outer_border[i] - inner_border[ia1]);
 	double dist_h1 = cv::norm(outer_border[i] - inner_border[ih1]);
@@ -105,7 +105,7 @@ std::pair<std::size_t, std::size_t> RectPlate::findA1H1(
   if ((h1 + 1) % outer_border.size() != a1) std::swap(a1, h1);
   Q_ASSERT((h1 + 1) % outer_border.size() == a1);
 
-  if (a1 == -1 || h1 == -1 || a1 == h1)
+  if (a1 == 100 || h1 == 100 || a1 == h1)
 	throw std::runtime_error("Could not detect orientation of plate");
 
   return {a1, h1};
