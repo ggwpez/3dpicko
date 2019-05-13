@@ -170,12 +170,11 @@ QJsonObject Profile::printerTemplate() {
 					  "nozzle_on_move",
 					  "Safety distance between nozzle and plates", "", -100,
 					  100, .01, 0, 0, "mm")
-#ifdef QT_DEBUG
-		  ,
+	  // Debug options
+	  ,
 	  makeCheckboxField("skip_source", "Skip soure plate", "", false),
 	  makeCheckboxField("skip_master", "Skip master plate", "", false),
 	  makeCheckboxField("skip_target", "Skip target plate", "", false),
-#endif
   }};
 
   return json;

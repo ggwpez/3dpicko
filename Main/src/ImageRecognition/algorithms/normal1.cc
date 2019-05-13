@@ -109,7 +109,7 @@ void Normal1::mask(AlgorithmJob* base, DetectionResult* result) {
   plate->mask(input, output);
 }
 
-void Normal1::threshold(AlgorithmJob* base, DetectionResult* result) {
+void Normal1::threshold(AlgorithmJob*, DetectionResult* result) {
   // Calculate mean and standart deviation
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
@@ -120,7 +120,7 @@ void Normal1::threshold(AlgorithmJob* base, DetectionResult* result) {
 						1);  // non flour
 }
 
-void Normal1::erodeAndDilate(AlgorithmJob* base, DetectionResult* result) {
+void Normal1::erodeAndDilate(AlgorithmJob*, DetectionResult* result) {
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
 

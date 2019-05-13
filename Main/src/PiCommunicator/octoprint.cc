@@ -18,7 +18,7 @@ OctoPrint::OctoPrint(OctoConfig const& config, QObject* _parent)
    QHostAddress add(config.address());
 
    if (add.protocol() == QAbstractSocket::IPv4Protocol ||
-																   add.protocol()
+																																   add.protocol()
    == QAbstractSocket::IPv6Protocol) url.setHost(config.address()); else
    {
 
@@ -64,8 +64,6 @@ void OctoPrint::SendCommand(Command* cmd) {
 				   std::bind(&Command::OnReplyFinished, cmd, reply));
   QObject::connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
 }
-
-void OctoPrint::SendCommandTo(Command* cmd, QUrl to) {}
 
 void OctoPrint::Resolve() {}
 }  // namespace pi

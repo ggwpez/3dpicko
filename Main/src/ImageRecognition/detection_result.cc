@@ -10,7 +10,7 @@ QJsonObject Marshalling::toJson(const DetectionResult& value) {
   QJsonArray colonies;
 
   /*for (Colony const& colony : value.colonies())
-				  colonies.push_back(Marshalling::toJson(colony));
+								  colonies.push_back(Marshalling::toJson(colony));
 
   obj["colonies"] = colonies;*/
 
@@ -18,11 +18,11 @@ QJsonObject Marshalling::toJson(const DetectionResult& value) {
 }
 
 template <>
-DetectionResult Marshalling::fromJson(const QJsonObject& obj) {
+DetectionResult Marshalling::fromJson(const QJsonObject&) {
   // DetectionResult ret(Marshalling::fromJson<AlgorithmResult>(obj));
 
   /*for (QJsonValueRef e : obj["colonies"].toArray())
-				  ret.colonies().push_back(Marshalling::fromJson<Colony>(e));*/
+								  ret.colonies().push_back(Marshalling::fromJson<Colony>(e));*/
   throw Exception("Not implemented");
   // return ret;
 }

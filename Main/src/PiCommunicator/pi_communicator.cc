@@ -26,10 +26,10 @@ void PiCommunicator::Connect() {
   commands::Connection::Response*) { Transition(State::CONNECTED); emit
   OnConnected();
   });
-  connect(cmd, &Command::OnStatusErr, this /* ctx ,
-								  [this](QJsonValue code) { emit
-  OnConnectionError("Wrong status code: " + code.toString()); }); connect(cmd,
-  SIGNAL(OnNetworkErr()), this, SIGNAL(OnNetworkErr()));
+  connect(cmd, &Command::OnStatusErr, this / * ctx ,
+																  [this](QJsonValue
+  code) { emit OnConnectionError("Wrong status code: " + code.toString()); });
+  connect(cmd, SIGNAL(OnNetworkErr()), this, SIGNAL(OnNetworkErr()));
   // Delete
   connect(cmd, SIGNAL(OnFinished()), cmd, SLOT(deleteLater()));*/
 }
