@@ -26,7 +26,8 @@ class PrinterProfile {
 	  float filament_extrusion_length_after_cut,
 	  float length_of_removed_filament,
 	  float
-		  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move);
+		  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move,
+	  bool skip_source, bool skip_master, bool skip_target);
 
   int movementSpeed() const;
   Point cutFilamentPosition() const;
@@ -40,6 +41,9 @@ class PrinterProfile {
   float filamentExtrusionLengthOnPutOntoMaster() const;
   float filamentExtrusionLengthAfterCut() const;
   float safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const;
+  bool skipSource() const;
+  bool skipMaster() const;
+  bool skipTarget() const;
 
  private:
   /**
@@ -134,6 +138,21 @@ class PrinterProfile {
    */
   const float
 	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
+
+  /**
+   * @brief skip_source_ The pick process will leave the source plate out.
+   */
+  const bool skip_source_;
+
+  /**
+   * @brief skip_master_ The pick process will leave the master plate out.
+   */
+  const bool skip_master_;
+
+  /**
+   * @brief skip_target_ The pick process will leave the target plate out.
+   */
+  const bool skip_target_;
 };
 }  // namespace c3picko
 #endif  // PRINTERPROFILE_H

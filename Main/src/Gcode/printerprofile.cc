@@ -12,7 +12,8 @@ PrinterProfile::PrinterProfile(
 	float filament_extrusion_length_on_pick,
 	float filament_extrusion_length_on_put_onto_master,
 	float filament_extrusion_length_after_cut, float length_of_removed_filament,
-	float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move)
+	float safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move,
+	bool skip_source, bool skip_master, bool skip_target)
 	: movement_speed_(movement_speed),
 	  cut_filament_position_above_trigger_(cut_filament_position_above_trigger),
 	  z_coordinate_pushing_the_trigger_(z_coordinate_pushing_the_trigger),
@@ -30,8 +31,10 @@ PrinterProfile::PrinterProfile(
 		  filament_extrusion_length_on_put_onto_master),
 	  filament_extrusion_length_after_cut_(filament_extrusion_length_after_cut),
 	  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_(
-		  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move) {
-}
+		  safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move),
+	  skip_source_(skip_source),
+	  skip_master_(skip_master),
+	  skip_target_(skip_target) {}
 
 int PrinterProfile::movementSpeed() const { return movement_speed_; }
 
@@ -79,5 +82,11 @@ float PrinterProfile::
 	safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove() const {
   return safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move_;
 }
+
+bool PrinterProfile::skipSource() const { return skip_source_; }
+
+bool PrinterProfile::skipMaster() const { return skip_master_; }
+
+bool PrinterProfile::skipTarget() const { return skip_target_; }
 
 }  // namespace c3picko

@@ -63,28 +63,49 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 	const GlobalMasterCoordinates& global_master_coordinate =
 		global_master_xy_coordinates_.at(starting_well + i);
 
-	gcodes.push_back(gcode_extrusion_length_on_move_cut_to_pick_);
-	gcodes.push_back(
-		GcodeInstruction::MoveToXY(global_colony_coordinate.xCoordinate(),
-								   global_colony_coordinate.yCoordinate()));
-	gcodes.push_back(gcode_lower_filament_onto_colony_);
-	gcodes.push_back(gcode_raise_filament_above_source_plate_);
+	// Source
+	{
+	  gcodes.push_back(gcode_extrusion_length_on_move_cut_to_pick_);
+	  gcodes.push_back(
+		  GcodeInstruction::MoveToXY(global_colony_coordinate.xCoordinate(),
+									 global_colony_coordinate.yCoordinate()));
+	  // We can only skip the Z movement because we dont have a
+	  // gcode_extrusion_length_on_move_cut_to_master_ variable, which would
+	  // also only be needed in this case .
+	  if (!printer_profile_.skipSource())
+		gcodes.push_back(gcode_lower_filament_onto_colony_);
+	  gcodes.push_back(gcode_raise_filament_above_source_plate_);
+	}
 
-	gcodes.push_back(gcode_extrusion_length_on_move_pick_to_master_);
-	gcodes.push_back(
-		GcodeInstruction::MoveToXY(global_master_coordinate.xCoordinate(),
-								   global_master_coordinate.yCoordinate()));
-	gcodes.push_back(gcode_lower_filament_onto_master_);
-	gcodes.push_back(gcode_raise_filament_above_master_plate_);
+	// Master
+	{
+	  gcodes.push_back(gcode_extrusion_length_on_move_pick_to_master_);
+	  gcodes.push_back(
+		  GcodeInstruction::MoveToXY(global_master_coordinate.xCoordinate(),
+									 global_master_coordinate.yCoordinate()));
+	  if (!printer_profile_.skipMaster())
+		gcodes.push_back(gcode_lower_filament_onto_master_);
+	  gcodes.push_back(gcode_raise_filament_above_master_plate_);
+	}
 
-	gcodes.push_back(gcode_extrusion_length_on_move_master_to_goal_);
-	gcodes.push_back(
-		GcodeInstruction::MoveToXY(global_well_coordinate.xCoordinate(),
-								   global_well_coordinate.yCoordinate()));
-	gcodes.push_back(gcode_align_tip_of_nozzle_with_top_of_well_);
-	gcodes.push_back(gcode_extrude_filament_until_bottom_of_well_);
-	gcodes.push_back(gcode_extrusion_length_on_move_goal_to_cut_);
-	gcodes.push_back(gcode_raise_filament_above_goal_plate_);
+	// Goal
+	{
+	  gcodes.push_back(gcode_extrusion_length_on_move_master_to_goal_);
+	  gcodes.push_back(
+		  GcodeInstruction::MoveToXY(global_well_coordinate.xCoordinate(),
+									 global_well_coordinate.yCoordinate()));
+
+	  if (!printer_profile_.skipTarget()) {
+		gcodes.push_back(gcode_align_tip_of_nozzle_with_top_of_well_);
+		for (int i = 0; i < plate_profile_.timesToLowerFilamentIntoWell();
+			 ++i) {
+		  gcodes.push_back(gcode_extrude_filament_until_bottom_of_well_);
+		  gcodes.push_back(gcode_extrusion_length_on_move_goal_to_cut_);
+		}
+	  } else
+		gcodes.push_back(gcode_extrusion_length_on_move_goal_to_cut_);
+	  gcodes.push_back(gcode_raise_filament_above_goal_plate_);
+	}
 
 	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
 	gcodes.push_back(gcode_extrude_filament_to_cut_length_);

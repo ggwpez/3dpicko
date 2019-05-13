@@ -41,6 +41,6 @@ quint8 Well::row() const { return row_; }
 quint8 Well::col() const { return col_; }
 
 quint16 Well::index() const {
-  return quint16((col_ - 1) * plate_->numberOfRows() + (row_ - 1));
+  return quint16(quint16(col_ - 1) * plate_->numberOfRows() + (row_ - 1));
 }
 }  // namespace c3picko
