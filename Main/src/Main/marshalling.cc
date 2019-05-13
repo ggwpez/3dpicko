@@ -33,6 +33,9 @@ QJsonObject Marshalling::toJson(const PrinterProfile& value) {
   obj["length_of_removed_filament"] = value.lengthOfRemovedFilament();
   obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_move"] =
 	  value.safetyDistanceBetweenTopSurfaceOfAllPlatesAndNozzleOnMove();
+  obj["skip_source"] = value.skipSource();
+  obj["skip_master"] = value.skipMaster();
+  obj["skip_target"] = value.skipTarget();
 
   return obj;
 }
@@ -54,7 +57,9 @@ PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
 	  obj["length_of_removed_filament"].toDouble(),
 	  obj["safety_distance_between_top_surface_of_all_plates_and_nozzle_on_"
 		  "move"]
-		  .toDouble());
+		  .toDouble(),
+	  obj["skip_source"].toBool(false), obj["skip_master"].toBool(false),
+	  obj["skip_target"].toBool(false));
 }
 
 template <>
@@ -126,6 +131,8 @@ QJsonObject Marshalling::toJson(const PlateProfile& value) {
 	  value.cultureMediumThicknessSourcePlate();
   obj["culture_medium_thickness_master_plate"] =
 	  value.cultureMediumThicknessMasterPlate();
+  obj["times_to_lower_filament_into_well"] =
+	  value.timesToLowerFilamentIntoWell();
 
   return obj;
 }
@@ -140,7 +147,8 @@ PlateProfile Marshalling::fromJson(const QJsonObject& obj) {
 	  obj["height_master_plate"].toDouble(),
 	  obj["height_goal_plate"].toDouble(), obj["well_depth"].toDouble(),
 	  obj["culture_medium_thickness_source_plate"].toDouble(),
-	  obj["culture_medium_thickness_master_plate"].toDouble());
+	  obj["culture_medium_thickness_master_plate"].toDouble(),
+	  obj["times_to_lower_filament_into_well"].toInt());
 }
 
 template <>

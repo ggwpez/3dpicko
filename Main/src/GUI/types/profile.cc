@@ -110,6 +110,15 @@ QJsonObject Profile::makeVecField(Profile::ID id, QString name, int vec_size,
 					  {"unit", unit}});
 }
 
+QJsonObject Profile::makeCheckboxField(Profile::ID id, QString name,
+									   QString description, bool defaultValue) {
+  return QJsonObject({{"id", id},
+					  {"name", name},
+					  {"type", "checkbox"},
+					  {"description", description},
+					  {"defaultValue", defaultValue}});
+}
+
 QJsonObject Profile::makeEnumField(Profile::ID id, QString name,
 								   QString description, QVariantMap options,
 								   QString defaultValue) {
@@ -127,41 +136,47 @@ QJsonObject Profile::makeEnumField(Profile::ID id, QString name,
 QJsonObject Profile::printerTemplate() {
   QJsonObject json;
 
-  json["settings"] = {
-	  {makeNumberField("movement_speed", "Movement speed", "", 1, 10800, 1,
-					   10800, 10800, "mm/60 s" /* Minute is not a SI unit*/),
-	   makeVec3Field("cut_filament_position_above_trigger", "Cut position", "",
-					 NULL_POINT, PR_MAX, .01, NULL_POINT, NULL_POINT, "mm"),
-	   makeNumberField("z_coordinate_pushing_the_trigger", "Push trigger at",
-					   "", -300, 300, .01, 0, 0, "mm"),
-	   makeNumberField("filament_extrusion_length_on_move_cut_to_pick",
-					   "Filament length cut to source", "", -100, 100, .01, 0,
-					   0, "mm"),
-	   makeNumberField("filament_extrusion_length_on_move_pick_to_master",
-					   "Filament length source to master", "", -100, 100, .01,
-					   0, 0, "mm"),
-	   makeNumberField("filament_extrusion_length_on_move_master_to_goal",
-					   "Filament length master to target", "", -100, 100, .01,
-					   0, 0, "mm"),
-	   makeNumberField("filament_extrusion_length_on_move_goal_to_cut",
-					   "Filament length target to cut", "", -100, 100, .01, 0,
-					   0, "mm"),
-	   makeNumberField("filament_extrusion_length_on_pick",
-					   "Filament length pick from source", "", -300, 300, .01,
-					   0, 0, "mm"),
-	   makeNumberField("filament_extrusion_length_on_put_onto_master",
-					   "Filament length put onto master", "", -100, 100, .01, 0,
-					   0, "mm"),
-	   makeNumberField("filament_extrusion_length_after_cut",
-					   "Filament length after cut", "", -100, 100, .01, 0, 0,
-					   "mm"),
-	   makeNumberField("length_of_removed_filament",
-					   "Filament length to be cut", "", 0, 100, .01, 0, 0,
-					   "mm"),
-	   makeNumberField("safety_distance_between_top_surface_of_all_plates_and_"
-					   "nozzle_on_move",
-					   "Safety distance between nozzle and plates", "", -100,
-					   100, .01, 0, 0, "mm")}};
+  json["settings"] = {{
+	  makeNumberField("movement_speed", "Movement speed", "", 1, 10800, 1,
+					  10800, 10800, "mm/60 s" /* Minute is not a SI unit*/),
+	  makeVec3Field("cut_filament_position_above_trigger", "Cut position", "",
+					NULL_POINT, PR_MAX, .01, NULL_POINT, NULL_POINT, "mm"),
+	  makeNumberField("z_coordinate_pushing_the_trigger", "Push trigger at", "",
+					  -300, 300, .01, 0, 0, "mm"),
+	  makeNumberField("filament_extrusion_length_on_move_cut_to_pick",
+					  "Filament length cut to source", "", -100, 100, .01, 0, 0,
+					  "mm"),
+	  makeNumberField("filament_extrusion_length_on_move_pick_to_master",
+					  "Filament length source to master", "", -100, 100, .01, 0,
+					  0, "mm"),
+	  makeNumberField("filament_extrusion_length_on_move_master_to_goal",
+					  "Filament length master to target", "", -100, 100, .01, 0,
+					  0, "mm"),
+	  makeNumberField("filament_extrusion_length_on_move_goal_to_cut",
+					  "Filament length target to cut", "", -100, 100, .01, 0, 0,
+					  "mm"),
+	  makeNumberField("filament_extrusion_length_on_pick",
+					  "Filament length pick from source", "", -300, 300, .01, 0,
+					  0, "mm"),
+	  makeNumberField("filament_extrusion_length_on_put_onto_master",
+					  "Filament length put onto master", "", -100, 100, .01, 0,
+					  0, "mm"),
+	  makeNumberField("filament_extrusion_length_after_cut",
+					  "Filament length after cut", "", -100, 100, .01, 0, 0,
+					  "mm"),
+	  makeNumberField("length_of_removed_filament", "Filament length to be cut",
+					  "", 0, 100, .01, 0, 0, "mm"),
+	  makeNumberField("safety_distance_between_top_surface_of_all_plates_and_"
+					  "nozzle_on_move",
+					  "Safety distance between nozzle and plates", "", -100,
+					  100, .01, 0, 0, "mm")
+#ifdef QT_DEBUG
+		  ,
+	  makeCheckboxField("skip_source", "Skip soure plate", "", false),
+	  makeCheckboxField("skip_master", "Skip master plate", "", false),
+	  makeCheckboxField("skip_target", "Skip target plate", "", false),
+#endif
+  }};
 
   return json;
 }
@@ -226,8 +241,9 @@ QJsonObject Profile::plateTemplate() {
 	   makeNumberField("culture_medium_thickness_source_plate",
 					   "Source medium thickness", "", 0, 200, .01, 0, 0, "mm"),
 	   makeNumberField("culture_medium_thickness_master_plate",
-					   "Master medium thickness", "", 0, 200, .01, 0, 0,
-					   "mm")}};
+					   "Master medium thickness", "", 0, 200, .01, 0, 0, "mm"),
+	   makeNumberField("times_to_lower_filament_into_well",
+					   "# Lower filament into Well", "", 1, 100, 1, 2, 2, "")}};
 
   return json;
 }

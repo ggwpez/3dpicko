@@ -69,6 +69,9 @@ class Profile {
 								  QString description, Point min, Point max,
 								  double step, Point placeholder,
 								  Point defaultValue, QString unit);
+
+  static QJsonObject makeCheckboxField(Profile::ID id, QString name,
+									   QString description, bool defaultValue);
   /**
    * @brief Creates a radio box
    * @param defaultValue default key used from options

@@ -7,7 +7,8 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
 						   float height_source_plate, float height_master_plate,
 						   float height_goal_plate, float well_depth,
 						   float culture_medium_thickness_source_plate,
-						   float culture_medium_thickness_master_plate)
+						   float culture_medium_thickness_master_plate,
+						   int times_to_lower_filament_into_well)
 	: number_of_rows_(number_of_rows),
 	  number_of_columns_(number_of_columns),
 	  number_of_wells_(number_of_columns * number_of_rows),
@@ -21,7 +22,8 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
 	  culture_medium_thickness_source_plate_(
 		  culture_medium_thickness_source_plate),
 	  culture_medium_thickness_master_plate_(
-		  culture_medium_thickness_master_plate) {}
+		  culture_medium_thickness_master_plate),
+	  times_to_lower_filament_into_well_(times_to_lower_filament_into_well) {}
 
 int PlateProfile::numberOfRows() const { return number_of_rows_; }
 
@@ -51,5 +53,9 @@ float PlateProfile::cultureMediumThicknessSourcePlate() const {
 
 float PlateProfile::cultureMediumThicknessMasterPlate() const {
   return culture_medium_thickness_master_plate_;
+}
+
+int PlateProfile::timesToLowerFilamentIntoWell() const {
+  return times_to_lower_filament_into_well_;
 }
 }  // namespace c3picko

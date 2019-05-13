@@ -20,7 +20,8 @@ class PlateProfile {
 			   float height_source_plate, float height_master_plate,
 			   float height_goal_plate, float well_depth,
 			   float culture_medium_thickness_source_plate,
-			   float culture_medium_thickness_master_plate);
+			   float culture_medium_thickness_master_plate,
+			   int timesToLowerFilamentIntoWell);
 
   int numberOfRows() const;
   int numberOfColumns() const;
@@ -34,6 +35,7 @@ class PlateProfile {
   float wellDepth() const;
   float cultureMediumThicknessSourcePlate() const;
   float cultureMediumThicknessMasterPlate() const;
+  int timesToLowerFilamentIntoWell() const;
 
  private:
   /**
@@ -106,6 +108,13 @@ class PlateProfile {
    * culture medium inside the master plate, for instance agars
    */
   const float culture_medium_thickness_master_plate_;
+
+  /**
+   * @brief
+   * times_to_lower_filament_into_well_ the number of time that the filament
+   * should tip into the PCR well fluid, 1-2 should be enought .
+   */
+  const int times_to_lower_filament_into_well_;
 };
 }  // namespace c3picko
 #endif  // PLATEPROFILE_H

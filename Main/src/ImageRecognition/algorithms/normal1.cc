@@ -9,7 +9,6 @@
 #include "ImageRecognition/plates/plate.h"
 
 namespace c3picko {
-
 Normal1::Normal1()
 	: Algorithm(
 		  "1", "Normal1", "Detects colonies with standard illumination",
