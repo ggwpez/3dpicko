@@ -36,6 +36,7 @@ QJsonObject Marshalling::toJson(const PrinterProfile& value) {
   obj["skip_source"] = value.skipSource();
   obj["skip_master"] = value.skipMaster();
   obj["skip_target"] = value.skipTarget();
+  obj["skip_cutoff"] = value.skipCutoff();
 
   return obj;
 }
@@ -59,7 +60,7 @@ PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
 		  "move"]
 		  .toDouble(),
 	  obj["skip_source"].toBool(false), obj["skip_master"].toBool(false),
-	  obj["skip_target"].toBool(false));
+	  obj["skip_target"].toBool(false), obj["skip_cutoff"].toBool(false));
 }
 
 template <>
@@ -180,6 +181,38 @@ QJsonObject Marshalling::toJson(const QDateTime& value) {
   obj["formatted"] = value.toString(dateTimeFormat());
 
   return obj;
+}
+
+template <>
+cv::Point2d Marshalling::fromJson(const QJsonObject& obj) {
+  return {obj["x"].toDouble(), obj["y"].toDouble()};
+}
+
+template <>
+QJsonObject Marshalling::toJson(const cv::Point2d& value) {
+  return {{"x", value.x}, {"y", value.y}};
+}
+
+template <>
+cv::Point2i Marshalling::fromJson(const QJsonObject& obj) {
+  return {obj["x"].toInt(), obj["y"].toInt()};
+}
+
+template <>
+QJsonObject Marshalling::toJson(const cv::Point2i& value) {
+  return {{"x", value.x}, {"y", value.y}};
+}
+
+template <>
+cv::Rect2i Marshalling::fromJson(const QJsonObject& obj) {
+  return {obj["x"].toInt(), obj["y"].toInt(), obj["w"].toInt(),
+		  obj["h"].toInt()};
+}
+
+template <>
+QJsonObject Marshalling::toJson(const cv::Rect2i& value) {
+  return {
+	  {"x", value.x}, {"y", value.y}, {"w", value.width}, {"h", value.height}};
 }
 
 template <>

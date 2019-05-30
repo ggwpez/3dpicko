@@ -1,4 +1,5 @@
 #include "ImageRecognition/plates/rect_plate.h"
+#include <QJsonArray>
 
 namespace c3picko {
 // TODO im not proud
@@ -140,5 +141,43 @@ void RectPlate::mask(const cv::Mat& in, cv::Mat& out) const {
 				   0, cv::Scalar::all(255), -1);
 
   out = in & mask;
+}
+
+const RectPlate::InnerBorder& RectPlate::innerBorder() const {
+  return inner_border_;
+}
+
+const RectPlate::OuterBorder& RectPlate::outerBorder() const {
+  return outer_border_;
+}
+
+template <>
+QJsonObject Marshalling::toJson(const RectPlate& value) {
+  QJsonObject obj;
+  QJsonArray inner, outer;
+
+  for (auto const& e : value.innerBorder())
+	inner.push_back(Marshalling::toJson(e));
+  for (auto const& e : value.outerBorder())
+	outer.push_back(Marshalling::toJson(e));
+
+  obj["inner"] = inner;
+  obj["outer"] = outer;
+
+  return obj;
+}
+
+template <>
+RectPlate Marshalling::fromJson(const QJsonObject& obj) {
+  RectPlate::InnerBorder inner;
+  RectPlate::OuterBorder outer;
+  QJsonArray jinner(obj["inner"].toArray()), jouter(obj["outer"].toArray());
+
+  for (std::size_t i = 0; i < inner.size(); ++i)
+	inner[i] = Marshalling::fromJson<cv::Point>(jinner[i]);
+  for (std::size_t i = 0; i < outer.size(); ++i)
+	outer[i] = Marshalling::fromJson<cv::Point>(jouter[i]);
+
+  return RectPlate(outer, inner);
 }
 }  // namespace c3picko

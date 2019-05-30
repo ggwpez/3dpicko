@@ -213,6 +213,22 @@ void Database::write(QJsonObject& obj) const {
 
 bool Database::readOnly() const { return read_only_; }
 
+bool Database::checkIntegrity() const {
+  QStringList errors;
+
+  for (auto const& job : jobs_) {
+	if (!profiles_.exists(job.plate()) || !profiles_.exists(job.printer()) ||
+		!profiles_.exists(job.socket()) || !profiles_.exists(job.octoprint()))
+	  errors << "Could not find all profiles for job" << job.id();
+	if (!images_.exists(job.imgID()))
+	  errors << "Could the image for job" << job.id();
+  }
+
+  qWarning() << errors;
+
+  return errors.empty();
+}
+
 void Database::setdefaultPrinter(const Profile::ID& default_printer) {
   default_printer_ = default_printer;
   emit OnDataChanged();

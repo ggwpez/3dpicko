@@ -98,7 +98,7 @@ class APIController : public QObject {
    */
   void updateDetectionSettings(Job::ID job, QString algo_id,
 							   QJsonObject settings, QObject* client);
-  void startJob(Job::ID id, Profile::ID octoprint, QObject* client);
+  void startJob(Job::ID id, QObject* client);
 
   void shutdown(QObject* client);
   void restart(QObject* client);
@@ -138,8 +138,6 @@ class APIController : public QObject {
   void OnProfileListRequested(QObject* client);
   void OnAlgorithmListRequested(QObject* client);
 
-  // Passing job as signal arg should not work, bc Job is not registered as a
-  // QMetaType but it still does, as long as all runs in the same thread FIXME
   void OnJobCreated(Job::ID, QObject* client);
   void OnJobCreateError(QString, QObject*);
   void OnJobDeleted(Job::ID, QObject* client);

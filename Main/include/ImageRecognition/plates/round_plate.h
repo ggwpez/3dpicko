@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ImageRecognition/plates/plate.h"
+#include "Main/marshalling.h"
 
 namespace c3picko {
 /**
@@ -28,7 +29,9 @@ class RoundPlate : public Plate {
 
   std::size_t m1() const;
 
-  InnerBorder innerBorder() const;
+  InnerBorder const& innerBorder() const;
+  InnerBorder const& outerBorder() const;
+  Markers const& markers() const;
 
  private:
   static std::size_t findM1(const Markers& markers);
@@ -59,4 +62,5 @@ class RoundPlate : public Plate {
    */
   std::size_t const m1_;
 };
+MAKE_MARSHALLABLE(RoundPlate);
 }  // namespace c3picko

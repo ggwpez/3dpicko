@@ -30,6 +30,7 @@ class Database : public QObject, JsonConvertable {
   Database(QSettings const& settings, QObject* parent);
 
   bool readOnly() const;
+  bool checkIntegrity() const;
 
   JobTable& jobs();
   JobTable const& jobs() const;

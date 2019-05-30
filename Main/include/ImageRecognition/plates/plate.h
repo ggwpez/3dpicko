@@ -41,8 +41,8 @@ class Plate {
   /**
    * @brief Gravity center of the detected border, not the same as bb_.center .
    */
-
   cv::Point2d const center_;
+
   /**
    * The unweighted average of all outer borders' angle.
    * Use it to cut the image.

@@ -103,6 +103,7 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
   std::unique_ptr<RoundPlate> original(
 	  new RoundPlate(edges[outer], edges[inner], markers));  // NOTE C++14
   std::unique_ptr<RoundPlate> rotated(original->rotated());
+  qDebug() << rotated->center().x << "/" << rotated->center().y;
 
   // Draw the inner ellipse and markers (optional)
   {

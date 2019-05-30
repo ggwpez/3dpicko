@@ -161,7 +161,7 @@ void APIController::UploadImage(Image image, QObject* client) {
 
   // Default detection algorithm used, TODO should be dictated by the plate
   // profile
-  Algorithm::ID aid("1");
+  Algorithm::ID aid("2");
   AlgorithmJob::ID jid = db_->newResultJobId();
   std::shared_ptr<PlateResult> result(
 	  std::make_shared<PlateResult>(db_->newResultId()));
@@ -456,8 +456,7 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
   if (job) job->start(true, false);
 }
 
-void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
-							 QObject* client) {
+void APIController::startJob(Job::ID id, QObject* client) {
   if (!db_->jobs().exists(id))
 	return emit OnJobStartError("Job '" + id + "' job found", client);
   Job& job = db_->jobs().get(id);
@@ -473,11 +472,11 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   if (!db_->profiles().exists(job.printer()) ||
 	  !db_->profiles().exists(job.socket()) ||
 	  !db_->profiles().exists(job.plate()) ||
-	  !db_->profiles().exists(octoprint_id))
+	  !db_->profiles().exists(job.octoprint()))
 	return emit OnJobStartError(
 		"Internal error: Cant find printer, socket, plate or octoprint profile",
 		client);
-  job.setOctoprint(octoprint_id);
+  job.setOctoprint(job.octoprint());
 
   PrinterProfile* printerp =
 	  db_->profiles().get(job.printer()).operator c3picko::PrinterProfile*();
@@ -499,18 +498,27 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
 
   Well well(job.startingRow(), job.startingCol(), plate);
   // Convert the colony coordinates to real world coordinates
-  for (auto it = selected.begin(); it != selected.end(); ++it) {
-	auto f = std::find_if(result->includedBegin(), result->includedEnd(),
-						  [&it](Colony const& c) { return c.id() == *it; });
+  {
+	for (auto it = selected.begin(); it != selected.end(); ++it) {
+	  auto colony =
+		  std::find_if(result->includedBegin(), result->includedEnd(),
+					   [&it](Colony const& c) { return c.id() == *it; });
 
-	if (f == result->includedEnd())
-	  return emit OnJobStartError("Internal error: Cant find selected colonie",
-								  client);
+	  if (colony == result->includedEnd())
+		return emit OnJobStartError("Internal error: Cant find selected colony",
+									client);
 
-	// Invert the y-axis. FIXME get the frame size from the plate profile
-	coords.push_back(Point(f->x() * 128, (1.0 - f->y()) * 85.9));
-	pick_positions.emplace(well, *it);
-	if (it + 1 != selected.end()) ++well;
+	  // Invert the y-axis. FIXME get the frame size from the plate profile
+	  // coords.push_back(Point(colony->x() * 128, (1.0 - colony->y()) * 85.9));
+	  coords.push_back(
+		  Point(colony->x() * 98 + 12.75,  // 11.5 is the offset of the plate
+										   // cutout to the left frame border.
+				(1.0 - colony->y()) * 92.5 - 2.8));
+	  qDebug() << colony->x() << colony->y();
+	  qDebug() << coords.back().xCoordinate() << coords.back().yCoordinate();
+	  pick_positions.emplace(well, *it);
+	  if (it + 1 != selected.end()) ++well;
+	}
   }
 
   std::vector<GcodeInstruction> code =

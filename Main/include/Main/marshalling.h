@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QSet>
+#include <opencv2/core.hpp>
 #include "Main/global.h"
 
 #if __cplusplus <= 201703L
@@ -63,6 +64,9 @@ class Marshalling {
 // Here we instantiate the template functions, so the compiler knows they must
 // exist somewhere. The classes themself are unaltered by this.
 MAKE_MARSHALLABLE(QDateTime);
+MAKE_MARSHALLABLE(cv::Point2d);
+MAKE_MARSHALLABLE(cv::Point2i);
+MAKE_MARSHALLABLE(cv::Rect2i);
 // template <> inline QJsonObject Marshalling::toJson(std::set<D> const&) {
 // return QJsonObject(); }
 

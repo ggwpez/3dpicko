@@ -1,4 +1,5 @@
 #include "ImageRecognition/plates/round_plate.h"
+#include <QJsonArray>
 #include "Main/exception.h"
 
 namespace c3picko {
@@ -56,12 +57,19 @@ double RoundPlate::calculateRotation(RoundPlate::Markers const& markers,
   double ret = std::atan2((std::sin(a1) + std::sin(a2) + std::sin(a3)) / 3,
 						  (std::cos(a1) + std::cos(a2) + std::cos(a3)) / 3);
 
-  ret = ret * 180 / M_PI;
+  ret = (ret - M_PI) * 180 / M_PI;  // -M_PI rotates the edgy marker to the
+									// left, such as it lies in the picker.
   return ret < 0 ? ret + 360 : ret;
 }
 
-RoundPlate::InnerBorder RoundPlate::innerBorder() const {
+const RoundPlate::Markers& RoundPlate::markers() const { return markers_; }
+
+const RoundPlate::InnerBorder& RoundPlate::innerBorder() const {
   return inner_border_;
+}
+
+const RoundPlate::InnerBorder& RoundPlate::outerBorder() const {
+  return outer_border_;
 }
 
 std::size_t RoundPlate::m1() const { return m1_; }
@@ -101,5 +109,42 @@ void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
 				   cv::Scalar::all(255), -1);
 
   out = in & mask;
+}
+
+template <>
+QJsonObject Marshalling::toJson(const RoundPlate& value) {
+  QJsonObject obj;
+  QJsonArray inner, outer, markers;
+
+  for (auto const& e : value.innerBorder())
+	inner.push_back(Marshalling::toJson(e));
+  for (auto const& e : value.outerBorder())
+	outer.push_back(Marshalling::toJson(e));
+  for (auto const& e : value.markers())
+	markers.push_back(Marshalling::toJson(e));
+
+  obj["inner"] = inner;
+  obj["outer"] = outer;
+  obj["markers"] = markers;
+
+  return obj;
+}
+
+template <>
+RoundPlate Marshalling::fromJson(const QJsonObject& obj) {
+  RoundPlate::InnerBorder inner;
+  RoundPlate::OuterBorder outer;
+  RoundPlate::Markers markers;
+  QJsonArray jinner(obj["inner"].toArray()), jouter(obj["outer"].toArray()),
+	  jmarkers(obj["markers"].toArray());
+
+  for (std::size_t i = 0; i < inner.size(); ++i)
+	inner[i] = Marshalling::fromJson<cv::Point>(jinner[i]);
+  for (std::size_t i = 0; i < outer.size(); ++i)
+	outer[i] = Marshalling::fromJson<cv::Point>(jouter[i]);
+  for (std::size_t i = 0; i < markers.size(); ++i)
+	markers[i] = Marshalling::fromJson<cv::Point>(jmarkers[i]);
+
+  return RoundPlate(outer, inner, markers);
 }
 }  // namespace c3picko

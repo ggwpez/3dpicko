@@ -50,10 +50,12 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 
   gcodes.push_back(gcode_raise_filament_above_source_plate_);
   gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-  gcodes.push_back(gcode_extrude_filament_to_cut_length_);
-  gcodes.push_back(gcode_push_trigger_);
-  gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-  gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+  if (!printer_profile_.skipCutoff()) {
+	gcodes.push_back(gcode_extrude_filament_to_cut_length_);
+	gcodes.push_back(gcode_push_trigger_);
+	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+	gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+  }
 
   for (size_t i = 0; i < local_colony_coordinates.size(); ++i) {
 	const GlobalColonyCoordinates global_colony_coordinate =
@@ -108,10 +110,12 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 	}
 
 	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-	gcodes.push_back(gcode_extrude_filament_to_cut_length_);
-	gcodes.push_back(gcode_push_trigger_);
-	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-	gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+	if (!printer_profile_.skipCutoff()) {
+	  gcodes.push_back(gcode_extrude_filament_to_cut_length_);
+	  gcodes.push_back(gcode_push_trigger_);
+	  gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+	  gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+	}
   }
 
   return gcodes;

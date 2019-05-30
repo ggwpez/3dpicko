@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ImageRecognition/plates/plate.h"
+#include "Main/marshalling.h"
 
 namespace c3picko {
 /**
@@ -16,8 +17,8 @@ class RectPlate : public Plate {
    * @brief Calculates the well positions A1 and H1, the angle and
    * rotation_matrix_
    */
-  RectPlate(OuterBorder const& outer_border, InnerBorder const& inner_border);
-  RectPlate(OuterBorder const& outer_border, InnerBorder const& inner_border,
+  RectPlate(OuterBorder const& outer_border, InnerBorder const& innerBorder);
+  RectPlate(OuterBorder const& outer_border, InnerBorder const& innerBorder,
 			std::size_t a1, std::size_t h1, cv::Point2d inner_center,
 			cv::Point2d outer_center, cv::Point2d center,
 			math::UnitValue center_error, double angle, cv::Rect aabb);
@@ -28,7 +29,8 @@ class RectPlate : public Plate {
   std::size_t a1() const;
   std::size_t h1() const;
 
-  OuterBorder outerBorder() const;
+  OuterBorder const& outerBorder() const;
+  InnerBorder const& innerBorder() const;
 
  private:
   /**
@@ -37,7 +39,7 @@ class RectPlate : public Plate {
    * mirrored.
    */
   static std::pair<std::size_t, std::size_t> findA1H1(
-	  const OuterBorder& outer_border, const InnerBorder& inner_border);
+	  const OuterBorder& outer_border, const InnerBorder& innerBorder);
   void findAndSetA1H1();
   /**
    * @brief Calculates the rotation of a quasi rectangle, only works counter
@@ -86,4 +88,5 @@ class RectPlate : public Plate {
    */
   math::UnitValue center_error_;
 };
+MAKE_MARSHALLABLE(RectPlate);
 }  // namespace c3picko

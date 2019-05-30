@@ -175,6 +175,7 @@ QJsonObject Profile::printerTemplate() {
 	  makeCheckboxField("skip_source", "Skip soure plate", "", false),
 	  makeCheckboxField("skip_master", "Skip master plate", "", false),
 	  makeCheckboxField("skip_target", "Skip target plate", "", false),
+	  makeCheckboxField("skip_cutoff", "No filament", "", false),
   }};
 
   return json;
