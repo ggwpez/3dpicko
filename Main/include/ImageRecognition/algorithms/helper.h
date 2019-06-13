@@ -1,12 +1,15 @@
 #pragma once
 
 #include <complex>
+#include <iterator>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
 /**
  * This file is the collecting pond for all that needs to find a permanent home.
  */
+
+#define M_1_PI_2 0.1591549430918953357688837d /* 1/(2pi) */
 
 class QByteArray;
 class QString;

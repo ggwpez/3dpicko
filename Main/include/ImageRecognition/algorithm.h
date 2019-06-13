@@ -51,6 +51,7 @@ class Algorithm : public QObject, public QRunnable {
   QString description() const;
   QList<AlgoSetting> defaultSettings() const;
   bool isThreadable() const;
+  AlgorithmJob* job() const;
 
   /**
    * @brief Abstract classes can not be marshallable.

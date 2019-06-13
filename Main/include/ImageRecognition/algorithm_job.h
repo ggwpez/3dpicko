@@ -57,6 +57,7 @@ class AlgorithmJob : public QObject {
 
   qint64 maxMs() const;
   Algorithm* algo() const;
+  QThreadPool* pool() const;
 
  signals:
   void OnAlgoSucceeded();

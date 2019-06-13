@@ -161,7 +161,7 @@ void APIController::UploadImage(Image image, QObject* client) {
 
   // Default detection algorithm used, TODO should be dictated by the plate
   // profile
-  Algorithm::ID aid("2");
+  Algorithm::ID aid("1");
   AlgorithmJob::ID jid = db_->newResultJobId();
   std::shared_ptr<PlateResult> result(
 	  std::make_shared<PlateResult>(db_->newResultId()));
