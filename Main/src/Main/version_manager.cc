@@ -214,7 +214,7 @@ void VersionManager::linkVersion(Version::ID id) {
   ResourcePath s_main(working_dir_ + "main"),
 	  s_lqua(working_dir_ + "libquazip.so.1");
   QString t_main("builds/" + id + "/Main/Main"),
-	  t_lqua("builds/" + id + "/quazip/quazip/libquazip.so.1");
+	  t_lqua("builds/" + id + "/depend/quazip/quazip/libquazip.so.1");
 
   Process* ln_main(Process::ln(t_main, s_main));
   Process* ln_lqua(Process::ln(t_lqua, s_lqua));
