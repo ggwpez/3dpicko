@@ -4,10 +4,10 @@
 #include "GUI/requestmapper.h"
 #include "GUI/ws_server.h"
 #include "ImageRecognition/algorithm_manager.h"
+#include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/algorithms/fluro1.h"
-#include "ImageRecognition/algorithms/normal1.h"
-#include "ImageRecognition/algorithms/plate1.h"
-#include "ImageRecognition/algorithms/plate2.h"
+#include "ImageRecognition/algorithms/plate_rect.h"
+#include "ImageRecognition/algorithms/plate_round.h"
 #include "Main/signal_daemon.h"
 #include "Main/updater.h"
 
@@ -21,6 +21,7 @@
 
 using namespace stefanfrings;
 using namespace c3picko;
+using namespace c3picko::algorithms;
 
 static int start(int argc, char** argv) {
 #ifdef Q_OS_LINUX
@@ -30,26 +31,33 @@ static int start(int argc, char** argv) {
   QString ini_file(Setup(&app));
   QSettings settings(ini_file, QSettings::IniFormat);
 
+  // Algorithms
   QThreadPool* algo_pool = new QThreadPool(&app);
   algo_pool->setMaxThreadCount(qMin(1, QThread::idealThreadCount() / 2));
   AlgorithmManager* colony_detector =
-	  new AlgorithmManager(algo_pool, {new Normal1(), new Fluro1()}, &app);
-  AlgorithmManager* plate_detector =
-	  new AlgorithmManager(algo_pool, {new Plate1(), new Plate2()}, &app);
+	  new AlgorithmManager(algo_pool, {new Colonies1(), new Fluro1()}, &app);
+  AlgorithmManager* plate_detector = new AlgorithmManager(
+	  algo_pool, {new PlateRect(), new PlateRound()}, &app);
 
+  // Database
   settings.beginGroup("database");
   Database* db = new Database(settings, &app);
   settings.endGroup();
   settings.beginGroup("database.autosave");
-  Autosaver* dbs = new Autosaver(settings, nullptr);
+
+  // Autosaver
+  Autosaver* autos = new Autosaver(settings, nullptr);
   settings.endGroup();
 
-  QObject::connect(db, &Database::OnDataChanged, dbs, &Autosaver::dataChanged);
-  QObject::connect(dbs, &Autosaver::OnAutosaveNeeded, db, &Database::autosave);
-  QObject::connect(dbs, &Autosaver::OnAutosaveSkipp, db,
+  QObject::connect(db, &Database::OnDataChanged, autos,
+				   &Autosaver::dataChanged);
+  QObject::connect(autos, &Autosaver::OnAutosaveNeeded, db,
+				   &Database::autosave);
+  QObject::connect(autos, &Autosaver::OnAutosaveSkipp, db,
 				   &Database::autosaveSkipped);
-  dbs->start();
+  autos->start();
 
+  // Updater
   QSettings upd_settings(ini_file, QSettings::IniFormat);
   upd_settings.beginGroup("updater");
   if (upd_settings.value("enabled").toBool()) {
@@ -123,7 +131,7 @@ int main(int argc, char** argv) {
 	}
 
 	if (status == exitCodeSoftRestart())
-	  qInfo() << "Awaiting restart...";
+	  qInfo("Awaiting restart...");
 	else
 	  break;
   };

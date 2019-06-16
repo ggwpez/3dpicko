@@ -1,22 +1,24 @@
-#include "ImageRecognition/algorithms/plate2.h"
+#include "ImageRecognition/algorithms/plate_round.h"
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
 #include "ImageRecognition/algorithm_job.h"
+#include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/algorithms/helper.h"
-#include "ImageRecognition/algorithms/plate1.h"
+#include "ImageRecognition/algorithms/plate_rect.h"
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/round_plate.h"
 
 namespace c3picko {
-Plate2::Plate2()
+namespace algorithms {
+PlateRound::PlateRound()
 	: Algorithm("2", "Plate2", "Detects a round plate with red frame attached",
-				{(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
-				 (AlgoStep)Plate2::detect},
+				{(AlgoStep)Colonies1::cvt, (AlgoStep)PlateRect::threshold,
+				 (AlgoStep)PlateRound::detect},
 				{}, true, 5000) {}
 
-void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
+void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   /**
    * Steps:
    *
@@ -123,4 +125,5 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
   result->original_ = std::move(original);
   result->rotated_ = std::move(rotated);
 }
+}  // namespace algorithms
 }  // namespace c3picko

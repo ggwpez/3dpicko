@@ -1,28 +1,22 @@
-#include "ImageRecognition/algorithms/plate1.h"
+#include "ImageRecognition/algorithms/plate_rect.h"
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
 #include "ImageRecognition/algorithm_job.h"
-#include "ImageRecognition/algorithms/normal1.h"
+#include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/rect_plate.h"
 
 namespace c3picko {
-Plate1::Plate1()
+namespace algorithms {
+PlateRect::PlateRect()
 	: Algorithm("1", "Plate1", "Detects a plate with red frame attached",
-				{(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
-				 (AlgoStep)Plate1::detect},
+				{(AlgoStep)Colonies1::cvt, (AlgoStep)PlateRect::threshold,
+				 (AlgoStep)PlateRect::detect},
 				{}, true, 5000) {}
 
-void Plate1::cvt(AlgorithmJob* base, PlateResult* result) {
-  cv::Mat& input = *reinterpret_cast<cv::Mat*>(base->input().front());
-  cv::Mat& output = result->newMat();
-
-  cv::cvtColor(input, output, CV_BGR2GRAY);
-}
-
-void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
+void PlateRect::threshold(AlgorithmJob*, PlateResult* result) {
   cv::Mat& input = result->oldMat();
   cv::Mat& output = result->newMat();
 
@@ -40,7 +34,7 @@ void Plate1::threshold(AlgorithmJob*, PlateResult* result) {
   cv::dilate(tmp, output, kernel);
 }
 
-void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
+void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
   // This code was written very quickly, it is therefore quite messy and needs
   // to be reworked
   /**
@@ -191,4 +185,5 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
 	  static_cast<RectPlate*>(result->original_->rotated()));
   Plate::crop(*result->original_, *result->rotated_, ret, ret);
 }
+}  // namespace algorithms
 }  // namespace c3picko

@@ -28,14 +28,12 @@ AlgorithmJob* AlgorithmManager::createJob(
   for (Algorithm* algo : algos_) {
 	if (algo->id() == algo_id) {
 	  Algorithm* new_algo = algo->cloneEmpty();
-
 	  AlgorithmJob* job = new AlgorithmJob(job_id, new_algo, settings, result,
 										   pool_, new_algo->maxMs(), nullptr);
 	  return job;
 	}
   }
-
-  return nullptr;
+  throw Exception("Could not find algorithm (id=" + algo_id + ")");
 }
 
 QList<Algorithm*> AlgorithmManager::algos() const { return algos_; }

@@ -1,5 +1,4 @@
-#ifndef COMMAND__INC_H_
-#define COMMAND_INC_H_
+#pragma once
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -30,4 +29,3 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply) {
 }
 }  // namespace pi
 }  // namespace c3picko
-#endif  // COMMAND_INC_H_

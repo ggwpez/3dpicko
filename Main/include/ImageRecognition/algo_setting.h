@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QColor>
-#include <QDebug>
 #include <QPair>
 #include <QString>
 #include <QVariant>
