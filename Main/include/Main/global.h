@@ -10,23 +10,27 @@
 
 class QCoreApplication;
 class QSslConfiguration;
-namespace c3picko {
+namespace c3picko
+{
 class ResourcePath;
 class Version;
 /**
  * @return Throws on error.
  */
-QSslConfiguration* LoadSslConfig(QSettings& settings);
+QSslConfiguration* loadSslConfig(QSettings& settings);
 
-ResourcePath Root();
-ResourcePath Etc();
-/**
- * Document Root for the webserver.
- */
-ResourcePath DocRoot();
-QString UploadFolderName();
-ResourcePath UploadFolder();
-ResourcePath reportFolder();
+namespace paths
+{
+	ResourcePath root();
+	ResourcePath etc();
+	/**
+	 * Document Root for the webserver.
+	 */
+	ResourcePath docRoot();
+	QString		 uploadFolderName();
+	ResourcePath uploadFolder();
+	ResourcePath reportFolder();
+} // namespace paths
 
 QString searchConfigFile(QStringList args);
 /**
@@ -34,14 +38,16 @@ QString searchConfigFile(QStringList args);
  * necessary directories.
  * @return getConfig()
  */
-QString Setup(QCoreApplication* app);
+QString setupGlobal(QCoreApplication* app);
+void	cleanupGlobal();
 
 /**
  * @return Path to serverconfig.ini. Only works after Setup
  */
-QString getConfigPath();
+QString		   getConfigPath();
 const Version& currentVersion();
-int getSubprocessTimeoutMs();
+int			   getSubprocessTimeoutMs();
+int			   getBacklogLength();
 
 /**
  * @brief logTextColor
@@ -79,4 +85,4 @@ int exitCodeSuccess();
  * Returns the default image extension for saving images.
  */
 char const* defaultImageExtension();
-}  // namespace c3picko
+} // namespace c3picko

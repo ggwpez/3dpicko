@@ -1,5 +1,6 @@
 CONFIG += warn_on qt
 CONFIG -= c++11
+CONFIG += c++14
 QT = network core websockets gui concurrent
 
 # The following define makes your compiler emit warnings if you use
@@ -20,7 +21,8 @@ DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -Wshadow -Wreturn-local-addr -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Wshadow -Wreturn-local-addr
+
 
 INCLUDEPATH += $$ROOTPATH/quazip
 DEPENDPATH += $$ROOTPATH/quazip

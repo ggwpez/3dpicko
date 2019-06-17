@@ -11,7 +11,7 @@
 namespace c3picko {
 SignalDaemon::SignalDaemon(QObject* _parent) : QObject(_parent) {
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, socketpair_))
-	qFatal("Couldn't create HUP socketpair");
+	qFatal("Couldn't create Signal socketpair");
 
   notifier_ = new QSocketNotifier(socketpair_[1], QSocketNotifier::Read, this);
   connect(notifier_, SIGNAL(activated(int)), this, SLOT(socketNotify(int)));
