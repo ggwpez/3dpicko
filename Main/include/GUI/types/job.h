@@ -66,13 +66,13 @@ class Job {
  private:
   ID id_;
   Image::ID img_id_;
+  std::shared_ptr<AlgorithmJob> result_job_;
+  QString name_, description_;
+  QDateTime created_;
   /**
    * @brief Saves a history of all past detections.
    * .top() is the current result.
    */
-  std::shared_ptr<AlgorithmJob> result_job_;
-  QString name_, description_;
-  QDateTime created_;
   QStack<AlgorithmResult::ID> result_ids_;
   Profile::ID printer_, socket_, plate_, octoprint_;
   int starting_row_, starting_col_;

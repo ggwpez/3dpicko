@@ -26,6 +26,9 @@ class RoundPlate : public Plate {
 
   virtual RoundPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
+  virtual bool isPixelPickable(int x, int y) const override;
+  virtual LocalColonyCoordinates mapImageToGlobal(double x,
+												  double y) const override;
 
   std::size_t m1() const;
 

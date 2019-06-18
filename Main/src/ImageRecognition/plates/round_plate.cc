@@ -95,6 +95,7 @@ RoundPlate* RoundPlate::rotated() const {
   // transform contours
   cv::transform(outer_border_, new_outer_border, T);
   cv::transform(inner_border_, new_inner_border, R);
+
   cv::transform(inner_border_, new_inner_border, T);
   cv::transform(markers_, new_markers, R);
   cv::transform(markers_, new_markers, T);
@@ -109,6 +110,14 @@ void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
 				   cv::Scalar::all(255), -1);
 
   out = in & mask;
+}
+
+bool RoundPlate::isPixelPickable(int x, int y) const {
+  return (cv::pointPolygonTest(inner_border_, cv::Point(x, y), false) > 0);
+}
+
+LocalColonyCoordinates RoundPlate::mapImageToGlobal(double x, double y) const {
+  return {float(x * 98 + 12.5), float((1.0 - y) * 92.5 - 2.8)};
 }
 
 template <>

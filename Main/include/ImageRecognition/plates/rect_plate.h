@@ -25,6 +25,9 @@ class RectPlate : public Plate {
 
   virtual RectPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
+  virtual bool isPixelPickable(int x, int y) const override;
+  virtual LocalColonyCoordinates mapImageToGlobal(double x,
+												  double y) const override;
 
   std::size_t a1() const;
   std::size_t h1() const;

@@ -143,6 +143,14 @@ void RectPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   out = in & mask;
 }
 
+bool RectPlate::isPixelPickable(int x, int y) const {
+  return (cv::pointPolygonTest(inner_border_, cv::Point(x, y), false) > 0);
+}
+
+LocalColonyCoordinates RectPlate::mapImageToGlobal(double x, double y) const {
+  return {float(x * 128), float((1.0 - y) * 85.9)};
+}
+
 const RectPlate::InnerBorder& RectPlate::innerBorder() const {
   return inner_border_;
 }

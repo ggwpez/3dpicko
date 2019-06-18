@@ -381,6 +381,7 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
 void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
+  job.setOctoprint(db_->defaultOctoconfig());
 
   // if (!db_->profiles().exists(job.printer()))
   // emit OnJobCreateError("Printer profile " + id + " unknown", client);
@@ -491,6 +492,8 @@ void APIController::startJob(Job::ID id, QObject* client) {
   PlateSocketProfile* socket(db_->profiles().get(job.socket()));
   PlateProfile* plate(db_->profiles().get(job.plate()));
   OctoConfig* octoprint(db_->profiles().get(job.octoprint()));
+  Plate* detectedPlate(db_->detectedPlates().get(job.imgID()).get());
+  Image const& image(db_->images().get(job.imgID()));
 
   OctoPrint* printer = new OctoPrint(*octoprint, this);
   GcodeGenerator gen(*socket, *printerp, *plate);
@@ -513,12 +516,17 @@ void APIController::startJob(Job::ID id, QObject* client) {
 		return emit OnJobStartError("Internal error: Cant find selected colony",
 									client);
 
-	  // Invert the y-axis. FIXME get the frame size from the plate profile
-	  // coords.push_back(Point(colony->x() * 128, (1.0 - colony->y()) * 85.9));
-	  coords.push_back(
-		  Point(colony->x() * 98 + 12.75,  // 11.5 is the offset of the plate
-										   // cutout to the left frame border.
-				(1.0 - colony->y()) * 92.5 - 2.8));
+	  LocalColonyCoordinates global(
+		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
+	  if (!detectedPlate->isPixelPickable(
+			  global.xCoordinate() * image.width(),
+			  global.yCoordinate() * image.height())) {
+		qWarning() << "cant not pick detected colony (id=" << colony->id()
+				   << ")";
+		continue;
+	  }
+
+	  coords.push_back(global);
 	  qDebug() << colony->x() << colony->y();
 	  qDebug() << coords.back().xCoordinate() << coords.back().yCoordinate();
 	  pick_positions.emplace(well, *it);
