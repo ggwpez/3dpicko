@@ -381,6 +381,7 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
 void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
+  job.setOctoprint(db_->defaultOctoconfig());
 
   // if (!db_->profiles().exists(job.printer()))
   // emit OnJobCreateError("Printer profile " + id + " unknown", client);
@@ -491,6 +492,8 @@ void APIController::startJob(Job::ID id, QObject* client) {
   PlateSocketProfile* socket(db_->profiles().get(job.socket()));
   PlateProfile* plate(db_->profiles().get(job.plate()));
   OctoConfig* octoprint(db_->profiles().get(job.octoprint()));
+  Plate* detectedPlate(db_->detectedPlates().get(job.imgID()).get());
+  Image const& image(db_->images().get(job.imgID()));
 
   OctoPrint* printer = new OctoPrint(*octoprint, this);
   GcodeGenerator gen(*socket, *printerp, *plate);
@@ -513,14 +516,17 @@ void APIController::startJob(Job::ID id, QObject* client) {
 		return emit OnJobStartError("Internal error: Cant find selected colony",
 									client);
 
-	  // Invert the y-axis. FIXME get the frame size from the plate profile
-	  // coords.push_back(Point(colony->x() * 128, (1.0 - colony->y()) * 85.9));
+	  // Assert that they are within the inner border
+	  if (!detectedPlate->isPixelPickable(colony->x() * image.width(),
+										  colony->y() * image.height())) {
+		qWarning() << "cant not pick detected colony (id=" << colony->id()
+				   << ")";
+		continue;
+	  }
+
+	  // Map the image coordinate
 	  coords.push_back(
-		  Point(colony->x() * 98 + 12.75,  // 11.5 is the offset of the plate
-										   // cutout to the left frame border.
-				(1.0 - colony->y()) * 92.5 - 2.8));
-	  qDebug() << colony->x() << colony->y();
-	  qDebug() << coords.back().xCoordinate() << coords.back().yCoordinate();
+		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
 	  pick_positions.emplace(well, *it);
 	  if (it + 1 != selected.end()) ++well;
 	}
@@ -539,14 +545,17 @@ void APIController::startJob(Job::ID id, QObject* client) {
   QStringList gcode_list;
   for (auto const& c : code) gcode_list << QString::fromStdString(c.ToString());
 
-  emit OnJobStarted(report, client);
   Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-  connect(cmd, &Command::OnStatusErr,
-		  [](QJsonValue status) { qWarning() << status.toString(); });
-  connect(cmd, &Command::OnNetworkErr,
-		  [](QString error) { qWarning() << error; });
+  connect(cmd, &Command::OnStatusErr, [this, client](QJsonValue status) {
+	emit OnJobStartError("Octoprint error: " + status.toString(), client);
+  });
+  connect(cmd, &Command::OnNetworkErr, [this, client](QString error) {
+	emit OnJobStartError("Network error: " + error, client);
+  });
+  connect(cmd, &Command::OnStatusOk,
+		  [this, report, client] { emit OnJobStarted(report, client); });
   connect(cmd, &Command::OnFinished, printer, &OctoPrint::deleteLater);
-  printer->SendCommand(cmd);  // TODO inform client
+  printer->SendCommand(cmd);
 }
 
 void APIController::shutdown(QObject*) {

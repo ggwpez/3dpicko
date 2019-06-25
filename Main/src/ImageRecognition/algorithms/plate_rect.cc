@@ -104,9 +104,9 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
 	auto const& polygon(*it);
 
 	double w =
-		math::distance(polygon[0].x, polygon[0].y, polygon[1].x, polygon[1].y);
-	double h = math::distance(polygon[1].x, polygon[1].y, polygon[2].x,
-							  polygon[2].y);  // TODO use cv::norm
+		math::norm_l2(polygon[0].x, polygon[0].y, polygon[1].x, polygon[1].y);
+	double h = math::norm_l2(polygon[1].x, polygon[1].y, polygon[2].x,
+							 polygon[2].y);  // TODO use cv::norm
 
 	double r(std::min(w, h) / double(std::max(w, h)));
 	if (!outer_side_ratio.contains(r))

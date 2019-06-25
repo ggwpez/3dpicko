@@ -68,8 +68,8 @@ std::vector<Colony> filterByMinDistanceSlow(std::vector<Colony> const& colonies,
 
   for (std::size_t x = 0; x < n; ++x) {
 	for (std::size_t y = x + 1; y < n; ++y) {
-	  half_dist.at<double>(x, y) = distance(colonies[x].x(), colonies[x].y(),
-											colonies[y].x(), colonies[y].y()) -
+	  half_dist.at<double>(x, y) = norm_l2(colonies[x].x(), colonies[x].y(),
+										   colonies[y].x(), colonies[y].y()) -
 								   2 * r - d;
 	}
   }

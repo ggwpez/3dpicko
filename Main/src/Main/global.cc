@@ -100,7 +100,7 @@ static void setupSignals(QCoreApplication* app) {
 	  app->quit();
   });
 #else
-  qInfo() << "UNIX Signal Setup skipped";
+  qDebug() << "UNIX Signal Setup skipped";
 #endif
 }
 

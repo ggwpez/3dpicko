@@ -7,1241 +7,305 @@
     "deleted_images": {
     },
     "deleted_jobs": {
-        "217": {
-            "created": {
-                "formatted": "25.04.19 15:36:17",
-                "ms": 1556199377518
+    },
+    "detected_plates": {
+        "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff": {
+            "data": {
+                "inner": [
+                    {
+                        "x": 264,
+                        "y": 1212
+                    },
+                    {
+                        "x": 326,
+                        "y": 1427
+                    },
+                    {
+                        "x": 404,
+                        "y": 1571
+                    },
+                    {
+                        "x": 533,
+                        "y": 1730
+                    },
+                    {
+                        "x": 653,
+                        "y": 1831
+                    },
+                    {
+                        "x": 775,
+                        "y": 1904
+                    },
+                    {
+                        "x": 1006,
+                        "y": 1985
+                    },
+                    {
+                        "x": 1180,
+                        "y": 2002
+                    },
+                    {
+                        "x": 1379,
+                        "y": 1989
+                    },
+                    {
+                        "x": 1689,
+                        "y": 1867
+                    },
+                    {
+                        "x": 1936,
+                        "y": 1656
+                    },
+                    {
+                        "x": 2046,
+                        "y": 1488
+                    },
+                    {
+                        "x": 2111,
+                        "y": 1324
+                    },
+                    {
+                        "x": 2144,
+                        "y": 1165
+                    },
+                    {
+                        "x": 2143,
+                        "y": 941
+                    },
+                    {
+                        "x": 2095,
+                        "y": 738
+                    },
+                    {
+                        "x": 2013,
+                        "y": 557
+                    },
+                    {
+                        "x": 1866,
+                        "y": 376
+                    },
+                    {
+                        "x": 1734,
+                        "y": 267
+                    },
+                    {
+                        "x": 1558,
+                        "y": 173
+                    },
+                    {
+                        "x": 1381,
+                        "y": 122
+                    },
+                    {
+                        "x": 1043,
+                        "y": 116
+                    },
+                    {
+                        "x": 887,
+                        "y": 156
+                    },
+                    {
+                        "x": 703,
+                        "y": 242
+                    },
+                    {
+                        "x": 596,
+                        "y": 318
+                    },
+                    {
+                        "x": 423,
+                        "y": 503
+                    },
+                    {
+                        "x": 337,
+                        "y": 652
+                    },
+                    {
+                        "x": 278,
+                        "y": 819
+                    },
+                    {
+                        "x": 255,
+                        "y": 989
+                    }
+                ],
+                "markers": [
+                    {
+                        "x": 1799,
+                        "y": 112
+                    },
+                    {
+                        "x": 110,
+                        "y": 1288
+                    },
+                    {
+                        "x": 2142,
+                        "y": 1650
+                    }
+                ],
+                "outer": [
+                    {
+                        "x": 27,
+                        "y": 1306
+                    },
+                    {
+                        "x": 431,
+                        "y": 1774
+                    },
+                    {
+                        "x": 698,
+                        "y": 1979
+                    },
+                    {
+                        "x": 837,
+                        "y": 2044
+                    },
+                    {
+                        "x": 1086,
+                        "y": 2100
+                    },
+                    {
+                        "x": 1249,
+                        "y": 2109
+                    },
+                    {
+                        "x": 1480,
+                        "y": 2070
+                    },
+                    {
+                        "x": 1687,
+                        "y": 1986
+                    },
+                    {
+                        "x": 2213,
+                        "y": 1698
+                    },
+                    {
+                        "x": 2256,
+                        "y": 1084
+                    },
+                    {
+                        "x": 2233,
+                        "y": 819
+                    },
+                    {
+                        "x": 2161,
+                        "y": 608
+                    },
+                    {
+                        "x": 1847,
+                        "y": 41
+                    },
+                    {
+                        "x": 1226,
+                        "y": 2
+                    },
+                    {
+                        "x": 934,
+                        "y": 33
+                    },
+                    {
+                        "x": 611,
+                        "y": 181
+                    },
+                    {
+                        "x": 355,
+                        "y": 429
+                    },
+                    {
+                        "x": 196,
+                        "y": 730
+                    }
+                ]
             },
-            "description": "",
-            "detections": [
-            ],
-            "id": "217",
-            "img_id": "be2639a21ee6d61f6be5bd9b47cbf17f841e7ae7c52df4e93466c6e27ddc3b3c",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "219": {
-            "created": {
-                "formatted": "25.04.19 15:40:19",
-                "ms": 1556199619004
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "219",
-            "img_id": "126f330542e0a500213c9d19fcec99d3be6ba03a0ba5fd275dc5b25653803da7",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "234": {
-            "created": {
-                "formatted": "06.05.19 17:24:26",
-                "ms": 1557156266460
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "234",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "249": {
-            "created": {
-                "formatted": "23.05.19 16:26:05",
-                "ms": 1558621565067
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "249",
-            "img_id": "e83a81d4af9108ede873f38146e2c4370ddf055f9b25f8fe689ce1ca831a05c6",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "250": {
-            "created": {
-                "formatted": "23.05.19 16:34:06",
-                "ms": 1558622046857
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "250",
-            "img_id": "e83a81d4af9108ede873f38146e2c4370ddf055f9b25f8fe689ce1ca831a05c6",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "266": {
-            "created": {
-                "formatted": "16.06.19 11:35:46",
-                "ms": 1560677746218
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "266",
-            "img_id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
-        },
-        "268": {
-            "created": {
-                "formatted": "16.06.19 11:41:57",
-                "ms": 1560678117136
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "268",
-            "img_id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
-            "name": "",
-            "printer": "302",
-            "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
-            "step": 0
+            "type": "round"
         }
     },
     "images": {
-        "126f330542e0a500213c9d19fcec99d3be6ba03a0ba5fd275dc5b25653803da7": {
-            "description": "descrtiption",
-            "height": 1219,
-            "id": "126f330542e0a500213c9d19fcec99d3be6ba03a0ba5fd275dc5b25653803da7",
-            "original_name": "IM000170.Tif",
-            "path": "/uploads/TgyZ3441",
-            "uploaded": {
-                "formatted": "25.04.19 15:37:03",
-                "ms": 1556199423727
-            },
-            "width": 1818
-        },
-        "266272c3c626938d5422952c7f788d8681713aea398baf2ea38988a17eb68c39": {
-            "description": "descrtiption",
-            "height": 1219,
-            "id": "266272c3c626938d5422952c7f788d8681713aea398baf2ea38988a17eb68c39",
-            "original_name": "IM000167.Tif",
-            "path": "/uploads/BAHTu422",
-            "uploaded": {
-                "formatted": "23.04.19 18:47:51",
-                "ms": 1556038071098
-            },
-            "width": 1818
-        },
         "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff": {
             "description": "descrtiption",
             "height": 2107,
             "id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
             "original_name": "PICT_20190425_161407.JPG",
-            "path": "/uploads/bBcPTbhb",
+            "path": "/uploads/VASHnoqw",
             "uploaded": {
-                "formatted": "16.06.19 11:35:33",
-                "ms": 1560677733963
+                "formatted": "17.06.19 19:02:44",
+                "ms": 1560790964483
             },
             "width": 2260
-        },
-        "2a38475ab8765c4a26dacd843264af8e65d9b6c82162797a2cd7f700da09e135": {
-            "description": "descrtiption",
-            "height": 2390,
-            "id": "2a38475ab8765c4a26dacd843264af8e65d9b6c82162797a2cd7f700da09e135",
-            "original_name": "PICT_20190425_161351.JPG",
-            "path": "/uploads/JQrTqoaG",
-            "uploaded": {
-                "formatted": "23.05.19 16:38:35",
-                "ms": 1558622315316
-            },
-            "width": 2560
-        },
-        "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653": {
-            "description": "descrtiption",
-            "height": 2285,
-            "id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "original_name": "PICT_20190425_163101.JPG",
-            "path": "/uploads/Tbvo3539",
-            "uploaded": {
-                "formatted": "25.04.19 16:34:25",
-                "ms": 1556202865215
-            },
-            "width": 3404
-        },
-        "3be8a14f829853d50a68446d2a5081227c52b98fbd87249cb640053ae731a7c2": {
-            "description": "descrtiption",
-            "height": 1220,
-            "id": "3be8a14f829853d50a68446d2a5081227c52b98fbd87249cb640053ae731a7c2",
-            "original_name": "IM000168.Tif",
-            "path": "/uploads/efo32677",
-            "uploaded": {
-                "formatted": "23.04.19 18:19:09",
-                "ms": 1556036349795
-            },
-            "width": 1818
-        },
-        "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae": {
-            "description": "descrtiption",
-            "height": 2532,
-            "id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "original_name": "PICT_20190308_172849.JPG",
-            "path": "/uploads/dfXftRjy",
-            "uploaded": {
-                "formatted": "06.05.19 17:24:21",
-                "ms": 1557156261408
-            },
-            "width": 3762
-        },
-        "62d5c15a4823ee268d00a0c7c893b548d9f2b56ef2233561b09a1bb9b82a43b5": {
-            "description": "descrtiption",
-            "height": 2143,
-            "id": "62d5c15a4823ee268d00a0c7c893b548d9f2b56ef2233561b09a1bb9b82a43b5",
-            "original_name": "PICT_20190523_164904.JPG",
-            "path": "/uploads/NFnweUeB",
-            "uploaded": {
-                "formatted": "23.05.19 16:55:19",
-                "ms": 1558623319629
-            },
-            "width": 2301
-        },
-        "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def": {
-            "description": "descrtiption",
-            "height": 2142,
-            "id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "original_name": "PICT_20190523_165053.JPG",
-            "path": "/uploads/CAkBOVvY",
-            "uploaded": {
-                "formatted": "23.05.19 17:00:45",
-                "ms": 1558623645027
-            },
-            "width": 2302
-        },
-        "97faba114f35572bf54b45b89d5615c9200b20b63fedec5720ba15384226081e": {
-            "description": "descrtiption",
-            "height": 2142,
-            "id": "97faba114f35572bf54b45b89d5615c9200b20b63fedec5720ba15384226081e",
-            "original_name": "PICT_20190523_165053.JPG",
-            "path": "/uploads/vWbhZklg",
-            "uploaded": {
-                "formatted": "23.05.19 16:55:26",
-                "ms": 1558623326900
-            },
-            "width": 2302
-        },
-        "be2639a21ee6d61f6be5bd9b47cbf17f841e7ae7c52df4e93466c6e27ddc3b3c": {
-            "description": "descrtiption",
-            "height": 1220,
-            "id": "be2639a21ee6d61f6be5bd9b47cbf17f841e7ae7c52df4e93466c6e27ddc3b3c",
-            "original_name": "IM000169.Tif",
-            "path": "/uploads/dZVwb947",
-            "uploaded": {
-                "formatted": "25.04.19 14:58:54",
-                "ms": 1556197134468
-            },
-            "width": 1818
-        },
-        "e83a81d4af9108ede873f38146e2c4370ddf055f9b25f8fe689ce1ca831a05c6": {
-            "description": "descrtiption",
-            "height": 2390,
-            "id": "e83a81d4af9108ede873f38146e2c4370ddf055f9b25f8fe689ce1ca831a05c6",
-            "original_name": "PICT_20190425_161351.JPG",
-            "path": "/uploads/uEMgQHWZ",
-            "uploaded": {
-                "formatted": "23.05.19 16:08:28",
-                "ms": 1558620508507
-            },
-            "width": 2561
         }
     },
-    "job_id": 271,
+    "job_id": 275,
     "jobs": {
-        "210": {
+        "271": {
             "created": {
-                "formatted": "23.04.19 18:19:43",
-                "ms": 1556036383663
+                "formatted": "17.06.19 19:02:47",
+                "ms": 1560790967905
             },
             "description": "",
             "detections": [
             ],
-            "id": "210",
-            "img_id": "3be8a14f829853d50a68446d2a5081227c52b98fbd87249cb640053ae731a7c2",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_0--23.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "211": {
-            "created": {
-                "formatted": "23.04.19 18:27:53",
-                "ms": 1556036873972
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "211",
-            "img_id": "3be8a14f829853d50a68446d2a5081227c52b98fbd87249cb640053ae731a7c2",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_1--23.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "212": {
-            "created": {
-                "formatted": "23.04.19 18:32:44",
-                "ms": 1556037164986
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "212",
-            "img_id": "3be8a14f829853d50a68446d2a5081227c52b98fbd87249cb640053ae731a7c2",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_2--23.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "213": {
-            "created": {
-                "formatted": "23.04.19 18:38:41",
-                "ms": 1556037521885
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "213",
-            "img_id": "3be8a14f829853d50a68446d2a5081227c52b98fbd87249cb640053ae731a7c2",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_3--23.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "214": {
-            "created": {
-                "formatted": "23.04.19 18:47:54",
-                "ms": 1556038074387
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "214",
-            "img_id": "266272c3c626938d5422952c7f788d8681713aea398baf2ea38988a17eb68c39",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_4--23.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "215": {
-            "created": {
-                "formatted": "23.04.19 18:50:02",
-                "ms": 1556038202871
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "215",
-            "img_id": "266272c3c626938d5422952c7f788d8681713aea398baf2ea38988a17eb68c39",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_5--23.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "216": {
-            "created": {
-                "formatted": "25.04.19 15:00:25",
-                "ms": 1556197225383
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "216",
-            "img_id": "be2639a21ee6d61f6be5bd9b47cbf17f841e7ae7c52df4e93466c6e27ddc3b3c",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_6--25.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "218": {
-            "created": {
-                "formatted": "25.04.19 15:37:09",
-                "ms": 1556199429667
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "218",
-            "img_id": "126f330542e0a500213c9d19fcec99d3be6ba03a0ba5fd275dc5b25653803da7",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_7--25.04.19.zip",
-            "socket": "303",
-            "starting_col": 7,
-            "starting_row": 1,
-            "step": 0
-        },
-        "220": {
-            "created": {
-                "formatted": "25.04.19 15:41:58",
-                "ms": 1556199718934
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "220",
-            "img_id": "126f330542e0a500213c9d19fcec99d3be6ba03a0ba5fd275dc5b25653803da7",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_8--25.04.19.zip",
-            "socket": "303",
-            "starting_col": 7,
-            "starting_row": 1,
-            "step": 0
-        },
-        "221": {
-            "created": {
-                "formatted": "25.04.19 16:34:44",
-                "ms": 1556202884893
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "221",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_9--25.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "222": {
-            "created": {
-                "formatted": "26.04.19 16:14:57",
-                "ms": 1556288097344
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "222",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_10--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "223": {
-            "created": {
-                "formatted": "26.04.19 16:18:16",
-                "ms": 1556288296532
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "223",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_11--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "224": {
-            "created": {
-                "formatted": "26.04.19 16:20:45",
-                "ms": 1556288445676
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "224",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_12--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "225": {
-            "created": {
-                "formatted": "26.04.19 16:22:08",
-                "ms": 1556288528194
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "225",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_13--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "226": {
-            "created": {
-                "formatted": "26.04.19 16:25:02",
-                "ms": 1556288702939
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "226",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_14--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "227": {
-            "created": {
-                "formatted": "26.04.19 16:26:52",
-                "ms": 1556288812135
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "227",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_15--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "228": {
-            "created": {
-                "formatted": "26.04.19 16:28:34",
-                "ms": 1556288914355
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "228",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_16--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "229": {
-            "created": {
-                "formatted": "26.04.19 16:31:49",
-                "ms": 1556289109002
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "229",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_17--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "230": {
-            "created": {
-                "formatted": "26.04.19 16:35:25",
-                "ms": 1556289325529
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "230",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_18--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "231": {
-            "created": {
-                "formatted": "26.04.19 16:37:31",
-                "ms": 1556289451839
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "231",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_19--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "232": {
-            "created": {
-                "formatted": "26.04.19 16:38:48",
-                "ms": 1556289528039
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "232",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_20--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "233": {
-            "created": {
-                "formatted": "26.04.19 16:40:38",
-                "ms": 1556289638800
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "233",
-            "img_id": "314ace9e70cb51c603f39adc334cb71092311cda688f9de17bc3b6132c074653",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_21--26.04.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "235": {
-            "created": {
-                "formatted": "06.05.19 17:26:45",
-                "ms": 1557156405245
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "235",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_22--06.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "236": {
-            "created": {
-                "formatted": "06.05.19 17:28:33",
-                "ms": 1557156513044
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "236",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_23--06.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "237": {
-            "created": {
-                "formatted": "13.05.19 14:53:24",
-                "ms": 1557752004525
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "237",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_24--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "238": {
-            "created": {
-                "formatted": "13.05.19 14:53:59",
-                "ms": 1557752039328
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "238",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_25--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "239": {
-            "created": {
-                "formatted": "13.05.19 15:01:57",
-                "ms": 1557752517377
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "239",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_26--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "240": {
-            "created": {
-                "formatted": "13.05.19 15:04:01",
-                "ms": 1557752641199
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "240",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_27--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "241": {
-            "created": {
-                "formatted": "13.05.19 15:19:31",
-                "ms": 1557753571983
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "241",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_28--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "242": {
-            "created": {
-                "formatted": "13.05.19 15:22:06",
-                "ms": 1557753726169
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "242",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_29--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "243": {
-            "created": {
-                "formatted": "13.05.19 15:38:48",
-                "ms": 1557754728209
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "243",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_30--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "244": {
-            "created": {
-                "formatted": "13.05.19 15:51:20",
-                "ms": 1557755480727
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "244",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_31--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "245": {
-            "created": {
-                "formatted": "13.05.19 16:16:22",
-                "ms": 1557756982917
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "245",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_32--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "246": {
-            "created": {
-                "formatted": "13.05.19 16:18:42",
-                "ms": 1557757122602
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "246",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_33--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "247": {
-            "created": {
-                "formatted": "13.05.19 16:20:38",
-                "ms": 1557757238556
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "247",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_34--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "248": {
-            "created": {
-                "formatted": "13.05.19 16:22:25",
-                "ms": 1557757345650
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "248",
-            "img_id": "5726ad1052035e862689461b8f6a13021680ef8283fb9eb362c6ed727a0181ae",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_35--13.05.19.zip",
-            "socket": "303",
-            "starting_col": 12,
-            "starting_row": 8,
-            "step": 0
-        },
-        "251": {
-            "created": {
-                "formatted": "23.05.19 16:34:18",
-                "ms": 1558622058717
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "251",
-            "img_id": "e83a81d4af9108ede873f38146e2c4370ddf055f9b25f8fe689ce1ca831a05c6",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_36--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "252": {
-            "created": {
-                "formatted": "23.05.19 16:44:08",
-                "ms": 1558622648901
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "252",
-            "img_id": "2a38475ab8765c4a26dacd843264af8e65d9b6c82162797a2cd7f700da09e135",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_37--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "253": {
-            "created": {
-                "formatted": "23.05.19 16:55:32",
-                "ms": 1558623332555
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "253",
-            "img_id": "97faba114f35572bf54b45b89d5615c9200b20b63fedec5720ba15384226081e",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_38--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "254": {
-            "created": {
-                "formatted": "23.05.19 17:00:55",
-                "ms": 1558623655983
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "254",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_39--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "255": {
-            "created": {
-                "formatted": "23.05.19 17:05:53",
-                "ms": 1558623953430
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "255",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_40--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "256": {
-            "created": {
-                "formatted": "23.05.19 17:09:10",
-                "ms": 1558624150037
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "256",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_41--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "257": {
-            "created": {
-                "formatted": "23.05.19 17:18:07",
-                "ms": 1558624687325
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "257",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_42--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "258": {
-            "created": {
-                "formatted": "23.05.19 17:19:55",
-                "ms": 1558624795641
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "258",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_43--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "259": {
-            "created": {
-                "formatted": "23.05.19 17:21:30",
-                "ms": 1558624890739
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "259",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_44--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "260": {
-            "created": {
-                "formatted": "23.05.19 17:47:38",
-                "ms": 1558626458302
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "260",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_45--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "261": {
-            "created": {
-                "formatted": "23.05.19 17:49:16",
-                "ms": 1558626556867
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "261",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_46--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "262": {
-            "created": {
-                "formatted": "23.05.19 17:50:35",
-                "ms": 1558626635563
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "262",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_47--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "263": {
-            "created": {
-                "formatted": "23.05.19 17:51:14",
-                "ms": 1558626674118
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "263",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_48--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "264": {
-            "created": {
-                "formatted": "23.05.19 17:57:28",
-                "ms": 1558627048894
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "264",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_49--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "265": {
-            "created": {
-                "formatted": "23.05.19 17:57:52",
-                "ms": 1558627072801
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "265",
-            "img_id": "78d0c2d13cd0358cc3aa60db92d225cd586452285b97e0e94e10f5f101c52def",
-            "name": "",
-            "printer": "302",
-            "report": "/reports/report_50--23.05.19.zip",
-            "socket": "303",
-            "starting_col": 1,
-            "starting_row": 1,
-            "step": 0
-        },
-        "267": {
-            "created": {
-                "formatted": "16.06.19 11:37:19",
-                "ms": 1560677839467
-            },
-            "description": "",
-            "detections": [
-            ],
-            "id": "267",
+            "id": "271",
             "img_id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
             "name": "",
             "printer": "302",
             "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
+            "starting_col": 1,
+            "starting_row": 1,
             "step": 0
         },
-        "269": {
+        "272": {
             "created": {
-                "formatted": "16.06.19 12:12:25",
-                "ms": 1560679945329
+                "formatted": "17.06.19 19:09:39",
+                "ms": 1560791379888
             },
             "description": "",
             "detections": [
             ],
-            "id": "269",
+            "id": "272",
             "img_id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
             "name": "",
             "printer": "302",
+            "report": "/reports/report_51--17.06.19.zip",
             "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
+            "starting_col": 1,
+            "starting_row": 1,
             "step": 0
         },
-        "270": {
+        "273": {
             "created": {
-                "formatted": "16.06.19 14:55:33",
-                "ms": 1560689733102
+                "formatted": "17.06.19 19:11:17",
+                "ms": 1560791477603
             },
             "description": "",
             "detections": [
             ],
-            "id": "270",
+            "id": "273",
             "img_id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
             "name": "",
             "printer": "302",
+            "report": "/reports/report_52--17.06.19.zip",
             "socket": "303",
-            "starting_col": 0,
-            "starting_row": 0,
+            "starting_col": 1,
+            "starting_row": 1,
+            "step": 0
+        },
+        "274": {
+            "created": {
+                "formatted": "18.06.19 11:50:53",
+                "ms": 1560851453428
+            },
+            "description": "",
+            "detections": [
+            ],
+            "id": "274",
+            "img_id": "29a13ea86b234d40ce17bbd181a3260b3872547264cacee8fd0c5c9bc2b201ff",
+            "name": "",
+            "printer": "302",
+            "report": "/reports/report_53--18.06.19.zip",
+            "socket": "303",
+            "starting_col": 1,
+            "starting_row": 1,
             "step": 0
         }
     },
@@ -1318,6 +382,7 @@
                 "height_source_plate": 16.5,
                 "number_of_columns": 12,
                 "number_of_rows": 8,
+                "plate_type": "kROUND",
                 "times_to_lower_filament_into_well": 2,
                 "well_depth": 15.5,
                 "well_spacing_center_to_center": 9
@@ -1337,6 +402,7 @@
                 "height_source_plate": 14.5,
                 "number_of_columns": 24,
                 "number_of_rows": 16,
+                "plate_type": "kRECT",
                 "times_to_lower_filament_into_well": 2,
                 "well_depth": 10,
                 "well_spacing_center_to_center": 4.5
@@ -1355,9 +421,9 @@
             "type": "octoprint-profile"
         }
     },
-    "report_id": 51,
-    "result_id": 279,
-    "result_job_id": 273,
+    "report_id": 54,
+    "result_id": 284,
+    "result_job_id": 278,
     "versions": {
     },
     "versions_of_interest": [

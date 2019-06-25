@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "Gcode/point.h"
 #include "ImageRecognition/algorithms/helper.h"
 #include "Main/marshalling.h"
 
@@ -33,6 +34,30 @@ class Plate {
    * @param out Has the same saze as in .
    */
   virtual void mask(cv::Mat const& in, cv::Mat& out) const = 0;
+
+  /**
+   * @brief isInsideSafetyMargin
+   * @return Whether the Colony can be picked .
+   */
+  virtual bool isInsideSafetyMargin(cv::Point2d pos,
+									math::UnitValue radius) const = 0;
+
+  /**
+   * @brief isPickable Is the colony at this pixel coordinate pickable ?
+   * @param x
+   * @param y
+   * @return
+   */
+  virtual bool isPixelPickable(int x, int y) const = 0;
+
+  /**
+   * @brief map_image_to_global Maps colony image coordinates to global
+   * coordinates .
+   * @param x X Image coordinate of the colony .
+   * @param y Y Image coordinate of the colony .
+   * @return Global coordinate of the colony .
+   */
+  virtual LocalColonyCoordinates mapImageToGlobal(double x, double y) const = 0;
 
   cv::Point2d center() const;
   const cv::Mat& rotationMatrix() const;

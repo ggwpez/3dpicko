@@ -104,10 +104,18 @@ QString rangeToString(math::Range<double> const& v);
 QByteArray matToBase64(cv::Mat const&);
 
 /**
+ * @brief L1-Norm of (x1,y1) and (x2,y2)
+ */
+template <typename T>
+inline T norm_l1(T x1, T y1, T x2, T y2) {
+  return std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2);
+}
+
+/**
  * @brief L2-Norm of (x1,y1) and (x2,y2)
  */
 template <typename T>
-inline T distance(T x1, T y1, T x2, T y2) {
+inline T norm_l2(T x1, T y1, T x2, T y2) {
   return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
 }
 

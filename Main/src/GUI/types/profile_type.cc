@@ -15,7 +15,7 @@ QString profileToString(ProfileType val) {
 	  return "socket-profile";
   }
 
-  throw Exception("Unknown profile type: " + (int)val);
+  throw Exception("Unknown profile type: " + QString::number(int(val)));
 }
 
 ProfileType profileFromString(QString val) {

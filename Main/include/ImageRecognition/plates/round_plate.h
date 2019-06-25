@@ -26,6 +26,11 @@ class RoundPlate : public Plate {
 
   virtual RoundPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
+  virtual bool isInsideSafetyMargin(cv::Point2d pos,
+									math::UnitValue radius) const override;
+  virtual bool isPixelPickable(int x, int y) const override;
+  virtual LocalColonyCoordinates mapImageToGlobal(double x,
+												  double y) const override;
 
   std::size_t m1() const;
 
@@ -51,6 +56,12 @@ class RoundPlate : public Plate {
    * @brief Inner border of the plate, approximated as hexagon
    */
   InnerBorder const inner_border_;
+
+  /**
+   * @brief inner_border_aabb_ Square of half the width of the AABB of the inner
+   * border . Used to speed up safety margin calculation .
+   */
+  double const inner_border_aabb_width_2_squared_;
 
   /**
    * @brief The three distinct corners from the round plate .

@@ -54,7 +54,7 @@ bool Colony::included() const { return excluded_by_.isEmpty(); }
 
 AlgoSetting::ID Colony::excludedBy() const { return excluded_by_; }
 
-void Colony::setExcluded_by(const AlgoSetting::ID& excluded_by) {
+void Colony::setExcludedBy(const AlgoSetting::ID& excluded_by) {
   excluded_by_ = excluded_by;
 }
 
