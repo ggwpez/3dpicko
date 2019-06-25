@@ -25,6 +25,8 @@ class RectPlate : public Plate {
 
   virtual RectPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
+  virtual bool isInsideSafetyMargin(cv::Point2d pos,
+									math::UnitValue radius) const override;
   virtual bool isPixelPickable(int x, int y) const override;
   virtual LocalColonyCoordinates mapImageToGlobal(double x,
 												  double y) const override;
@@ -61,6 +63,12 @@ class RectPlate : public Plate {
    * @brief Inner border of the plate, approximated as hexagon
    */
   InnerBorder inner_border_;
+
+  /**
+   * @brief inner_border_bb_ AABB of the inner border .
+   * Used for quickly calculating Safet Margin collision .
+   */
+  cv::Rect const inner_border_aabb_;
 
   /**
    * @brief A1 well index in outer_center_

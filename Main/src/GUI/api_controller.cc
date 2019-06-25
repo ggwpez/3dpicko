@@ -516,19 +516,17 @@ void APIController::startJob(Job::ID id, QObject* client) {
 		return emit OnJobStartError("Internal error: Cant find selected colony",
 									client);
 
-	  LocalColonyCoordinates global(
-		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
-	  if (!detectedPlate->isPixelPickable(
-			  global.xCoordinate() * image.width(),
-			  global.yCoordinate() * image.height())) {
+	  // Assert that they are within the inner border
+	  if (!detectedPlate->isPixelPickable(colony->x() * image.width(),
+										  colony->y() * image.height())) {
 		qWarning() << "cant not pick detected colony (id=" << colony->id()
 				   << ")";
 		continue;
 	  }
 
-	  coords.push_back(global);
-	  qDebug() << colony->x() << colony->y();
-	  qDebug() << coords.back().xCoordinate() << coords.back().yCoordinate();
+	  // Map the image coordinate
+	  coords.push_back(
+		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
 	  pick_positions.emplace(well, *it);
 	  if (it + 1 != selected.end()) ++well;
 	}
@@ -547,14 +545,17 @@ void APIController::startJob(Job::ID id, QObject* client) {
   QStringList gcode_list;
   for (auto const& c : code) gcode_list << QString::fromStdString(c.ToString());
 
-  emit OnJobStarted(report, client);
   Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-  connect(cmd, &Command::OnStatusErr,
-		  [](QJsonValue status) { qWarning() << status.toString(); });
-  connect(cmd, &Command::OnNetworkErr,
-		  [](QString error) { qWarning() << error; });
+  connect(cmd, &Command::OnStatusErr, [this, client](QJsonValue status) {
+	emit OnJobStartError("Octoprint error: " + status.toString(), client);
+  });
+  connect(cmd, &Command::OnNetworkErr, [this, client](QString error) {
+	emit OnJobStartError("Network error: " + error, client);
+  });
+  connect(cmd, &Command::OnStatusOk,
+		  [this, report, client] { emit OnJobStarted(report, client); });
   connect(cmd, &Command::OnFinished, printer, &OctoPrint::deleteLater);
-  printer->SendCommand(cmd);  // TODO inform client
+  printer->SendCommand(cmd);
 }
 
 void APIController::shutdown(QObject*) {

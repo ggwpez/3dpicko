@@ -1,5 +1,6 @@
 #include "ImageRecognition/plates/rect_plate.h"
 #include <QJsonArray>
+#include <opencv2/highgui.hpp>
 
 namespace c3picko {
 // TODO im not proud
@@ -13,7 +14,10 @@ RectPlate::RectPlate(const OuterBorder& outer_border,
 				h1_ = findA1H1(outer_border, inner_border).second),
 			cv::boundingRect(outer_border)),
 	  outer_border_(outer_border),
-	  inner_border_(inner_border) {
+	  inner_border_(inner_border),
+	  inner_border_aabb_(cv::boundingRect(inner_border)),
+	  inner_center_(math::gravityCenter(inner_border)),
+	  outer_center_(math::gravityCenter(outer_border)) {
   center_error_ = std::abs(1 - outer_center_.x / inner_center_.x) +
 				  std::abs(1 - outer_center_.y / inner_center_.y);
 }
@@ -26,6 +30,7 @@ RectPlate::RectPlate(const OuterBorder& outer_border,
 	: Plate(center, angle, aabb),
 	  outer_border_(outer_border),
 	  inner_border_(inner_border),
+	  inner_border_aabb_(cv::boundingRect(inner_border)),
 	  a1_(a1),
 	  h1_(h1),
 	  inner_center_(inner_center),
@@ -120,12 +125,18 @@ RectPlate* RectPlate::rotated() const {
   OuterBorder new_outer_border;
   InnerBorder new_inner_border;
 
-  // transform contours
-  cv::transform(outer_border_, new_outer_border, rotationMatrix());
-  cv::transform(inner_border_, new_inner_border, rotationMatrix());
-
-  cv::Rect aabb = cv::boundingRect(new_outer_border);
+  cv::Mat R = rotationMatrix();
+  cv::transform(outer_border_, new_outer_border, R);
+  // transform image
+  cv::Rect aabb(cv::boundingRect(new_outer_border));
   cv::Point2d left_top(aabb.x, aabb.y);
+
+  cv::Mat T = (cv::Mat_<double>(2, 3) << 1, 0, -left_top.x, 0, 1, -left_top.y);
+  // transform contours
+  cv::transform(outer_border_, new_outer_border, T);
+  cv::transform(inner_border_, new_inner_border, R);
+
+  cv::transform(inner_border_, new_inner_border, T);
 
   // TODO is center_error_ still correct?
   return new RectPlate(new_outer_border, new_inner_border, a1_, h1_,
@@ -141,6 +152,16 @@ void RectPlate::mask(const cv::Mat& in, cv::Mat& out) const {
 				   0, cv::Scalar::all(255), -1);
 
   out = in & mask;
+}
+
+bool RectPlate::isInsideSafetyMargin(cv::Point2d pos,
+									 math::UnitValue radius) const {
+  cv::Rect rescaled(
+	  inner_border_aabb_.x + inner_border_aabb_.width * (1 - radius) / 2,
+	  inner_border_aabb_.y + inner_border_aabb_.height * (1 - radius) / 2,
+	  inner_border_aabb_.width * radius, inner_border_aabb_.height * radius);
+
+  return rescaled.contains(pos);
 }
 
 bool RectPlate::isPixelPickable(int x, int y) const {

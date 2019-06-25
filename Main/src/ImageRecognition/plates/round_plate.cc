@@ -13,6 +13,8 @@ RoundPlate::RoundPlate(const RoundPlate::OuterBorder& outer_border,
 			cv::boundingRect(outer_border)),
 	  outer_border_(outer_border),
 	  inner_border_(inner_border),
+	  inner_border_aabb_width_2_squared_(
+		  std::pow(cv::boundingRect(inner_border).width / 2, 2)),
 	  markers_(markers),
 	  m1_(findM1(markers)) {}
 
@@ -23,6 +25,8 @@ RoundPlate::RoundPlate(const RoundPlate::OuterBorder& outer_border,
 	: Plate(center, angle, aabb),
 	  outer_border_(outer_border),
 	  inner_border_(inner_border),
+	  inner_border_aabb_width_2_squared_(
+		  std::pow(cv::boundingRect(inner_border).width / 2, 2)),
 	  markers_(markers),
 	  m1_(m1) {}
 
@@ -112,6 +116,12 @@ void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   out = in & mask;
 }
 
+bool RoundPlate::isInsideSafetyMargin(cv::Point2d pos,
+									  math::UnitValue radius) const {
+  return (math::norm_l1(pos.x, pos.y, center_.x, center_.y) <=
+		  inner_border_aabb_width_2_squared_ * radius * radius);
+}
+
 bool RoundPlate::isPixelPickable(int x, int y) const {
   return (cv::pointPolygonTest(inner_border_, cv::Point(x, y), false) > 0);
 }
@@ -147,9 +157,9 @@ RoundPlate* Marshalling::fromJson(const QJsonObject& obj) {
   QJsonArray jinner(obj["inner"].toArray()), jouter(obj["outer"].toArray()),
 	  jmarkers(obj["markers"].toArray());
 
-  for (std::size_t i = 0; i < jinner.size(); ++i)
+  for (int i = 0; i < jinner.size(); ++i)
 	inner.push_back(Marshalling::fromJson<cv::Point>(jinner[i]));
-  for (std::size_t i = 0; i < jouter.size(); ++i)
+  for (int i = 0; i < jouter.size(); ++i)
 	outer.push_back(Marshalling::fromJson<cv::Point>(jouter[i]));
   for (std::size_t i = 0; i < markers.size(); ++i)
 	markers[i] = Marshalling::fromJson<cv::Point>(jmarkers[i]);

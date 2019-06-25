@@ -36,6 +36,13 @@ class Plate {
   virtual void mask(cv::Mat const& in, cv::Mat& out) const = 0;
 
   /**
+   * @brief isInsideSafetyMargin
+   * @return Whether the Colony can be picked .
+   */
+  virtual bool isInsideSafetyMargin(cv::Point2d pos,
+									math::UnitValue radius) const = 0;
+
+  /**
    * @brief isPickable Is the colony at this pixel coordinate pickable ?
    * @param x
    * @param y

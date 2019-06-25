@@ -79,7 +79,7 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
 	// Cluster points of the outer contour
 	for (std::size_t i = 0; i < raw_edges[outer].size(); ++i) {
 	  cv::Point v(raw_edges[outer][i] - center);
-	  double d = math::distance(0, 0, v.x, v.y);
+	  double d = math::norm_l2(0, 0, v.x, v.y);
 
 	  if (d > outer_r * margin_r) outer_points.push_back(raw_edges[outer][i]);
 	}
