@@ -101,7 +101,7 @@ void WsServer::clientError(QAbstractSocket::SocketError ec) {
 
 bool WsServer::StartListen() {
   if (server_->listen(QHostAddress(host_), port_)) {
-	qDebug("WebSocket server at %s:%d", qPrintable(host_), port_);
+	qDebug("WebSocket  %s:%d", qPrintable(host_), port_);
 
 	connect(server_, &QWebSocketServer::acceptError, this,
 			&WsServer::acceptError);

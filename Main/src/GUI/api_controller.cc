@@ -113,55 +113,39 @@ QJsonObject APIController::createVersionList() const {
 }
 
 void APIController::DeleteImage(Image::ID id, QObject* client) {
-  // Does the image exist?
-  if (!db_->images().exists(id)) {
-	emit OnImageDeleteError(id, client);
-	return;
-  }
-  // Is the image	used by a job?
+  if (!db_->images().exists(id)) return emit OnImageDeleteError(id, client);
+  // Is the image	not used by a job?
   for (auto const& pair : db_->jobs()) {
-	if (pair.second.imgID() == id) {
-	  emit OnImageDeleteError(id, client);
-	  return;
-	}
+	if (pair.second.imgID() == id) return emit OnImageDeleteError(id, client);
   }
 
-  Image image = db_->images().get(id);
+  Image& image = db_->images().get(id);
   image.clearCache();
 
   if (image.deleteFile()) {
-	db_->deletedImages().add(id, image);
-	db_->images().remove(
-		id);  // Carefull here, if we use a reference to image instead, it will
+	db_->images().remove(id);
+	// Image& invalid since here
 
 	if (db_->detectedPlates().exists(id)) db_->detectedPlates().remove(id);
 
-	// go out of scope after deletion
-	emit OnImageDeleted(image.id(), client);
-  } else {
+	emit OnImageDeleted(id, client);
+  } else
 	emit OnImageDeleteError(image.path().toSystemAbsolute(), client);
-  }
 }
 
 void APIController::DeleteJob(Job::ID id, QObject* client) {
-  // Does the job exist?
-  if (!db_->jobs().exists(id)) {
+  if (!db_->jobs().exists(id))
 	emit OnJobDeleteError(id, client);
-  } else {
-	Job job = db_->jobs().get(id);
+  else {
 	db_->jobs().remove(id);
-	db_->deletedJobs().add(id, job);
-
 	emit OnJobDeleted(id, client);
   }
 }
 
 void APIController::UploadImage(Image image, QObject* client) {
   std::shared_ptr<cv::Mat> raw(std::make_shared<cv::Mat>());
-  if (!image.readCvMat(*raw)) {
-	emit OnImageCreateError("Could not read/find image", client);
-	return;
-  }
+  if (!image.readCvMat(*raw))
+	return emit OnImageCreateError("Could not read/find image", client);
 
   PlateProfile* plate(db_->profiles().get(db_->defaultPlate()));
   Algorithm::ID aid(toString(plate->plateType()));
@@ -233,18 +217,18 @@ void APIController::createSettingsProfile(Profile& profile_wo_id,
 }
 
 void APIController::updateSettingsProfile(Profile& profile, QObject* client) {
-  if (!db_->profiles().exists(profile.id())) {
+  if (!db_->profiles().exists(profile.id()))
 	emit OnProfileUpdateError(profile.id(), client);
-  } else {
+  else {
 	db_->profiles().add(profile.id(), profile);
 	emit OnProfileUpdated(profile, client);
   }
 }
 
 void APIController::deleteSettingsProfile(Profile::ID id, QObject* client) {
-  if (!db_->profiles().exists(id)) {
+  if (!db_->profiles().exists(id))
 	emit OnProfileDeleteError(id, client);
-  } else if (isProfileUsedByJob(id))
+  else if (isProfileUsedByJob(id))
 	emit OnProfileDeleteError("used by a job", client);
   else if (isProfileDefault(id))
 	emit OnProfileDeleteError("is default", client);
@@ -255,10 +239,10 @@ void APIController::deleteSettingsProfile(Profile::ID id, QObject* client) {
 }
 
 void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
-  if (!db_->profiles().exists(id)) {
+  if (!db_->profiles().exists(id))
 	emit OnDefaultSettingsProfileSetError("Profile " + id + " not found",
 										  client);
-  } else {
+  else {
 	Profile const& profile = db_->profiles().get(id);
 
 	if (profile.type() == ProfileType::PRINTER)
@@ -272,8 +256,7 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 	else {
 	  qCritical() << "Database corrupt or wrong version: Profile" << id
 				  << "had unknown type" << (int)profile.type();
-	  emit OnDefaultSettingsProfileSetError("Database error", client);
-	  return;
+	  return emit OnDefaultSettingsProfileSetError("Database error", client);
 	}
 
 	emit OnDefaultSettingsProfileSet(id, client);
@@ -282,11 +265,11 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 
 void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
 									int col, QObject* client) {
-  if (!db_->jobs().exists(id)) {
+  if (!db_->jobs().exists(id))
 	emit OnSetStartingWellError("Job " + id + " not found", client);
-  } else if (!db_->profiles().exists(plate_id)) {
+  else if (!db_->profiles().exists(plate_id))
 	emit OnSetStartingWellError("Plate " + plate_id + " not found", client);
-  } else {
+  else {
 	auto plate = db_->profiles().get(plate_id).plate();
 
 	// Check the validity of row and col
@@ -383,15 +366,17 @@ void APIController::createJob(Job& job, QObject* client) {
   job.setCreationDate(QDateTime::currentDateTime());
   job.setOctoprint(db_->defaultOctoconfig());
 
-  // if (!db_->profiles().exists(job.printer()))
-  // emit OnJobCreateError("Printer profile " + id + " unknown", client);
-  // else if (!db_->profiles().exists(job.socket()))
-  // emit OnJobCreateError("Socket profile " + id + " unknown", client);
-  // else {
-  job.setId(id);
-  db_->jobs().add(id, job);
-  emit OnJobCreated(job.id(), client);
-  //}
+  if (!db_->profiles().exists(job.printer()))
+	emit OnJobCreateError("Printer profile " + id + " unknown", client);
+  else if (!db_->profiles().exists(job.socket()))
+	emit OnJobCreateError("Socket profile " + id + " unknown", client);
+  else if (!db_->profiles().exists(job.octoprint()))
+	emit OnJobCreateError("Octoprint profile " + id + " unknown", client);
+  else {
+	job.setId(id);
+	db_->jobs().add(id, job);
+	emit OnJobCreated(job.id(), client);
+  }
 }
 
 std::shared_ptr<AlgorithmJob> APIController::detectColonies(
@@ -440,8 +425,8 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
 				  [this, client, job_id, raw, result] {
 					emit this->OnColonyDetected(job_id, &result->colonies(),
 												client);
-					qDebug() << "Detected" << result->colonies().size() << "in"
-							 << raw->tookMs() << "ms";
+					qDebug() << "Detected" << result->colonies().size()
+							 << "colonies in" << raw->tookMs() << "ms";
 				  });
 		  connect(raw, &AlgorithmJob::OnAlgoFailed, raw, [this, raw, client] {
 			emit OnColonyDetectionError(raw->result()->stageError(), client);
@@ -532,9 +517,8 @@ void APIController::startJob(Job::ID id, QObject* client) {
 	}
   }
 
-  std::vector<GcodeInstruction> code =
-	  gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
-												job.startingCol(), coords);
+  std::vector<GcodeInstruction> code(gen.CreateGcodeForTheEntirePickingProcess(
+	  job.startingRow(), job.startingCol(), coords));
 
   Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
 										   pick_positions, code));

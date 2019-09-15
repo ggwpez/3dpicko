@@ -8,7 +8,6 @@
 #include "ImageRecognition/detection_result.h"
 #include "ImageRecognition/plates/plate.h"
 #include "Main/version.h"
-
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "GUI/types/profile.h"
 
@@ -35,12 +34,8 @@ class Database : public QObject, JsonConvertable {
 
   JobTable& jobs();
   JobTable const& jobs() const;
-  JobTable& deletedJobs();  // Tracks deleted jobs TODO neeeded?
-  JobTable const& deletedJobs() const;
   ImageTable& images();
   ImageTable const& images() const;
-  ImageTable& deletedImages();  // "
-  ImageTable const& deletedImages() const;
   ProfileTable& profiles();
   ProfileTable const& profiles() const;
   VersionTable& versions();
@@ -71,7 +66,7 @@ class Database : public QObject, JsonConvertable {
 
  signals:
   /**
-   * @brief Emitted when any data content was changed .
+   * @brief Emitted when any data was changed, used by the autosaver .
    */
   void OnDataChanged();
 
@@ -85,9 +80,7 @@ class Database : public QObject, JsonConvertable {
   bool read_only_;
 
   JobTable jobs_;
-  JobTable deleted_jobs_;
   ImageTable images_;
-  ImageTable deleted_images_;
   ProfileTable profiles_;
   VersionTable versions_;
   PlateTable detected_plates_;
@@ -96,13 +89,6 @@ class Database : public QObject, JsonConvertable {
    * Ordered by date; front is old and back is new.
    */
   VersionIdVector versions_installed_;
-  // AlgoJobTable algo_jobs_;
-  /**
-   * @brief Saves all past image detection processes.
-   * TODO create a way to disable it.
-   */
-  // DetectionResultTable detection_results_;
-
   /**
    * @brief New unused job id.
    */

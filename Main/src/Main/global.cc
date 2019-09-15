@@ -46,10 +46,10 @@ QSslConfiguration* loadSslConfig(QSettings& settings) {
 	// throws
 	QSslConfiguration* ssl = LoadSsl(key, cert);
 
-	qDebug() << "SSL enabled";
+	qDebug() << "SSL        enabled";
 	return ssl;
   } else {
-	qDebug() << "SSL disabled";
+	qDebug() << "SSL        disabled";
 	return nullptr;
   }
 }
@@ -146,8 +146,9 @@ QString setupGlobal(QCoreApplication* app) {
   int backlog_length = settings.value("backlog_length", 1000).toInt();
   Logger::instance()->setBacklogLength(backlog_length);
 
-  qDebug().noquote() << "Version:" << currentVersion().id() << "built on"
-					 << currentVersion().date().toString(dateTimeFormat());
+  qDebug().noquote() << "Version:" << currentVersion().id() << "from"
+					 << currentVersion().date().toString(dateTimeFormat())
+					 << "build on" << buildTime().toString(dateTimeFormat());
 
   return ini_file_path;
 }
@@ -192,8 +193,7 @@ static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
 							const QString& msg) {
   QString message = qFormatLogMessage(type, context, msg);
   QString time =
-	  "[ " + QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate) +
-	  " ] ";
+	  "[ " + QDateTime::currentDateTime().toString(dateTimeFormat()) + " ] ";
 
   QString console_string = time + consoleTextColor(type) + message + "\033[0m";
   QString html_string = time + htmlTextColor(type) + message + "</font>";
@@ -239,10 +239,16 @@ Version const& currentVersion() {
   return current;
 }
 
+QDateTime buildTime() {
+  static QDateTime time(QDateTime::fromString(BUILD_DATE, Qt::ISODate));
+
+  return time;
+}
+
 int getSubprocessTimeoutMs() { return subprocess_timeout_ms; }
 
 void cleanupGlobal() {
-  // FIXME QMetaType::unregisterConverterFunction<math::Range<double>,
-  // QString>(math::rangeToString);
+  /*QMetaType::registerConverter<math::Range<double>, QString>(
+	  math::rangeToString);*/
 }
 }  // namespace c3picko

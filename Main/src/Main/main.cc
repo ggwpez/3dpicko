@@ -62,11 +62,11 @@ static int start(int argc, char** argv) {
   // Updater
   QSettings upd_settings(ini_file, QSettings::IniFormat);
   upd_settings.beginGroup("updater");
-  if (upd_settings.value("enabled").toBool()) {
+  if (upd_settings.value("enabled", false).toBool()) {
 	new Updater(upd_settings, *db, &app);
-	qDebug("Updater enabled");
+	qDebug("Updater    enabled");
   } else
-	qDebug("Updater disabled");
+	qDebug("Updater    disabled");
 
   APIController* api =
 	  new APIController(colony_detector, plate_detector, nullptr, db, &app);
@@ -76,7 +76,6 @@ static int start(int argc, char** argv) {
   StaticFileController* staticFileController = new StaticFileController(
 	  settings, paths::docRoot().toSystemAbsolute(), &app);
   settings.endGroup();
-  qInfo() << "DocRoot is" << paths::docRoot().toSystemAbsolute();
 
   // SSL
   settings.beginGroup("ssl");
@@ -125,7 +124,7 @@ int main(int argc, char** argv) {
 
   // Restarts the program when it exited with exitCodeSoftRestart()
   while (true) {
-	qInfo("Starting");
+	qDebug("Starting");
 	try {
 	  status = start(argc, argv);
 	} catch (std::exception const& e) {
@@ -135,7 +134,7 @@ int main(int argc, char** argv) {
 	}
 
 	if (status == exitCodeSoftRestart())
-	  qInfo() << "Awaiting restart...";
+	  qDebug() << "Awaiting restart...";
 	else
 	  break;
   };

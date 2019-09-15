@@ -44,6 +44,7 @@ void cleanupGlobal();
  */
 QString getConfigPath();
 const Version& currentVersion();
+QDateTime buildTime();
 int getSubprocessTimeoutMs();
 int getBacklogLength();
 

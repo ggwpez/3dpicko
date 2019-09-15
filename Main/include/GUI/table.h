@@ -141,11 +141,16 @@ class Table : public JsonConvertable {
   }
 
  public:
+  /**
+   * @brief Inherited
+   */
   inline void read(QJsonObject const& obj) override {
 	for (auto it = obj.begin(); it != obj.end(); ++it)
 	  addAsJson(it.key(), it.value().toObject());
   }
-
+  /**
+   * @brief Inherited
+   */
   inline void write(QJsonObject& obj) const override {
 	for (auto it = entries_.begin(); it != entries_.end(); ++it)
 	  obj[it->first] = Marshalling::toJson(it->second);

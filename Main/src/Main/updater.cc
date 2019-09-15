@@ -51,10 +51,7 @@ Updater::Updater(const QSettings& settings, Database& db, QObject* _parent)
   startSearch();
 }
 
-Updater::~Updater() {
-  stopSearch();
-  // deleted by this
-}
+Updater::~Updater() { stopSearch(); }
 
 ResourcePath Updater::sourceDir() const { return working_dir_ + "source/"; }
 

@@ -21,7 +21,14 @@ DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -Wshadow -Wreturn-local-addr
+QMAKE_CXXFLAGS += -Werror=return-type -Wshadow
+
+*g++ {
+	QMAKE_CXXFLAGS += -Wreturn-local-addr
+}
+clang {
+	QMAKE_CXXFLAGS += -Wreturn-stack-address
+}
 
 
 # List with all possible defines

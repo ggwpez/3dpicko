@@ -27,7 +27,6 @@ Image::Image(QByteArray data, QString original_name, QString description,
 	  description_(description),
 	  path_(),
 	  uploaded_(uploaded) {
-  // Calculate size
   if (!decodeCvMat(data, image_)) {
 	qWarning() << "Loading image failed:" << original_name;
 	return;
