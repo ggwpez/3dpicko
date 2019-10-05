@@ -68,6 +68,8 @@ class APIOutput : public QObject {
   void SetColoniesToPickError(QString error, QObject* client);
 
   void ColonyDetectionStarted(Job::ID, QObject* client);
+
+  void UpdateRequested(QObject* client);
   /**
    * @brief Always call this from ColonyDetector or derived!
    */

@@ -19,6 +19,7 @@ struct APICommands {
   static QString DELETE_JOB;
   static QString START_JOB;
   static QString UPLOAD_IMAGE;
+  static QString UPDATE_SOFTWARE;
   static QString CREATE_SETTINGS_PROFILE;
   static QString UPDATE_SETTINGS_PROFILE;
   static QString DELETE_SETTINGS_PROFILE;

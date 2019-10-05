@@ -199,6 +199,10 @@ void APIController::UploadImage(Image image, QObject* client) {
   }
 }
 
+void APIController::updateSoftware(QObject* client) {
+  emit OnUpdateRequested(client);
+}
+
 void APIController::createSettingsProfile(Profile& profile_wo_id,
 										  QObject* client) {
   Profile::ID id = db_->newProfileId();

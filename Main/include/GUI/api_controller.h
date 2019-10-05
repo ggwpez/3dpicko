@@ -75,6 +75,7 @@ class APIController : public QObject {
   void DeleteImage(Image::ID, QObject* client);
   void DeleteJob(Job::ID id, QObject* client);
   void UploadImage(Image, QObject* client);
+  void updateSoftware(QObject* client);
   void createSettingsProfile(Profile& prof_wo_id, QObject* client);
   void updateSettingsProfile(Profile& profile, QObject* client);
   void deleteSettingsProfile(Profile::ID id, QObject* client);
@@ -167,6 +168,8 @@ class APIController : public QObject {
   void OnSetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
 						   QObject* client);
   void OnSetColoniesToPickError(QString error, QObject* client);
+
+  void OnUpdateRequested(QObject* client);
 
   void OnColonyDetectionStarted(Job::ID, QObject* client);
   /**
