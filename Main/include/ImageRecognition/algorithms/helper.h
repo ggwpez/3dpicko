@@ -1,12 +1,15 @@
 #pragma once
 
 #include <complex>
+#include <iterator>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
 /**
  * This file is the collecting pond for all that needs to find a permanent home.
  */
+
+#define M_1_PI_2 0.1591549430918953357688837 /* 1/(2pi) */
 
 class QByteArray;
 class QString;
@@ -101,10 +104,18 @@ QString rangeToString(math::Range<double> const& v);
 QByteArray matToBase64(cv::Mat const&);
 
 /**
+ * @brief L1-Norm of (x1,y1) and (x2,y2)
+ */
+template <typename T>
+inline T norm_l1(T x1, T y1, T x2, T y2) {
+  return std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2);
+}
+
+/**
  * @brief L2-Norm of (x1,y1) and (x2,y2)
  */
 template <typename T>
-inline T distance(T x1, T y1, T x2, T y2) {
+inline T norm_l2(T x1, T y1, T x2, T y2) {
   return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
 }
 

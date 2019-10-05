@@ -45,19 +45,6 @@ class Image {
    */
   static ID calculateId(const cv::Mat& image);
 
-  /**
-   * @brief Returns a cropped version of the current image.
-   * Non-const bc it may modify the cache.
-   * @param x Start x pos
-   * @param y Start y pos
-   * @param w Crop Width
-   * @param h Crop Height
-   * @param output
-   * @param error Error string is set, when return is false
-   * @return Success.
-   */
-  bool crop(int x, int y, int w, int h, Image& output, QString& error);
-
   bool readCvMat(cv::Mat& output);
   bool readData(QByteArray& output) const;
   static bool decodeCvMat(QByteArray data, cv::Mat& output);

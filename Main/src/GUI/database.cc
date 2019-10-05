@@ -6,7 +6,7 @@
 namespace c3picko {
 Database::Database(const QSettings& settings, QObject* parent)
 	: QObject(parent),
-	  file_path_(Root() + "/database.json"),
+	  file_path_(paths::root() + "/database.json"),
 	  read_only_(!settings.value("saveChanges", true).toBool()),
 	  job_id_(200),
 	  profile_id_(300) {
@@ -23,11 +23,15 @@ Database::Database(const QSettings& settings, QObject* parent)
 	else
 	  read(json);
   } else if (ignore_empty)
-	qDebug() << "Database not found, creating new one (ignoreEmpty=true)";
+	qDebug() << "Database not found, creating a new one (ignoreEmpty=true)";
   else
 	throw Exception("Error reading database from file: " +
 					file_path_.toSystemAbsolute() + " (ignoreEmpty=false)");
+
+  if (settings.value("check", false).toBool()) checkIntegrity();
 }
+
+Database::~Database() { saveToFile(); }
 
 void Database::saveToFile() {
   try {
@@ -75,22 +79,7 @@ Database::ImageTable& Database::images() {
   return images_;
 }
 
-Database::JobTable& Database::deletedJobs() { return deleted_jobs_; }
-
-const Database::JobTable& Database::deletedJobs() const {
-  return deleted_jobs_;
-}
-
 const Database::ImageTable& Database::images() const { return images_; }
-
-Database::ImageTable& Database::deletedImages() {
-  emit OnDataChanged();
-  return deleted_images_;
-}
-
-const Database::ImageTable& Database::deletedImages() const {
-  return deleted_images_;
-}
 
 Database::ProfileTable& Database::profiles() {
   emit OnDataChanged();
@@ -115,10 +104,11 @@ const Database::VersionIdVector& Database::installedVersions() const {
   return versions_installed_;
 }
 
-// Database::AlgoJobTable& Database::algoJobs() { return algo_jobs_; }
+Database::PlateTable& Database::detectedPlates() { return detected_plates_; }
 
-// Database::DetectionResultTable& Database::detectionResults() { return
-// detection_results_; }
+const Database::PlateTable& Database::detectedPlates() const {
+  return detected_plates_;
+}
 
 Job::ID Database::newJobId() {
   emit OnDataChanged();
@@ -155,18 +145,15 @@ Profile::ID Database::defaultOctoconfig() const { return default_octoprint_; }
 
 void Database::read(QJsonObject const& obj) {
   jobs_.read(obj["jobs"].toObject());
-  deleted_jobs_.read(obj["deleted_jobs"].toObject());
   images_.read(obj["images"].toObject());
-  deleted_images_.read(obj["deleted_images"].toObject());
   profiles_.read(obj["profiles"].toObject());
   versions_.read(obj["versions"].toObject());
+  detected_plates_.read(obj["detected_plates"].toObject());
 
   QJsonArray const& arr(obj["versions_of_interest"].toArray());
   for (auto e : arr)  // TODO
 	versions_installed_.push_back(e.toString());
   // versions_oi_.read(obj["versions_of_interest"].toObject());
-
-  // TODO read detection*
 
   job_id_ = obj["job_id"].toInt();
   profile_id_ = obj["profile_id"].toInt();
@@ -184,11 +171,10 @@ void Database::read(QJsonObject const& obj) {
 
 void Database::write(QJsonObject& obj) const {
   obj["jobs"] = (QJsonObject)jobs_;
-  obj["deleted_jobs"] = (QJsonObject)deleted_jobs_;
   obj["images"] = (QJsonObject)images_;
-  obj["deleted_images"] = (QJsonObject)deleted_images_;
   obj["profiles"] = (QJsonObject)profiles_;
   obj["versions"] = (QJsonObject)versions_;
+  obj["detected_plates"] = (QJsonObject)detected_plates_;
 
   QJsonArray arr;
   for (auto e : versions_installed_) arr.push_back(e);
@@ -212,6 +198,26 @@ void Database::write(QJsonObject& obj) const {
 }
 
 bool Database::readOnly() const { return read_only_; }
+
+bool Database::checkIntegrity() const {
+  QStringList errors;
+
+  for (auto const& pair : jobs_) {
+	Job const& job = pair.second;
+	if (!profiles_.exists(job.plate()) || !profiles_.exists(job.printer()) ||
+		!profiles_.exists(job.socket()) || !profiles_.exists(job.octoprint()))
+	  errors << ("Lost Profile of job " + job.id());
+	if (!images_.exists(job.imgID()))
+	  errors << ("Lost Image   of job " + job.id());
+  }
+
+  if (!errors.empty()) {
+	qWarning().nospace() << "Database errors (" << errors.size() << "):";
+	for (QString error : errors) qWarning().noquote() << "" << error;
+  }
+
+  return errors.empty();
+}
 
 void Database::setdefaultPrinter(const Profile::ID& default_printer) {
   default_printer_ = default_printer;

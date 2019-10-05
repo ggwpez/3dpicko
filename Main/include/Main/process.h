@@ -18,7 +18,7 @@ class Process : public QObject {
 						   QStringList arguments = {});
   static Process* gitCheckout(QString branch, const ResourcePath& repo);
   /**
-   * @brief Git log command.
+   * @brief Git log command .
    * @param Directory of the repository to log
    * @param additional arguments, emtpy means {"--pretty=format:\"%H#%ad\"",
    * "--date=rfc2822", "--max-count=5"}

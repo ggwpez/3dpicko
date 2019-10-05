@@ -3,10 +3,10 @@
 
 #include <vector>
 
+#include "Gcode/platetype.h"
 #include "Gcode/point.h"
 
 namespace c3picko {
-
 /**
  * @file plateprofile.h
  * @author flopicko
@@ -15,17 +15,18 @@ namespace c3picko {
  */
 class PlateProfile {
  public:
-  PlateProfile(int number_of_rows, int number_of_columns, float a1_row_offset,
-			   float a1_column_offset, float well_spacing_center_to_center,
-			   float height_source_plate, float height_master_plate,
-			   float height_goal_plate, float well_depth,
-			   float culture_medium_thickness_source_plate,
+  PlateProfile(int number_of_rows, int number_of_columns, PlateType plateType,
+			   float a1_row_offset, float a1_column_offset,
+			   float well_spacing_center_to_center, float height_source_plate,
+			   float height_master_plate, float height_goal_plate,
+			   float well_depth, float culture_medium_thickness_source_plate,
 			   float culture_medium_thickness_master_plate,
 			   int timesToLowerFilamentIntoWell);
 
   int numberOfRows() const;
   int numberOfColumns() const;
   int numberOfWells() const;
+  PlateType plateType() const;
   float a1RowOffset() const;
   float a1ColumnOffset() const;
   float wellSpacingCenterToCenter() const;
@@ -52,6 +53,12 @@ class PlateProfile {
    * @brief number_of_wells_ The number of wells the goal plate has.
    */
   const int number_of_wells_;
+
+  /**
+   * @brief plate_type_ Type of the plate. Used in the plate detection
+   * algorithm.
+   */
+  const PlateType plate_type_;
 
   /**
    * @brief a1_row_offset_ The offset of the center of the first well A1 to the

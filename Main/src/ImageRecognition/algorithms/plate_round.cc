@@ -1,22 +1,26 @@
-#include "ImageRecognition/algorithms/plate2.h"
+#include "ImageRecognition/algorithms/plate_round.h"
+#include <memory>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
 #include "ImageRecognition/algorithm_job.h"
+#include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/algorithms/helper.h"
-#include "ImageRecognition/algorithms/plate1.h"
+#include "ImageRecognition/algorithms/plate_rect.h"
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/round_plate.h"
 
 namespace c3picko {
-Plate2::Plate2()
-	: Algorithm("2", "Plate2", "Detects a round plate with red frame attached",
-				{(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
-				 (AlgoStep)Plate2::detect},
+namespace algorithms {
+PlateRound::PlateRound()
+	: Algorithm("kROUND", "Round1",
+				"Detects a round plate with red frame attached",
+				{(AlgoStep)Colonies1::cvt, (AlgoStep)PlateRect::threshold,
+				 (AlgoStep)PlateRound::detect},
 				{}, true, 5000) {}
 
-void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
+void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   /**
    * Steps:
    *
@@ -75,7 +79,7 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
 	// Cluster points of the outer contour
 	for (std::size_t i = 0; i < raw_edges[outer].size(); ++i) {
 	  cv::Point v(raw_edges[outer][i] - center);
-	  double d = math::distance(0, 0, v.x, v.y);
+	  double d = math::norm_l2(0, 0, v.x, v.y);
 
 	  if (d > outer_r * margin_r) outer_points.push_back(raw_edges[outer][i]);
 	}
@@ -100,26 +104,27 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
   }
 
   // Create the plates
-  std::unique_ptr<RoundPlate> original(
-	  new RoundPlate(edges[outer], edges[inner], markers));  // NOTE C++14
-  std::unique_ptr<RoundPlate> rotated(original->rotated());
+  std::unique_ptr<RoundPlate> unrotated(
+	  std::make_unique<RoundPlate>(edges[outer], edges[inner], markers));
+  std::unique_ptr<RoundPlate> rotated(unrotated->rotated());
 
   // Draw the inner ellipse and markers (optional)
   {
 	cv::ellipse(output, inner_e, cv::Scalar::all(255), 2, cv::LINE_AA);
-	cv::drawMarker(output, markers[original->m1()], cv::Scalar(0, 255, 0),
+	cv::drawMarker(output, markers[unrotated->m1()], cv::Scalar(0, 255, 0),
 				   cv::MARKER_CROSS, 30, 2);
-	cv::drawMarker(output, markers[(original->m1() + 1) % 3],
+	cv::drawMarker(output, markers[(unrotated->m1() + 1) % 3],
 				   cv::Scalar(255, 255, 0), cv::MARKER_TILTED_CROSS, 30, 2);
-	cv::drawMarker(output, markers[(original->m1() + 2) % 3],
+	cv::drawMarker(output, markers[(unrotated->m1() + 2) % 3],
 				   cv::Scalar(255, 255, 0), cv::MARKER_TILTED_CROSS, 30, 2);
   }
 
   // Rotate/Cut the final image
-  Plate::crop(*original, *rotated, output, output);
+  Plate::crop(*unrotated, *rotated, output, output);
 
   // Set result output
-  result->original_ = std::move(original);
-  result->rotated_ = std::move(rotated);
+  result->original() = std::move(unrotated);
+  result->rotated() = std::move(rotated);
 }
+}  // namespace algorithms
 }  // namespace c3picko

@@ -16,17 +16,19 @@ class Version;
 /**
  * @return Throws on error.
  */
-QSslConfiguration* LoadSslConfig(QSettings& settings);
+QSslConfiguration* loadSslConfig(QSettings& settings);
 
-ResourcePath Root();
-ResourcePath Etc();
+namespace paths {
+ResourcePath root();
+ResourcePath etc();
 /**
  * Document Root for the webserver.
  */
-ResourcePath DocRoot();
-QString UploadFolderName();
-ResourcePath UploadFolder();
+ResourcePath docRoot();
+QString uploadFolderName();
+ResourcePath uploadFolder();
 ResourcePath reportFolder();
+}  // namespace paths
 
 QString searchConfigFile(QStringList args);
 /**
@@ -34,14 +36,17 @@ QString searchConfigFile(QStringList args);
  * necessary directories.
  * @return getConfig()
  */
-QString Setup(QCoreApplication* app);
+QString setupGlobal(QCoreApplication* app);
+void cleanupGlobal();
 
 /**
  * @return Path to serverconfig.ini. Only works after Setup
  */
 QString getConfigPath();
 const Version& currentVersion();
+QDateTime buildTime();
 int getSubprocessTimeoutMs();
+int getBacklogLength();
 
 /**
  * @brief logTextColor

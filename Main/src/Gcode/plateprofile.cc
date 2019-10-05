@@ -2,7 +2,8 @@
 
 namespace c3picko {
 PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
-						   float a1_row_offset, float a1_column_offset,
+						   PlateType plate_type, float a1_row_offset,
+						   float a1_column_offset,
 						   float well_spacing_center_to_center,
 						   float height_source_plate, float height_master_plate,
 						   float height_goal_plate, float well_depth,
@@ -12,6 +13,7 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
 	: number_of_rows_(number_of_rows),
 	  number_of_columns_(number_of_columns),
 	  number_of_wells_(number_of_columns * number_of_rows),
+	  plate_type_(plate_type),
 	  a1_row_offset_(a1_row_offset),
 	  a1_column_offset_(a1_column_offset),
 	  well_spacing_center_to_center_(well_spacing_center_to_center),
@@ -30,6 +32,8 @@ int PlateProfile::numberOfRows() const { return number_of_rows_; }
 int PlateProfile::numberOfColumns() const { return number_of_columns_; }
 
 int PlateProfile::numberOfWells() const { return number_of_wells_; }
+
+PlateType PlateProfile::plateType() const { return plate_type_; }
 
 float PlateProfile::a1RowOffset() const { return a1_row_offset_; }
 

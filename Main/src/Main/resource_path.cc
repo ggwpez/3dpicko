@@ -11,15 +11,15 @@ ResourcePath ResourcePath::fromSystemAbsolute(QString path) { return path; }
 
 // We have two // now, but the operator+ manages that
 ResourcePath ResourcePath::fromServerAbsolute(QString path) {
-  return Root() + path;
+  return paths::root() + path;
 }
 
 ResourcePath ResourcePath::fromServerRelative(QString path) {
-  return Root() + "/" + path;
+  return paths::root() + "/" + path;
 }
 
 ResourcePath ResourcePath::fromDocRootAbsolute(QString path) {
-  return DocRoot() + path;
+  return paths::docRoot() + path;
 }
 
 const QString ResourcePath::toSystemAbsolute() const {
@@ -28,7 +28,7 @@ const QString ResourcePath::toSystemAbsolute() const {
 }
 
 const QString ResourcePath::toServerAbsolute() const {
-  QString root_abs = Root().toSystemAbsolute();
+  QString root_abs = paths::root().toSystemAbsolute();
 
   if (!system_absolute_.startsWith(root_abs))
 	throw Exception(
@@ -40,7 +40,7 @@ const QString ResourcePath::toServerAbsolute() const {
 }
 
 const QString ResourcePath::toDocRootAbsolute() const {
-  QString droot_abs = DocRoot().toSystemAbsolute();
+  QString droot_abs = paths::docRoot().toSystemAbsolute();
 
   if (!system_absolute_.startsWith(droot_abs))
 	throw Exception(

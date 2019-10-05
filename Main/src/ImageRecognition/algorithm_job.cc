@@ -55,6 +55,8 @@ void AlgorithmJob::timeStop() {
   took_ms_ = elapsedMs();
 }
 
+QThreadPool* AlgorithmJob::pool() const { return pool_; }
+
 Algorithm* AlgorithmJob::algo() const { return algo_; }
 
 QDateTime AlgorithmJob::created() const { return created_; }

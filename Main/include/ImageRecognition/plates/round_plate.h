@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ImageRecognition/plates/plate.h"
+#include "Main/marshalling.h"
 
 namespace c3picko {
 /**
@@ -25,10 +26,17 @@ class RoundPlate : public Plate {
 
   virtual RoundPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
+  virtual bool isInsideSafetyMargin(cv::Point2d pos,
+									math::UnitValue radius) const override;
+  virtual bool isPixelPickable(int x, int y) const override;
+  virtual LocalColonyCoordinates mapImageToGlobal(double x,
+												  double y) const override;
 
   std::size_t m1() const;
 
-  InnerBorder innerBorder() const;
+  InnerBorder const& innerBorder() const;
+  InnerBorder const& outerBorder() const;
+  Markers const& markers() const;
 
  private:
   static std::size_t findM1(const Markers& markers);
@@ -50,6 +58,12 @@ class RoundPlate : public Plate {
   InnerBorder const inner_border_;
 
   /**
+   * @brief inner_border_aabb_ Square of half the width of the AABB of the inner
+   * border . Used to speed up safety margin calculation .
+   */
+  double const inner_border_aabb_width_2_squared_;
+
+  /**
    * @brief The three distinct corners from the round plate .
    */
   Markers const markers_;
@@ -59,4 +73,5 @@ class RoundPlate : public Plate {
    */
   std::size_t const m1_;
 };
+MAKE_MARSHALLABLE(RoundPlate*);
 }  // namespace c3picko

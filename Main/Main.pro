@@ -4,9 +4,6 @@ TEMPLATE = app
 
 SOURCES += \
 	src/ImageRecognition/algorithm_job.cc \
-	src/ImageRecognition/algorithms/plate2.cc \
-	src/ImageRecognition/algorithms/plate1.cc \
-	src/ImageRecognition/algorithms/normal1.cc \
 	src/ImageRecognition/algorithms/fluro1.cc \
 	src/ImageRecognition/algorithms/helper.cc \
 	src/ImageRecognition/algorithm_manager.cc \
@@ -77,14 +74,18 @@ SOURCES += \
 	src/Main/setting.cc \
 	src/Main/process.cc \
 	src/Main/version_manager.cc \
-	src/Main/marshalling.cc
+	src/Main/marshalling.cc \
+	src/ImageRecognition/algorithms/plate_rect.cc \
+	src/ImageRecognition/algorithms/plate_round.cc \
+	src/ImageRecognition/algorithms/colonies1.cc \
+	src/Main/dtor_callback.cc \
+	src/Main/json_convertable.cc \
+	src/Gcode/platetype.cc \
+	src/Main/logger.cc
 
 HEADERS += \
-	include/ImageRecognition/algorithms/normal1.h \
-	include/ImageRecognition/algorithms/plate1.h \
 	include/ImageRecognition/algorithms/fluro1.h \
 	include/ImageRecognition/algorithms/helper.h \
-	include/ImageRecognition/algorithms/plate2.h \
 	include/ImageRecognition/plates/plate.h \
 	include/ImageRecognition/plates/round_plate.h \
 	include/ImageRecognition/plates/rect_plate.h \
@@ -160,7 +161,13 @@ HEADERS += \
 	include/Main/updater.h \
 	include/Main/exception.h \
 	include/Main/resource_path.h \
-	include/Main/json_convertable.h
+	include/Main/json_convertable.h \
+	include/ImageRecognition/algorithms/plate_rect.h \
+	include/ImageRecognition/algorithms/plate_round.h \
+	include/ImageRecognition/algorithms/colonies1.h \
+	include/Main/dtor_callback.h \
+	include/Gcode/platetype.h \
+	include/Main/logger.h
 
 unix {
 	HEADERS += include/Main/signal_daemon.h
@@ -182,8 +189,7 @@ LIBS += -L/usr/local/lib/ \
 # Updater defines
 DEFINES += GIT_HASH="'\"$$system('git log --pretty=format:\'%H\' --max-count=1')\"'"
 DEFINES += GIT_DATE="'\"$$system('git log --pretty=format:\'%H\' --pretty=format:\'%ad\' --date=rfc2822 --max-count=1')\"'"
-#DEFINES += SOURCE_DIR="'\"$$ROOTPATH\"'"
-#DEFINES += BUILD_DIR="'\"$$shadowed($$ROOTPATH)\"'"
+DEFINES += BUILD_DATE="'\"$$system('date --iso-8601=seconds')\"'"
 message($$DEFINES)
 
 # Default rules for deployment.

@@ -26,7 +26,7 @@ class Table : public JsonConvertable {
 
  public:
   typedef QString Key;
-  typedef QMap<Key, Value> MapType;
+  typedef std::map<Key, Value> MapType;
 
   /**
    * @brief Add the value to the table and overrides old entries.
@@ -39,9 +39,26 @@ class Table : public JsonConvertable {
 	if (it != entries_.end()) {
 	  // *it = value;
 	  entries_.erase(it);
-	  entries_.insert(key, value);
+	  entries_.emplace(key, value);
 	} else {
-	  entries_.insert(key, value);
+	  entries_.emplace(key, value);
+	}
+  }
+
+  /**
+   * @brief Add the value to the table and overrides old entries.
+   * @param key
+   * @param value
+   */
+  inline void add(Key const& key, Value&& value) {
+	auto it = entries_.find(key);
+
+	if (it != entries_.end()) {
+	  // *it = value;
+	  entries_.erase(it);
+	  entries_.emplace(key, std::move(value));
+	} else {
+	  entries_.emplace(key, std::move(value));
 	}
   }
 
@@ -74,7 +91,7 @@ class Table : public JsonConvertable {
 	if (it == entries_.end())
 	  throw Exception("Table", "Key not found");
 	else
-	  return it.value();
+	  return it->second;
   }
 
   inline Value const& get(Key const& key) const {
@@ -83,7 +100,7 @@ class Table : public JsonConvertable {
 	if (it == entries_.end())
 	  throw Exception("Table", "Key not found");
 	else
-	  return it.value();
+	  return it->second;
   }
 
   /**
@@ -103,7 +120,7 @@ class Table : public JsonConvertable {
    * @param key
    * @thows does not throw except for Dtor Exceptions.
    */
-  inline void remove(Key const& key) { entries_.remove(key); }
+  inline void remove(Key const& key) { entries_.erase(key); }
 
   // key_value_iterator was introduced in 5.10 but the CI-Server has 5.9.5
   inline typename MapType::iterator begin() { return entries_.begin(); }
@@ -116,15 +133,27 @@ class Table : public JsonConvertable {
 	return entries_.cend();
   }
 
+  inline typename MapType::const_iterator cbegin() const {
+	return entries_.cbegin();
+  }
+  inline typename MapType::const_iterator cend() const {
+	return entries_.cend();
+  }
+
  public:
+  /**
+   * @brief Inherited
+   */
   inline void read(QJsonObject const& obj) override {
 	for (auto it = obj.begin(); it != obj.end(); ++it)
 	  addAsJson(it.key(), it.value().toObject());
   }
-
+  /**
+   * @brief Inherited
+   */
   inline void write(QJsonObject& obj) const override {
 	for (auto it = entries_.begin(); it != entries_.end(); ++it)
-	  obj[it.key()] = Marshalling::toJson(it.value());
+	  obj[it->first] = Marshalling::toJson(it->second);
   }
 
   inline MapType const& entries() const { return entries_; }

@@ -1,6 +1,7 @@
 CONFIG += warn_on qt
 CONFIG -= c++11
-QT = network core websockets gui
+CONFIG += c++14
+QT = network core websockets gui concurrent
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -20,10 +21,15 @@ DOCROOTPATH=$$ROOTPATH/GUI/docroot/
 ETCPATH=$$DOCROOTPATH/etc/
 
 LIBS =
-QMAKE_CXXFLAGS += -Werror=return-type -Wreturn-local-addr -std=c++11
+QMAKE_CXXFLAGS += -Werror=return-type -Wshadow
 
-INCLUDEPATH += $$ROOTPATH/quazip
-DEPENDPATH += $$ROOTPATH/quazip
+*g++ {
+	QMAKE_CXXFLAGS += -Wreturn-local-addr
+}
+clang {
+	QMAKE_CXXFLAGS += -Wreturn-stack-address
+}
+
 
 # List with all possible defines
 # C3PICKO_API_KEY_CHECK_OFF, C3PICKO_NO_ZLIB, C3PICKO_NO_QUAZIP, C3PICKO_TEXT_COLORS_OFF

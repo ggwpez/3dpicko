@@ -1,14 +1,15 @@
 #include "ImageRecognition/algorithms/fluro1.h"
 #include <opencv2/opencv.hpp>
 #include "ImageRecognition/algorithm_result.h"
-#include "ImageRecognition/algorithms/normal1.h"
+#include "ImageRecognition/algorithms/colonies1.h"
 
 namespace c3picko {
+namespace algorithms {
 Fluro1::Fluro1()
 	: Algorithm(
 		  "2", "Fluro1", "Detects fluorescente colonies",
-		  {(AlgoStep)&Normal1::cvt, (AlgoStep)&Fluro1::threshold,
-		   (AlgoStep)&Normal1::erodeAndDilate, (AlgoStep)&Normal1::label /*,
+		  {(AlgoStep)&Colonies1::cvt, (AlgoStep)&Fluro1::threshold,
+		   (AlgoStep)&Colonies1::erodeAndDilate, (AlgoStep)&Colonies1::label /*,
 		   (AlgoStep)&Normal1::relativeFiltering*/},
 		  {/*AlgoSetting::make_checkbox("show_excluded_by_algo",
 																  "Show ignored
@@ -50,4 +51,5 @@ void Fluro1::threshold(AlgorithmJob*, DetectionResult* result) {
   cv::threshold(input, output, mean[0] + 1.5 * stddev[0], 255,
 				cv::THRESH_BINARY);  // flour TODO tryp Otsu's method
 }
+}  // namespace algorithms
 }  // namespace c3picko

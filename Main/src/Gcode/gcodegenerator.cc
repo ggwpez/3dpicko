@@ -50,10 +50,12 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 
   gcodes.push_back(gcode_raise_filament_above_source_plate_);
   gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-  gcodes.push_back(gcode_extrude_filament_to_cut_length_);
-  gcodes.push_back(gcode_push_trigger_);
-  gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-  gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+  if (!printer_profile_.skipCutoff()) {
+	gcodes.push_back(gcode_extrude_filament_to_cut_length_);
+	gcodes.push_back(gcode_push_trigger_);
+	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+	gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+  }
 
   for (size_t i = 0; i < local_colony_coordinates.size(); ++i) {
 	const GlobalColonyCoordinates global_colony_coordinate =
@@ -97,8 +99,8 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 
 	  if (!printer_profile_.skipTarget()) {
 		gcodes.push_back(gcode_align_tip_of_nozzle_with_top_of_well_);
-		for (int i = 0; i < plate_profile_.timesToLowerFilamentIntoWell();
-			 ++i) {
+		for (int l = 0; l < plate_profile_.timesToLowerFilamentIntoWell();
+			 ++l) {
 		  gcodes.push_back(gcode_extrude_filament_until_bottom_of_well_);
 		  gcodes.push_back(gcode_extrusion_length_on_move_goal_to_cut_);
 		}
@@ -108,10 +110,12 @@ GcodeGenerator::CreateGcodeForTheEntirePickingProcess(
 	}
 
 	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-	gcodes.push_back(gcode_extrude_filament_to_cut_length_);
-	gcodes.push_back(gcode_push_trigger_);
-	gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
-	gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+	if (!printer_profile_.skipCutoff()) {
+	  gcodes.push_back(gcode_extrude_filament_to_cut_length_);
+	  gcodes.push_back(gcode_push_trigger_);
+	  gcodes.push_back(gcode_move_to_cut_filament_position_above_trigger_);
+	  gcodes.push_back(gcode_gauge_filament_extrusion_length_);
+	}
   }
 
   return gcodes;

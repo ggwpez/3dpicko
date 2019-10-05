@@ -36,6 +36,7 @@ QJsonObject Marshalling::toJson(const PrinterProfile& value) {
   obj["skip_source"] = value.skipSource();
   obj["skip_master"] = value.skipMaster();
   obj["skip_target"] = value.skipTarget();
+  obj["skip_cutoff"] = value.skipCutoff();
 
   return obj;
 }
@@ -59,7 +60,7 @@ PrinterProfile Marshalling::fromJson(const QJsonObject& obj) {
 		  "move"]
 		  .toDouble(),
 	  obj["skip_source"].toBool(false), obj["skip_master"].toBool(false),
-	  obj["skip_target"].toBool(false));
+	  obj["skip_target"].toBool(false), obj["skip_cutoff"].toBool(false));
 }
 
 template <>
@@ -120,6 +121,8 @@ QJsonObject Marshalling::toJson(const PlateProfile& value) {
 
   obj["number_of_rows"] = value.numberOfRows();
   obj["number_of_columns"] = value.numberOfColumns();
+  obj["plate_type"] =
+	  (value.plateType() == PlateType::kROUND ? "kROUND" : "kRECT");
   obj["a1_row_offset"] = value.a1RowOffset();
   obj["a1_column_offset"] = value.a1ColumnOffset();
   obj["well_spacing_center_to_center"] = value.wellSpacingCenterToCenter();
@@ -141,6 +144,8 @@ template <>
 PlateProfile Marshalling::fromJson(const QJsonObject& obj) {
   return PlateProfile(
 	  obj["number_of_rows"].toInt(), obj["number_of_columns"].toInt(),
+	  (obj["plate_type"].toString() == "kROUND" ? PlateType::kROUND
+												: PlateType::kRECT),
 	  obj["a1_row_offset"].toDouble(), obj["a1_column_offset"].toDouble(),
 	  obj["well_spacing_center_to_center"].toDouble(),
 	  obj["height_source_plate"].toDouble(),
@@ -180,6 +185,38 @@ QJsonObject Marshalling::toJson(const QDateTime& value) {
   obj["formatted"] = value.toString(dateTimeFormat());
 
   return obj;
+}
+
+template <>
+cv::Point2d Marshalling::fromJson(const QJsonObject& obj) {
+  return {obj["x"].toDouble(), obj["y"].toDouble()};
+}
+
+template <>
+QJsonObject Marshalling::toJson(const cv::Point2d& value) {
+  return {{"x", value.x}, {"y", value.y}};
+}
+
+template <>
+cv::Point2i Marshalling::fromJson(const QJsonObject& obj) {
+  return {obj["x"].toInt(), obj["y"].toInt()};
+}
+
+template <>
+QJsonObject Marshalling::toJson(const cv::Point2i& value) {
+  return {{"x", value.x}, {"y", value.y}};
+}
+
+template <>
+cv::Rect2i Marshalling::fromJson(const QJsonObject& obj) {
+  return {obj["x"].toInt(), obj["y"].toInt(), obj["w"].toInt(),
+		  obj["h"].toInt()};
+}
+
+template <>
+QJsonObject Marshalling::toJson(const cv::Rect2i& value) {
+  return {
+	  {"x", value.x}, {"y", value.y}, {"w", value.width}, {"h", value.height}};
 }
 
 template <>

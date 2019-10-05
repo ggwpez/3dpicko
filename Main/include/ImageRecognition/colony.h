@@ -31,7 +31,7 @@ class Colony {
   bool included() const;
   AlgoSetting::ID excludedBy() const;
 
-  void setExcluded_by(const AlgoSetting::ID& excluded_by);
+  void setExcludedBy(const AlgoSetting::ID& excluded_by);
 
  private:
   /**

@@ -17,7 +17,7 @@ namespace c3picko {
 Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
 				   const std::map<Well, Colony::ID>& pick_positions,
 				   Image const& image, const DetectionResult* result,
-				   QSet<Colony::ID> colonies_to_pick, const Profile& plate_,
+				   QSet<Colony::ID> colonies_to_pick, const Profile& plate,
 				   const Profile& printer, const Profile& socket,
 				   const Profile& octoprint,
 				   std::vector<GcodeInstruction> const& gcode)
@@ -28,7 +28,7 @@ Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
 	  image_(image),
 	  result_(result),
 	  colonies_to_pick_(colonies_to_pick),
-	  plate_(plate_),
+	  plate_(plate),
 	  printer_(printer),
 	  socket_(socket),
 	  octoprint_(octoprint),
@@ -58,9 +58,9 @@ Reporter Reporter::fromDatabase(
 Report Reporter::createReport() const {
   QString name = "report_" + id_ + "-" + job_.name() + "-" +
 				 job_.created().toString("dd.MM.yy");
-  ResourcePath output = reportFolder() + (name + ".zip");
-  ResourcePath htm_path = reportFolder() + (name + ".html");
-  ResourcePath gcode_path = reportFolder() + (name + ".gcode");
+  ResourcePath output = paths::reportFolder() + (name + ".zip");
+  ResourcePath htm_path = paths::reportFolder() + (name + ".html");
+  ResourcePath gcode_path = paths::reportFolder() + (name + ".gcode");
   cv::Mat img_data = result_->first();
 
   // Render the colonies and their ids

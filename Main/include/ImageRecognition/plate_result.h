@@ -13,6 +13,15 @@ class PlateResult : public MatrixResult {
  public:
   using MatrixResult::MatrixResult;
 
+  const cv::Mat* rotatedImage() const;
+
+  std::unique_ptr<Plate>&& original();
+  std::unique_ptr<Plate>&& rotated();
+
+  std::unique_ptr<Plate> const& original() const;
+  std::unique_ptr<Plate> const& rotated() const;
+
+ private:
   /**
    * @brief Plate as detected by the algorithm
    */
@@ -22,8 +31,6 @@ class PlateResult : public MatrixResult {
    * straight horizontal
    */
   std::unique_ptr<Plate> rotated_;
-
-  const cv::Mat* rotatedImage() const;
 };
 MAKE_MARSHALLABLE(PlateResult);
 }  // namespace c3picko

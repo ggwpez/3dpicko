@@ -1,10 +1,10 @@
-#include "ImageRecognition/algorithms/normal1.h"
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
 #include "ImageRecognition/algorithms/helper.h"
+#include "ImageRecognition/algorithms/normal1.h"
 #include "ImageRecognition/colony.h"
 #include "ImageRecognition/plates/plate.h"
 

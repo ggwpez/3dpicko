@@ -6,8 +6,8 @@
 #include "GUI/types/report.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/detection_result.h"
+#include "ImageRecognition/plates/plate.h"
 #include "Main/version.h"
-
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "GUI/types/profile.h"
 
@@ -24,29 +24,26 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Profile> ProfileTable;
   typedef Table<Version> VersionTable;
   typedef QVector<Version::ID> VersionIdVector;
-  // typedef Table<DetectionResult*> DetectionResultTable;
-  // typedef Table<AlgorithmJob*>	AlgoJobTable;
+  typedef Table<std::unique_ptr<Plate>> PlateTable;
 
   Database(QSettings const& settings, QObject* parent);
+  ~Database() override;
 
   bool readOnly() const;
+  bool checkIntegrity() const;
 
   JobTable& jobs();
   JobTable const& jobs() const;
-  JobTable& deletedJobs();  // Tracks deleted jobs TODO neeeded?
-  JobTable const& deletedJobs() const;
   ImageTable& images();
   ImageTable const& images() const;
-  ImageTable& deletedImages();  // "
-  ImageTable const& deletedImages() const;
   ProfileTable& profiles();
   ProfileTable const& profiles() const;
   VersionTable& versions();
   VersionTable const& versions() const;
   VersionIdVector& installedVersions();
   VersionIdVector const& installedVersions() const;
-  // AlgoJobTable&		  algoJobs();
-  // DetectionResultTable& detectionResults();
+  PlateTable& detectedPlates();
+  PlateTable const& detectedPlates() const;
 
   Job::ID newJobId();
   Profile::ID newProfileId();
@@ -69,7 +66,7 @@ class Database : public QObject, JsonConvertable {
 
  signals:
   /**
-   * @brief Emitted when any data content was changed .
+   * @brief Emitted when any data was changed, used by the autosaver .
    */
   void OnDataChanged();
 
@@ -83,23 +80,15 @@ class Database : public QObject, JsonConvertable {
   bool read_only_;
 
   JobTable jobs_;
-  JobTable deleted_jobs_;
   ImageTable images_;
-  ImageTable deleted_images_;
   ProfileTable profiles_;
   VersionTable versions_;
+  PlateTable detected_plates_;
   /**
    * @brief All installed versions.
    * Ordered by date; front is old and back is new.
    */
   VersionIdVector versions_installed_;
-  // AlgoJobTable algo_jobs_;
-  /**
-   * @brief Saves all past image detection processes.
-   * TODO create a way to disable it.
-   */
-  // DetectionResultTable detection_results_;
-
   /**
    * @brief New unused job id.
    */

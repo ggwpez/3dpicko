@@ -7,7 +7,6 @@
 #include "Main/resource_path.h"
 
 namespace c3picko {
-
 Image::Image(Image::ID id, QString original_name, QString description,
 			 ResourcePath path, QDateTime uploaded, int width, int height)
 	: original_name_(original_name),
@@ -28,7 +27,6 @@ Image::Image(QByteArray data, QString original_name, QString description,
 	  description_(description),
 	  path_(),
 	  uploaded_(uploaded) {
-  // Calculate size
   if (!decodeCvMat(data, image_)) {
 	qWarning() << "Loading image failed:" << original_name;
 	return;
@@ -61,16 +59,16 @@ bool Image::writeToFile() {
 						 // files with the same content
 	return false;
 
-  QTemporaryFile file((UploadFolder() + "XXXXXXXX").toSystemAbsolute());
+  QTemporaryFile file((paths::uploadFolder() + "XXXXXXXX").toSystemAbsolute());
   file.setAutoRemove(false);  // TODO
 
   if (!file.open()) {
 	qCritical() << "Could not write image to drive:" << file.errorString()
-				<< "Directory:" << UploadFolder().toSystemAbsolute();
+				<< "Directory:" << paths::uploadFolder().toSystemAbsolute();
 	return false;
   } else {
 	std::vector<uint8_t> raw;
-	cv::imencode(".jpg", image_, raw);  // TODO use extension
+	cv::imencode(defaultImageExtension(), image_, raw);
 
 	if (!file.write(reinterpret_cast<char const*>(raw.data()), raw.size())) {
 	  qCritical() << "Could not write image" << id_ << "(" << file.errorString()
@@ -78,8 +76,7 @@ bool Image::writeToFile() {
 	  return false;
 	}
 
-	path_ = UploadFolder() + QFileInfo(file).fileName();
-	clearCache();  // TODO make optional
+	path_ = paths::uploadFolder() + QFileInfo(file).fileName();
 	return true;
   }
 }
@@ -94,37 +91,18 @@ bool Image::deleteFile() {
 
 void Image::clearCache() { image_.release(); }
 
-bool Image::crop(int x, int y, int w, int h, Image& output, QString& error) {
-  x = qBound(0, x, width_ - 1);
-  y = qBound(0, y, height_ - 1);
-  w = qBound(1, w, width_ - x);
-  h = qBound(1, h, height_ - y);  // TODO is this correct?
-
-  if (std::max(w, h) < 100) {
-	error = "Cropped image to small";
-	return false;
-  }
-
-  QString desc, name;
-
-  desc = "Cropped version of '" + original_name_ + "'";
-  name = original_name_ + "_1";
-
-  cv::Mat image;
-  if (!readCvMat(image)) return false;
-  cv::Mat cropped = image(cv::Rect(x, y, w, h));  // crop
-
-  output = Image(cropped, name, desc, QDateTime::currentDateTime());
-  return true;
-}
-
 bool Image::readCvMat(cv::Mat& output) {
   if (!(output = image_).empty()) return true;
 
   QByteArray data;
   if (!readData(data)) return false;
 
-  return decodeCvMat(data, output);
+  if (!decodeCvMat(data, image_))
+	return false;
+  else {
+	output = image_;
+	return true;
+  }
 }
 
 bool Image::readData(QByteArray& output) const {

@@ -12,28 +12,27 @@ namespace c3picko {
 Algorithm::~Algorithm() {}
 
 void Algorithm::run() {
-  AlgorithmJob* job = qobject_cast<AlgorithmJob*>(this->parent());
-  if (!job) throw Exception("Algorithm always needs AlgorithmJob as parent");
+  AlgorithmJob* j = job();
+  if (!j) throw Exception("Algorithm always needs AlgorithmJob as parent");
 
-  AlgorithmResult* result = job->result().get();
+  AlgorithmResult* result = j->result().get();
 
   QString error_prefix, error_infix, error_postfix, error;
   QTextStream error_ts(&error);
   QTextStream(&error_prefix)
 	  << "Algorithm " << this->metaObject()->className() << " crashed (step=";
   QTextStream(&error_postfix)
-	  << ",job=" << job->id() << ",thread=" << QThread::currentThreadId()
-	  << ") ";
+	  << ",job=" << j->id() << ",thread=" << QThread::currentThreadId() << ") ";
 
-  job->timeStart();
+  j->timeStart();
   int i;
   try {
 	for (i = 0; i < steps_.size(); ++i) {
 	  result->last_stage_ = i;
-	  if (job->elapsedMs() >= job->maxMs())
-		throw Exception("Job timed out (id=" + job->id() + ")");
+	  if (j->elapsedMs() >= j->maxMs())
+		throw Exception("Job timed out (id=" + j->id() + ")");
 
-	  steps_[i](job, result);  // TODO only pass job
+	  steps_[i](j, result);  // TODO only pass job
 	  result->stages_succeeded_ = true;
 	}
 	result->finalize();
@@ -48,15 +47,15 @@ void Algorithm::run() {
 	result->stages_succeeded_ = false;
   }
 
-  job->timeStop();
+  j->timeStop();
   if (result->stages_succeeded_)
-	emit job->OnAlgoSucceeded();
+	emit j->OnAlgoSucceeded();
   else
-	emit job->OnAlgoFailed();
+	emit j->OnAlgoFailed();
 
   if (error.size()) qCritical() << error;
 
-  emit job->OnFinished();
+  emit j->OnFinished();
 }
 
 Algorithm::Algorithm(Algorithm::ID id, QString name, QString description,
@@ -81,6 +80,10 @@ QList<AlgoSetting> Algorithm::defaultSettings() const {
 }
 
 bool Algorithm::isThreadable() const { return is_threadable_; }
+
+AlgorithmJob* Algorithm::job() const {
+  return qobject_cast<AlgorithmJob*>(this->parent());
+}
 
 qint64 Algorithm::maxMs() const { return max_ms_; }
 

@@ -95,40 +95,6 @@ void VersionManager::checkoutAndQmakeVersion(Version::ID id) {
   git->start();
 }
 
-// https://forum.qt.io/topic/59245/is-there-any-api-to-recursively-copy-a-directory-and-all-it-s-sub-dirs-and-files/3
-// at 05.04.2019
-static bool copyRecursively(QString sourceFolder, QString destFolder) {
-  bool success = false;
-  QDir sourceDir(sourceFolder), destDir(destFolder);
-
-  if (!sourceDir.exists()) {
-	qWarning() << "Could not find source dirctory" << sourceFolder;
-	return false;
-  }
-
-  if (!destDir.exists()) destDir.mkdir(destFolder);
-
-  // TODO try QDirIterator
-  QStringList files = sourceDir.entryList(QDir::Files);
-  for (int i = 0; i < files.count(); i++) {
-	QString srcName = sourceFolder + QDir::separator() + files[i];
-	QString destName = destFolder + QDir::separator() + files[i];
-	success = QFile::copy(srcName, destName);
-	if (!success) return false;
-  }
-
-  files.clear();
-  files = sourceDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-  for (int i = 0; i < files.count(); i++) {
-	QString srcName = sourceFolder + QDir::separator() + files[i];
-	QString destName = destFolder + QDir::separator() + files[i];
-	success = copyRecursively(srcName, destName);
-	if (!success) return false;
-  }
-
-  return true;
-}
-
 void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
   ResourcePath new_build_dir(working_dir_ + "builds/" + id);
 
@@ -214,7 +180,7 @@ void VersionManager::linkVersion(Version::ID id) {
   ResourcePath s_main(working_dir_ + "main"),
 	  s_lqua(working_dir_ + "libquazip.so.1");
   QString t_main("builds/" + id + "/Main/Main"),
-	  t_lqua("builds/" + id + "/quazip/quazip/libquazip.so.1");
+	  t_lqua("builds/" + id + "/depend/quazip/quazip/libquazip.so.1");
 
   Process* ln_main(Process::ln(t_main, s_main));
   Process* ln_lqua(Process::ln(t_lqua, s_lqua));

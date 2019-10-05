@@ -16,6 +16,7 @@
 #include <QDebug>
 #include <QJsonArray>
 #include <QMetaMethod>
+#include <functional>
 #include <memory>
 #include <random>
 
@@ -94,8 +95,8 @@ QJsonObject APIController::createVersionList() const {
   QJsonObject ret;
 
   QJsonArray all;
-  for (Version const& version : db_->versions())
-	all.push_back(Marshalling::toJson(version));
+  for (auto const& version : db_->versions())
+	all.push_back(Marshalling::toJson(version.second));
 
   QJsonArray installed;
   for (Version::ID id : db_->installedVersions()) installed.push_back(id);
@@ -112,56 +113,42 @@ QJsonObject APIController::createVersionList() const {
 }
 
 void APIController::DeleteImage(Image::ID id, QObject* client) {
-  // Does the image exist?
-  if (!db_->images().exists(id)) {
-	emit OnImageDeleteError(id, client);
-	return;
-  }
-  // Is the image	used by a job?
-  for (auto const& job : db_->jobs()) {
-	if (job.imgID() == id) {
-	  emit OnImageDeleteError(id, client);
-	  return;
-	}
+  if (!db_->images().exists(id)) return emit OnImageDeleteError(id, client);
+  // Is the image	not used by a job?
+  for (auto const& pair : db_->jobs()) {
+	if (pair.second.imgID() == id) return emit OnImageDeleteError(id, client);
   }
 
-  Image image = db_->images().get(id);
+  Image& image = db_->images().get(id);
   image.clearCache();
 
   if (image.deleteFile()) {
-	db_->deletedImages().add(id, image);
-	db_->images().remove(
-		id);  // Carefull here, if we use a reference to image instead, it will
-	// go out of scope after deletion
-	emit OnImageDeleted(image.id(), client);
-  } else {
+	db_->images().remove(id);
+	// Image& invalid since here
+
+	if (db_->detectedPlates().exists(id)) db_->detectedPlates().remove(id);
+
+	emit OnImageDeleted(id, client);
+  } else
 	emit OnImageDeleteError(image.path().toSystemAbsolute(), client);
-  }
 }
 
 void APIController::DeleteJob(Job::ID id, QObject* client) {
-  // Does the job exist?
-  if (!db_->jobs().exists(id)) {
+  if (!db_->jobs().exists(id))
 	emit OnJobDeleteError(id, client);
-  } else {
-	Job job = db_->jobs().get(id);
+  else {
 	db_->jobs().remove(id);
-	db_->deletedJobs().add(id, job);
-
 	emit OnJobDeleted(id, client);
   }
 }
 
 void APIController::UploadImage(Image image, QObject* client) {
   std::shared_ptr<cv::Mat> raw(std::make_shared<cv::Mat>());
-  if (!image.readCvMat(*raw)) {
-	emit OnImageCreateError("Could not read/find image", client);
-	return;
-  }
+  if (!image.readCvMat(*raw))
+	return emit OnImageCreateError("Could not read/find image", client);
 
-  // Default detection algorithm used, TODO should be dictated by the plate
-  // profile
-  Algorithm::ID aid("1");
+  PlateProfile* plate(db_->profiles().get(db_->defaultPlate()));
+  Algorithm::ID aid(toString(plate->plateType()));
   AlgorithmJob::ID jid = db_->newResultJobId();
   std::shared_ptr<PlateResult> result(
 	  std::make_shared<PlateResult>(db_->newResultId()));
@@ -194,8 +181,11 @@ void APIController::UploadImage(Image image, QObject* client) {
 			  // Is the user trying to upload an image twice?
 			  if (db_->images().exists(cropped.id()))
 				qDebug() << "Ignoring doubled image";
-			  else
+			  else {
 				db_->images().add(cropped.id(), cropped);
+				db_->detectedPlates().add(cropped.id(),
+										  std::move(result->rotated()));
+			  }
 
 			  emit this->OnImageCreated(cropped.id(), client);
 			  qDebug() << "Detected Plate in" << ajob->tookMs() << "ms";
@@ -217,7 +207,7 @@ void APIController::createSettingsProfile(Profile& profile_wo_id,
   // check that there is not already an octoprint profile
   if (profile_wo_id.type() == ProfileType::OCTOPRINT) {
 	for (auto it = db_->profiles().begin(); it != db_->profiles().end(); ++it)
-	  if (it->type() == ProfileType::OCTOPRINT)
+	  if (it->second.type() == ProfileType::OCTOPRINT)
 		return emit OnProfileCreateError(
 			"Cant create more than one octoprint profile", client);
   }
@@ -227,33 +217,32 @@ void APIController::createSettingsProfile(Profile& profile_wo_id,
 }
 
 void APIController::updateSettingsProfile(Profile& profile, QObject* client) {
-  if (!db_->profiles().exists(profile.id())) {
+  if (!db_->profiles().exists(profile.id()))
 	emit OnProfileUpdateError(profile.id(), client);
-  } else {
+  else {
 	db_->profiles().add(profile.id(), profile);
 	emit OnProfileUpdated(profile, client);
   }
 }
 
 void APIController::deleteSettingsProfile(Profile::ID id, QObject* client) {
-  if (!db_->profiles().exists(id)) {
+  if (!db_->profiles().exists(id))
 	emit OnProfileDeleteError(id, client);
-  } else if (isProfileUsedByJob(id))
+  else if (isProfileUsedByJob(id))
 	emit OnProfileDeleteError("used by a job", client);
   else if (isProfileDefault(id))
 	emit OnProfileDeleteError("is default", client);
   else {
-	// FIXME cant delete profiles used by jobs
 	emit OnProfileDeleted(id, client);
 	db_->profiles().remove(id);
   }
 }
 
 void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
-  if (!db_->profiles().exists(id)) {
+  if (!db_->profiles().exists(id))
 	emit OnDefaultSettingsProfileSetError("Profile " + id + " not found",
 										  client);
-  } else {
+  else {
 	Profile const& profile = db_->profiles().get(id);
 
 	if (profile.type() == ProfileType::PRINTER)
@@ -267,8 +256,7 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 	else {
 	  qCritical() << "Database corrupt or wrong version: Profile" << id
 				  << "had unknown type" << (int)profile.type();
-	  emit OnDefaultSettingsProfileSetError("Database error", client);
-	  return;
+	  return emit OnDefaultSettingsProfileSetError("Database error", client);
 	}
 
 	emit OnDefaultSettingsProfileSet(id, client);
@@ -277,11 +265,11 @@ void APIController::setDefaultSettingsProfile(Profile::ID id, QObject* client) {
 
 void APIController::setStartingWell(Job::ID id, Profile::ID plate_id, int row,
 									int col, QObject* client) {
-  if (!db_->jobs().exists(id)) {
+  if (!db_->jobs().exists(id))
 	emit OnSetStartingWellError("Job " + id + " not found", client);
-  } else if (!db_->profiles().exists(plate_id)) {
+  else if (!db_->profiles().exists(plate_id))
 	emit OnSetStartingWellError("Plate " + plate_id + " not found", client);
-  } else {
+  else {
 	auto plate = db_->profiles().get(plate_id).plate();
 
 	// Check the validity of row and col
@@ -376,16 +364,19 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
 void APIController::createJob(Job& job, QObject* client) {
   Job::ID id = db_->newJobId();
   job.setCreationDate(QDateTime::currentDateTime());
+  job.setOctoprint(db_->defaultOctoconfig());
 
-  // if (!db_->profiles().exists(job.printer()))
-  // emit OnJobCreateError("Printer profile " + id + " unknown", client);
-  // else if (!db_->profiles().exists(job.socket()))
-  // emit OnJobCreateError("Socket profile " + id + " unknown", client);
-  // else {
-  job.setId(id);
-  db_->jobs().add(id, job);
-  emit OnJobCreated(job.id(), client);
-  //}
+  if (!db_->profiles().exists(job.printer()))
+	emit OnJobCreateError("Printer profile " + id + " unknown", client);
+  else if (!db_->profiles().exists(job.socket()))
+	emit OnJobCreateError("Socket profile " + id + " unknown", client);
+  else if (!db_->profiles().exists(job.octoprint()))
+	emit OnJobCreateError("Octoprint profile " + id + " unknown", client);
+  else {
+	job.setId(id);
+	db_->jobs().add(id, job);
+	emit OnJobCreated(job.id(), client);
+  }
 }
 
 std::shared_ptr<AlgorithmJob> APIController::detectColonies(
@@ -418,8 +409,13 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
 			std::make_shared<DetectionResult>(result_id));
 		std::shared_ptr<AlgorithmJob> algo_job(colony_detector_->createJob(
 			algo_id, algo_job_id, result, settings));
-		algo_job->pushInput(image.get());
 		AlgorithmJob* raw = algo_job.get();
+
+		algo_job->pushInput(image.get());
+		if (db_->detectedPlates().exists(img_id))
+		  // Nobody can delete an image while the job uses it, so the plate also
+		  // wont be deleted
+		  algo_job->pushInput(db_->detectedPlates().get(img_id).get());
 
 		if (!algo_job) {
 		  emit OnColonyDetectionError("Algorithm not found", client);
@@ -429,8 +425,8 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
 				  [this, client, job_id, raw, result] {
 					emit this->OnColonyDetected(job_id, &result->colonies(),
 												client);
-					qDebug() << "Detected" << result->colonies().size() << "in"
-							 << raw->tookMs() << "ms";
+					qDebug() << "Detected" << result->colonies().size()
+							 << "colonies in" << raw->tookMs() << "ms";
 				  });
 		  connect(raw, &AlgorithmJob::OnAlgoFailed, raw, [this, raw, client] {
 			emit OnColonyDetectionError(raw->result()->stageError(), client);
@@ -456,8 +452,7 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
   if (job) job->start(true, false);
 }
 
-void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
-							 QObject* client) {
+void APIController::startJob(Job::ID id, QObject* client) {
   if (!db_->jobs().exists(id))
 	return emit OnJobStartError("Job '" + id + "' job found", client);
   Job& job = db_->jobs().get(id);
@@ -473,20 +468,17 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   if (!db_->profiles().exists(job.printer()) ||
 	  !db_->profiles().exists(job.socket()) ||
 	  !db_->profiles().exists(job.plate()) ||
-	  !db_->profiles().exists(octoprint_id))
+	  !db_->profiles().exists(job.octoprint()))
 	return emit OnJobStartError(
 		"Internal error: Cant find printer, socket, plate or octoprint profile",
 		client);
-  job.setOctoprint(octoprint_id);
 
-  PrinterProfile* printerp =
-	  db_->profiles().get(job.printer()).operator c3picko::PrinterProfile*();
-  PlateSocketProfile* socket =
-	  db_->profiles().get(job.socket()).operator c3picko::PlateSocketProfile*();
-  PlateProfile* plate =
-	  db_->profiles().get(job.plate()).operator c3picko::PlateProfile*();
-  OctoConfig* octoprint =
-	  db_->profiles().get(job.octoprint()).operator c3picko::pi::OctoConfig*();
+  PrinterProfile* printerp(db_->profiles().get(job.printer()));
+  PlateSocketProfile* socket(db_->profiles().get(job.socket()));
+  PlateProfile* plate(db_->profiles().get(job.plate()));
+  OctoConfig* octoprint(db_->profiles().get(job.octoprint()));
+  Plate* detectedPlate(db_->detectedPlates().get(job.imgID()).get());
+  Image const& image(db_->images().get(job.imgID()));
 
   OctoPrint* printer = new OctoPrint(*octoprint, this);
   GcodeGenerator gen(*socket, *printerp, *plate);
@@ -499,23 +491,34 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
 
   Well well(job.startingRow(), job.startingCol(), plate);
   // Convert the colony coordinates to real world coordinates
-  for (auto it = selected.begin(); it != selected.end(); ++it) {
-	auto f = std::find_if(result->includedBegin(), result->includedEnd(),
-						  [&it](Colony const& c) { return c.id() == *it; });
+  {
+	for (auto it = selected.begin(); it != selected.end(); ++it) {
+	  auto colony =
+		  std::find_if(result->includedBegin(), result->includedEnd(),
+					   [&it](Colony const& c) { return c.id() == *it; });
 
-	if (f == result->includedEnd())
-	  return emit OnJobStartError("Internal error: Cant find selected colonie",
-								  client);
+	  if (colony == result->includedEnd())
+		return emit OnJobStartError("Internal error: Cant find selected colony",
+									client);
 
-	// Invert the y-axis. FIXME get the frame size from the plate profile
-	coords.push_back(Point(f->x() * 128, (1.0 - f->y()) * 85.9));
-	pick_positions.emplace(well, *it);
-	if (it + 1 != selected.end()) ++well;
+	  // Assert that they are within the inner border
+	  if (!detectedPlate->isPixelPickable(colony->x() * image.width(),
+										  colony->y() * image.height())) {
+		qWarning() << "cant not pick detected colony (id=" << colony->id()
+				   << ")";
+		continue;
+	  }
+
+	  // Map the image coordinate
+	  coords.push_back(
+		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
+	  pick_positions.emplace(well, *it);
+	  if (it + 1 != selected.end()) ++well;
+	}
   }
 
-  std::vector<GcodeInstruction> code =
-	  gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
-												job.startingCol(), coords);
+  std::vector<GcodeInstruction> code(gen.CreateGcodeForTheEntirePickingProcess(
+	  job.startingRow(), job.startingCol(), coords));
 
   Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
 										   pick_positions, code));
@@ -526,40 +529,48 @@ void APIController::startJob(Job::ID id, Profile::ID octoprint_id,
   QStringList gcode_list;
   for (auto const& c : code) gcode_list << QString::fromStdString(c.ToString());
 
-  emit OnJobStarted(report, client);
   Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
-  connect(cmd, &Command::OnStatusErr,
-		  [](QJsonValue status) { qWarning() << status.toString(); });
-  connect(cmd, &Command::OnNetworkErr,
-		  [](QString error) { qWarning() << error; });
+  connect(cmd, &Command::OnStatusErr, [this, client](QJsonValue status) {
+	emit OnJobStartError("Octoprint error: " + status.toString(), client);
+  });
+  connect(cmd, &Command::OnNetworkErr, [this, client](QString error) {
+	emit OnJobStartError("Network error: " + error, client);
+  });
+  connect(cmd, &Command::OnStatusOk,
+		  [this, report, client] { emit OnJobStarted(report, client); });
   connect(cmd, &Command::OnFinished, printer, &OctoPrint::deleteLater);
-  printer->SendCommand(cmd);  // TODO inform client
+  printer->SendCommand(cmd);
 }
 
 void APIController::shutdown(QObject*) {
   qDebug() << "Shutdown";
-  qApp->exit(EXIT_SUCCESS);
+  qApp->exit(exitCodeSuccess());
 }
 
 void APIController::restart(QObject*) {
   qDebug() << "Restart";
-  qApp->exit(exitCodeHardRestart());
+  qApp->exit(exitCodeSoftRestart());
 }
 
 QJsonObject APIController::createImageList() const {
+  std::map<int, int> l;
+
+  // Order Images by upload date
+  std::vector<std::reference_wrapper<Image const>> pairs;
+  for (auto const& pair : db_->images())
+	pairs.push_back(
+		std::cref<Image>(pair.second));  // Copy here bc reference_wrapper does
+										 // not have move ctor ?!
+  std::sort(pairs.begin(), pairs.end(),
+			[](std::reference_wrapper<Image const> a,
+			   std::reference_wrapper<Image const> b) {
+			  return a.get().uploaded() < b.get().uploaded();
+			});
+
   QJsonArray json_images;
 
-  // Get all image ids
-  auto ids = db_->images().entries().keys();
-
-  // Order ids by their matching images upload date
-  std::sort(ids.begin(), ids.end(), [this](Image::ID a, Image::ID b) {
-	return this->db_->images().get(a).uploaded() <
-		   this->db_->images().get(b).uploaded();
-  });
-
-  for (auto id : ids)
-	json_images.push_back(Marshalling::toJson(db_->images().get(id)));
+  for (auto const& pair : pairs)
+	json_images.push_back(Marshalling::toJson(pair.get()));
 
   return {{"images", json_images}};
 }
@@ -575,8 +586,8 @@ QJsonObject APIController::createImageList(Image const& img) {
 QJsonObject APIController::createJobList() {
   QJsonArray json_jobs;
 
-  for (auto const& job : db_->jobs())
-	json_jobs.append(Marshalling::toJson(job));
+  for (auto const& pair : db_->jobs())
+	json_jobs.append(Marshalling::toJson(pair.second));
 
   return {{"jobs", json_jobs}};
 }
@@ -593,8 +604,8 @@ QJsonObject APIController::createProfileList() {
   QJsonObject json;
   QJsonArray json_profiles;
 
-  for (auto const& profile : db_->profiles())
-	json_profiles.append(Marshalling::toJson(profile));
+  for (auto const& pair : db_->profiles())
+	json_profiles.append(Marshalling::toJson(pair.second));
 
   json["defaultPrinter"] = db_->defaultPrinter();
   json["defaultSocket"] = db_->defaultSocket();
@@ -629,10 +640,12 @@ QJsonObject APIController::createDeleteJob(Job const& job) {
 }
 
 bool APIController::isProfileUsedByJob(Profile::ID profile) {
-  for (Job const& job : db_->jobs())
+  for (auto const& pair : db_->jobs()) {
+	Job const& job(pair.second);
 	if (job.plate() == profile || job.printer() == profile ||
 		job.socket() == profile || job.octoprint() == profile)
 	  return true;
+  }
 
   return false;
 }

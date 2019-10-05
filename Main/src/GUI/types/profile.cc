@@ -175,6 +175,7 @@ QJsonObject Profile::printerTemplate() {
 	  makeCheckboxField("skip_source", "Skip soure plate", "", false),
 	  makeCheckboxField("skip_master", "Skip master plate", "", false),
 	  makeCheckboxField("skip_target", "Skip target plate", "", false),
+	  makeCheckboxField("skip_cutoff", "No filament", "", false),
   }};
 
   return json;
@@ -223,6 +224,10 @@ QJsonObject Profile::plateTemplate() {
 					   ""),
 	   makeNumberField("number_of_columns", "Number of columns", "", 1, 100, 1,
 					   0, 0, ""),
+	   makeEnumField(
+		   "plate_type", "Plate Type", "",
+		   {{"kRECT", "Rectangular plate"}, {"kROUND", "Round plate"}},
+		   "kRECT"),
 	   makeNumberField("a1_row_offset", "A1 row offset", "", -1000, 1000, .01,
 					   0, 0, "mm"),
 	   makeNumberField("a1_column_offset", "A1 column offset", "", -1000, 1000,

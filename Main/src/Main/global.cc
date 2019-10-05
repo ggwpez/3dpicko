@@ -4,6 +4,7 @@
 #include <QtDebug>
 #include "ImageRecognition/algorithms/helper.h"
 #include "Main/exception.h"
+#include "Main/logger.h"
 #include "Main/resource_path.h"
 #include "Main/version.h"
 
@@ -38,34 +39,28 @@ static QSslConfiguration* LoadSsl(QString key, QString cert) {
   return ssl;
 }
 
-QSslConfiguration* LoadSslConfig(QSettings& settings) {
+QSslConfiguration* loadSslConfig(QSettings& settings) {
   if (settings.value("enabled", false).toBool()) {
 	QString cert(settings.value("certificate").toString());
 	QString key(settings.value("key").toString());
-
 	// throws
 	QSslConfiguration* ssl = LoadSsl(key, cert);
 
-	qInfo() << "SSL setup completed";
+	qDebug() << "SSL        enabled";
 	return ssl;
   } else {
-	qInfo() << "SSL disabled";
+	qDebug() << "SSL        disabled";
 	return nullptr;
   }
 }
-
-ResourcePath Root() { return root_path; }
-
-ResourcePath Etc() { return Root() + "etc/"; }
-
-ResourcePath DocRoot() { return doc_root_path; }
-
-QString UploadFolderName() { return "uploads"; }
-
-ResourcePath UploadFolder() { return DocRoot() + UploadFolderName() + "/"; }
-
-ResourcePath reportFolder() { return DocRoot() + "reports/"; }
-
+namespace paths {
+ResourcePath root() { return root_path; }
+ResourcePath etc() { return root() + "etc/"; }
+ResourcePath docRoot() { return doc_root_path; }
+QString uploadFolderName() { return "uploads"; }
+ResourcePath uploadFolder() { return docRoot() + uploadFolderName() + "/"; }
+ResourcePath reportFolder() { return docRoot() + "reports/"; }
+}  // namespace paths
 /**
  * Search the configuration file.
  * Aborts the application if not found.
@@ -80,10 +75,9 @@ QString searchConfigFile(QStringList args) {
   QFileInfo info(file);
   if (file.exists()) {
 	QString configFileName = QDir(file.fileName()).canonicalPath();
-	qInfo() << "Reading config:" << configFileName;
 	return configFileName;
   } else {
-	qFatal("Ini file not found, pass path to .ini as first argument.");
+	qFatal("Ini file not found, pass path as first argument.");
 	qApp->exit(1);
   }
   return "";
@@ -106,7 +100,7 @@ static void setupSignals(QCoreApplication* app) {
 	  app->quit();
   });
 #else
-  qInfo() << "UNIX Signal Setup skipped";
+  qDebug() << "UNIX Signal Setup skipped";
 #endif
 }
 
@@ -117,7 +111,7 @@ static void qtTypeSetup() {
 
 static int subprocess_timeout_ms;
 static QString ini_file_path;
-QString Setup(QCoreApplication* app) {
+QString setupGlobal(QCoreApplication* app) {
   setupSignals(app);
   qtTypeSetup();
   ini_file_path = searchConfigFile(app->arguments());
@@ -133,25 +127,28 @@ QString Setup(QCoreApplication* app) {
   upload_path = root_path + settings.value("uploads").toString();
   report_path = root_path + settings.value("reports").toString();
 
-  if (!Root().exists() || !Root().isDir())
-	throw Exception("Root '" + Root().toSystemAbsolute() +
+  if (!paths::root().exists() || !paths::root().isDir())
+	throw Exception("Root '" + paths::root().toSystemAbsolute() +
 					"' must be a valid directory");
-  if (!DocRoot().exists() || !DocRoot().isDir())
-	throw Exception("DocRoot '" + DocRoot().toSystemAbsolute() +
+  if (!paths::docRoot().exists() || !paths::docRoot().isDir())
+	throw Exception("DocRoot '" + paths::docRoot().toSystemAbsolute() +
 					"' must be a valid directory");
 
   // Create "uploads" folder
-  if (!QDir(UploadFolder().toSystemAbsolute()).exists())
-	QDir().mkdir(UploadFolder().toSystemAbsolute());
+  if (!QDir(paths::uploadFolder().toSystemAbsolute()).exists())
+	QDir().mkdir(paths::uploadFolder().toSystemAbsolute());
   // Create "report" folder
-  if (!QDir(reportFolder().toSystemAbsolute()).exists())
-	QDir().mkdir(reportFolder().toSystemAbsolute());
+  if (!QDir(paths::reportFolder().toSystemAbsolute()).exists())
+	QDir().mkdir(paths::reportFolder().toSystemAbsolute());
 
   subprocess_timeout_ms =
 	  settings.value("subprocess_timeout_s", 60 * 1000).toInt() * 1000;
+  int backlog_length = settings.value("backlog_length", 1000).toInt();
+  Logger::instance()->setBacklogLength(backlog_length);
 
-  qDebug().noquote() << "Version:" << currentVersion().id() << "built on"
-					 << currentVersion().date().toString(dateTimeFormat());
+  qDebug().noquote() << "Version:" << currentVersion().id() << "from"
+					 << currentVersion().date().toString(dateTimeFormat())
+					 << "build on" << buildTime().toString(dateTimeFormat());
 
   return ini_file_path;
 }
@@ -183,6 +180,7 @@ QString htmlTextColor(QtMsgType type) {
 	case QtMsgType::QtCriticalMsg:
 	case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
 	  clr = "red";				 // Red
+	  break;
 	default:
 	  break;
   }
@@ -195,20 +193,19 @@ static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
 							const QString& msg) {
   QString message = qFormatLogMessage(type, context, msg);
   QString time =
-	  "[ " + QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate) +
-	  " ] ";
+	  "[ " + QDateTime::currentDateTime().toString(dateTimeFormat()) + " ] ";
 
   QString console_string = time + consoleTextColor(type) + message + "\033[0m";
   QString html_string = time + htmlTextColor(type) + message + "</font>";
 
-  if (messageHandler) messageHandler(html_string);
-
-	// TODO bad style to write everything to stderr
+  // TODO bad style to write everything to stderr
 #if defined(Q_OS_LINUX) || defined(C3PICKO_TEXT_COLORS_OFF)
   fprintf(stderr, "%s\n", qPrintable(console_string));
 #else
   fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));
 #endif
+
+  Logger::instance()->log(html_string);
 }
 
 void setMessageHandler(const std::function<void(QString)>& handler) {
@@ -226,7 +223,7 @@ int exitCodeHardRestart() { return 101; }
 int exitCodeSuccess() { return 0; }
 int exitCodeError() { return 1; }
 
-const char* defaultImageExtension() { return "jpg"; }
+const char* defaultImageExtension() { return ".png"; }
 
 QString getConfigPath() {
   if (ini_file_path.isEmpty())
@@ -242,5 +239,16 @@ Version const& currentVersion() {
   return current;
 }
 
+QDateTime buildTime() {
+  static QDateTime time(QDateTime::fromString(BUILD_DATE, Qt::ISODate));
+
+  return time;
+}
+
 int getSubprocessTimeoutMs() { return subprocess_timeout_ms; }
+
+void cleanupGlobal() {
+  /*QMetaType::registerConverter<math::Range<double>, QString>(
+	  math::rangeToString);*/
+}
 }  // namespace c3picko

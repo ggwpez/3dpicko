@@ -41,7 +41,7 @@ void HttpListener::listen() {
 	qCritical("HttpListener: Cannot bind on port %i: %s", port,
 			  qPrintable(errorString()));
   } else {
-	qDebug("HttpListener at     %s:%i", qPrintable(host), port);
+	qDebug("HTTP(s)    %s:%i", qPrintable(host), port);
   }
 }
 

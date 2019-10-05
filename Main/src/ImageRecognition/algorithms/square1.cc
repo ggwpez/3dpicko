@@ -1,10 +1,10 @@
-#include "ImageRecognition/algorithms/plate1.h"
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithms/normal1.h"
+#include "ImageRecognition/algorithms/plate1.h"
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/rect_plate.h"
 

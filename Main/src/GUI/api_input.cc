@@ -45,7 +45,7 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 	Profile::ID octoprint =
 		Marshalling::fromJson<Profile::ID>(req_data["octoprint_profile"]);
 
-	api->startJob(job, "306" /* FIXME */, client);
+	api->startJob(job, client);
   } else if (path == APICommands::UPLOAD_IMAGE) {
 	// Get image data
 	QByteArray img_data(

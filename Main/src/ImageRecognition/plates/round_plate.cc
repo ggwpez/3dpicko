@@ -1,4 +1,5 @@
 #include "ImageRecognition/plates/round_plate.h"
+#include <QJsonArray>
 #include "Main/exception.h"
 
 namespace c3picko {
@@ -12,6 +13,8 @@ RoundPlate::RoundPlate(const RoundPlate::OuterBorder& outer_border,
 			cv::boundingRect(outer_border)),
 	  outer_border_(outer_border),
 	  inner_border_(inner_border),
+	  inner_border_aabb_width_2_squared_(
+		  std::pow(cv::boundingRect(inner_border).width / 2, 2)),
 	  markers_(markers),
 	  m1_(findM1(markers)) {}
 
@@ -22,6 +25,8 @@ RoundPlate::RoundPlate(const RoundPlate::OuterBorder& outer_border,
 	: Plate(center, angle, aabb),
 	  outer_border_(outer_border),
 	  inner_border_(inner_border),
+	  inner_border_aabb_width_2_squared_(
+		  std::pow(cv::boundingRect(inner_border).width / 2, 2)),
 	  markers_(markers),
 	  m1_(m1) {}
 
@@ -56,12 +61,19 @@ double RoundPlate::calculateRotation(RoundPlate::Markers const& markers,
   double ret = std::atan2((std::sin(a1) + std::sin(a2) + std::sin(a3)) / 3,
 						  (std::cos(a1) + std::cos(a2) + std::cos(a3)) / 3);
 
-  ret = ret * 180 / M_PI;
+  ret = (ret - M_PI) * 180 / M_PI;  // -M_PI rotates the edgy marker to the
+									// left, such as it lies in the picker.
   return ret < 0 ? ret + 360 : ret;
 }
 
-RoundPlate::InnerBorder RoundPlate::innerBorder() const {
+const RoundPlate::Markers& RoundPlate::markers() const { return markers_; }
+
+const RoundPlate::InnerBorder& RoundPlate::innerBorder() const {
   return inner_border_;
+}
+
+const RoundPlate::InnerBorder& RoundPlate::outerBorder() const {
+  return outer_border_;
 }
 
 std::size_t RoundPlate::m1() const { return m1_; }
@@ -87,6 +99,7 @@ RoundPlate* RoundPlate::rotated() const {
   // transform contours
   cv::transform(outer_border_, new_outer_border, T);
   cv::transform(inner_border_, new_inner_border, R);
+
   cv::transform(inner_border_, new_inner_border, T);
   cv::transform(markers_, new_markers, R);
   cv::transform(markers_, new_markers, T);
@@ -101,5 +114,56 @@ void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
 				   cv::Scalar::all(255), -1);
 
   out = in & mask;
+}
+
+bool RoundPlate::isInsideSafetyMargin(cv::Point2d pos,
+									  math::UnitValue radius) const {
+  return (math::norm_l1(pos.x, pos.y, center_.x, center_.y) <=
+		  inner_border_aabb_width_2_squared_ * radius * radius);
+}
+
+bool RoundPlate::isPixelPickable(int x, int y) const {
+  return (cv::pointPolygonTest(inner_border_, cv::Point(x, y), false) > 0);
+}
+
+LocalColonyCoordinates RoundPlate::mapImageToGlobal(double x, double y) const {
+  return {float(x * 98 + 12.5), float((1.0 - y) * 92.5 - 2.8)};
+}
+
+template <>
+QJsonObject Marshalling::toJson(RoundPlate* const& value) {
+  QJsonObject obj;
+  QJsonArray inner, outer, markers;
+
+  for (auto const& e : value->innerBorder())
+	inner.push_back(Marshalling::toJson(e));
+  for (auto const& e : value->outerBorder())
+	outer.push_back(Marshalling::toJson(e));
+  for (auto const& e : value->markers())
+	markers.push_back(Marshalling::toJson(e));
+
+  obj["inner"] = inner;
+  obj["outer"] = outer;
+  obj["markers"] = markers;
+
+  return obj;
+}
+
+template <>
+RoundPlate* Marshalling::fromJson(const QJsonObject& obj) {
+  RoundPlate::InnerBorder inner;
+  RoundPlate::OuterBorder outer;
+  RoundPlate::Markers markers;
+  QJsonArray jinner(obj["inner"].toArray()), jouter(obj["outer"].toArray()),
+	  jmarkers(obj["markers"].toArray());
+
+  for (int i = 0; i < jinner.size(); ++i)
+	inner.push_back(Marshalling::fromJson<cv::Point>(jinner[i]));
+  for (int i = 0; i < jouter.size(); ++i)
+	outer.push_back(Marshalling::fromJson<cv::Point>(jouter[i]));
+  for (std::size_t i = 0; i < markers.size(); ++i)
+	markers[i] = Marshalling::fromJson<cv::Point>(jmarkers[i]);
+
+  return new RoundPlate(outer, inner, markers);
 }
 }  // namespace c3picko

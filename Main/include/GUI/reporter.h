@@ -31,8 +31,8 @@ class Reporter {
   Reporter(Report::ID id, Job const& job, QDateTime creation,
 		   const std::map<Well, Colony::ID>& pick_positions, const Image& image,
 		   const DetectionResult* results_, QSet<Colony::ID> colonies_to_pick,
-		   Profile const& plate_, Profile const& printer_,
-		   Profile const& socket_, Profile const& octoprint_,
+		   Profile const& plate, Profile const& printer, Profile const& socket,
+		   Profile const& octoprint,
 		   const std::vector<GcodeInstruction>& gcode);
 
   void writeHtmlReport(cv::Mat const& img_data, QString& html) const;

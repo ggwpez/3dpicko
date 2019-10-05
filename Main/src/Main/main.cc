@@ -4,10 +4,12 @@
 #include "GUI/requestmapper.h"
 #include "GUI/ws_server.h"
 #include "ImageRecognition/algorithm_manager.h"
+#include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/algorithms/fluro1.h"
-#include "ImageRecognition/algorithms/normal1.h"
-#include "ImageRecognition/algorithms/plate1.h"
-#include "ImageRecognition/algorithms/plate2.h"
+#include "ImageRecognition/algorithms/plate_rect.h"
+#include "ImageRecognition/algorithms/plate_round.h"
+#include "Main/dtor_callback.h"
+#include "Main/logger.h"
 #include "Main/signal_daemon.h"
 #include "Main/updater.h"
 
@@ -21,56 +23,63 @@
 
 using namespace stefanfrings;
 using namespace c3picko;
+using namespace c3picko::algorithms;
 
 static int start(int argc, char** argv) {
 #ifdef Q_OS_LINUX
   startLog();
 #endif
   QCoreApplication app(argc, argv);
-  QString ini_file(Setup(&app));
+  QString ini_file(setupGlobal(&app));
   QSettings settings(ini_file, QSettings::IniFormat);
 
+  // Algorithms
   QThreadPool* algo_pool = new QThreadPool(&app);
-  algo_pool->setMaxThreadCount(qMin(1, QThread::idealThreadCount() / 2));
+  algo_pool->setMaxThreadCount(qMax(1, QThread::idealThreadCount()));
   AlgorithmManager* colony_detector =
-	  new AlgorithmManager(algo_pool, {new Normal1(), new Fluro1()}, &app);
-  AlgorithmManager* plate_detector =
-	  new AlgorithmManager(algo_pool, {new Plate1(), new Plate2()}, &app);
+	  new AlgorithmManager(algo_pool, {new Colonies1(), new Fluro1()}, &app);
+  AlgorithmManager* plate_detector = new AlgorithmManager(
+	  algo_pool, {new PlateRect(), new PlateRound()}, &app);
 
+  // Database
   settings.beginGroup("database");
   Database* db = new Database(settings, &app);
   settings.endGroup();
   settings.beginGroup("database.autosave");
-  Autosaver* dbs = new Autosaver(settings, nullptr);
+
+  // Autosaver
+  Autosaver* autos = new Autosaver(settings, &app);
   settings.endGroup();
 
-  QObject::connect(db, &Database::OnDataChanged, dbs, &Autosaver::dataChanged);
-  QObject::connect(dbs, &Autosaver::OnAutosaveNeeded, db, &Database::autosave);
-  QObject::connect(dbs, &Autosaver::OnAutosaveSkipp, db,
+  QObject::connect(db, &Database::OnDataChanged, autos,
+				   &Autosaver::dataChanged);
+  QObject::connect(autos, &Autosaver::OnAutosaveNeeded, db,
+				   &Database::autosave);
+  QObject::connect(autos, &Autosaver::OnAutosaveSkipp, db,
 				   &Database::autosaveSkipped);
-  dbs->start();
+  autos->start();
 
+  // Updater
   QSettings upd_settings(ini_file, QSettings::IniFormat);
   upd_settings.beginGroup("updater");
-  if (upd_settings.value("enabled").toBool()) {
+  if (upd_settings.value("enabled", false).toBool()) {
 	new Updater(upd_settings, *db, &app);
-	qDebug("Updater enabled");
+	qDebug("Updater    enabled");
   } else
-	qDebug("Updater disabled");
+	qDebug("Updater    disabled");
 
   APIController* api =
 	  new APIController(colony_detector, plate_detector, nullptr, db, &app);
 
   // Static file controller
   settings.beginGroup("files");
-  StaticFileController* staticFileController =
-	  new StaticFileController(settings, DocRoot().toSystemAbsolute(), &app);
+  StaticFileController* staticFileController = new StaticFileController(
+	  settings, paths::docRoot().toSystemAbsolute(), &app);
   settings.endGroup();
-  qInfo() << "DocRoot is" << DocRoot().toSystemAbsolute();
 
   // SSL
   settings.beginGroup("ssl");
-  QSslConfiguration* ssl = LoadSslConfig(settings);
+  QSslConfiguration* ssl = loadSslConfig(settings);
 
   // HTTP server
   QSettings http_settings(ini_file, QSettings::IniFormat);
@@ -91,19 +100,21 @@ static int start(int argc, char** argv) {
   QObject::connect(api, &APIController::toAllExClient, ws_server,
 				   &WsServer::ToAllExClient);
 
-  QObject::connect(&app, &QCoreApplication::aboutToQuit, [db] {
-	db->saveToFile();  // save database
-	stopLog();		   // reset message handlers
-  });
+  // Calls stopLog when something throws an exception als
+  // QCoreApplication::abouToQuit does not get emitted
+  DtorCallback guard(
+	  [db] {
+		db->saveToFile();
+		stopLog();
+	  },
+	  DtorCallback::CallType::kONLY_IN_EXC_CONTEXT);
+  QObject::connect(&app, &QCoreApplication::aboutToQuit, stopLog);
 
   if (!ws_server->StartListen()) return 1;
 
-  // copy logging output to ws_server
-  setMessageHandler([&ws_server](QString msg) {
-	if (ws_server)
-	  QMetaObject::invokeMethod(ws_server, "NewDebugLine",
-								Q_ARG(QString, msg));  // send to other thread
-  });
+  // send logging output to clients
+  QObject::connect(Logger::instance(), &Logger::OnNewLine, ws_server,
+				   &WsServer::NewDebugLine);
 
   return app.exec();
 }
@@ -111,9 +122,9 @@ static int start(int argc, char** argv) {
 int main(int argc, char** argv) {
   int status;
 
-  // Restarts the program when it exited with exitCodeRestart()
+  // Restarts the program when it exited with exitCodeSoftRestart()
   while (true) {
-	qInfo("Starting");
+	qDebug("Starting");
 	try {
 	  status = start(argc, argv);
 	} catch (std::exception const& e) {
@@ -123,7 +134,7 @@ int main(int argc, char** argv) {
 	}
 
 	if (status == exitCodeSoftRestart())
-	  qInfo() << "Awaiting restart...";
+	  qDebug() << "Awaiting restart...";
 	else
 	  break;
   };
