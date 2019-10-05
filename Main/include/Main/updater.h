@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QMutex>
 #include <QObject>
 #include <QTimer>
 #include "GUI/database.h"
@@ -54,11 +55,14 @@ class Updater : public QObject {
    * @brief Stops the search for updates.
    */
   void stopSearch();
+
+ public:
   /**
    * @brief Searches for an update.
    */
-  void search();
+  void Search();
 
+ private:
   // Git callbacks
   void logSuccess(QString);
   void logFailure(QString);
@@ -71,5 +75,6 @@ class Updater : public QObject {
   QString repo_url_;
   QString repo_branch_;
   VersionManager* mng_;
+  QMutex mtx_;
 };
 }  // namespace c3picko
