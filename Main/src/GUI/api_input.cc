@@ -57,6 +57,8 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 		Image(img_data, img_name, "descrtiption", QDateTime::currentDateTime());
 
 	api->UploadImage(std::move(image), client);
+  } else if (path == APICommands::UPDATE_SOFTWARE) {
+	api->updateSoftware(client);
   } else if (path == APICommands::CREATE_SETTINGS_PROFILE) {
 	// Profile::ID newId		 = api->db().newProfileId();
 

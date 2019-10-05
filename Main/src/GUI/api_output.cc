@@ -153,6 +153,10 @@ void APIOutput::ColonyDetectionStarted(
 	Job::ID, QObject*) { /* TODO inform client, maybe add a loading animtion */
 }
 
+void APIOutput::UpdateRequested(QObject* client) {
+  emit op->toClient(client, APICommands::UPDATE_SOFTWARE, QJsonObject());
+}
+
 void APIOutput::ColonyDetected(Job::ID job, const std::vector<Colony>* colonies,
 							   QObject* client) {
   QJsonArray json_coords;

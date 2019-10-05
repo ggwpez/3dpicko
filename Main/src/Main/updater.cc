@@ -46,7 +46,7 @@ Updater::Updater(const QSettings& settings, Database& db, QObject* _parent)
 
   timer_ = new QTimer(this);
   timer_->setInterval(interval_s_ * 1000);
-  connect(timer_, &QTimer::timeout, this, &Updater::search);
+  connect(timer_, &QTimer::timeout, this, &Updater::Search);
 
   startSearch();
 }
@@ -99,8 +99,8 @@ void Updater::stopSearch() {
   timer_->stop();
 }
 
-void Updater::search() {
-  // timer_->stop();
+void Updater::Search() {
+  QMutexLocker lock(&mtx_);
   qDebug() << "Searching for updates...";
 
   Process* gitF = Process::gitFech(sourceDir(), {"origin"});

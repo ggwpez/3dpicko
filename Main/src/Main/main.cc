@@ -62,14 +62,18 @@ static int start(int argc, char** argv) {
   // Updater
   QSettings upd_settings(ini_file, QSettings::IniFormat);
   upd_settings.beginGroup("updater");
+  Updater* updater = nullptr;
   if (upd_settings.value("enabled", false).toBool()) {
-	new Updater(upd_settings, *db, &app);
+	updater = new Updater(upd_settings, *db, &app);
 	qDebug("Updater    enabled");
   } else
 	qDebug("Updater    disabled");
 
   APIController* api =
 	  new APIController(colony_detector, plate_detector, nullptr, db, &app);
+  if (updater)
+	QObject::connect(api, &APIController::OnUpdateRequested, updater,
+					 &Updater::Search);
 
   // Static file controller
   settings.beginGroup("files");

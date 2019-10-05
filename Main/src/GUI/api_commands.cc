@@ -13,6 +13,7 @@ QString APICommands::DELETE_IMAGE = "deleteimage";
 QString APICommands::DELETE_JOB = "deletejob";
 QString APICommands::START_JOB = "startjob";
 QString APICommands::UPLOAD_IMAGE = "uploadimage";
+QString APICommands::UPDATE_SOFTWARE = "updatesoftware";
 QString APICommands::CREATE_SETTINGS_PROFILE = "createsettingsprofile";
 QString APICommands::UPDATE_SETTINGS_PROFILE = "updatesettingsprofile";
 QString APICommands::DELETE_SETTINGS_PROFILE = "deletesettingsprofile";
