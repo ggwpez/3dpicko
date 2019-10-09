@@ -17,4 +17,8 @@ Start it with the <b>start.sh</b> script in that folder, a service will not be c
   
 ## Usage
 Go to the installation directory ~/3dpicko-installation and execute ```./start.sh```.   
-You can now navigate to 127.0.0.1:8080 in you'r browser to access the GUI :tada:.
+You can now navigate to 127.0.0.1:8080 in you'r browser to access the GUI :tada:.  
+  
+## Updating
+_If_ everything works correctly, a click to the <i>Update</i> button in the Admin GUI should be enought.  
+On the next cold-restart it should use the new version. (Dont try the <i>Restart</i> button in the GUI, it does a warm-restart).
