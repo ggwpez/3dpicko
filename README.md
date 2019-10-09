@@ -8,7 +8,7 @@ Steps:
 sudo apt update && sudo apt install git
 git clone git@gitlab.com:ggwpez/3cpicko.git && cd 3cpicko
 bash dependencies.sh
-bash setup.sh ~/3dpicko-installation dev-updater 
+bash setup.sh ~/3dpicko-installation dev 
 ```
 The compilation of opencv could take a while.  
 If everything completes, 3DpickO will be installed to ~/3dpicko-installation.  
