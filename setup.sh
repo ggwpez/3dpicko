@@ -42,7 +42,6 @@ cd $BUILDS
 mkdir $2
 cd $2
 
-# TODO release
 qmake $SOURCE
 make -j$(nproc) > /dev/null
 # GCC 8 likes to segfault, just try it twice
