@@ -4,9 +4,9 @@ After=network.target
 StartLimitIntervalSec=0
 [Service]
 Type=simple
-Restart=always
-RestartSec=1
-User=ubuntu
+Restart=on-abnormal
+RestartSec=3
+User=cpicko
 ExecStart=/usr/bin/env bash %install/start.sh
 
 [Install]

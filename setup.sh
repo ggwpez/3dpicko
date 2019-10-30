@@ -52,7 +52,8 @@ cd $ROOT
 ln -s builds/$2/Main/Main $ROOT/main
 ln -s builds/$2/depend/quazip/quazip/libquazip.so.1 $ROOT/libquazip.so.1
 
-sudo cp dpicko.service /etc/systemd/system/dpicko.service
+sed -i "s#%install#${ROOT}#g" $SOURCE/dpicko.service
+sudo cp $SOURCE/dpicko.service /etc/systemd/system/dpicko.service
 sudo systemctl start dpicko
 
 echo "Setup complete, service started"
