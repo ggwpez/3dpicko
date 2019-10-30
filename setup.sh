@@ -52,6 +52,9 @@ cd $ROOT
 ln -s builds/$2/Main/Main $ROOT/main
 ln -s builds/$2/depend/quazip/quazip/libquazip.so.1 $ROOT/libquazip.so.1
 
-echo "Setup complete, start with ./start.sh"
+sudo cp dpicko.service /etc/systemd/system/dpicko.service
+sudo systemctl start dpicko
+
+echo "Setup complete, service started"
 exit 0
 

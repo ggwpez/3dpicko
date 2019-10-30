@@ -70,6 +70,11 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
   math::findConnectedComponentEdges(erroded, edges, area);
   qDebug() << "Found" << edges.size() << "contours";
 
+  /*cv::drawContours(output, edges, 0, cv::Scalar::all(255));
+  cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
+  cv::imshow("test", output);
+  cv::waitKey(0);*/
+
   // Step 2
   for (std::size_t i = 0; i < edges.size(); ++i) {
 	auto edge = edges[i];

@@ -1,0 +1,13 @@
+[Unit]
+Description=3DPickO service
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=ubuntu
+ExecStart=/usr/bin/env bash %install/start.sh
+
+[Install]
+WantedBy=multi-user.target

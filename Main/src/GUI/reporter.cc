@@ -60,6 +60,7 @@ Report Reporter::createReport() const {
 				 job_.created().toString("dd.MM.yy");
   ResourcePath output = paths::reportFolder() + (name + ".zip");
   ResourcePath htm_path = paths::reportFolder() + (name + ".html");
+  ResourcePath txt_path = paths::reportFolder() + (name + "_coords.txt");
   ResourcePath gcode_path = paths::reportFolder() + (name + ".gcode");
   cv::Mat img_data = result_->first();
 
@@ -93,6 +94,26 @@ Report Reporter::createReport() const {
 	file.write(html.toUtf8());
   }
 
+  // Create txt file for Thomas Zolls roboter
+  {
+	QFile file(txt_path.toSystemAbsolute());
+	QTextStream ts(&file);
+	std::vector<Colony> const& colonies(result_->colonies());
+
+	if (!file.open(QIODevice::WriteOnly))
+	  throw Exception("Could not write coords to: " +
+					  txt_path.toSystemAbsolute());
+
+	for (auto it = pick_positions_.begin(); it != pick_positions_.end(); ++it) {
+	  Colony const& colony =
+		  *std::find_if(colonies.begin(), colonies.end(),
+						[it](Colony const& c) { return c.id() == it->second; });
+	  cv::Point pos(colony.x() * img_data.cols, colony.y() * img_data.rows);
+
+	  ts << colony.id() << "," << pos.x << "," << pos.y << ",null,null,null\n";
+	}
+  }
+
   // Write gcode to file
   {
 	QFile file(gcode_path.toSystemAbsolute());
@@ -107,10 +128,11 @@ Report Reporter::createReport() const {
   }
 
 #ifndef C3PICKO_NO_ZLIB
-  // Compress the html + gcode
+  // Compress the html + gcode + txt_coords
   JlCompress::compressFiles(
 	  output.toSystemAbsolute(),
-	  {gcode_path.toSystemAbsolute(), htm_path.toSystemAbsolute()});
+	  {gcode_path.toSystemAbsolute(), htm_path.toSystemAbsolute(),
+	   txt_path.toSystemAbsolute()});
 #else
   // Let the client only download the html
   output = htm_path;
