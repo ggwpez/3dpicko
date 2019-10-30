@@ -7,7 +7,7 @@ Type=simple
 Restart=on-abnormal
 RestartSec=3
 User=cpicko
-ExecStart=/usr/bin/env bash %install/start.sh
+ExecStart=/usr/bin/env sh -c 'cd %install && sh start.sh'
 
 [Install]
 WantedBy=multi-user.target
