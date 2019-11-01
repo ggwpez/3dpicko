@@ -6,7 +6,7 @@ StartLimitIntervalSec=0
 Type=simple
 Restart=on-abnormal
 RestartSec=3
-User=cpicko
+User=ubuntu
 ExecStart=/usr/bin/env sh -c 'cd %install && sh start.sh'
 
 [Install]
