@@ -14,11 +14,13 @@
 class QThreadPool;
 class ColonyDetector;
 namespace c3picko {
+class Well;
 class VersionManager;
 class AlgorithmJob;
 namespace pi {
 class Command;
 }
+class GcodeInstruction;
 /**
  * @brief Contains the logic for the API.
  * Works together with APIInput and APIOutput.
@@ -100,6 +102,7 @@ class APIController : public QObject {
   void updateDetectionSettings(Job::ID job, QString algo_id,
 							   QJsonObject settings, QObject* client);
   void startJob(Job::ID id, QObject* client);
+  void getReport(Job::ID id, QObject* client);
 
   void shutdown(QObject* client);
   void restart(QObject* client);
@@ -144,8 +147,11 @@ class APIController : public QObject {
   void OnJobDeleted(Job::ID, QObject* client);
   void OnJobDeleteError(Job::ID id, QObject* client);
 
-  void OnJobStarted(Report, QObject* client);
+  void OnJobStarted(Job::ID, QObject* client);
   void OnJobStartError(QString error, QObject* client);
+
+  void OnReport(Job::ID id, QString path, QObject* client);
+  void OnReportError(QString error, QObject* client);
 
   void OnImageCreated(Image::ID, QObject* client);
   void OnImageCreateError(QString path, QObject* client);
@@ -200,6 +206,8 @@ class APIController : public QObject {
   std::shared_ptr<AlgorithmJob> detectColonies(Job::ID job_id, QString algo_id,
 											   QJsonObject settings,
 											   QObject* client);
+  QString calculateGcode(Job::ID id, std::vector<GcodeInstruction>* gcode,
+						 std::map<c3picko::Well, Colony::ID>*);
 
  protected:
   AlgorithmManager *colony_detector_, *plate_detector_;

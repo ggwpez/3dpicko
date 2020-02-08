@@ -41,8 +41,11 @@ class APIOutput : public QObject {
   void JobCreateError(QString, QObject*);
   void JobDeleted(Job::ID id, QObject* client);
   void JobDeleteError(Job::ID id, QObject* client);
-  void JobStarted(Report report, QObject* client);
+  void JobStarted(Job::ID id, QObject* client);
   void JobStartError(QString error, QObject* client);
+
+  void Report(Job::ID id, QString path, QObject* client);
+  void ReportError(QString error, QObject* client);
 
   void ImageCreated(Image::ID, QObject* client);
   void ImageCreateError(QString path, QObject* client);

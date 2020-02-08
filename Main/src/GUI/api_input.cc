@@ -42,10 +42,10 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 	api->DeleteJob(id, client);
   } else if (path == APICommands::START_JOB) {
 	Job::ID job = Marshalling::fromJson<QString>(req_data["id"]);
-	Profile::ID octoprint =
-		Marshalling::fromJson<Profile::ID>(req_data["octoprint_profile"]);
-
 	api->startJob(job, client);
+  } else if (path == APICommands::GET_REPORT) {
+	Job::ID id = Marshalling::fromJson<Job::ID>(req_data["id"]);
+	api->getReport(id, client);
   } else if (path == APICommands::UPLOAD_IMAGE) {
 	// Get image data
 	QByteArray img_data(

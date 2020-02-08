@@ -69,6 +69,11 @@ $(function Setup()
             else if (type == "getversionlist")
             {
             }
+            else if (type == "getreport") {
+                console.log(data.path);
+                button_div = document.getElementById('overview-buttons');
+                button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.path}" download>Download Report</a>`);
+            }
             else if (type == "versionswitched")
             {
                 alert("New vesion is: " +data.id);
@@ -131,10 +136,6 @@ $(function Setup()
                 if(data.id == current_job.id){
                     current_job.status = "started";
                     delete unsaved_elements['new_job'];
-                    button_div = document.getElementById('overview-buttons');
-                    if(data.report){
-                        button_div.insertAdjacentHTML('beforeend', `<a class="btn btn-primary m-1" href="${data.report}" download>Download Report</a>`);
-                    }
                 }
             }
             else if (type == "getjoblist")
@@ -430,6 +431,7 @@ function selectionTab(){
             name: document.getElementById('inputJobName').value,
             printer: printer_id,
             socket: socket_id,
+            octoprint: default_profiles['octoprint-profile'],
             description: description
         }
         api("createjob", current_job);
@@ -490,6 +492,7 @@ function overviewTab(selected_colonies){
         let plate_selection = document.getElementById("select-plate-profile");
         let plate_id = plate_selection.options[plate_selection.selectedIndex].value;
         api("setstartingwell", {row: collided_row, column: collided_column, job_id: current_job.id, plate_id: plate_id});
+        api('getreport', {id: current_job.id});
         const canvas_layer0 = document.getElementById('layer0');
         const canvas_layer1 = document.getElementById('layer1');
         // TODO onclick resize
@@ -520,11 +523,10 @@ function executeTab(){
         $('#check-preconditions').hide();
         $('#execute-button').hide();
         $('#pickjob-running').show();
-        api('startjob', {id: current_job.id, octoprint_profile: default_profiles['octoprint-profile']});
+        api('startjob', {id: current_job.id});
     }
     form.classList.add('was-validated');
 }
-
 
 // bootstrap alert-type: success/warning/danger/primary/dark...
 function ShowAlert(message, type = "success", delay=3000){

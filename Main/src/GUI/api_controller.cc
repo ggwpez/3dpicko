@@ -456,16 +456,15 @@ void APIController::updateDetectionSettings(Job::ID job_id, QString algo_id,
   if (job) job->start(true, false);
 }
 
-void APIController::startJob(Job::ID id, QObject* client) {
-  if (!db_->jobs().exists(id))
-	return emit OnJobStartError("Job '" + id + "' job found", client);
-  Job& job = db_->jobs().get(id);
+QString APIController::calculateGcode(
+	Job::ID id, std::vector<GcodeInstruction>* gcode,
+	std::map<Well, Colony::ID>* pick_positions) {
+  if (!db_->jobs().exists(id)) return "Job '" + id + "' job found";
+  Job const& job = db_->jobs().get(id);
 
   if (!job.resultJob() || !job.resultJob()->result())
-	return emit OnJobStartError(
-		"Job " + id +
-			" could not find its detection results: " + job.resultID(),
-		client);
+	return "Job " + id +
+		   " could not find its detection results: " + job.resultID();
   DetectionResult* result =
 	  static_cast<DetectionResult*>(job.resultJob()->result().get());
 
@@ -473,26 +472,21 @@ void APIController::startJob(Job::ID id, QObject* client) {
 	  !db_->profiles().exists(job.socket()) ||
 	  !db_->profiles().exists(job.plate()) ||
 	  !db_->profiles().exists(job.octoprint()))
-	return emit OnJobStartError(
-		"Internal error: Cant find printer, socket, plate or octoprint profile",
-		client);
+	return "Internal error: Cant find printer, socket, plate or octoprint "
+		   "profile";
 
   PrinterProfile* printerp(db_->profiles().get(job.printer()));
   PlateSocketProfile* socket(db_->profiles().get(job.socket()));
   PlateProfile* plate(db_->profiles().get(job.plate()));
-  OctoConfig* octoprint(db_->profiles().get(job.octoprint()));
   Plate* detectedPlate(db_->detectedPlates().get(job.imgID()).get());
   Image const& image(db_->images().get(job.imgID()));
 
-  OctoPrint* printer = new OctoPrint(*octoprint, this);
   GcodeGenerator gen(*socket, *printerp, *plate);
 
   // Order the colonies by their top left position
   QSet<Colony::ID> selected = job.coloniesToPick();
 
   std::vector<LocalColonyCoordinates> coords;
-  std::map<Well, Colony::ID> pick_positions;
-
   Well well(job.startingRow(), job.startingCol(), plate);
   // Convert the colony coordinates to real world coordinates
   {
@@ -502,8 +496,7 @@ void APIController::startJob(Job::ID id, QObject* client) {
 					   [&it](Colony const& c) { return c.id() == *it; });
 
 	  if (colony == result->includedEnd())
-		return emit OnJobStartError("Internal error: Cant find selected colony",
-									client);
+		return "Internal error: Cant find selected colony";
 
 	  // Assert that they are within the inner border
 	  if (!detectedPlate->isPixelPickable(colony->x() * image.width(),
@@ -516,23 +509,44 @@ void APIController::startJob(Job::ID id, QObject* client) {
 	  // Map the image coordinate
 	  coords.push_back(
 		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
-	  pick_positions.emplace(well, *it);
+	  pick_positions->emplace(well, *it);
 	  if (it + 1 != selected.end()) ++well;
 	}
   }
 
-  std::vector<GcodeInstruction> code(gen.CreateGcodeForTheEntirePickingProcess(
-	  job.startingRow(), job.startingCol(), coords));
+  *gcode = gen.CreateGcodeForTheEntirePickingProcess(job.startingRow(),
+													 job.startingCol(), coords);
+  return "";
+}
 
-  Reporter reporter(Reporter::fromDatabase(*db_, db_->newReportId(), job.id(),
-										   pick_positions, code));
+void APIController::getReport(Job::ID id, QObject* client) {
+  std::vector<GcodeInstruction> gcode;
+  std::map<Well, Colony::ID> pick_positions;
+  auto error = calculateGcode(id, &gcode, &pick_positions);
+  if (!error.isEmpty()) return emit OnReportError(error, client);
+
+  Reporter reporter(Reporter::fromDatabase(*db_, id, pick_positions, gcode));
   Report report = reporter.createReport();
-  job.setReportPath(report.data());
+  db_->reports().add(id, report);
 
+  emit OnReport(id, report.data().toDocRootAbsolute(), client);
+}
+
+void APIController::startJob(Job::ID id, QObject* client) {
+  std::vector<GcodeInstruction> gcode;
+  std::map<Well, Colony::ID> pick_positions;
+  auto error = calculateGcode(id, &gcode, &pick_positions);
+  if (!error.isEmpty())
+	return emit OnJobStartError("calculating gcode:" + error, client);
+
+  Job const& job = db_->jobs().get(id);
   // Convert gcode to octoprint commands
   QStringList gcode_list;
-  for (auto const& c : code) gcode_list << QString::fromStdString(c.ToString());
+  for (auto const& c : gcode)
+	gcode_list << QString::fromStdString(c.ToString());
 
+  OctoConfig* octoprint(db_->profiles().get(job.octoprint()));
+  OctoPrint* printer = new OctoPrint(*octoprint, this);
   Command* cmd = commands::ArbitraryCommand::MultiCommand(gcode_list);
   connect(cmd, &Command::OnStatusErr, [this, client](QJsonValue status) {
 	emit OnJobStartError("Octoprint error: " + status.toString(), client);
@@ -541,7 +555,7 @@ void APIController::startJob(Job::ID id, QObject* client) {
 	emit OnJobStartError("Network error: " + error, client);
   });
   connect(cmd, &Command::OnStatusOk,
-		  [this, report, client] { emit OnJobStarted(report, client); });
+		  [this, id, client] { emit OnJobStarted(id, client); });
   connect(cmd, &Command::OnFinished, printer, &OctoPrint::deleteLater);
   printer->SendCommand(cmd);
 }
