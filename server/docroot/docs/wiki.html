@@ -1,23 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <!-- TODO:
 replace pics with new ones:
 colony picker
 algorithmns
 part 1 with frame
 scissors id="configuration_hardware"
-nozzel bündig
+nozzel b&Atilde;&frac14;ndig
 
 Convert to List with proper line break, why is it not working by default?
 use fixed withd independent of browser size
 A1 = H1 in Grafik
 
 Feedback
-Einstellungen nicht überprüft?
+Einstellungen nicht &Atilde;&frac14;berpr&Atilde;&frac14;ft?
 
 Navileiste ausrichting
 Navileiste scorllen Introduction
 
 
--->
+--><html><body>
 <div id="introduction">
   <h1> Introduction </h1>
   <!--
@@ -61,27 +62,27 @@ Navileiste scorllen Introduction
   
     <h3> Colony Picker </h3>
     <p>
-      <img src="./img/wiki/colony_picker.jpg"  width="400">
+      <img src="./img/wiki/colony_picker.jpg" width="400">
     </p>
     
     <h3> Web Interface </h3>
     <p>
-      <img src="./img/wiki/webinterface.jpg"  width="400">
+      <img src="./img/wiki/webinterface.jpg" width="400">
     </p>
   
     <h3> Petri Dish Socket </h3>
     <p>
-      <img src="./img/wiki/Socket.jpg"  width="400">
+      <img src="./img/wiki/Socket.jpg" width="400">
     </p>
   
     <h3> Pneumatic Scissors </h3>
     <p>
-    <img src="./img/wiki/pneumatic_scissors.jpg"  width="400">
+    <img src="./img/wiki/pneumatic_scissors.jpg" width="400">
     </p>
   
     <h3> Filament </h3>
     <p>
-    <img src="./img/wiki/filament.jpg"  width="400">
+    <img src="./img/wiki/filament.jpg" width="400">
     </p>
 	<!--
     <h3> Waste Bin </h3>
@@ -110,7 +111,8 @@ Navileiste scorllen Introduction
   <li>Make sure that you know where the printer's <a class="textLink text-primary" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('power_button', 'Power button')">power button</a> is. In case of any malfunctioning of the printer turn it off immediatly.
   
   
-  </ul>
+  </li>
+</ul>
   </div>
 </div>
 <div id="user_manual_example_picking_process">
@@ -125,11 +127,12 @@ Navileiste scorllen Introduction
   <p>
     This step has great impact on how easy and exact the picket process will be. Therefore this step should not be rushed and done with great diligence.
   </p>
-  <img src="./img/wiki/Colony_Dish.jpg"  width="400"> <br>
+  <img src="./img/wiki/Colony_Dish.jpg" width="400"> <br>
   <p>
     These are the recommended condition under which the photo should be taken: <br>
     <b>Camera settings:</b>
-	<ul>
+	</p>
+<ul>
       <li>aspect ratio: 16:9 (13 MP)</li>
       <li>brightness: 0</li>
       <li>ISO: 100</li>
@@ -148,19 +151,20 @@ Navileiste scorllen Introduction
     </ul>
 	Take the picture and check wether it has good contrast. Afterwards copy it to the device you intend to start the picking process with.
     Afterwards remove the red frame carefully.
-  </p>
+  
   
   <h2> 2. Insert the Petri Dishes into the Socket </h2>
   <p>
-    <ul>
+    </p>
+<ul>
       <li> Put the plates into the socket according to the socket's inscription </li>
       <li> Mind the correct orientation </li>
 	  <li> Do not forget to remove the covers of the plates</li>
       <li> Mistakes can damage the picker </li>
     </ul>
     It should look like this: <br>
-    <img src="./img/wiki/Orientation_Dish.jpg"  width="400"> <br>
-    </p>
+    <img src="./img/wiki/Orientation_Dish.jpg" width="400"> <br>
+    
   <!--
   <h2> 3. Open Web Interface </h2>
   <p>
@@ -169,7 +173,7 @@ Navileiste scorllen Introduction
   </p>
   -->
   <h2 id="choose_image-h"> 3. Choose Image </h2>
-  <img src="./img/wiki/webinterface.jpg"  width="400">
+  <img src="./img/wiki/webinterface.jpg" width="400">
   <div id="choose_image">
     Choose your image by either:
     <ul>
@@ -194,7 +198,7 @@ Navileiste scorllen Introduction
   <!--
   <p> Insert here Information about the pick-job, the date will automatically inserted. This information will be displayed in the "History". </p>
   -->
-  <img src="./img/wiki/pickjob_attributes.jpg"  width="400">
+  <img src="./img/wiki/pickjob_attributes.jpg" width="400">
   <div id="pickjob_attributes">
     <ul>
       <li> Insert Information about the pick-job </li>
@@ -205,7 +209,7 @@ Navileiste scorllen Introduction
   
   <h2 id="detect_colonies-h"> 5. Detect Colonies </h2>
   Colony detection runs automatically when this step is reached.
-  <p><img src="./img/wiki/Detection_Settings.jpg"  width="400"></p>
+  <p><img src="./img/wiki/Detection_Settings.jpg" width="400"></p>
   <div id="detect_colonies">
 	<dl>
 		<dt>1</dt>
@@ -220,7 +224,8 @@ Navileiste scorllen Introduction
 			<ul style="list-style-type:disc;">
 				<li>Adjust the detection by changing its settings</li>
 				<li>Changing any detection settings triggers another colony detection run automatically</li>
-				<li>For more information about a filter click on its name or read <a class="textLink text-primary" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings');window.scrollTo(0, 0);">"Advanced Settings"</a></li>
+				<li>For more information about a filter click on its name or read <a class="textLink text-primary" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings');window.scrollTo(0, 0);">"Advanced Settings"</a>
+</li>
 			</ul>
 		
 		<dt>3</dt>
@@ -244,7 +249,7 @@ Navileiste scorllen Introduction
     Here the selection of the PCR dish takes place, the drop down menu offers all available PCR dishes. Below the PCR dish selection the number of colonies which will be picked can be selected. To the right the starting well can be chosen with a click on the desired well. All chosen wells are shown in green. If more colonies are selected than available wells the excess colonies will be discarded.
     This is an example of a 96 well PCR dish: <br>
   -->
-  <p><img src="./img/wiki/PCR_Dish_Site.jpg"  width="400"></p>
+  <p><img src="./img/wiki/PCR_Dish_Site.jpg" width="400"></p>
   <dl>
     <dt>1</dt>
       <div id="choose_plates">
@@ -268,7 +273,7 @@ Navileiste scorllen Introduction
   </dl>
   
   <h2 id="overview-h"> 7. Overview </h2>
-  <p><img src="./img/wiki/Overview_Site.jpg"  width="400"></p>
+  <p><img src="./img/wiki/Overview_Site.jpg" width="400"></p>
   <div id="overview">
   <!--
     This site shows you all the configuration you have done before and is intended as a mean to exclude any errors before starting the picking process
@@ -314,7 +319,7 @@ Navileiste scorllen Introduction
   <div id="area">
     <p>
        Set an upper and lower limit of area a colony should have. <br>
-      <img src="./img/wiki/Area.jpg"  width="400">
+      <img src="./img/wiki/Area.jpg" width="400">
     </p>
   </div>
 
@@ -329,7 +334,7 @@ Navileiste scorllen Introduction
   <div id="aabb_ratio">
     <p>
       Filter colonies by the ratio of the width and length of their bounding boxes. A perfectly round colony would have the ration 1. Refer to the red bounding box. The calculation is as follows: <img src="./img/wiki/side_ratio.jpg"> <br><br>
-      <img src="./img/wiki/aabb_ratio.jpg"  width="400"> <br>
+      <img src="./img/wiki/aabb_ratio.jpg" width="400"> <br>
     </p>
   </div>
   
@@ -340,7 +345,7 @@ Navileiste scorllen Introduction
 	  A perfectly round colony would have the ration 1.
 	  The calculation is as follows: <img src="./img/wiki/side_ratio.jpg"> <br>
 	  Refer to the red bounding box. <br>
-      <img src="./img/wiki/bb_ratio.jpg"  width="400"> <br>
+      <img src="./img/wiki/bb_ratio.jpg" width="400"> <br>
     </p>
   </div>
     
@@ -348,7 +353,7 @@ Navileiste scorllen Introduction
   <div id="convexity">
     <p>
       Filter colonies by their convexity. The calculation is as follows: First the convex hull of the colony is approximated. Afterwards the area of the recognized hull is divided by the area of the approximated hull. <img src="./img/wiki/convexity_f.jpg"> <br>
-      <img src="./img/wiki/Convexity.jpg"  width="400"> <br>
+      <img src="./img/wiki/Convexity.jpg" width="400"> <br>
     </p>
   </div>
   
@@ -357,7 +362,7 @@ Navileiste scorllen Introduction
     <p>
       Filter colonies by their roundness. The calculation is as follows: <img src="./img/wiki/circularity_f.jpg"> 
       <br>
-      <img src="./img/wiki/Circularity.jpg"  width="400"> <br>,
+      <img src="./img/wiki/Circularity.jpg" width="400"> <br>,
     </p>
   </div>
   <!--
@@ -533,7 +538,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   <h3> Socket Profiles </h3>
   <div id="socket_profiles">
   <p></p>
-    <p><img src="./img/wiki/Socket3.jpg"  width="400"></p>
+    <p><img src="./img/wiki/Socket3.jpg" width="400"></p>
 	<!--
     <p>The origin location are marked in red. <br>
 	The rotated orientation is marked in blue.
@@ -637,7 +642,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
 	<!--
     <p>This option is intended to create new PCR dishes in different sizes. <br></p>
     -->
-	<p><img src="./img/wiki/PCR_Dish2.jpg"  width="400"> </p>
+	<p><img src="./img/wiki/PCR_Dish2.jpg" width="400"> </p>
     <p>
     Red box: one column, <br>
 	Orange box: one row, <br>
@@ -857,7 +862,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   <p></p>
   <h3> Raspberry Pi </h3>
   <p>
-    <img src="./img/wiki/Raspberry_Pi.jpg"  width="400">
+    <img src="./img/wiki/Raspberry_Pi.jpg" width="400">
   </p>
   
   <h4> Power Supply Unit </h4>
@@ -867,7 +872,7 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   
   <h3> Magnetic Valve </h3>
   <p>
-    <img src="./img/wiki/magnetic_valve.jpg"  width="400">
+    <img src="./img/wiki/magnetic_valve.jpg" width="400">
   </p>
   
   <h2> Step by Step Assembly</h2>
@@ -882,16 +887,16 @@ Exclude colonies based on their difference to the left, right, upper and lower b
     -->
     Assemble the printer according to the manufacture's instructions. Note that you do not need to mount or connect the heating bed. Insert a screw in the drilling at the scissors mounting place. Then mount the pneumatic scissors onto the socket. Now mount the socket onto the printer's bed holder. Fixate each screw with a nut (This nut will now hold the Petri dish bed onto the heating element). A further nut has to be placed on top of the last on for later leveling of the socket. Afterwards put the screws through the dedicated holes of the 3D printer's heating bed holder and fixate them with nuts again. At last attach the pneumatic scissor's switch to the socket. You can use tape or glue to fasten it.<br>
 	Heating-bed holder: <br>
-    <img src="./img/wiki/Heatingbed_Holder.jpg"  width="400"> <br>
+    <img src="./img/wiki/Heatingbed_Holder.jpg" width="400"> <br>
     switch holder with attached switch: <br>
-    <img src="./img/wiki/Switch.jpg"  width="400">
+    <img src="./img/wiki/Switch.jpg" width="400">
   </p>
   
   <h3> 2. Positioning </h3>
   <p>
     Position the colony picker on a plane surface. 
 	Make sure it has enough space to all sides, so that the socket can move unhindered on the x,y axes. 
-	Also check the 3D printer’s manual for further instruction.
+	Also check the 3D printer&acirc;&#128;&#153;s manual for further instruction.
   </p>
   
   <h3> 3. Wiring </h3>
@@ -899,16 +904,16 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   <p>
     Connect the raspberry pi to the printer with mini usb cable and with a network cable to the network. Lastly connect it to the printers power supply. <br>
     3D printers USB connection: <br>
-    <img src="./img/wiki/USB_Connection.jpg"  width="400">
+    <img src="./img/wiki/USB_Connection.jpg" width="400">
   </p>
     <p>
     
     </p>
-    <img id="check_network_connection" src="./img/wiki/check_network_connection.jpg"  width="400">
+    <img id="check_network_connection" src="./img/wiki/check_network_connection.jpg" width="400">
   <h4> Pneumatic Scissors </h4>
   <p>
     The pneumatic scissors have to be connected to the magnetic valve. Please check the image for the correct orientation. <br>
-    <img src="./img/wiki/pneumatic_scissors.jpg"  width="400">
+    <img src="./img/wiki/pneumatic_scissors.jpg" width="400">
   </p>
   
   <h4> Magnetic Valve </h4>
@@ -916,9 +921,9 @@ Exclude colonies based on their difference to the left, right, upper and lower b
     The magnetic valve has to be connected to the contact switch mounted on the socket. 
 	For checking air pressure manually press the switch right sided to the scissors to activate them. 
 	They should close automatically and open after releasing the switch. <br>
-    <img id="pneumatic_scissors_switch" src="./img/wiki/pneumatic_scissors_switch.jpg"  width="400">
+    <img id="pneumatic_scissors_switch" src="./img/wiki/pneumatic_scissors_switch.jpg" width="400">
   </p>
-  </p>
+  
   
   <h4> 3D Printer </h4>
   <p>
@@ -936,9 +941,9 @@ Exclude colonies based on their difference to the left, right, upper and lower b
   <h3> 5. Filament </h3>
   <p>
     Insert the filament. Operate the handle at the stepper motor. <br>
-    <img src="./img/wiki/filament_handle.jpg"  width="400"> <br>
+    <img src="./img/wiki/filament_handle.jpg" width="400"> <br>
      Now the stepper motor lost grip and the present filament can be pulled out. Afterwards the new filament can be inserted in the handles hole and pushed past the stepper motor into the tube. Push the filament until it reaches the nozzle, sometimes it tangles with the brass tube connection. To fix this the tube connection can be unscrewed and the filament manually placed into the brass adapter and screwed on again. When finished make sure the filament is located at the tip of the nozzle. The filament needs to be steril, if there are any contaminations, they can be transmitted to the hardware and recontaminated a future filament. <br>
-    <img id="filament_nozzle" src="./img/wiki/filament_nozzle.jpg"  width="400"> <br>
+    <img id="filament_nozzle" src="./img/wiki/filament_nozzle.jpg" width="400"> <br>
     Only if this is met the printer can determine the filament exact location and pick correctly.
   </p>
   <!--
@@ -987,4 +992,6 @@ Exclude colonies based on their difference to the left, right, upper and lower b
     </p>
 </div>
 
-<img id="power_button" src="./img/wiki/power_button.jpg"  width="400">
+<img id="power_button" src="./img/wiki/power_button.jpg" width="400">
+</div>
+</body></html>

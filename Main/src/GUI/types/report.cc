@@ -9,4 +9,15 @@ Job::ID Report::job() const { return job_; }
 
 const ResourcePath& Report::data() const { return data_; }
 
+template <>
+QJsonObject Marshalling::toJson(Report const& value) {
+  return {{"path", value.data().toDocRootAbsolute()}, {"job", value.job()}};
+}
+
+template <>
+Report Marshalling::fromJson(const QJsonObject& obj) {
+  return Report(Marshalling::fromJson<Job::ID>(obj["job"]),
+				ResourcePath::fromDocRootAbsolute(obj["path"].toString()));
+}
+
 }  // namespace c3picko

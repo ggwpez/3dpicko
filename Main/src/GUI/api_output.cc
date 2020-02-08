@@ -57,14 +57,20 @@ void APIOutput::JobDeleteError(Job::ID id, QObject* client) {
   Error(APICommands::DELETE_JOB, "id=" + id, client);
 }
 
-void APIOutput::JobStarted(Report report, QObject*) {
-  emit op->toAll(
-	  APICommands::START_JOB,
-	  {{"id", report.job()}, {"report", report.data().toDocRootAbsolute()}});
+void APIOutput::JobStarted(Job::ID id, QObject*) {
+  emit op->toAll(APICommands::START_JOB, {{"id", id}});
 }
 
 void APIOutput::JobStartError(QString error, QObject* client) {
   Error(APICommands::START_JOB, error, client);
+}
+
+void APIOutput::Report(Job::ID id, QString path, QObject* client) {
+  emit op->toAll(APICommands::GET_REPORT, {{"id", id}, {"path", path}});
+}
+
+void APIOutput::ReportError(QString error, QObject* client) {
+  Error(APICommands::GET_REPORT, "error=" + error, client);
 }
 
 void APIOutput::ImageCreated(Image::ID id, QObject*) {

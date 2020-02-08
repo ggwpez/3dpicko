@@ -25,6 +25,7 @@ class Database : public QObject, JsonConvertable {
   typedef Table<Version> VersionTable;
   typedef QVector<Version::ID> VersionIdVector;
   typedef Table<std::unique_ptr<Plate>> PlateTable;
+  typedef Table<Report> ReportTable;
 
   Database(QSettings const& settings, QObject* parent);
   ~Database() override;
@@ -44,12 +45,13 @@ class Database : public QObject, JsonConvertable {
   VersionIdVector const& installedVersions() const;
   PlateTable& detectedPlates();
   PlateTable const& detectedPlates() const;
+  ReportTable& reports();
+  ReportTable const& reports() const;
 
   Job::ID newJobId();
   Profile::ID newProfileId();
   AlgorithmResult::ID newResultId();
   AlgorithmJob::ID newResultJobId();
-  Report::ID newReportId();
 
   Profile::ID defaultPrinter() const;
   Profile::ID defaultSocket() const;
@@ -84,6 +86,8 @@ class Database : public QObject, JsonConvertable {
   ProfileTable profiles_;
   VersionTable versions_;
   PlateTable detected_plates_;
+  ReportTable reports_;
+
   /**
    * @brief All installed versions.
    * Ordered by date; front is old and back is new.
@@ -105,10 +109,6 @@ class Database : public QObject, JsonConvertable {
    * @brief New unused result id.
    */
   qint64 result_id_;
-  /**
-   * @brief New unused report id.
-   */
-  qint64 report_id_;
 
   Profile::ID default_printer_;
   Profile::ID default_socket_;

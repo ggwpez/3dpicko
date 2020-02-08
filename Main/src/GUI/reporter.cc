@@ -14,15 +14,14 @@
 #include <QTextTableFormat>
 
 namespace c3picko {
-Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
+Reporter::Reporter(const Job& job, QDateTime creation,
 				   const std::map<Well, Colony::ID>& pick_positions,
 				   Image const& image, const DetectionResult* result,
 				   QSet<Colony::ID> colonies_to_pick, const Profile& plate,
 				   const Profile& printer, const Profile& socket,
 				   const Profile& octoprint,
 				   std::vector<GcodeInstruction> const& gcode)
-	: id_(id),
-	  job_(job),
+	: job_(job),
 	  creation_(creation),
 	  pick_positions_(pick_positions),
 	  image_(image),
@@ -37,7 +36,7 @@ Reporter::Reporter(Report::ID id, const Job& job, QDateTime creation,
 }
 
 Reporter Reporter::fromDatabase(
-	const Database& db, Report::ID id, Job::ID jid,
+	const Database& db, Job::ID jid,
 	const std::map<Well, Colony::ID>& pick_positions,
 	std::vector<GcodeInstruction> const& gcode) {
   Job job = db.jobs().get(jid);
@@ -50,13 +49,13 @@ Reporter Reporter::fromDatabase(
   DetectionResult* result =
 	  static_cast<DetectionResult*>(job.resultJob()->result().get());
 
-  return Reporter(id, job, QDateTime::currentDateTime(), pick_positions, img,
+  return Reporter(job, QDateTime::currentDateTime(), pick_positions, img,
 				  result, job.coloniesToPick(), plate, printer, socket,
 				  octoprint, gcode);
 }
 
 Report Reporter::createReport() const {
-  QString name = "report_" + id_ + "-" + job_.name() + "-" +
+  QString name = "report_" + job_.id() + "-" + job_.name() + "-" +
 				 job_.created().toString("dd.MM.yy");
   ResourcePath output = paths::reportFolder() + (name + ".zip");
   ResourcePath htm_path = paths::reportFolder() + (name + ".html");
@@ -248,9 +247,7 @@ QString Reporter::createProlog() const {
 		 "</title></head><body><tt>";
 }
 
-QString Reporter::createTitle() const {
-  return "Report #" + id_ + " for Job #" + job_.id();
-}
+QString Reporter::createTitle() const { return "Report for Job #" + job_.id(); }
 
 QString Reporter::createEpilog() const { return "</tt></body></html>"; }
 }  // namespace c3picko

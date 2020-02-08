@@ -110,6 +110,10 @@ const Database::PlateTable& Database::detectedPlates() const {
   return detected_plates_;
 }
 
+Database::ReportTable& Database::reports() { return reports_; }
+
+const Database::ReportTable& Database::reports() const { return reports_; }
+
 Job::ID Database::newJobId() {
   emit OnDataChanged();
   return QString::number(job_id_++);
@@ -130,11 +134,6 @@ AlgorithmJob::ID Database::newResultJobId() {
   return QString::number(result_job_id_++);
 }
 
-Report::ID Database::newReportId() {
-  emit OnDataChanged();
-  return QString::number(report_id_++);
-}
-
 Profile::ID Database::defaultPrinter() const { return default_printer_; }
 
 Profile::ID Database::defaultSocket() const { return default_socket_; }
@@ -149,6 +148,7 @@ void Database::read(QJsonObject const& obj) {
   profiles_.read(obj["profiles"].toObject());
   versions_.read(obj["versions"].toObject());
   detected_plates_.read(obj["detected_plates"].toObject());
+  reports_.read(obj["reports"].toObject());
 
   QJsonArray const& arr(obj["versions_of_interest"].toArray());
   for (auto e : arr)  // TODO
@@ -159,7 +159,6 @@ void Database::read(QJsonObject const& obj) {
   profile_id_ = obj["profile_id"].toInt();
   result_id_ = obj["result_id"].toInt();
   result_job_id_ = obj["result_job_id"].toInt();
-  report_id_ = obj["report_id"].toInt();
 
   default_printer_ = Marshalling::fromJson<Profile::ID>(obj["default_printer"]);
   default_socket_ = Marshalling::fromJson<Profile::ID>(obj["default_socket"]);
@@ -175,6 +174,7 @@ void Database::write(QJsonObject& obj) const {
   obj["profiles"] = (QJsonObject)profiles_;
   obj["versions"] = (QJsonObject)versions_;
   obj["detected_plates"] = (QJsonObject)detected_plates_;
+  obj["reports"] = (QJsonObject)reports_;
 
   QJsonArray arr;
   for (auto e : versions_installed_) arr.push_back(e);
@@ -188,7 +188,6 @@ void Database::write(QJsonObject& obj) const {
   obj["profile_id"] = profile_id_;
   obj["result_id"] = result_id_;
   obj["result_job_id"] = result_job_id_;
-  obj["report_id"] = report_id_;
 
   obj["default_printer"] = default_printer_;
   obj["default_socket"] = default_socket_;

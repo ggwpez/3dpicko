@@ -14,8 +14,6 @@ class Database;
  */
 class Report {
  public:
-  typedef QString ID;
-
   Report(Job::ID job, ResourcePath data);
 
   Job::ID job() const;
@@ -28,4 +26,5 @@ class Report {
    */
   ResourcePath data_;
 };
+MAKE_MARSHALLABLE(Report)
 }  // namespace c3picko

@@ -10,6 +10,6 @@ namespace c3picko {
 class History {
  private:
   Job::ID job_;
-  Report::ID report_;
+  // Report::ID report_;
 };
 }  // namespace c3picko
