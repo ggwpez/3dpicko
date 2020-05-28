@@ -51,12 +51,17 @@ cd $ROOT
 ln -s builds/$2/Main/Main $ROOT/main
 ln -s builds/$2/depend/quazip/quazip/libquazip.so.1 $ROOT/libquazip.so.1
 
-sudo cp $SOURCE/dpicko.service /etc/systemd/system/dpicko.service
-sudo sed -i "s#%install#${ROOT}#g" /etc/systemd/system/dpicko.service
-sudo systemctl daemon-reload
-sudo systemctl enable dpicko
-sudo systemctl start dpicko
+if [[ $(pidof systemd) ]]; then
+    sudo cp $SOURCE/dpicko.service /etc/systemd/system/dpicko.service
+    sudo sed -i "s#%install#${ROOT}#g" /etc/systemd/system/dpicko.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable dpicko
+    sudo systemctl start dpicko
+    echo "Service started"
+else
+    echo "Systemd not found"
+fi
 
-echo "Setup complete, service started"
+echo "Setup complete"
 exit 0
 
