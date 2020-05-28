@@ -13,10 +13,7 @@ bash setup.sh ~/3dpicko-installation 098c16f6349b3c34ef848fc39c27192b802bf9a0
 That long hex number is the version that should be installed.  
 The compilation of opencv could take a while.  
 If everything completes, 3DpickO will be installed to ~/3dpicko-installation.  
-Start it with the <b>start.sh</b> script in that folder, a service will not be created yet, so it wont restart on reboot. (todo)  
-  
-## Usage
-Go to the installation directory ~/3dpicko-installation and execute ```./start.sh```.   
+A service will be created and started.
 You can now navigate to 127.0.0.1:8080 in you'r browser to access the GUI :tada:.  
   
 ## Updating
