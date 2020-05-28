@@ -8,7 +8,7 @@ Steps:
 sudo apt update && sudo apt install git
 git clone git@gitlab.com:ggwpez/3cpicko.git && cd 3cpicko
 bash dependencies.sh
-bash setup.sh ~/3dpicko-installation 0f9a6cc664ff0a23d4ff7e2a7d6c02f6c068211a 
+bash setup.sh ~/3dpicko-installation 098c16f6349b3c34ef848fc39c27192b802bf9a0 
 ```
 That long hex number is the version that should be installed.  
 The compilation of opencv could take a while.  
