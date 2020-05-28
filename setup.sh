@@ -51,7 +51,7 @@ cd $ROOT
 ln -s builds/$2/Main/Main $ROOT/main
 ln -s builds/$2/depend/quazip/quazip/libquazip.so.1 $ROOT/libquazip.so.1
 
-if [[ $(pidof systemd) ]]; then
+if [ "$CPICKO_ENV" = "docker" ]; then
     sudo cp $SOURCE/dpicko.service /etc/systemd/system/dpicko.service
     sudo sed -i "s#%install#${ROOT}#g" /etc/systemd/system/dpicko.service
     sudo systemctl daemon-reload
@@ -59,7 +59,7 @@ if [[ $(pidof systemd) ]]; then
     sudo systemctl start dpicko
     echo "Service started"
 else
-    echo "Systemd not found"
+    echo "Skipping service setup in docker"
 fi
 
 echo "Setup complete"
