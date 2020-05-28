@@ -52,14 +52,14 @@ ln -s builds/$2/Main/Main $ROOT/main
 ln -s builds/$2/depend/quazip/quazip/libquazip.so.1 $ROOT/libquazip.so.1
 
 if [ "$CPICKO_ENV" = "docker" ]; then
+    echo "Skipping service setup in docker"
+else
     sudo cp $SOURCE/dpicko.service /etc/systemd/system/dpicko.service
     sudo sed -i "s#%install#${ROOT}#g" /etc/systemd/system/dpicko.service
     sudo systemctl daemon-reload
     sudo systemctl enable dpicko
     sudo systemctl start dpicko
     echo "Service started"
-else
-    echo "Skipping service setup in docker"
 fi
 
 echo "Setup complete"
