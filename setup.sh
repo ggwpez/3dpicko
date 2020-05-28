@@ -25,7 +25,7 @@ BUILDS=$ROOT/builds
 mkdir -p $SOURCE
 mkdir -p $BUILDS
 
-git clone -n git@gitlab.com:ggwpez/3cpicko.git $SOURCE
+git clone -n https://gitlab.com/ggwpez/3cpicko.git $SOURCE
 cd $SOURCE && git checkout $2
 git submodule init
 git submodule update
