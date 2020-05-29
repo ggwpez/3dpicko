@@ -18,9 +18,8 @@ You can now navigate to 127.0.0.1:8080 in you'r browser to access the GUI :tada:
 ## Docker
 You can also use docker do build/run it:  
 ```
-sudo apt update && sudo apt install git
-git clone https://gitlab.com/ggwpez/3cpicko.git && cd 3cpicko
-docker build --tag 3dpicko:0.1 - < Dockerfile && docker run 3dpicko:0.1
+curl https://gitlab.com/ggwpez/3cpicko/-/raw/dev/Dockerfile | docker build --tag dpicko:0.1 -
+docker run dpicko:0.1
 ```
 
 ## Updating
