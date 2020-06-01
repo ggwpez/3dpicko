@@ -1,0 +1,13 @@
+# set the base image to Ubuntu 14.04
+FROM cpicko-deps
+
+RUN git submodule init
+RUN git submodule update
+RUN mkdir build/
+WORKDIR build/
+RUN qmake ../
+RUN make -j$(nproc) > /dev/null
+WORKDIR ..
+
+RUN sudo apt-get install cppcheck doxygen graphviz libxml2-utils clang-format pkg-config -y
+RUN apt-get autoremove

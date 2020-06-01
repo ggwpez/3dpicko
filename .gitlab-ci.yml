@@ -1,77 +1,42 @@
 stages:
-  - dependencies
+  - deps
   - build
   - test
   - check
   - format
   - document
 
-dependencies:linux:
-  stage: dependencies
+deps:docker:
+  stage: deps
   script:
-    - whoami
-    - uname -a
-    - lsb_release -a
-    #- sudo apt update -qq
-    #- sudo apt -y -qq install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config
-    #- sudo bash opencv.sh
-    - mkdir -p ~/.ssh/
-    - ssh-keyscan gitlab.com > ~/.ssh/known_hosts
-    - git config --global user.email "gitlab@spam.tasty.limo"
-    - git config --global user.name "Commitbot"
-  except:
-    - /^.*-format$/
+    - docker build -f Dockerfile.deps -t cpicko-deps .
 
-build:linux:
+build:docker:
   stage: build
   script:
-    - git submodule init
-    - git submodule update
-    - mkdir build
-    - cd build
-    - qmake -qt=qt5 ..
-    - make -j > /dev/null
-    - cd ..
-  artifacts:
-    paths:
-      - build/
-    expire_in: 2 hour
+    - docker build -f Dockerfile.ci -t cpicko-ci .
 
-test:linux:
+test:docker:
   stage: test
   script:
-    - mkdir -p build
-    - cd build
-    - qmake -qt=qt5 ..
-    - make -j > /dev/null
-    - export LD_LIBRARY_PATH=../PiCommunicator
-    - make check
-  except:
-    - /^.*$/ # -format
+    - docker run -w="/3cpicko/build/" cpicko-ci make check
     
-check:linux:
+check:docker:
   stage: check
   script:
-    - grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
-    - cppcheck --error-exitcode=1 . > /dev/null
-  except:
-    - /^.*-format$/
+    - docker run cpicko-ci grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
+    - docker run cpicko-ci cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
 
-format:linux:
+format:docker:
   stage: format
   script:
-    - clang-format --version
-    - git remote set-url origin git@gitlab.com:ggwpez/3cpicko.git
-    - export GIT_SSH_COMMAND="ssh -i ~/.ssh/gitlab"
-    - git branch -D `echo $CI_COMMIT_REF_NAME-format` || true
-    - git checkout -b `echo $CI_COMMIT_REF_NAME-format`
-    - find . -regex '.*\.\(cc\|h\|hpp\|cpp\)' -exec clang-format -style=file -i {} \;
-    - find . -name '*\.html' -type f -exec xmllint --html --output '{}' --format '{}' \;
-    - git diff --quiet --exit-code || (git add -u && git commit -m"=Auto formatting=" && git push origin HEAD && echo "Created new branch, abort" && exit 1)
-  except:
-    - /^.*$/
+    - docker run cpicko-ci git checkout -- .
+    - docker run cpicko-ci clang-format --version
+    - docker run cpicko-ci bash check.sh
+  allow_failure:
+    true
 
-document:linux:
+document:docker:
   stage: document
   script:
-    - doxygen Doxyfile > /dev/null
+    - docker run cpicko-ci doxygen Doxyfile > /dev/null 2>&1
