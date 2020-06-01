@@ -1,0 +1,21 @@
+FROM ubuntu:20.04
+
+MAINTAINER oliver.tale@web.de
+
+RUN apt-get update && apt-get install -y sudo
+RUN useradd -ms /bin/bash docker
+RUN su docker
+
+# Install tzdata so it does not annoy us later
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get update && apt-get upgrade -y && sudo apt-get install -y tzdata git apt-utils qt5-default libqt5websockets5-dev g++ build-essential pkg-config zlib1g-dev cppcheck libxml2-utils clang-format doxygen graphviz
+
+COPY ./opencv.sh /src/
+RUN bash /src/opencv.sh
+
+# Clang
+RUN apt-get install -y clang-10 clang++-10
+RUN ln -s /usr/bin/clang++-10 /usr/bin/clang++
+RUN ln -s /usr/bin/clang-10 /usr/bin/clang
+RUN apt-get autoremove

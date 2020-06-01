@@ -1,0 +1,8 @@
+FROM cpicko-deps as clone
+
+COPY ./ /src/
+WORKDIR /src/
+RUN git submodule init
+RUN git submodule update
+RUN mkdir build/
+WORKDIR /src/build/

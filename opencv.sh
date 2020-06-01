@@ -20,7 +20,7 @@ cd ~
 
 # VERSION TO BE INSTALLED
 
-OPENCV_VERSION='3.4.3'
+OPENCV_VERSION='3.4.10'
 
 opencv_version=`pkg-config --modversion opencv | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{3\}$/\1/"`
 
@@ -50,15 +50,15 @@ sudo apt-get install -y libtbb-dev
 # 3. INSTALL THE LIBRARY
 
 sudo apt-get install -y unzip wget
-wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip
+wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip
 unzip -qq opencv-${OPENCV_VERSION}.zip
 rm opencv-${OPENCV_VERSION}.zip
 mv opencv-${OPENCV_VERSION} OpenCV
 cd OpenCV
 mkdir build
 cd build
-cmake -DWITH_QT=OFF -DWITH_GTK=ON -DWITH_TBB=ON -DENABLE_PRECOMPILED_HEADERS=OFF -DWITH_CUDA=OFF -DWITH_MATLAB=OFF -DBUILD_opencv_apps=OFF -DBUILD_ANDROID_EXAMPLES=OFF -DBUILD_DOCS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_FAT_JAVA_LIB=OFF -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_opencv_videostab=OFF -DBUILD_opencv_matlab=OFF ..
-make -j$(nproc)
+cmake -D CMAKE_BUILD_TYPE=Release -DBUILD_LIST=core,imgproc,highgui,photo ..
+make -j$(nproc) 2> /dev/null
 sudo make install
 sudo ldconfig
 

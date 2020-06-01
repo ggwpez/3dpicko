@@ -6,37 +6,42 @@ stages:
   - format
   - document
 
-deps:docker:
+pull-deps:docker:
   stage: deps
   script:
-    - docker build -f Dockerfile.deps -t cpicko-deps .
+    - docker build -f dockerfiles/Dockerfile.deps -t cpicko-deps .
+    - docker build -f dockerfiles/Dockerfile.clone -t cpicko-clone .
 
-build:docker:
+build-clang:docker:
   stage: build
   script:
-    - docker build -f Dockerfile.ci -t cpicko-ci .
+    - docker build -f dockerfiles/Dockerfile.clang .
 
-test:docker:
+build-gcc:docker:
+  stage: build
+  script:
+    - docker build -f dockerfiles/Dockerfile.gcc -t cpicko-build .
+
+test-gcc:docker:
   stage: test
   script:
-    - docker run -w="/3cpicko/build/" cpicko-ci make check
+    - docker run -w="/src/build/" cpicko-build make check
     
 check:docker:
   stage: check
   script:
-    - docker run cpicko-ci grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
-    - docker run cpicko-ci cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
+    - docker run cpicko-build grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
+    - docker run cpicko-build cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
 
 format:docker:
   stage: format
   script:
-    - docker run cpicko-ci git checkout -- .
-    - docker run cpicko-ci clang-format --version
-    - docker run cpicko-ci bash check.sh
+    - docker run cpicko-build clang-format --version
+    - docker run cpicko-build bash check.sh
   allow_failure:
     true
 
 document:docker:
   stage: document
   script:
-    - docker run cpicko-ci doxygen Doxyfile > /dev/null 2>&1
+    - docker run cpicko-build doxygen Doxyfile > /dev/null 2>&1

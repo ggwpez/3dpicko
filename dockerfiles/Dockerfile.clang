@@ -1,0 +1,4 @@
+FROM cpicko-clone as clang
+RUN qmake -spec linux-clang ..
+RUN make -j$(nproc) > /dev/null
+WORKDIR /src/

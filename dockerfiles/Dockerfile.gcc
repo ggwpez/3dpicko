@@ -1,0 +1,4 @@
+FROM cpicko-clone as gcc
+RUN qmake ..
+RUN make -j$(nproc) > /dev/null
+WORKDIR /src/
