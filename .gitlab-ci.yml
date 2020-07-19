@@ -1,3 +1,20 @@
+image: docker:19.03.12
+
+services:
+  - docker:19.03.12-dind
+
+
+variables:
+  OCKER_DRIVER: overlay2
+  # Create the certificates inside this directory for both the server
+  # and client. The certificates used by the client will be created in
+  # /certs/client so we only need to share this directory with the
+  # volume mount in `config.toml`.
+  DOCKER_TLS_CERTDIR: "/certs"
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 stages:
   - deps
   - build
@@ -5,43 +22,56 @@ stages:
   - check
   - format
   - document
+  - deploy
 
-pull-deps:docker:
+deps:docker:
   stage: deps
   script:
-    - docker build -f dockerfiles/Dockerfile.deps -t cpicko-deps .
-    - docker build -f dockerfiles/Dockerfile.clone -t cpicko-clone .
+    - docker pull registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04 || true
+    - docker build --cache-from registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04 -f dockerfiles/Dockerfile.deps -t registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04 --build-arg OS="ubuntu:18.04" .
+    - docker push registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04
 
-build-clang:docker:
+build:docker:
   stage: build
   script:
-    - docker build -f dockerfiles/Dockerfile.clang .
+    - docker build -f dockerfiles/Dockerfile --target=build --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3dpicko-dev:ubuntu-18.04 .
 
-build-gcc:docker:
-  stage: build
-  script:
-    - docker build -f dockerfiles/Dockerfile.gcc -t cpicko-build .
-
-test-gcc:docker:
-  stage: test
-  script:
-    - docker run -w="/src/build/" cpicko-build make check
+#test:docker:
+#  stage: test
+#  script:
+#    - docker run --rm -w="/3dpicko/build/" 3dpicko-dev:ubuntu-18.04 make test
     
-check:docker:
+static-check:docker:
   stage: check
   script:
-    - docker run cpicko-build grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
-    - docker run cpicko-build cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
+    #- docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
+    - docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
 
 format:docker:
   stage: format
   script:
-    - docker run cpicko-build clang-format --version
-    - docker run cpicko-build bash check.sh
+    - docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 bash check.sh
   allow_failure:
     true
 
 document:docker:
   stage: document
   script:
-    - docker run cpicko-build doxygen Doxyfile > /dev/null 2>&1
+    - docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 doxygen Doxyfile > /dev/null 2>&1
+
+zip:docker:
+  stage: deploy
+  script:
+    - docker build -f dockerfiles/Dockerfile --target=zip --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3dpicko-zip:ubuntu-18.04 .
+    - docker run --rm  3dpicko-zip:ubuntu-18.04 > 3DPicko.zip
+  artifacts:
+    paths:
+      - 3DPicko.zip
+    expire_in: 2 hrs
+
+container:docker:
+  stage: deploy
+  script:
+    - docker build -f dockerfiles/Dockerfile --target=image --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3dpicko:dev .
+    - docker tag 3dpicko:dev registry.gitlab.com/ggwpez/3dpicko:dev
+    - docker push registry.gitlab.com/ggwpez/3dpicko:dev
