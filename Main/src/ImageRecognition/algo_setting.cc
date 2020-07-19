@@ -106,7 +106,18 @@ void AlgoSetting::addSubSetting(const AlgoSetting& sub) {
   sub_settings_.push_back(sub);
 }
 
-QList<AlgoSetting> AlgoSetting::subSettings() const { return sub_settings_; }
+AlgoSetting AlgoSetting::subSetting(QString id) const {
+	for (AlgoSetting const& setting : sub_settings_) {
+	  if (setting.id() == id) return setting;
+	}
+
+	throw Exception("Could not find AlgoSetting (id=" + id + ")");
+}
+
+QList<AlgoSetting> AlgoSetting::subSettings() const
+{
+	return sub_settings_;
+}
 
 template <>
 QJsonObject Marshalling::toJson(const AlgoSetting& value) {

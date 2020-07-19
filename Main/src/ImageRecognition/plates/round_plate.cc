@@ -1,5 +1,6 @@
 #include "ImageRecognition/plates/round_plate.h"
 #include <QJsonArray>
+#include <opencv2/opencv.hpp>
 #include "Main/exception.h"
 
 namespace c3picko {
@@ -78,36 +79,6 @@ const RoundPlate::InnerBorder& RoundPlate::outerBorder() const {
 
 std::size_t RoundPlate::m1() const { return m1_; }
 
-RoundPlate* RoundPlate::rotated() const {
-  OuterBorder new_outer_border;
-  InnerBorder new_inner_border;
-  Markers new_markers;
-
-  /**
-   * First We rotate the outer border with R, then calculate the offset that it
-   * needs to be moved, and create translation matrix T from it. Then we rotate
-   * and translate everything.
-   */
-
-  cv::Mat R = rotationMatrix();
-  cv::transform(outer_border_, new_outer_border, R);
-  // transform image
-  cv::Rect aabb(cv::boundingRect(new_outer_border));
-  cv::Point2d left_top(aabb.x, aabb.y);
-
-  cv::Mat T = (cv::Mat_<double>(2, 3) << 1, 0, -left_top.x, 0, 1, -left_top.y);
-  // transform contours
-  cv::transform(outer_border_, new_outer_border, T);
-  cv::transform(inner_border_, new_inner_border, R);
-
-  cv::transform(inner_border_, new_inner_border, T);
-  cv::transform(markers_, new_markers, R);
-  cv::transform(markers_, new_markers, T);
-
-  return new RoundPlate(new_outer_border, new_inner_border, new_markers, m1_,
-						center() - left_top, 0, aabb);
-}
-
 void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   cv::Mat mask(in.rows, in.cols, in.type(), cv::Scalar());
   cv::drawContours(mask, std::vector<std::vector<cv::Point>>{inner_border_}, 0,
@@ -116,18 +87,18 @@ void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   out = in & mask;
 }
 
-bool RoundPlate::isInsideSafetyMargin(cv::Point2d pos,
-									  math::UnitValue radius) const {
-  return (math::norm_l1(pos.x, pos.y, center_.x, center_.y) <=
-		  inner_border_aabb_width_2_squared_ * radius * radius);
+LocalColonyCoordinates RoundPlate::mapImageToGlobal(const PlateProfile* plate, double x, double y) const {
+	return {float(x * 98 + 12.5), float((1.0 - y) * 92.5 - 2.8)};
 }
 
-bool RoundPlate::isPixelPickable(int x, int y) const {
-  return (cv::pointPolygonTest(inner_border_, cv::Point(x, y), false) > 0);
-}
+void RoundPlate::crop(const cv::Mat& in, cv::Mat& out) const {
+	float h = cv::norm(markers_[m1_] -markers_[(m1_ +1) %3]);
+	float w = cv::norm(markers_[(m1_+2)%4] -markers_[m1_]);
+	std::array<cv::Point2f, 3> border{{markers_[m1_], markers_[(m1_+2)%3], markers_[(m1_+1)%3]}};
+	std::array<cv::Point2f, 3> pts = {{{0,h/2}, {w,0}, {w, h}}};
 
-LocalColonyCoordinates RoundPlate::mapImageToGlobal(double x, double y) const {
-  return {float(x * 98 + 12.5), float((1.0 - y) * 92.5 - 2.8)};
+	cv::Mat T = cv::findHomography(border, pts);
+	cv::warpPerspective(in, out, T, cv::Size(w, h));
 }
 
 template <>

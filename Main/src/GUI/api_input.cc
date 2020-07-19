@@ -86,14 +86,6 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 					 in_user = Marshalling::fromJson<QSet<Colony::ID>>(
 						 req_data["in_user"]);
 
-	//
-	// EXLUDED, INCLUDED
-	// EX_USER, IN_USER
-	// number
-	//
-	// (INCLUDED U IN_USER) \ EX_USER
-	//
-
 	api->setColoniesToPick(job, ex_user, in_user, number, client);
   } else if (path == APICommands::UPDATE_DETECTION_SETTINGS) {
 	Job::ID job_id = Marshalling::fromJson<QString>(req_data["job_id"]);

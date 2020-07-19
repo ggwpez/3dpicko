@@ -6,10 +6,11 @@
 namespace c3picko {
 Database::Database(const QSettings& settings, QObject* parent)
 	: QObject(parent),
-	  file_path_(paths::root() + "/database.json"),
+	  file_path_(findPath(settings)),
 	  read_only_(!settings.value("saveChanges", true).toBool()),
 	  job_id_(200),
 	  profile_id_(300) {
+  qDebug() << "Database path:" << file_path_.toSystemAbsolute();
   const bool ignore_empty = settings.value("ignoreEmpty", true).toBool();
   QFile file(file_path_.toSystemAbsolute());
 
@@ -64,7 +65,21 @@ void Database::autosave() {
 }
 
 void Database::autosaveSkipped() {
-  qDebug() << "Skipped Autosave (no changes)";
+	qDebug() << "Skipped Autosave (no changes)";
+}
+
+ResourcePath Database::findPath(const QSettings& s)
+{
+	if (!s.contains("path"))
+		throw Exception("Missing setting: database.path");
+	QString str = s.value("path").toString();
+	if (str.isEmpty())
+		throw Exception("Empty setting: database.path");
+	str += "database.json";
+	if (str.startsWith("/"))
+		return ResourcePath::fromSystemAbsolute(str);
+	else
+		return ResourcePath::fromServerRelative(str);
 }
 
 Database::JobTable& Database::jobs() {

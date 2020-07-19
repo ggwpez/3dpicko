@@ -15,6 +15,7 @@
 
 # Save path, so we can restore it
 
+set -e
 gwd=$(pwd)
 cd ~
 
@@ -37,15 +38,7 @@ fi
 # 2. INSTALL THE DEPENDENCIES
 
 # Build tools:
-sudo apt-get install -y cmake
-
-# GUI (if you want to use GTK instead of Qt, replace 'qt5-default' with 'libgtkglext1-dev' and remove '-DWITH_QT=ON' option in CMake):
-
-# Media I/O:
-sudo apt-get install -y zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libjasper-dev libopenexr-dev libgdal-dev
-
-# Parallelism and linear algebra libraries:
-sudo apt-get install -y libtbb-dev
+sudo apt-get install -y cmake zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libjasper-dev libopenexr-dev libgdal-dev libtbb-dev
 
 # 3. INSTALL THE LIBRARY
 

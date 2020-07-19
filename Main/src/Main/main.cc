@@ -73,7 +73,7 @@ static int start(int argc, char** argv) {
 	  new APIController(colony_detector, plate_detector, nullptr, db, &app);
   if (updater)
 	QObject::connect(api, &APIController::OnUpdateRequested, updater,
-					 &Updater::Search);
+					 &Updater::TryUpdate);
 
   // Static file controller
   settings.beginGroup("files");

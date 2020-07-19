@@ -78,6 +78,8 @@ class Database : public QObject, JsonConvertable {
   void autosaveSkipped();
 
  private:
+  static ResourcePath findPath(QSettings const&);
+
   ResourcePath file_path_;
   bool read_only_;
 

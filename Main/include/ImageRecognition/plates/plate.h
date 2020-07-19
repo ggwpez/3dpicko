@@ -16,18 +16,12 @@ class Plate {
   Plate(cv::Point2d center, double angle, cv::Rect aabb);
   virtual ~Plate() = default;
   /**
-   * @brief Rotates the plate by the negative current angle and rotates/cuts the
-   * out cv::Mat such that the plate is centered and straight.
-   */
-  virtual Plate* rotated() const = 0;
-  /**
    * @brief Rotate and cut the input image such that the plate is centered and
    * without border .
    * @param in Input Image
    * @param out Output Image
    */
-  static void crop(Plate const& original, Plate const& rotated,
-				   cv::Mat const& in, cv::Mat& out);
+  virtual void crop(cv::Mat const& in, cv::Mat& out) const = 0;
   /**
    * @brief Turns all pixel black, that are outside of the area of interest .
    * @param in
@@ -36,28 +30,13 @@ class Plate {
   virtual void mask(cv::Mat const& in, cv::Mat& out) const = 0;
 
   /**
-   * @brief isInsideSafetyMargin
-   * @return Whether the Colony can be picked .
-   */
-  virtual bool isInsideSafetyMargin(cv::Point2d pos,
-									math::UnitValue radius) const = 0;
-
-  /**
-   * @brief isPickable Is the colony at this pixel coordinate pickable ?
-   * @param x
-   * @param y
-   * @return
-   */
-  virtual bool isPixelPickable(int x, int y) const = 0;
-
-  /**
    * @brief map_image_to_global Maps colony image coordinates to global
    * coordinates .
    * @param x X Image coordinate of the colony .
    * @param y Y Image coordinate of the colony .
    * @return Global coordinate of the colony .
    */
-  virtual LocalColonyCoordinates mapImageToGlobal(double x, double y) const = 0;
+  virtual LocalColonyCoordinates mapImageToGlobal(PlateProfile const* plate, double x, double y) const = 0;
 
   cv::Point2d center() const;
   const cv::Mat& rotationMatrix() const;
@@ -73,7 +52,7 @@ class Plate {
   /**
    * The unweighted average of all outer borders' angle.
    * Use it to cut the image.
-   * Imaginary inverted Complex angle, ex: 0° is (1,0) and 90° is (0,-1) .
+   * [0,360)
    */
   double const angle_;
 

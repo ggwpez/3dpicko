@@ -1,6 +1,8 @@
 #include "ImageRecognition/plates/rect_plate.h"
+#include "Gcode/plateprofile.h"
 #include <QJsonArray>
 #include <opencv2/highgui.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace c3picko {
 // TODO im not proud
@@ -121,55 +123,29 @@ void RectPlate::findAndSetA1H1() {
   std::tie(a1_, h1_) = findA1H1(outer_border_, inner_border_);
 }
 
-RectPlate* RectPlate::rotated() const {
-  OuterBorder new_outer_border;
-  InnerBorder new_inner_border;
-
-  cv::Mat R = rotationMatrix();
-  cv::transform(outer_border_, new_outer_border, R);
-  // transform image
-  cv::Rect aabb(cv::boundingRect(new_outer_border));
-  cv::Point2d left_top(aabb.x, aabb.y);
-
-  cv::Mat T = (cv::Mat_<double>(2, 3) << 1, 0, -left_top.x, 0, 1, -left_top.y);
-  // transform contours
-  cv::transform(outer_border_, new_outer_border, T);
-  cv::transform(inner_border_, new_inner_border, R);
-
-  cv::transform(inner_border_, new_inner_border, T);
-
-  // TODO is center_error_ still correct?
-  return new RectPlate(new_outer_border, new_inner_border, a1_, h1_,
-					   inner_center_ - left_top, outer_center_ - left_top,
-					   center_ - left_top, center_error_, 0, aabb);
-}
-
 void RectPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   cv::Mat mask(in.rows, in.cols, in.type(), cv::Scalar());
-  cv::drawContours(mask,
-				   std::vector<std::vector<cv::Point>>{
-					   {inner_border_.begin(), inner_border_.end()}},
-				   0, cv::Scalar::all(255), -1);
+  int const bw = in.cols*0.05, bh = in.rows*0.08; // percent margin
+  int const w = in.cols-bw,
+			h = in.rows-bh;
+  std::vector<std::vector<cv::Point>> cts{{{cv::Point(bw,bh), cv::Point(w, bh), cv::Point(w, h), cv::Point(bw, h)}}};
+  cv::drawContours(mask, cts, 0, cv::Scalar::all(255), -1);
 
   out = in & mask;
 }
 
-bool RectPlate::isInsideSafetyMargin(cv::Point2d pos,
-									 math::UnitValue radius) const {
-  cv::Rect rescaled(
-	  inner_border_aabb_.x + inner_border_aabb_.width * (1 - radius) / 2,
-	  inner_border_aabb_.y + inner_border_aabb_.height * (1 - radius) / 2,
-	  inner_border_aabb_.width * radius, inner_border_aabb_.height * radius);
-
-  return rescaled.contains(pos);
+LocalColonyCoordinates RectPlate::mapImageToGlobal(const PlateProfile* plate, double x, double y) const {
+	return {float(x * plate->redFrameWidth()), float((1.0 - y) * plate->redFrameHeight())};
 }
 
-bool RectPlate::isPixelPickable(int x, int y) const {
-  return (cv::pointPolygonTest(inner_border_, cv::Point(x, y), false) > 0);
-}
+void RectPlate::crop(const cv::Mat& in, cv::Mat& out) const {
+	float h = cv::norm(outer_border_[h1_] -outer_border_[a1_]);
+	float w = cv::norm(outer_border_[(h1_+2)%4] -outer_border_[a1_]);
+	std::array<cv::Point2f, 4> border{{outer_border_[a1_], outer_border_[(a1_+1)%4], outer_border_[(a1_+2)%4], outer_border_[(a1_+3)%4]}};
+	std::array<cv::Point2f, 4> pts = {{{0,0}, {w,0}, {w,h}, {0, h}}};
 
-LocalColonyCoordinates RectPlate::mapImageToGlobal(double x, double y) const {
-  return {float(x * 128), float((1.0 - y) * 85.9)};
+	cv::Mat T = cv::findHomography(border, pts);
+	cv::warpPerspective(in, out, T, cv::Size(w, h));
 }
 
 const RectPlate::InnerBorder& RectPlate::innerBorder() const {

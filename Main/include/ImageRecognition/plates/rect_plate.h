@@ -23,13 +23,11 @@ class RectPlate : public Plate {
 			cv::Point2d outer_center, cv::Point2d center,
 			math::UnitValue center_error, double angle, cv::Rect aabb);
 
-  virtual RectPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
-  virtual bool isInsideSafetyMargin(cv::Point2d pos,
-									math::UnitValue radius) const override;
-  virtual bool isPixelPickable(int x, int y) const override;
-  virtual LocalColonyCoordinates mapImageToGlobal(double x,
+  virtual LocalColonyCoordinates mapImageToGlobal(PlateProfile const* plate,
+												  double x,
 												  double y) const override;
+  virtual void crop(cv::Mat const& in, cv::Mat& out) const;
 
   std::size_t a1() const;
   std::size_t h1() const;

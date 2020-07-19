@@ -60,7 +60,7 @@ class Updater : public QObject {
   /**
    * @brief Searches for an update.
    */
-  void Search();
+  void TryUpdate();
 
  private:
   // Git callbacks

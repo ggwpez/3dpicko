@@ -106,7 +106,6 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   // Create the plates
   std::unique_ptr<RoundPlate> unrotated(
 	  std::make_unique<RoundPlate>(edges[outer], edges[inner], markers));
-  std::unique_ptr<RoundPlate> rotated(unrotated->rotated());
 
   // Draw the inner ellipse and markers (optional)
   {
@@ -120,11 +119,10 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   }
 
   // Rotate/Cut the final image
-  Plate::crop(*unrotated, *rotated, output, output);
+  unrotated->crop(output, output);
 
   // Set result output
   result->original() = std::move(unrotated);
-  result->rotated() = std::move(rotated);
 }
 }  // namespace algorithms
 }  // namespace c3picko

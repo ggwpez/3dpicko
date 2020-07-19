@@ -29,6 +29,7 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
 	  to_be_installed_.dequeue();
 	qDebug().nospace().noquote() << "Installation complete (id=" << id << ")";
 	db_.installedVersions().push_back(id);
+	linkVersion(id);
 
 	// if (db_.installedVersions().size() > max_interesting_)
 	// remOldestVersion(db_.installedVersions().front());
@@ -99,7 +100,7 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
   ResourcePath new_build_dir(working_dir_ + "builds/" + id);
 
   // Check for the build directory and maybe copy an old build in there, to
-  // speed up make
+  // speed up make.
   if (!QDir(new_build_dir.toSystemAbsolute()).exists()) {
 	if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
 	  return emit OnInstallError(
@@ -169,7 +170,6 @@ void VersionManager::makeVersion(Version::ID id) {
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
   connect(make, &Process::OnSuccess, [this, id]() {
 	emit this->OnInstalled(id);
-	this->linkVersion(id);
   });
 
   registerProcess(id, make);

@@ -128,6 +128,7 @@ class AlgoSetting {
   QColor color() const;
 
   void addSubSetting(AlgoSetting const& sub);
+  AlgoSetting subSetting(QString id) const;
   QList<AlgoSetting> subSettings() const;
 
  protected:

@@ -34,9 +34,19 @@ AlgorithmJob::~AlgorithmJob() { /* algo_ deleted as child element */
 
 void AlgorithmJob::pushInput(void* input) { input_.push_back(input); }
 
+void AlgorithmJob::setProfile(void* prof)
+{
+	profile_ = prof;
+}
+
 const AlgorithmJob::InputData& AlgorithmJob::input() const { return input_; }
 
 AlgorithmJob::InputData& AlgorithmJob::input() { return input_; }
+
+void* AlgorithmJob::profile() const
+{
+	return profile_;
+}
 
 void AlgorithmJob::start(bool threaded, bool delete_when_done) {
   if (delete_when_done)

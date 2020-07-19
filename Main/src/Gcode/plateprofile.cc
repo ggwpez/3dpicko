@@ -9,7 +9,7 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
 						   float height_goal_plate, float well_depth,
 						   float culture_medium_thickness_source_plate,
 						   float culture_medium_thickness_master_plate,
-						   int times_to_lower_filament_into_well)
+						   int times_to_lower_filament_into_well, float red_frame_width, float red_frame_height)
 	: number_of_rows_(number_of_rows),
 	  number_of_columns_(number_of_columns),
 	  number_of_wells_(number_of_columns * number_of_rows),
@@ -25,7 +25,8 @@ PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
 		  culture_medium_thickness_source_plate),
 	  culture_medium_thickness_master_plate_(
 		  culture_medium_thickness_master_plate),
-	  times_to_lower_filament_into_well_(times_to_lower_filament_into_well) {}
+	  times_to_lower_filament_into_well_(times_to_lower_filament_into_well),
+	  red_frame_width_(red_frame_width), red_frame_height_(red_frame_height) {}
 
 int PlateProfile::numberOfRows() const { return number_of_rows_; }
 
@@ -60,6 +61,16 @@ float PlateProfile::cultureMediumThicknessMasterPlate() const {
 }
 
 int PlateProfile::timesToLowerFilamentIntoWell() const {
-  return times_to_lower_filament_into_well_;
+	return times_to_lower_filament_into_well_;
+}
+
+float PlateProfile::redFrameWidth() const
+{
+	return red_frame_width_;
+}
+
+float PlateProfile::redFrameHeight() const
+{
+	return red_frame_height_;
 }
 }  // namespace c3picko

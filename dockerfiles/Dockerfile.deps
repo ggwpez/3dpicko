@@ -1,21 +1,27 @@
-FROM ubuntu:20.04
+ARG OS
+FROM $OS as deps
 
-MAINTAINER oliver.tale@web.de
+MAINTAINER oliver@tasty.limo
 
-RUN apt-get update && apt-get install -y sudo
-RUN useradd -ms /bin/bash docker
-RUN su docker
-
-# Install tzdata so it does not annoy us later
+ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=Europe/Berlin
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt-get update && apt-get upgrade -y && sudo apt-get install -y tzdata git apt-utils qt5-default libqt5websockets5-dev g++ build-essential pkg-config zlib1g-dev cppcheck libxml2-utils clang-format doxygen graphviz
+WORKDIR /tmp/ocv
+RUN apt-get update && \
+	apt -y install qt5-default libqt5websockets5-dev g++ libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config cmake zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libopenexr-dev libgdal-dev libtbb-dev unzip wget
 
-COPY ./opencv.sh /src/
-RUN bash /src/opencv.sh
+ARG OPENCV_VERSION='3.4.10'
+RUN wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip \
+	&& unzip -qq opencv-${OPENCV_VERSION}.zip \
+	&& rm opencv-${OPENCV_VERSION}.zip \
+	&& mv opencv-${OPENCV_VERSION} OpenCV \
+	&& cd OpenCV \
+	&& mkdir build \
+	&& cd build \
+	&& cmake -D CMAKE_BUILD_TYPE=Release -DBUILD_LIST=core,imgproc,highgui,photo .. \
+	&& make -j$(nproc) 2> /dev/null \
+	&& make install \
+	&& ldconfig
 
-# Clang
-RUN apt-get install -y clang-10 clang++-10
-RUN ln -s /usr/bin/clang++-10 /usr/bin/clang++
-RUN ln -s /usr/bin/clang-10 /usr/bin/clang
-RUN apt-get autoremove
+RUN apt-get autoremove -y && rm -rf "/var/lib/apt/lists/*"
+WORKDIR /root
+RUN rm -rf /tmp/ocv
