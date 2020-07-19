@@ -262,4 +262,4 @@ class GcodeGenerator {
   std::vector<GlobalMasterCoordinates> global_master_xy_coordinates_;
 };
 }  // namespace c3picko
-#endif  // GCODEGENERATOR_H
+#endif	// GCODEGENERATOR_H

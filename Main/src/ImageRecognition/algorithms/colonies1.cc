@@ -1,10 +1,12 @@
 #include "ImageRecognition/algorithms/colonies1.h"
+
 #include <QFuture>
 #include <QFutureSynchronizer>
 #include <QtConcurrent>
 #include <functional>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
@@ -15,30 +17,36 @@
 namespace c3picko {
 namespace algorithms {
 Colonies1::Colonies1()
-		: Algorithm(
-			  "1", "Normal1", "Detects colonies with standard illumination",
-			  {(AlgoStep)Colonies1::cvt, (AlgoStep)Colonies1::mask, (AlgoStep)Colonies1::threshold, (AlgoStep)Colonies1::erodeAndDilate,
-			   (AlgoStep)Colonies1::label, /*(AlgoStep)Colonies1::safetyMargin ,*/
-			  (AlgoStep)Colonies1::relativeFiltering},
-			  {AlgoSetting::make_rangeslider_double("area", "Area", "", 50, 2000, 1, {120, 1000}),
-			   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio", "", 0, 1, .001, {.7, 1}, Qt::cyan),
-			   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "", 0, 1, .001, {.7, 1}, Qt::magenta),
-			   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0, 1, .001, {.8, 1}, Qt::green),
-			   AlgoSetting::make_rangeslider_double("circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-				AlgoSetting::make_dropdown("relative_what", "Relative filtering Attribute",
-										   "Select an attribute to filter",
-										   {{"n", "None"},
-											{"a", "Area"},
-											{"r", "Circumference"},
-											{"b", "brightness"}},
-										   "n"),
-										   AlgoSetting::make_rangeslider_double(
-										   "relative_value", "Relative filtering value", "Mean +x*Standard deviation", -5, 5, .01,
-										   {-5, 5}, Qt::red)},
-			  true, 3000)
-	{
-
-	}
+	: Algorithm(
+		  "1", "Normal1", "Detects colonies with standard illumination",
+		  {(AlgoStep)Colonies1::cvt, (AlgoStep)Colonies1::mask,
+		   (AlgoStep)Colonies1::threshold, (AlgoStep)Colonies1::erodeAndDilate,
+		   (AlgoStep)Colonies1::label, /*(AlgoStep)Colonies1::safetyMargin ,*/
+		   (AlgoStep)Colonies1::relativeFiltering},
+		  {AlgoSetting::make_rangeslider_double("area", "Area", "", 50, 2000, 1,
+												{120, 1000}),
+		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+												"", 0, 1, .001, {.7, 1},
+												Qt::cyan),
+		   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+												0, 1, .001, {.7, 1},
+												Qt::magenta),
+		   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+												1, .001, {.8, 1}, Qt::green),
+		   AlgoSetting::make_rangeslider_double(
+			   "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+		   AlgoSetting::make_dropdown("relative_what",
+									  "Relative filtering Attribute",
+									  "Select an attribute to filter",
+									  {{"n", "None"},
+									   {"a", "Area"},
+									   {"r", "Circumference"},
+									   {"b", "brightness"}},
+									  "n"),
+		   AlgoSetting::make_rangeslider_double(
+			   "relative_value", "Relative filtering value",
+			   "Mean +x*Standard deviation", -5, 5, .01, {-5, 5}, Qt::red)},
+		  true, 3000) {}
 
 /**
  * @brief Checks the roundness of the given contour.
@@ -73,7 +81,7 @@ static AlgoSetting::ID roundness(int area, int w, int h,
 
   double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-  return convexity.contains(convex) ? "" : "convexity";  // flouro .91
+  return convexity.contains(convex) ? "" : "convexity";	 // flouro .91
 }
 
 void Colonies1::cvt(AlgorithmJob* base, DetectionResult* result) {
@@ -144,9 +152,8 @@ void Colonies1::label(AlgorithmJob* base, DetectionResult* result) {
   // This lambda expression will be executed for every detected component.
   // It needs to be a function, because we want to thread it .
   std::function<void(int, int)> map =
-	  [&centers, &colonies, &labeled, &stats, &input,
-	   &_aabb_ratio, &_area, &_bb_ratio, &_circularity,
-	   &_convexity](int start, int count) -> void {
+	  [&centers, &colonies, &labeled, &stats, &input, &_aabb_ratio, &_area,
+	   &_bb_ratio, &_circularity, &_convexity](int start, int count) -> void {
 	Colony::ID id = start;
 	const double scale_x = 1.0 / input.cols, scale_y = 1.0 / input.rows;
 
@@ -158,9 +165,9 @@ void Colonies1::label(AlgorithmJob* base, DetectionResult* result) {
 	  int label = labeled.at<int>(r, c);
 
 	  if (!label) {
-		  colonies[colony_index] =
-			  Colony(center.x * scale_x, center.y * scale_y, 0, 0, 10, 0, id++,
-					 "show_excluded_by_algo");
+		colonies[colony_index] =
+			Colony(center.x * scale_x, center.y * scale_y, 0, 0, 10, 0, id++,
+				   "show_excluded_by_algo");
 		continue;
 	  }
 
@@ -244,9 +251,9 @@ void Colonies1::safetyMargin(AlgorithmJob* base, DetectionResult* result) {
   for (auto it = input.begin(); it != input.end(); ++it) {
 	Colony& c = *it;
 
-	//if (!plate->isInsideSafetyMargin({c.x(), c.y()},
-		//							 margin_arg1))
-	  it->setExcludedBy("safety_margin_arg1");
+	// if (!plate->isInsideSafetyMargin({c.x(), c.y()},
+	//							 margin_arg1))
+	it->setExcludedBy("safety_margin_arg1");
   }
 }
 
@@ -255,15 +262,15 @@ void Colonies1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
 
   // Should we skip the step?
   QString what = base->settingById("relative_what").option<QString>().toLower();
-  math::Range<double> _rel =base->settingById("relative_value").value<math::Range<double>>();
+  math::Range<double> _rel =
+	  base->settingById("relative_value").value<math::Range<double>>();
 
   cv::Scalar mean, stddev;
   std::vector<cv::Scalar> values(input->size(), 0);
 
   double (Colony::*get_data)(void) const = nullptr;
 
-  if (what == "none")
-	  return;
+  if (what == "none") return;
   if (what == "area")
 	get_data = &Colony::area;
   else if (what == "circumference")
@@ -284,8 +291,9 @@ void Colonies1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   double rel_max = meand + _rel.upper_ * stddefd;
 
   for (auto it = input->begin(); it != input->end();) {
-	if (it->included() && ((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max))
-		it->setExcludedBy("relative_value");
+	if (it->included() &&
+		((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max))
+	  it->setExcludedBy("relative_value");
 	else
 	  ++it;
   }

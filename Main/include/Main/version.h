@@ -54,7 +54,7 @@ class Version {
   // ResourcePath build_dir_;
   State state_;
 };
-QString toString(Version::State state);  // TODO
+QString toString(Version::State state);	 // TODO
 Version::State versionStateFromString(QString string);
 
 MAKE_MARSHALLABLE(Version)

@@ -1,4 +1,5 @@
 #include "Main/version.h"
+
 #include "Main/exception.h"
 
 namespace c3picko {

@@ -1,8 +1,10 @@
 #include "ImageRecognition/plates/rect_plate.h"
-#include "Gcode/plateprofile.h"
+
 #include <QJsonArray>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
+#include "Gcode/plateprofile.h"
 
 namespace c3picko {
 // TODO im not proud
@@ -125,27 +127,32 @@ void RectPlate::findAndSetA1H1() {
 
 void RectPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   cv::Mat mask(in.rows, in.cols, in.type(), cv::Scalar());
-  int const bw = in.cols*0.05, bh = in.rows*0.08; // percent margin
-  int const w = in.cols-bw,
-			h = in.rows-bh;
-  std::vector<std::vector<cv::Point>> cts{{{cv::Point(bw,bh), cv::Point(w, bh), cv::Point(w, h), cv::Point(bw, h)}}};
+  int const bw = in.cols * 0.05, bh = in.rows * 0.08;  // percent margin
+  int const w = in.cols - bw, h = in.rows - bh;
+  std::vector<std::vector<cv::Point>> cts{
+	  {{cv::Point(bw, bh), cv::Point(w, bh), cv::Point(w, h),
+		cv::Point(bw, h)}}};
   cv::drawContours(mask, cts, 0, cv::Scalar::all(255), -1);
 
   out = in & mask;
 }
 
-LocalColonyCoordinates RectPlate::mapImageToGlobal(const PlateProfile* plate, double x, double y) const {
-	return {float(x * plate->redFrameWidth()), float((1.0 - y) * plate->redFrameHeight())};
+LocalColonyCoordinates RectPlate::mapImageToGlobal(const PlateProfile* plate,
+												   double x, double y) const {
+  return {float(x * plate->redFrameWidth()),
+		  float((1.0 - y) * plate->redFrameHeight())};
 }
 
 void RectPlate::crop(const cv::Mat& in, cv::Mat& out) const {
-	float h = cv::norm(outer_border_[h1_] -outer_border_[a1_]);
-	float w = cv::norm(outer_border_[(h1_+2)%4] -outer_border_[a1_]);
-	std::array<cv::Point2f, 4> border{{outer_border_[a1_], outer_border_[(a1_+1)%4], outer_border_[(a1_+2)%4], outer_border_[(a1_+3)%4]}};
-	std::array<cv::Point2f, 4> pts = {{{0,0}, {w,0}, {w,h}, {0, h}}};
+  float h = cv::norm(outer_border_[h1_] - outer_border_[a1_]);
+  float w = cv::norm(outer_border_[(h1_ + 2) % 4] - outer_border_[a1_]);
+  std::array<cv::Point2f, 4> border{
+	  {outer_border_[a1_], outer_border_[(a1_ + 1) % 4],
+	   outer_border_[(a1_ + 2) % 4], outer_border_[(a1_ + 3) % 4]}};
+  std::array<cv::Point2f, 4> pts = {{{0, 0}, {w, 0}, {w, h}, {0, h}}};
 
-	cv::Mat T = cv::findHomography(border, pts);
-	cv::warpPerspective(in, out, T, cv::Size(w, h));
+  cv::Mat T = cv::findHomography(border, pts);
+  cv::warpPerspective(in, out, T, cv::Size(w, h));
 }
 
 const RectPlate::InnerBorder& RectPlate::innerBorder() const {

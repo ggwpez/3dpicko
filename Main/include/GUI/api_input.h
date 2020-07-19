@@ -2,6 +2,7 @@
 
 #include <QList>
 #include <QString>
+
 #include "GUI/types/job.h"
 #include "Main/global.h"
 #include "database.h"

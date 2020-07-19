@@ -1,4 +1,5 @@
 #include "ImageRecognition/detection_result.h"
+
 #include <QJsonArray>
 
 namespace c3picko {

@@ -1,4 +1,5 @@
 #include "PiCommunicator/responses/file_or_folder_info.h"
+
 #include <QJsonArray>
 
 namespace c3picko {

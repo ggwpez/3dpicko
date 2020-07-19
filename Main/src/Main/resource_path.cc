@@ -1,4 +1,5 @@
 #include "Main/resource_path.h"
+
 #include "Main/exception.h"
 
 namespace c3picko {

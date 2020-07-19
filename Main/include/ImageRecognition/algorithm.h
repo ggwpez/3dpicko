@@ -5,6 +5,7 @@
 #include <QVector>
 #include <functional>
 #include <stack>
+
 #include "Main/marshalling.h"
 
 namespace c3picko {

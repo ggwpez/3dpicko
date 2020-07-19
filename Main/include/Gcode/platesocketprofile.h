@@ -123,4 +123,4 @@ class PlateSocketProfile {
   const float socket_origin_offset_z_;
 };
 }  // namespace c3picko
-#endif  // PLATESOCKETPROFILE_H
+#endif	// PLATESOCKETPROFILE_H

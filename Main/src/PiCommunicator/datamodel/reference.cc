@@ -1,4 +1,5 @@
 #include "PiCommunicator/datamodel/reference.h"
+
 #include <QJsonObject>
 
 namespace c3picko {

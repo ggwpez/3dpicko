@@ -1,4 +1,5 @@
 #include "PiCommunicator/apikey.h"
+
 #include "Main/exception.h"
 
 namespace c3picko {

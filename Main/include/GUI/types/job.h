@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QStack>
 #include <QString>
+
 #include "GUI/types/image.h"
 #include "GUI/types/profile.h"
 #include "ImageRecognition/algorithm_result.h"

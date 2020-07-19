@@ -1,12 +1,12 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
+
 #include "GUI/types/job.h"
 #include "GUI/types/report.h"
 #include "Main/global.h"
 #include "Main/version.h"
-
-#include <QObject>
 
 namespace c3picko {
 class Colony;

@@ -1,5 +1,7 @@
 #include "ImageRecognition/algorithm_manager.h"
+
 #include <QThreadPool>
+
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
 

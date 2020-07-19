@@ -1,5 +1,6 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
@@ -86,7 +87,7 @@ static AlgoSetting::ID roundness(int area, int w, int h,
 
   double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-  return convexity.contains(convex) ? "" : "convexity";  // flouro .91
+  return convexity.contains(convex) ? "" : "convexity";	 // flouro .91
 }
 
 void Normal1::cvt(AlgorithmJob* base, DetectionResult* result) {
@@ -117,7 +118,7 @@ void Normal1::threshold(AlgorithmJob*, DetectionResult* result) {
   cv::Scalar mean, stddev;
   cv::adaptiveThreshold(input, output, 255, cv::ADAPTIVE_THRESH_MEAN_C,
 						cv::THRESH_BINARY_INV, 51,
-						1);  // non flour
+						1);	 // non flour
 }
 
 void Normal1::erodeAndDilate(AlgorithmJob*, DetectionResult* result) {

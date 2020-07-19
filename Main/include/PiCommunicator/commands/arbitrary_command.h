@@ -26,4 +26,4 @@ class ArbitraryCommand : public Command {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // ARBITRARY_COMMAND_H_
+#endif	// ARBITRARY_COMMAND_H_

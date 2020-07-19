@@ -12,4 +12,4 @@ typedef QStringList GCode;
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // GCODE_H
+#endif	// GCODE_H

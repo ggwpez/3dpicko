@@ -8,7 +8,7 @@ namespace pi {
 namespace commands {
 ArbitraryCommand* ArbitraryCommand::SingleCommand(QString command) {
   return new ArbitraryCommand("printer/command",
-							  QJsonObject({{"command", command}}),  // ugly
+							  QJsonObject({{"command", command}}),	// ugly
 							  {204}, Command::HTTPType::POST);
 }
 

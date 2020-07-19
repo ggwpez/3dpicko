@@ -16,4 +16,4 @@ FileType FileTypeFromString(QString const& str);
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // FILE_TYPE_H
+#endif	// FILE_TYPE_H

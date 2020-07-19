@@ -2,6 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
+
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithms/helper.h"
 #include "ImageRecognition/algorithms/plate1.h"
@@ -64,12 +65,12 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
 
   double inner_r =
 	  (inner_e.size.width + inner_e.size.height) / 4;  // /4 b its the diameter
-  double outer_r = (inner_r / 82.9) * 91.1;  // FIXME get values from profile
+  double outer_r = (inner_r / 82.9) * 91.1;	 // FIXME get values from profile
   double margin_r = 1.03;
   // Calculate markers
   std::array<cv::Point, 3> markers;
   {
-	std::vector<cv::Point2f> outer_points;  // kmeans only works with floats
+	std::vector<cv::Point2f> outer_points;	// kmeans only works with floats
 	std::vector<std::vector<cv::Point>> marker_data(3);
 	std::vector<int> labels;
 	// Cluster points of the outer contour
@@ -101,7 +102,7 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
 
   // Create the plates
   std::unique_ptr<RoundPlate> original(
-	  new RoundPlate(edges[outer], edges[inner], markers));  // NOTE C++14
+	  new RoundPlate(edges[outer], edges[inner], markers));	 // NOTE C++14
   std::unique_ptr<RoundPlate> rotated(original->rotated());
   qDebug() << rotated->center().x << "/" << rotated->center().y;
 

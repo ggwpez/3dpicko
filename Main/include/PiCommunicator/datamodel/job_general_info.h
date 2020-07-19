@@ -28,4 +28,4 @@ struct JobGeneralInfo {
 }  // namespace data
 }  // namespace pi
 }  // namespace c3picko
-#endif  // JOBGENERALINFO_H
+#endif	// JOBGENERALINFO_H

@@ -82,4 +82,4 @@ class PiCommunicator : public QObject {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_
+#endif	// PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_

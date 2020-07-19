@@ -1,7 +1,9 @@
 #include "GUI/requestmapper.h"
+
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
+
 #include "GUI/api_input.h"
 #include "Main/global.h"
 #include "httpsession.h"

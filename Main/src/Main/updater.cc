@@ -1,4 +1,5 @@
 #include "Main/updater.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QProcess>
@@ -6,6 +7,7 @@
 #include <QSettings>
 #include <QThread>
 #include <QTimer>
+
 #include "Main/process.h"
 #include "Main/version_manager.h"
 

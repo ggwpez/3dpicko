@@ -37,4 +37,4 @@ using GlobalColonyCoordinates = Point;
 using GlobalMasterCoordinates = Point;
 using GlobalWellCoordinates = Point;
 }  // namespace c3picko
-#endif  // POINT_H
+#endif	// POINT_H

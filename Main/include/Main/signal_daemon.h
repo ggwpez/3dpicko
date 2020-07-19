@@ -1,6 +1,7 @@
 #pragma once
 
 #include <signal.h>
+
 #include <QObject>
 #include <QSet>
 class QSocketNotifier;

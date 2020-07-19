@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include "Gcode/point.h"
 #include "ImageRecognition/algorithms/helper.h"
 #include "Main/marshalling.h"
@@ -36,7 +37,8 @@ class Plate {
    * @param y Y Image coordinate of the colony .
    * @return Global coordinate of the colony .
    */
-  virtual LocalColonyCoordinates mapImageToGlobal(PlateProfile const* plate, double x, double y) const = 0;
+  virtual LocalColonyCoordinates mapImageToGlobal(PlateProfile const* plate,
+												  double x, double y) const = 0;
 
   cv::Point2d center() const;
   const cv::Mat& rotationMatrix() const;

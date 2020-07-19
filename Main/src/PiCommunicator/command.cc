@@ -1,4 +1,5 @@
 #include "PiCommunicator/command.h"
+
 #include <QMetaEnum>
 #include <QVariant>
 

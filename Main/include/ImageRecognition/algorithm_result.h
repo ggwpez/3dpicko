@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <vector>
+
 #include "ImageRecognition/colony.h"
 
 namespace cv {

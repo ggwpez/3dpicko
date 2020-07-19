@@ -1,4 +1,5 @@
 #include "Main/version_manager.h"
+
 #include "GUI/database.h"
 #include "Main/exception.h"
 #include "Main/process.h"
@@ -58,7 +59,7 @@ void VersionManager::remOldestVersion(Version::ID id) {
 
   qDebug() << "Removing old version" << id;
   // Is there a process active right now?
-  if (processes_.find(id) != processes_.end())  // Kill the process
+  if (processes_.find(id) != processes_.end())	// Kill the process
 	processes_.at(id)->kill();
 
   ResourcePath build(working_dir_ + "builds/" + id);
@@ -168,9 +169,8 @@ void VersionManager::makeVersion(Version::ID id) {
 	  emit this->OnInstallError("make", output);
   });
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
-  connect(make, &Process::OnSuccess, [this, id]() {
-	emit this->OnInstalled(id);
-  });
+  connect(make, &Process::OnSuccess,
+		  [this, id]() { emit this->OnInstalled(id); });
 
   registerProcess(id, make);
   make->start();

@@ -1,6 +1,8 @@
 #include "ImageRecognition/plates/plate.h"
+
 #include <QDebug>
 #include <opencv2/imgproc.hpp>
+
 #include "ImageRecognition/plates/rect_plate.h"
 #include "ImageRecognition/plates/round_plate.h"
 

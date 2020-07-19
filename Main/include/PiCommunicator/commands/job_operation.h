@@ -37,4 +37,4 @@ class JobOperation : public Command {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // JOB_OPERATION_H
+#endif	// JOB_OPERATION_H

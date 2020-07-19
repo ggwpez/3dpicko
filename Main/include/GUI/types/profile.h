@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include "GUI/types/profile_type.h"
 #include "Main/marshalling.h"
 
@@ -23,7 +24,7 @@ class Profile {
   explicit operator PrinterProfile*() const;
   explicit operator PlateSocketProfile*() const;
   explicit operator PlateProfile*() const;
-  explicit operator pi::OctoConfig*() const;
+  explicit operator pi::OctoConfig *() const;
 
   ID id() const;
   void setId(ID id);

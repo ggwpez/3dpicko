@@ -1,9 +1,11 @@
 #include "GUI/types/image.h"
+
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QTemporaryFile>
 #include <algorithm>
+
 #include "Main/resource_path.h"
 
 namespace c3picko {
@@ -55,7 +57,7 @@ Image::Image(cv::Mat image, QString original_name, QString description,
 
 bool Image::writeToFile() {
   if (image_.empty() ||
-	  !path_.isEmpty())  // path_ should be empty, otherwise we may create two
+	  !path_.isEmpty())	 // path_ should be empty, otherwise we may create two
 						 // files with the same content
 	return false;
 

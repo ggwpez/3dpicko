@@ -1,4 +1,5 @@
 #include "GUI/database.h"
+
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -65,21 +66,18 @@ void Database::autosave() {
 }
 
 void Database::autosaveSkipped() {
-	qDebug() << "Skipped Autosave (no changes)";
+  qDebug() << "Skipped Autosave (no changes)";
 }
 
-ResourcePath Database::findPath(const QSettings& s)
-{
-	if (!s.contains("path"))
-		throw Exception("Missing setting: database.path");
-	QString str = s.value("path").toString();
-	if (str.isEmpty())
-		throw Exception("Empty setting: database.path");
-	str += "database.json";
-	if (str.startsWith("/"))
-		return ResourcePath::fromSystemAbsolute(str);
-	else
-		return ResourcePath::fromServerRelative(str);
+ResourcePath Database::findPath(const QSettings& s) {
+  if (!s.contains("path")) throw Exception("Missing setting: database.path");
+  QString str = s.value("path").toString();
+  if (str.isEmpty()) throw Exception("Empty setting: database.path");
+  str += "database.json";
+  if (str.startsWith("/"))
+	return ResourcePath::fromSystemAbsolute(str);
+  else
+	return ResourcePath::fromServerRelative(str);
 }
 
 Database::JobTable& Database::jobs() {

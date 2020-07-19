@@ -1,4 +1,5 @@
 #include "PiCommunicator/responses/job_info.h"
+
 #include <QJsonValue>
 
 namespace c3picko {

@@ -1,9 +1,11 @@
 #include "GUI/ws_server.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QWebSocketServer>
 #include <QtWebSockets>
+
 #include "GUI/api_controller.h"
 #include "Main/global.h"
 
@@ -69,7 +71,7 @@ void WsServer::NewTextData(QString data) {
 	emit OnRequest(req, data, client);
   } else
 	qFatal("%s",
-		   "qobject_cast<QWebSocket*>(sender()) was null");  // if this fails,
+		   "qobject_cast<QWebSocket*>(sender()) was null");	 // if this fails,
 															 // check that this
 															 // function was
 															 // never manually

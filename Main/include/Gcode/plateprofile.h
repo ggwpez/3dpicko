@@ -21,8 +21,8 @@ class PlateProfile {
 			   float height_master_plate, float height_goal_plate,
 			   float well_depth, float culture_medium_thickness_source_plate,
 			   float culture_medium_thickness_master_plate,
-			   int timesToLowerFilamentIntoWell,
-			   float red_frame_width, float red_frame_height);
+			   int timesToLowerFilamentIntoWell, float red_frame_width,
+			   float red_frame_height);
 
   int numberOfRows() const;
   int numberOfColumns() const;
@@ -139,4 +139,4 @@ class PlateProfile {
   const float red_frame_height_;
 };
 }  // namespace c3picko
-#endif  // PLATEPROFILE_H
+#endif	// PLATEPROFILE_H

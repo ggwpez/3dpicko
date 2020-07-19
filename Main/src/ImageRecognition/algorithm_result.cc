@@ -1,8 +1,10 @@
 #include "ImageRecognition/algorithm_result.h"
+
 #include <QJsonArray>
 #include <QThread>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
+
 #include "ImageRecognition/colony.h"
 #include "Main/exception.h"
 

@@ -3,6 +3,7 @@
 #include <QMutex>
 #include <QObject>
 #include <QTimer>
+
 #include "GUI/database.h"
 #include "Main/resource_path.h"
 

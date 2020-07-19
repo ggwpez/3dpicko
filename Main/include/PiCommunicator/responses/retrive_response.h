@@ -1,10 +1,10 @@
 #ifndef RETRIVE_RESPONSE_H_
 #define RETRIVE_RESPONSE_H_
 
+#include <QVector>
+
 #include "PiCommunicator/response.h"
 #include "PiCommunicator/responses/file_or_folder_info.h"
-
-#include <QVector>
 
 namespace c3picko {
 namespace pi {
@@ -27,4 +27,4 @@ struct RetriveResponse : public Response {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // RETRIVE_RESPONSE_H_
+#endif	// RETRIVE_RESPONSE_H_

@@ -1,5 +1,7 @@
 #include "Main/marshalling.h"
+
 #include <QJsonArray>
+
 #include "GUI/types/profile.h"
 #include "Gcode/plateprofile.h"
 #include "Gcode/platesocketprofile.h"

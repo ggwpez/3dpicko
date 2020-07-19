@@ -1,10 +1,10 @@
 #include "PiCommunicator/commands/upload_file.h"
+
 #include <QByteArray>
 #include <QFile>
-#include <QJsonValue>
-
 #include <QHttpMultiPart>
 #include <QHttpPart>
+#include <QJsonValue>
 
 namespace c3picko {
 namespace pi {

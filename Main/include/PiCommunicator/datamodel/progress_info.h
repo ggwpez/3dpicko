@@ -38,4 +38,4 @@ struct ProgressInfo {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // PROGRESS_INFO_H
+#endif	// PROGRESS_INFO_H

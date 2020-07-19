@@ -2,6 +2,7 @@
 
 #include <QJsonObject>
 #include <QJsonValueRef>
+
 #include "Main/global.h"
 
 namespace c3picko {

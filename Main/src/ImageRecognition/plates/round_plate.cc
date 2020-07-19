@@ -1,6 +1,8 @@
 #include "ImageRecognition/plates/round_plate.h"
+
 #include <QJsonArray>
 #include <opencv2/opencv.hpp>
+
 #include "Main/exception.h"
 
 namespace c3picko {
@@ -62,7 +64,7 @@ double RoundPlate::calculateRotation(RoundPlate::Markers const& markers,
   double ret = std::atan2((std::sin(a1) + std::sin(a2) + std::sin(a3)) / 3,
 						  (std::cos(a1) + std::cos(a2) + std::cos(a3)) / 3);
 
-  ret = (ret - M_PI) * 180 / M_PI;  // -M_PI rotates the edgy marker to the
+  ret = (ret - M_PI) * 180 / M_PI;	// -M_PI rotates the edgy marker to the
 									// left, such as it lies in the picker.
   return ret < 0 ? ret + 360 : ret;
 }
@@ -87,18 +89,20 @@ void RoundPlate::mask(const cv::Mat& in, cv::Mat& out) const {
   out = in & mask;
 }
 
-LocalColonyCoordinates RoundPlate::mapImageToGlobal(const PlateProfile* plate, double x, double y) const {
-	return {float(x * 98 + 12.5), float((1.0 - y) * 92.5 - 2.8)};
+LocalColonyCoordinates RoundPlate::mapImageToGlobal(const PlateProfile* plate,
+													double x, double y) const {
+  return {float(x * 98 + 12.5), float((1.0 - y) * 92.5 - 2.8)};
 }
 
 void RoundPlate::crop(const cv::Mat& in, cv::Mat& out) const {
-	float h = cv::norm(markers_[m1_] -markers_[(m1_ +1) %3]);
-	float w = cv::norm(markers_[(m1_+2)%4] -markers_[m1_]);
-	std::array<cv::Point2f, 3> border{{markers_[m1_], markers_[(m1_+2)%3], markers_[(m1_+1)%3]}};
-	std::array<cv::Point2f, 3> pts = {{{0,h/2}, {w,0}, {w, h}}};
+  float h = cv::norm(markers_[m1_] - markers_[(m1_ + 1) % 3]);
+  float w = cv::norm(markers_[(m1_ + 2) % 4] - markers_[m1_]);
+  std::array<cv::Point2f, 3> border{
+	  {markers_[m1_], markers_[(m1_ + 2) % 3], markers_[(m1_ + 1) % 3]}};
+  std::array<cv::Point2f, 3> pts = {{{0, h / 2}, {w, 0}, {w, h}}};
 
-	cv::Mat T = cv::findHomography(border, pts);
-	cv::warpPerspective(in, out, T, cv::Size(w, h));
+  cv::Mat T = cv::findHomography(border, pts);
+  cv::warpPerspective(in, out, T, cv::Size(w, h));
 }
 
 template <>

@@ -1,11 +1,11 @@
 #ifndef UPLOAD_RESPONSE_H_
 #define UPLOAD_RESPONSE_H_
 
+#include <QVector>
+
 #include "PiCommunicator/datamodel/abridged_file_info.h"
 #include "PiCommunicator/datamodel/location.h"
 #include "PiCommunicator/response.h"
-
-#include <QVector>
 
 namespace c3picko {
 namespace pi {
@@ -29,4 +29,4 @@ struct UploadResponse : public Response {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // RETRIVE_RESPONSE_H_
+#endif	// RETRIVE_RESPONSE_H_

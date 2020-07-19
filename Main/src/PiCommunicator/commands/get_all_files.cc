@@ -1,4 +1,5 @@
 #include "PiCommunicator/commands/get_all_files.h"
+
 #include <QByteArray>
 #include <QJsonDocument>
 #include <QJsonParseError>

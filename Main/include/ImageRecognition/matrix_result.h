@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <stack>
+
 #include "ImageRecognition/algorithm_result.h"
 
 namespace c3picko {

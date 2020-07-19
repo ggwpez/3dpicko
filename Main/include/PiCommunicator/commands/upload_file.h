@@ -58,4 +58,4 @@ class UploadFile : public Command {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // UPLOAD_COMMAND_H_
+#endif	// UPLOAD_COMMAND_H_

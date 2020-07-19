@@ -1,4 +1,13 @@
 #include "GUI/api_controller.h"
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QJsonArray>
+#include <QMetaMethod>
+#include <functional>
+#include <memory>
+#include <random>
+
 #include "GUI/reporter.h"
 #include "GUI/types/well.h"
 #include "Gcode/gcodegenerator.h"
@@ -11,14 +20,6 @@
 #include "Main/version_manager.h"
 #include "PiCommunicator/commands/arbitrary_command.h"
 #include "PiCommunicator/octoprint.h"
-
-#include <QCoreApplication>
-#include <QDebug>
-#include <QJsonArray>
-#include <QMetaMethod>
-#include <functional>
-#include <memory>
-#include <random>
 
 using namespace c3picko::pi;
 namespace c3picko {
@@ -347,12 +348,11 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
 		  "Cant include and exclude a colony at the same time", client);
   }
 
-  eligible = in_algo -ex_user;
+  eligible = in_algo - ex_user;
   selected = in_user;
 
   std::mt19937_64 gen(1234);  // same seed for determinism
-  while ((selected.size() < number) && eligible.size())
-  {
+  while ((selected.size() < number) && eligible.size()) {
 	std::uniform_int_distribution<> dis(0, eligible.size() - 1);
 	auto it = eligible.begin() + dis(gen);
 	selected.insert(*it);
@@ -397,7 +397,7 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
 	  emit OnColonyDetectionError("Image not found", client);
 	} else {
 	  Image& img = db_->images().get(
-		  img_id);  // Non const& bc readCvMat() can set the cache
+		  img_id);	// Non const& bc readCvMat() can set the cache
 	  std::shared_ptr<cv::Mat> image(std::make_shared<cv::Mat>());
 
 	  if (!img.readCvMat(*image)) {
@@ -566,7 +566,7 @@ QJsonObject APIController::createImageList() const {
   std::vector<std::reference_wrapper<Image const>> pairs;
   for (auto const& pair : db_->images())
 	pairs.push_back(
-		std::cref<Image>(pair.second));  // Copy here bc reference_wrapper does
+		std::cref<Image>(pair.second));	 // Copy here bc reference_wrapper does
 										 // not have move ctor ?!
   std::sort(pairs.begin(), pairs.end(),
 			[](std::reference_wrapper<Image const> a,

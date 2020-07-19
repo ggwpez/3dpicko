@@ -1,5 +1,7 @@
 #include "PiCommunicator/pi_communicator.h"
+
 #include <QString>
+
 #include "PiCommunicator/commands/all.h"
 
 namespace c3picko {

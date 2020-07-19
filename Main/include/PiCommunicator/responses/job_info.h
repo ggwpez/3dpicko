@@ -23,4 +23,4 @@ struct JobInfo : public Response {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // JOB_INFO_H
+#endif	// JOB_INFO_H

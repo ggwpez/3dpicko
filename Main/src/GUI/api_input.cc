@@ -1,4 +1,5 @@
 #include "GUI/api_input.h"
+
 #include "GUI/api_commands.h"
 #include "GUI/api_controller.h"
 
@@ -50,7 +51,7 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 	// Get image data
 	QByteArray img_data(
 		QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
-								   .toUtf8()));  // TODO ugly code
+								   .toUtf8()));	 // TODO ugly code
 	QString img_name =
 		Marshalling::fromJson<QString>(req_data["original_filename"]);
 	Image image =

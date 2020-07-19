@@ -23,4 +23,4 @@ class RequestMapper : public HttpRequestHandler {
   StaticFileController* staticFileController;
 };
 }  // namespace c3picko
-#endif  // REQUESTMAPPER_H
+#endif	// REQUESTMAPPER_H

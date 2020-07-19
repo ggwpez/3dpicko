@@ -3,6 +3,7 @@
 #include <QElapsedTimer>
 #include <QObject>
 #include <memory>
+
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_result.h"
 

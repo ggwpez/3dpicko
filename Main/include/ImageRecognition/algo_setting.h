@@ -4,6 +4,7 @@
 #include <QPair>
 #include <QString>
 #include <QVariant>
+
 #include "ImageRecognition/algorithms/helper.h"
 #include "Main/exception.h"
 #include "Main/marshalling.h"

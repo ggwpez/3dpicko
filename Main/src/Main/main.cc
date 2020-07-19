@@ -1,3 +1,8 @@
+#include <QCoreApplication>
+#include <QFile>
+#include <QThreadPool>
+#include <QtGlobal>
+
 #include "GUI/api_controller.h"
 #include "GUI/autosaver.h"
 #include "GUI/database.h"
@@ -12,14 +17,8 @@
 #include "Main/logger.h"
 #include "Main/signal_daemon.h"
 #include "Main/updater.h"
-
 #include "httplistener.h"
 #include "staticfilecontroller.h"
-
-#include <QCoreApplication>
-#include <QFile>
-#include <QThreadPool>
-#include <QtGlobal>
 
 using namespace stefanfrings;
 using namespace c3picko;
