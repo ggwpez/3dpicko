@@ -1,5 +1,7 @@
 #include "Main/logger.h"
+
 #include <QMutexLocker>
+
 #include "Main/global.h"
 
 namespace c3picko {

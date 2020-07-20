@@ -1,9 +1,11 @@
 #pragma once
 
 #include <qwebsocketprotocol.h>
+
 #include <QObject>
 #include <QSslConfiguration>
 #include <QSslError>
+
 #include "GUI/api_input.h"
 
 using namespace stefanfrings;

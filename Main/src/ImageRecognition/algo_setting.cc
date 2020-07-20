@@ -1,5 +1,7 @@
 #include "ImageRecognition/algo_setting.h"
+
 #include <QJsonArray>
+
 #include "Main/exception.h"
 
 namespace c3picko {
@@ -106,6 +108,14 @@ void AlgoSetting::addSubSetting(const AlgoSetting& sub) {
   sub_settings_.push_back(sub);
 }
 
+AlgoSetting AlgoSetting::subSetting(QString id) const {
+  for (AlgoSetting const& setting : sub_settings_) {
+	if (setting.id() == id) return setting;
+  }
+
+  throw Exception("Could not find AlgoSetting (id=" + id + ")");
+}
+
 QList<AlgoSetting> AlgoSetting::subSettings() const { return sub_settings_; }
 
 template <>
@@ -120,7 +130,7 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
   obj["id"] = value.id();
   obj["type"] = value.type();
   obj["name"] = name;
-  obj["description"] = "";  // = "<a href=\"" + link + "\" target=\"_blank\"
+  obj["description"] = "";	// = "<a href=\"" + link + "\" target=\"_blank\"
 							// rel=\"noopener\" >Wiki link</a>";
   obj["color"] = value.color().name();
 
@@ -164,7 +174,7 @@ QJsonObject Marshalling::toJson(const AlgoSetting& value) {
 
 template <>
 Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
-  throw Exception("Marshalling::fromJson<AlgoSetting> not tested");  // TODO
+  throw Exception("Marshalling::fromJson<AlgoSetting> not tested");	 // TODO
   AlgoSetting::ID id = Marshalling::fromJson<QString>(obj["id"]);
   QString type = Marshalling::fromJson<QString>(obj["type"]).toLower();
   QString name = Marshalling::fromJson<QString>(obj["name"]);

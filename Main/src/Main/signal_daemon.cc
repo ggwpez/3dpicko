@@ -1,11 +1,12 @@
 #include "Main/signal_daemon.h"
-#include <QCoreApplication>
-#include <QDebug>
-#include <QSocketNotifier>
 
 #include <signal.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QSocketNotifier>
 #include <iostream>
 
 namespace c3picko {
@@ -15,7 +16,7 @@ SignalDaemon::SignalDaemon(QObject* _parent) : QObject(_parent) {
 
   notifier_ = new QSocketNotifier(socketpair_[1], QSocketNotifier::Read, this);
   connect(notifier_, SIGNAL(activated(int)), this, SLOT(socketNotify(int)));
-  notifier_->setEnabled(true);  // dont forget this…
+  notifier_->setEnabled(true);	// dont forget this…
 }
 
 int SignalDaemon::registerSignal(int signal) {

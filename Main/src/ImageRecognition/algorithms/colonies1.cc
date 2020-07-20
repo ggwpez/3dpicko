@@ -1,10 +1,12 @@
 #include "ImageRecognition/algorithms/colonies1.h"
+
 #include <QFuture>
 #include <QFutureSynchronizer>
 #include <QtConcurrent>
 #include <functional>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
@@ -15,34 +17,36 @@
 namespace c3picko {
 namespace algorithms {
 Colonies1::Colonies1()
-		: Algorithm(
-			  "1", "Normal1", "Detects colonies with standard illumination",
-			  {(AlgoStep)Colonies1::cvt, (AlgoStep)Colonies1::mask, (AlgoStep)Colonies1::threshold, (AlgoStep)Colonies1::erodeAndDilate,
-			   (AlgoStep)Colonies1::label, (AlgoStep)Colonies1::safetyMargin /*,
-   (AlgoStep)&Normal1::relativeFiltering*/},
-			  {AlgoSetting::make_rangeslider_double("area", "Area", "", 50, 2000, 1, {120, 1000}),
-			  AlgoSetting::make_slider_double("safety_margin_arg1", "Safety Margin radius", "", 0, 1, .01, .9, Qt::gray),
-			   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio", "", 0, 1, .001, {.7, 1}, Qt::cyan),
-			   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "", 0, 1, .001, {.7, 1}, Qt::magenta),
-			   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0, 1, .001, {.8, 1}, Qt::green),
-			   AlgoSetting::make_rangeslider_double("circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
-			   /*AlgoSetting::make_checkbox(
-   "filter_relative", "Filter detected colonies", "", false,
-   {AlgoSetting::make_dropdown("relative_filter", "Filter Colonies",
-   "Select an attribute to filter",
-   {{"n", "None"},
-{"a", "Area"},
-{"r", "Circumference"},
-{"b", "brightness"}},
-   "n"),
-AlgoSetting::make_rangeslider_double(
-"rel", "Mean", "Mean +x*Standard deviation", -5, 5, .01,
-{-5, 5})},
-   Qt::red)*/},
-			  true, 3000)
-	{
-
-	}
+	: Algorithm(
+		  "1", "Normal1", "Detects colonies with standard illumination",
+		  {(AlgoStep)Colonies1::cvt, (AlgoStep)Colonies1::mask,
+		   (AlgoStep)Colonies1::threshold, (AlgoStep)Colonies1::erodeAndDilate,
+		   (AlgoStep)Colonies1::label, /*(AlgoStep)Colonies1::safetyMargin ,*/
+		   (AlgoStep)Colonies1::relativeFiltering},
+		  {AlgoSetting::make_rangeslider_double("area", "Area", "", 50, 2000, 1,
+												{120, 1000}),
+		   AlgoSetting::make_rangeslider_double("aabb_ratio", "AABB Side Ratio",
+												"", 0, 1, .001, {.7, 1},
+												Qt::cyan),
+		   AlgoSetting::make_rangeslider_double("bb_ratio", "BB Side Ratio", "",
+												0, 1, .001, {.7, 1},
+												Qt::magenta),
+		   AlgoSetting::make_rangeslider_double("convexity", "Convexity", "", 0,
+												1, .001, {.8, 1}, Qt::green),
+		   AlgoSetting::make_rangeslider_double(
+			   "circularity", "Circularity", "", 0, 1, .001, {.6, 1}, Qt::blue),
+		   AlgoSetting::make_dropdown("relative_what",
+									  "Relative filtering Attribute",
+									  "Select an attribute to filter",
+									  {{"n", "None"},
+									   {"a", "Area"},
+									   {"r", "Circumference"},
+									   {"b", "brightness"}},
+									  "n"),
+		   AlgoSetting::make_rangeslider_double(
+			   "relative_value", "Relative filtering value",
+			   "Mean +x*Standard deviation", -5, 5, .01, {-5, 5}, Qt::red)},
+		  true, 3000) {}
 
 /**
  * @brief Checks the roundness of the given contour.
@@ -77,7 +81,7 @@ static AlgoSetting::ID roundness(int area, int w, int h,
 
   double convex(cv::contourArea(contour) / cv::contourArea(hull_contour));
 
-  return convexity.contains(convex) ? "" : "convexity";  // flouro .91
+  return convexity.contains(convex) ? "" : "convexity";	 // flouro .91
 }
 
 void Colonies1::cvt(AlgorithmJob* base, DetectionResult* result) {
@@ -127,7 +131,6 @@ void Colonies1::label(AlgorithmJob* base, DetectionResult* result) {
   cv::Mat& input = result->oldMat();
   std::vector<Colony>& colonies = result->colonies();
 
-  // std::atomic<Colony::ID> id(-1);
   math::Range<double> _area =
 	  base->settingById("area").value<math::Range<double>>();
   math::Range<double> _aabb_ratio =
@@ -138,8 +141,6 @@ void Colonies1::label(AlgorithmJob* base, DetectionResult* result) {
 	  base->settingById("circularity").value<math::Range<double>>();
   math::Range<double> _convexity =
 	  base->settingById("convexity").value<math::Range<double>>();
-  bool show_excluded =
-	  false;  // base->settingById("show_excluded_by_algo").value<bool>();
 
   cv::Mat stats, labeled, centers;
 
@@ -151,9 +152,8 @@ void Colonies1::label(AlgorithmJob* base, DetectionResult* result) {
   // This lambda expression will be executed for every detected component.
   // It needs to be a function, because we want to thread it .
   std::function<void(int, int)> map =
-	  [&centers, &colonies, &labeled, &stats, base, &input, &show_excluded,
-	   &_aabb_ratio, &_area, &_bb_ratio, &_circularity,
-	   &_convexity](int start, int count) -> void {
+	  [&centers, &colonies, &labeled, &stats, &input, &_aabb_ratio, &_area,
+	   &_bb_ratio, &_circularity, &_convexity](int start, int count) -> void {
 	Colony::ID id = start;
 	const double scale_x = 1.0 / input.cols, scale_y = 1.0 / input.rows;
 
@@ -165,10 +165,9 @@ void Colonies1::label(AlgorithmJob* base, DetectionResult* result) {
 	  int label = labeled.at<int>(r, c);
 
 	  if (!label) {
-		if (show_excluded)
-		  colonies[colony_index] =
-			  Colony(center.x * scale_x, center.y * scale_y, 0, 0, 10, 0, id++,
-					 "show_excluded_by_algo");
+		colonies[colony_index] =
+			Colony(center.x * scale_x, center.y * scale_y, 0, 0, 10, 0, id++,
+				   "show_excluded_by_algo");
 		continue;
 	  }
 
@@ -223,10 +222,10 @@ contours[0], *reinterpret_cast<cv::Mat*>(base->input().front()));*/
 	}
   };
 
-  // Parallel part
-  const int threads = base->pool()->maxThreadCount();
+  // Parallel part only for >100 colonies.
+  const int threads = centers.rows > 100 ? base->pool()->maxThreadCount() : 1;
   const int task_size = centers.rows / threads;
-  Q_ASSERT(threads && task_size);
+  Q_ASSERT(threads);
   QFutureSynchronizer<void> barrier;  // synchronises in dtor
 
   for (int i = 0; i < threads; ++i) {
@@ -246,34 +245,15 @@ contours[0], *reinterpret_cast<cv::Mat*>(base->input().front()));*/
 // TODO round safety margin
 void Colonies1::safetyMargin(AlgorithmJob* base, DetectionResult* result) {
   std::vector<Colony>& input = result->colonies();
-  /*auto margin_lr =
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																  base->settingById("safety_margin_lr").value<math::Range<double>>();
-  auto margin_tb =
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																  base->settingById("safety_margin_tb").value<math::Range<double>>();
-  cv::Rect2d bounding(cv::Point2d(margin_lr.lower_, margin_tb.lower_),
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																  cv::Point2d(margin_lr.upper_,
-  margin_tb.upper_));
-
-  for (auto it = input.begin(); it != input.end(); ++it) {
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																Colony const& c
-  = *it; cv::Point2d cp(c.x(), c.y());
-
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																if
-  (!c.included()) continue; if (!bounding.contains(cp))
-  it->setExcluded_by("safety_margin_lt");
-  }*/
-
   cv::Mat& image = result->oldMat();
   auto margin_arg1 = base->settingById("safety_margin_arg1").value<double>();
   Plate const* plate(static_cast<Plate*>(base->input()[1]));
-
   for (auto it = input.begin(); it != input.end(); ++it) {
 	Colony& c = *it;
 
-	// if (!c.included()) continue;
-	if (!plate->isInsideSafetyMargin({c.x() * image.cols, c.y() * image.rows},
-									 margin_arg1))
-	  it->setExcludedBy("safety_margin_arg1");
+	// if (!plate->isInsideSafetyMargin({c.x(), c.y()},
+	//							 margin_arg1))
+	it->setExcludedBy("safety_margin_arg1");
   }
 }
 
@@ -281,26 +261,24 @@ void Colonies1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   std::vector<Colony>* input = &result->colonies();
 
   // Should we skip the step?
-  if (!base->settingById("filter_relative").value<bool>()) return;
-  QString option =
-	  base->settingById("relative_filter").option<QString>().toLower();
-
+  QString what = base->settingById("relative_what").option<QString>().toLower();
   math::Range<double> _rel =
-	  base->settingById("rel").value<math::Range<double>>();
+	  base->settingById("relative_value").value<math::Range<double>>();
 
   cv::Scalar mean, stddev;
   std::vector<cv::Scalar> values(input->size(), 0);
 
   double (Colony::*get_data)(void) const = nullptr;
 
-  if (option == "area")
+  if (what == "none") return;
+  if (what == "area")
 	get_data = &Colony::area;
-  else if (option == "circumference")
+  else if (what == "circumference")
 	get_data = &Colony::circumference;
-  else if (option == "brightness")
+  else if (what == "brightness")
 	get_data = &Colony::brightness;
   else
-	throw Exception("Unknown dropdown option " + option);
+	throw Exception("Unknown dropdown option " + what);
 
   for (std::size_t i = 0; i < input->size(); ++i)
 	values[i] = (input->at(i).*get_data)();
@@ -313,8 +291,9 @@ void Colonies1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   double rel_max = meand + _rel.upper_ * stddefd;
 
   for (auto it = input->begin(); it != input->end();) {
-	if ((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max)
-	  input->erase(it);
+	if (it->included() &&
+		((*(it).*get_data)() < rel_min || (*(it).*get_data)() > rel_max))
+	  it->setExcludedBy("relative_value");
 	else
 	  ++it;
   }

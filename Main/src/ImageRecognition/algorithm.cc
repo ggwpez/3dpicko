@@ -1,7 +1,9 @@
 #include "ImageRecognition/algorithm.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QThread>
+
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
@@ -32,7 +34,7 @@ void Algorithm::run() {
 	  if (j->elapsedMs() >= j->maxMs())
 		throw Exception("Job timed out (id=" + j->id() + ")");
 
-	  steps_[i](j, result);  // TODO only pass job
+	  steps_[i](j, result);	 // TODO only pass job
 	  result->stages_succeeded_ = true;
 	}
 	result->finalize();
@@ -40,7 +42,7 @@ void Algorithm::run() {
 	error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
 			 << e.what();
 	result->stages_succeeded_ = false;
-  } catch (...)  // FIXME abort
+  } catch (...)	 // FIXME abort
   {
 	error_ts << qPrintable(error_prefix) << i << qPrintable(error_postfix)
 			 << "unknown";
@@ -95,7 +97,7 @@ QJsonObject Marshalling::toJson(const Algorithm& value) {
 
   QJsonArray json_settings;
   for (AlgoSetting const& setting : value.defaultSettings())
-	json_settings.push_back(Marshalling::toJson(setting));  // NOTE add index to
+	json_settings.push_back(Marshalling::toJson(setting));	// NOTE add index to
 															// support formats
 															// that dont have
 															// ordered arrays

@@ -1,10 +1,12 @@
 #include "PiCommunicator/octoprint.h"
+
 #include <QHostAddress>
 #include <QJsonArray>
 #include <QMetaEnum>
 #include <QUrlQuery>
 #include <functional>
 #include <utility>
+
 #include "PiCommunicator/command.h"
 
 namespace c3picko {

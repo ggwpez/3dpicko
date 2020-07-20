@@ -2,6 +2,7 @@
 #include <QSslConfiguration>
 #include <QSslKey>
 #include <QtDebug>
+
 #include "ImageRecognition/algorithms/helper.h"
 #include "Main/exception.h"
 #include "Main/logger.h"
@@ -34,7 +35,7 @@ static QSslConfiguration* LoadSsl(QString key, QString cert) {
   ssl->setPeerVerifyMode(QSslSocket::VerifyNone);
   ssl->setLocalCertificate(certificate);
   ssl->setPrivateKey(sslKey);
-  ssl->setProtocol(QSsl::SecureProtocols);  // TODO
+  ssl->setProtocol(QSsl::SecureProtocols);	// TODO
 
   return ssl;
 }
@@ -123,9 +124,15 @@ QString setupGlobal(QCoreApplication* app) {
   if (!path.endsWith('/')) path += '/';
 
   root_path = ResourcePath::fromSystemAbsolute(path);
-  doc_root_path = root_path + settings.value("docroot").toString();
-  upload_path = root_path + settings.value("uploads").toString();
-  report_path = root_path + settings.value("reports").toString();
+  {
+	QString path = settings.value("docroot").toString();
+	if (path.startsWith("/"))
+	  doc_root_path = ResourcePath::fromSystemAbsolute(path);
+	else
+	  doc_root_path = root_path + path;
+  }
+  upload_path = doc_root_path + settings.value("uploads").toString();
+  report_path = doc_root_path + settings.value("reports").toString();
 
   if (!paths::root().exists() || !paths::root().isDir())
 	throw Exception("Root '" + paths::root().toSystemAbsolute() +
@@ -163,7 +170,7 @@ QString consoleTextColor(QtMsgType type) {
 	  return "\x1B[33m";  // Orange
 	case QtMsgType::QtCriticalMsg:
 	  return "\x1B[31m";		 // Red
-	case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
+	case QtMsgType::QtFatalMsg:	 // is the same as QtSystemMsg
 	  return "\x1B[31;1m";		 // Red, Fat
 	default:
 	  Q_UNREACHABLE();
@@ -178,7 +185,7 @@ QString htmlTextColor(QtMsgType type) {
 	  clr = "orange";  // Orange
 	  break;
 	case QtMsgType::QtCriticalMsg:
-	case QtMsgType::QtFatalMsg:  // is the same as QtSystemMsg
+	case QtMsgType::QtFatalMsg:	 // is the same as QtSystemMsg
 	  clr = "red";				 // Red
 	  break;
 	default:

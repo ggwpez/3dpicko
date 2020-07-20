@@ -1,9 +1,12 @@
 #include "ImageRecognition/algorithms/plate_rect.h"
+
 #include <memory>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
+
+#include "Gcode/plateprofile.h"
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/plate_result.h"
@@ -56,6 +59,8 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
    *    in the center.
    */
 
+  PlateProfile const& profile =
+	  *reinterpret_cast<PlateProfile*>(base->profile());
   cv::Mat const& original = *reinterpret_cast<cv::Mat*>(base->input().front());
   cv::Mat const& erroded = result->oldMat();
 
@@ -68,12 +73,6 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
 
   // Step 1
   math::findConnectedComponentEdges(erroded, edges, area);
-  qDebug() << "Found" << edges.size() << "contours";
-
-  /*cv::drawContours(output, edges, 0, cv::Scalar::all(255));
-  cv::namedWindow("test", cv::WINDOW_AUTOSIZE);
-  cv::imshow("test", output);
-  cv::waitKey(0);*/
 
   // Step 2
   for (std::size_t i = 0; i < edges.size(); ++i) {
@@ -100,7 +99,7 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
 	throw std::runtime_error("Could not approximate inner edge");
 
   double eps = .1;
-  double plate_ratio = 128. / 85.9;  // FIXME get data from plate profile
+  double plate_ratio = profile.redFrameWidth() / profile.redFrameHeight();
   double optimal = 1 / plate_ratio;
   math::Range<double> outer_side_ratio(optimal - eps, optimal + eps);
 
@@ -111,7 +110,7 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
 	double w =
 		math::norm_l2(polygon[0].x, polygon[0].y, polygon[1].x, polygon[1].y);
 	double h = math::norm_l2(polygon[1].x, polygon[1].y, polygon[2].x,
-							 polygon[2].y);  // TODO use cv::norm
+							 polygon[2].y);	 // TODO use cv::norm
 
 	double r(std::min(w, h) / double(std::max(w, h)));
 	if (!outer_side_ratio.contains(r))
@@ -186,14 +185,13 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
   // Create the plates
   std::unique_ptr<RectPlate> unrotated(
 	  std::make_unique<RectPlate>(outer_edge, inner_edge));
-  std::unique_ptr<RectPlate> rotated(unrotated->rotated());
 
   // Rotate/Cut the final image
-  Plate::crop(*unrotated, *rotated, output, output);
+  // Plate::crop(*unrotated, *rotated, output, output);
+  unrotated->crop(output, output);
 
   // Set result output
   result->original() = std::move(unrotated);
-  result->rotated() = std::move(rotated);
 }
 }  // namespace algorithms
 }  // namespace c3picko

@@ -1,5 +1,7 @@
 #include "GUI/types/profile_type.h"
+
 #include <QtGlobal>
+
 #include "Main/exception.h"
 
 namespace c3picko {

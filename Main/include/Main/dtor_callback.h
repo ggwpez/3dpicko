@@ -11,9 +11,9 @@ class DtorCallback {
  public:
   enum class CallType {
 	kALWAYS,				 // always be called in destructor
-	kONLY_IN_EXC_CONTEXT,	// only called when the destructor is called from
+	kONLY_IN_EXC_CONTEXT,	 // only called when the destructor is called from
 							 // stack unwinding
-	kONLY_IN_NO_EXC_CONTEXT  // only called when the destructor is not called
+	kONLY_IN_NO_EXC_CONTEXT	 // only called when the destructor is not called
 							 // from stack unwinding
   };
 

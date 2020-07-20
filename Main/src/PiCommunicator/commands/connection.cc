@@ -30,7 +30,7 @@ Connection* Connection::FakeAck() {
 void Connection::OnReplyFinished(QNetworkReply* reply) {
   if (type_ == HTTPType::GET)  // Are we waiting for a response ?
 	CheckStatusCodeAndResponse<Response>(reply);
-  else if (type_ == HTTPType::POST)  // No response in POST
+  else if (type_ == HTTPType::POST)	 // No response in POST
 	CheckStatusCode(reply, nullptr);
   else
 	Q_UNREACHABLE();

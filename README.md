@@ -1,29 +1,36 @@
-## Install
-The following steps were tested on a fresh Ubunt 18.04 installation.  
-You need access to the repository and a [SSH key](https://docs.gitlab.com/ee/ssh/) so that the script can clone the repository.  
+## Installation
 
-Steps:  
-```
-sudo apt update && sudo apt install git
-git clone https://gitlab.com/ggwpez/3cpicko.git && cd 3cpicko
-bash dependencies.sh
-bash setup.sh ~/3dpicko-installation 098c16f6349b3c34ef848fc39c27192b802bf9a0 
-```
-That long hex number is the version that should be installed.  
-The compilation of opencv could take a while.  
-If everything completes, 3DpickO will be installed to ~/3dpicko-installation.  
-A service will be created and started.
-You can now navigate to 127.0.0.1:8080 in you'r browser to access the GUI :tada:.  
+There are three ways of setting it up:  
+  - Docker container (recommended)
+  - Binary release (Ubuntu 18.04 & 20.04)
+  - Compile from source
 
-## Docker
-You can also use docker do build/run it:  
+### Docker
+For quick tryout:
 ```
-curl https://gitlab.com/ggwpez/3cpicko/-/raw/dev/Dockerfile | docker build --tag dpicko:0.1 -
-docker run dpicko:0.1
+docker run -v$(pwd)/:/db -v$(pwd)/uploads:/docroot/uploads -v$(pwd)/reports:/docroot/reports --rm -i ggwpez/3dpicko:dev
 ```
+Open *172.17.0.2:8080* in your browser. If you have more than one docker container running the ip is different.  
+
+For server deployment:
+```
+docker run -v$(pwd)/:/db -v$(pwd)/uploads:/docroot/uploads -v$(pwd)/reports:/docroot/reports --net=host --restart unless-stopped -d --name 3dpicko ggwpez/3dpicko:dev
+```
+Open *0.0.0.0:8080* in your browser; this openes ports 8080 and 8888.
+
+On the first run, it will create a default database with the preset for the TU Darmstadt laboratory in it.  
+The directories *uploads/* and *reports/* will contain a copy of all uploaded images and created reports.
+
+### Binary release
+
+### Compile
+
+## Known BUGs
+- Auto-updater: Currently disabled since it is not used anyway.
+- Round plates: The image detection for round source plates does not work.
 
 ## Updating
-_If_ everything works correctly, a click to the <i>Update</i> button in the Admin GUI should be enought.  
-On the next cold-restart it should use the new version. (Dont try the <i>Restart</i> button in the GUI, it does a warm-restart).  
-### Auto updater
-It does the same thing as a click to the _Update_ button and can be configured in the _serverconfig.ini_ section _updater_.
+### Docker
+```
+docker pull ggwpez/3dpicko:dev
+```

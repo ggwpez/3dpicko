@@ -1,4 +1,5 @@
 #include "Main/updater.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QProcess>
@@ -6,6 +7,7 @@
 #include <QSettings>
 #include <QThread>
 #include <QTimer>
+
 #include "Main/process.h"
 #include "Main/version_manager.h"
 
@@ -46,7 +48,7 @@ Updater::Updater(const QSettings& settings, Database& db, QObject* _parent)
 
   timer_ = new QTimer(this);
   timer_->setInterval(interval_s_ * 1000);
-  connect(timer_, &QTimer::timeout, this, &Updater::Search);
+  connect(timer_, &QTimer::timeout, this, &Updater::TryUpdate);
 
   startSearch();
 }
@@ -99,7 +101,7 @@ void Updater::stopSearch() {
   timer_->stop();
 }
 
-void Updater::Search() {
+void Updater::TryUpdate() {
   QMutexLocker lock(&mtx_);
   qDebug() << "Searching for updates...";
 
@@ -154,7 +156,7 @@ void Updater::logSuccess(QString output) {
 	}
   }
 
-  // Is there a new ersion that we should install?
+  // Is there a new version that we should install?
   // Obviously we could install more than one new version, but we keep it simple
   // for now
   if (!to_be_installed.isEmpty()) try {

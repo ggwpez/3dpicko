@@ -1,9 +1,9 @@
 #pragma once
 
 #include <opencv2/core.hpp>
-#include "ImageRecognition/colony.h"
 
 #include "ImageRecognition/algorithm.h"
+#include "ImageRecognition/colony.h"
 #include "ImageRecognition/detection_result.h"
 
 namespace c3picko {

@@ -186,4 +186,4 @@ class GcodeInstruction {
   std::vector<GcodeField> fields_;
 };
 }  // namespace c3picko
-#endif  // GCODEINSTRUCTION_H
+#endif	// GCODEINSTRUCTION_H

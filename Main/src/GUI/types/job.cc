@@ -1,4 +1,5 @@
 #include "GUI/types/job.h"
+
 #include <QJsonArray>
 
 namespace c3picko {

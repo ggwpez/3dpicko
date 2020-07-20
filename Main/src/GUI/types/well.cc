@@ -1,4 +1,5 @@
 #include "GUI/types/well.h"
+
 #include "Gcode/plateprofile.h"
 #include "Main/exception.h"
 

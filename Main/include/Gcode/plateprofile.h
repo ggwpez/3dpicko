@@ -21,7 +21,8 @@ class PlateProfile {
 			   float height_master_plate, float height_goal_plate,
 			   float well_depth, float culture_medium_thickness_source_plate,
 			   float culture_medium_thickness_master_plate,
-			   int timesToLowerFilamentIntoWell);
+			   int timesToLowerFilamentIntoWell, float red_frame_width,
+			   float red_frame_height);
 
   int numberOfRows() const;
   int numberOfColumns() const;
@@ -37,6 +38,8 @@ class PlateProfile {
   float cultureMediumThicknessSourcePlate() const;
   float cultureMediumThicknessMasterPlate() const;
   int timesToLowerFilamentIntoWell() const;
+  float redFrameWidth() const;
+  float redFrameHeight() const;
 
  private:
   /**
@@ -122,6 +125,18 @@ class PlateProfile {
    * should tip into the PCR well fluid, 1-2 should be enought .
    */
   const int times_to_lower_filament_into_well_;
+
+  /**
+   * @brief red_frame_width_ width of the red frame that is placed on the
+   * source plate in mm.
+   */
+  const float red_frame_width_;
+
+  /**
+   * @brief red_frame_height_ width of the red frame that is placed on the
+   * source plate in mm.
+   */
+  const float red_frame_height_;
 };
 }  // namespace c3picko
-#endif  // PLATEPROFILE_H
+#endif	// PLATEPROFILE_H

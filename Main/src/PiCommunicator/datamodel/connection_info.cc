@@ -1,4 +1,5 @@
 #include "PiCommunicator/responses/connection_info.h"
+
 #include <QJsonArray>
 
 namespace c3picko {
@@ -22,7 +23,7 @@ ConnectionInfo::ConnectionInfo(const QJsonObject& obj) : Response(obj) {
   for (auto profile : options_json["printerProfiles"].toArray())
 	options.printer_profiles.insert(
 		{profile.toObject()["name"].toString(),
-		 profile.toObject()["id"].toString()});  // QtJson is dumb
+		 profile.toObject()["id"].toString()});	 // QtJson is dumb
 
   options.port_preference = options_json["portreference"].toString();
   options.baudrate_preference = options_json["baudratePreference"].toInt();

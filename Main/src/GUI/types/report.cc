@@ -1,4 +1,5 @@
 #include "GUI/types/report.h"
+
 #include "GUI/database.h"
 #include "Gcode/plateprofile.h"
 

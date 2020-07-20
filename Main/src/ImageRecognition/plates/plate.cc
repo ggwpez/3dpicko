@@ -1,6 +1,8 @@
 #include "ImageRecognition/plates/plate.h"
+
 #include <QDebug>
 #include <opencv2/imgproc.hpp>
+
 #include "ImageRecognition/plates/rect_plate.h"
 #include "ImageRecognition/plates/round_plate.h"
 
@@ -9,14 +11,7 @@ Plate::Plate(cv::Point2d center, double angle, cv::Rect bb)
 	: center_(center),
 	  angle_(angle),
 	  aabb_(bb),
-	  rotation_matrix_(cv::getRotationMatrix2D(center_, angle_, 1)) {}
-
-void Plate::crop(const Plate& original, const Plate& rotated, const cv::Mat& in,
-				 cv::Mat& out) {
-  cv::warpAffine(in, out, original.rotationMatrix(),
-				 cv::Size(in.cols, in.rows));
-  out = out(rotated.aabb());
-}
+	  rotation_matrix_(cv::getRotationMatrix2D(cv::Point2f(), angle_, 1)) {}
 
 cv::Point2d Plate::center() const { return center_; }
 

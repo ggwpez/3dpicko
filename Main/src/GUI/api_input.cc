@@ -1,4 +1,5 @@
 #include "GUI/api_input.h"
+
 #include "GUI/api_commands.h"
 #include "GUI/api_controller.h"
 
@@ -50,7 +51,7 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 	// Get image data
 	QByteArray img_data(
 		QByteArray::fromBase64(Marshalling::fromJson<QString>(req_data["file"])
-								   .toUtf8()));  // TODO ugly code
+								   .toUtf8()));	 // TODO ugly code
 	QString img_name =
 		Marshalling::fromJson<QString>(req_data["original_filename"]);
 	Image image =
@@ -85,14 +86,6 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 						 req_data["ex_user"]),
 					 in_user = Marshalling::fromJson<QSet<Colony::ID>>(
 						 req_data["in_user"]);
-
-	//
-	// EXLUDED, INCLUDED
-	// EX_USER, IN_USER
-	// number
-	//
-	// (INCLUDED U IN_USER) \ EX_USER
-	//
 
 	api->setColoniesToPick(job, ex_user, in_user, number, client);
   } else if (path == APICommands::UPDATE_DETECTION_SETTINGS) {

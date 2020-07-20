@@ -3,6 +3,7 @@
 #include <QElapsedTimer>
 #include <QObject>
 #include <memory>
+
 #include "ImageRecognition/algo_setting.h"
 #include "ImageRecognition/algorithm_result.h"
 
@@ -33,8 +34,10 @@ class AlgorithmJob : public QObject {
   ~AlgorithmJob();
 
   void pushInput(void*);
+  void setProfile(void*);
   InputData const& input() const;
   InputData& input();
+  void* profile() const;
 
   std::shared_ptr<AlgorithmResult> result() const;
 
@@ -87,6 +90,7 @@ class AlgorithmJob : public QObject {
   Algorithm* algo_ = nullptr;
   QThreadPool* pool_;
   QList<AlgoSetting> settings_;
+  void* profile_;
   InputData input_;
   /**
    * @brief This pointer is only valid during the call of start(...)

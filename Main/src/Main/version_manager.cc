@@ -1,4 +1,5 @@
 #include "Main/version_manager.h"
+
 #include "GUI/database.h"
 #include "Main/exception.h"
 #include "Main/process.h"
@@ -29,6 +30,7 @@ VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
 	  to_be_installed_.dequeue();
 	qDebug().nospace().noquote() << "Installation complete (id=" << id << ")";
 	db_.installedVersions().push_back(id);
+	linkVersion(id);
 
 	// if (db_.installedVersions().size() > max_interesting_)
 	// remOldestVersion(db_.installedVersions().front());
@@ -57,7 +59,7 @@ void VersionManager::remOldestVersion(Version::ID id) {
 
   qDebug() << "Removing old version" << id;
   // Is there a process active right now?
-  if (processes_.find(id) != processes_.end())  // Kill the process
+  if (processes_.find(id) != processes_.end())	// Kill the process
 	processes_.at(id)->kill();
 
   ResourcePath build(working_dir_ + "builds/" + id);
@@ -99,7 +101,7 @@ void VersionManager::qmakeAmdMakeVersion(Version::ID id) {
   ResourcePath new_build_dir(working_dir_ + "builds/" + id);
 
   // Check for the build directory and maybe copy an old build in there, to
-  // speed up make
+  // speed up make.
   if (!QDir(new_build_dir.toSystemAbsolute()).exists()) {
 	if (!QDir().mkdir(new_build_dir.toSystemAbsolute()))
 	  return emit OnInstallError(
@@ -167,10 +169,8 @@ void VersionManager::makeVersion(Version::ID id) {
 	  emit this->OnInstallError("make", output);
   });
   connect(make, &Process::OnFinished, make, &Process::deleteLater);
-  connect(make, &Process::OnSuccess, [this, id]() {
-	emit this->OnInstalled(id);
-	this->linkVersion(id);
-  });
+  connect(make, &Process::OnSuccess,
+		  [this, id]() { emit this->OnInstalled(id); });
 
   registerProcess(id, make);
   make->start();

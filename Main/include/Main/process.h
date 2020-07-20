@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+
 #include "Main/global.h"
 #include "Main/resource_path.h"
 

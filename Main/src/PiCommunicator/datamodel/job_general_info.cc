@@ -1,4 +1,5 @@
 #include "PiCommunicator/datamodel/job_general_info.h"
+
 #include <QJsonObject>
 #include <QJsonValue>
 

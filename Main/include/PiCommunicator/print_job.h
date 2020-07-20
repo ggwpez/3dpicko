@@ -2,6 +2,7 @@
 #define PRINT_JOB_H
 
 #include <QObject>
+
 #include "PiCommunicator/datamodel/progress_info.h"
 #include "PiCommunicator/gcode.h"
 
@@ -56,4 +57,4 @@ class PrintJob : public QObject {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // PRINT_JOB_H
+#endif	// PRINT_JOB_H

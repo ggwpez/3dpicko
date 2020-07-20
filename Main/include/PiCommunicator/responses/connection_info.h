@@ -3,6 +3,7 @@
 
 #include <QPair>
 #include <QSet>
+
 #include "PiCommunicator/response.h"
 
 namespace c3picko {
@@ -43,4 +44,4 @@ struct ConnectionInfo : public Response {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // CONNECTION_H
+#endif	// CONNECTION_H

@@ -1,8 +1,10 @@
 #include "GUI/autosaver.h"
+
 #include <QDebug>
 #include <QRegularExpression>
 #include <QSettings>
 #include <QTimer>
+
 #include "Main/exception.h"
 
 namespace c3picko {

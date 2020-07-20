@@ -1,4 +1,5 @@
 #include "Main/exception.h"
+
 #include <string.h>
 
 namespace c3picko {

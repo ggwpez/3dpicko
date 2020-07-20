@@ -1,5 +1,7 @@
 #include "PiCommunicator/datamodel/file_type.h"
+
 #include <QString>
+
 #include "Main/exception.h"
 
 namespace c3picko {

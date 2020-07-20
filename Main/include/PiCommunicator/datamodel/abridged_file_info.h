@@ -2,6 +2,7 @@
 #define ABRIDGED_FILE_INFORMATION_H_
 
 #include <QString>
+
 #include "PiCommunicator/datamodel/location.h"
 #include "PiCommunicator/datamodel/reference.h"
 #include "PiCommunicator/response.h"
@@ -32,4 +33,4 @@ typedef data::AbridgedFileInfo AbridgedFileInfo;
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // ABRIDGED_FILE_INFORMATION_H_
+#endif	// ABRIDGED_FILE_INFORMATION_H_

@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <opencv2/core.hpp>
+
 #include "ImageRecognition/algorithm.h"
 #include "ImageRecognition/algorithm_job.h"
 

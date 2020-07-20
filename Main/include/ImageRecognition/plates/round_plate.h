@@ -24,13 +24,11 @@ class RoundPlate : public Plate {
 			 Markers const& markers, std::size_t m1, cv::Point2d center,
 			 double angle, cv::Rect aabb);
 
-  virtual RoundPlate* rotated() const override;
   virtual void mask(cv::Mat const& in, cv::Mat& out) const override;
-  virtual bool isInsideSafetyMargin(cv::Point2d pos,
-									math::UnitValue radius) const override;
-  virtual bool isPixelPickable(int x, int y) const override;
-  virtual LocalColonyCoordinates mapImageToGlobal(double x,
+  virtual LocalColonyCoordinates mapImageToGlobal(PlateProfile const* plate,
+												  double x,
 												  double y) const override;
+  virtual void crop(cv::Mat const& in, cv::Mat& out) const override;
 
   std::size_t m1() const;
 

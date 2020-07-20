@@ -41,4 +41,4 @@ class Connection : public Command {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // CONNECT_H
+#endif	// CONNECT_H

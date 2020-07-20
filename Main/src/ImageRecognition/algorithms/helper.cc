@@ -1,18 +1,18 @@
 #include "ImageRecognition/algorithms/helper.h"
-#include "ImageRecognition/colony.h"
+
+#include <opencv2/core/hal/interface.h>
 
 #include <QByteArray>
 #include <QDebug>
 #include <QtGlobal>
-
 #include <algorithm>
 #include <complex>
 #include <numeric>
-#include <set>
-
-#include <opencv2/core/hal/interface.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+#include <set>
+
+#include "ImageRecognition/colony.h"
 
 namespace c3picko {
 namespace math {

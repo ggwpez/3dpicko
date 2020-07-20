@@ -1,4 +1,5 @@
 #include "Main/setting.h"
+
 #include "Gcode/point.h"
 #include "Main/exception.h"
 #include "Main/marshalling.h"

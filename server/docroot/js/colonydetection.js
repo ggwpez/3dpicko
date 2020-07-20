@@ -294,11 +294,11 @@ function SetColoniesToPick(){
     colony_array.forEach((colony, index) => {
         let hash = colony.x+','+colony.y;
         if(colony.excluded_by == "" && excluded_by_user.has(hash)){
-            excluded_user.push(index);
+            excluded_user.push(colony.id);
             excluded.set(hash, excluded_by_user.get(hash));
         }
         else if(included_by_user.has(hash) && colony.excluded_by != "" && !included.has(hash)){
-            included_user.push(index);
+            included_user.push(colony.id);
             included.set(hash, included_by_user.get(hash));   
         }
     });
@@ -306,7 +306,8 @@ function SetColoniesToPick(){
     excluded_by_user = excluded;
     number_of_colonies = included_by_server - excluded_by_user.size + included_by_user.size;
     document.getElementById('enter-overview-button').onclick = function(){
-        api('setcoloniestopick',{'job': current_job.id, 'ex_user': excluded_user, 'in_user': included_user,'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
+        api('setcoloniestopick',{'job': current_job.id, 'ex_user': {"elements": excluded_user},
+            'in_user': {"elements": included_user}, 'number':parseInt(document.getElementById('slider-max_number_of_coloniesstrategy-form').value)});
     }
     return number_of_colonies;
 }

@@ -21,4 +21,4 @@ struct Reference {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // REFERENCE_H
+#endif	// REFERENCE_H

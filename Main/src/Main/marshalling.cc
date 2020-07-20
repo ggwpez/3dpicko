@@ -1,5 +1,7 @@
 #include "Main/marshalling.h"
+
 #include <QJsonArray>
+
 #include "GUI/types/profile.h"
 #include "Gcode/plateprofile.h"
 #include "Gcode/platesocketprofile.h"
@@ -136,6 +138,8 @@ QJsonObject Marshalling::toJson(const PlateProfile& value) {
 	  value.cultureMediumThicknessMasterPlate();
   obj["times_to_lower_filament_into_well"] =
 	  value.timesToLowerFilamentIntoWell();
+  obj["red_frame_width"] = value.redFrameWidth();
+  obj["red_frame_height"] = value.redFrameHeight();
 
   return obj;
 }
@@ -153,7 +157,8 @@ PlateProfile Marshalling::fromJson(const QJsonObject& obj) {
 	  obj["height_goal_plate"].toDouble(), obj["well_depth"].toDouble(),
 	  obj["culture_medium_thickness_source_plate"].toDouble(),
 	  obj["culture_medium_thickness_master_plate"].toDouble(),
-	  obj["times_to_lower_filament_into_well"].toInt());
+	  obj["times_to_lower_filament_into_well"].toInt(),
+	  obj["red_frame_width"].toDouble(), obj["red_frame_height"].toDouble());
 }
 
 template <>

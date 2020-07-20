@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QQueue>
+
 #include "Main/version.h"
 
 namespace c3picko {

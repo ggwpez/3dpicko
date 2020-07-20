@@ -3,6 +3,7 @@
 #include <QMutex>
 #include <QObject>
 #include <QTimer>
+
 #include "GUI/database.h"
 #include "Main/resource_path.h"
 
@@ -60,7 +61,7 @@ class Updater : public QObject {
   /**
    * @brief Searches for an update.
    */
-  void Search();
+  void TryUpdate();
 
  private:
   // Git callbacks

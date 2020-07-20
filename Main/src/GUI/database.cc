@@ -1,4 +1,5 @@
 #include "GUI/database.h"
+
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -6,13 +7,31 @@
 namespace c3picko {
 Database::Database(const QSettings& settings, QObject* parent)
 	: QObject(parent),
-	  file_path_(paths::root() + "/database.json"),
+	  file_path_(findPath(settings)),
 	  read_only_(!settings.value("saveChanges", true).toBool()),
 	  job_id_(200),
 	  profile_id_(300) {
   const bool ignore_empty = settings.value("ignoreEmpty", true).toBool();
-  QFile file(file_path_.toSystemAbsolute());
 
+  try {
+	readFromFile();
+  } catch (Exception const& e) {
+	if (ignore_empty) {
+	  qWarning() << "Database not found, using default (ignoreEmpty=true):"
+				 << e.what();
+	  QFile::copy("server/database-default.json",
+				  file_path_.toSystemAbsolute());
+	  readFromFile();
+	} else
+	  throw Exception("Database not found (ignoreEmpty=false): " +
+					  QString(e.what()));
+  }
+
+  if (settings.value("check", false).toBool()) checkIntegrity();
+}
+
+void Database::readFromFile() {
+  QFile file(file_path_.toSystemAbsolute());
   if (file.open(QIODevice::ReadOnly)) {
 	QByteArray data = file.readAll();
 	QJsonParseError error;
@@ -22,13 +41,9 @@ Database::Database(const QSettings& settings, QObject* parent)
 	  throw Exception("Cannot parse JSON database: " + error.errorString());
 	else
 	  read(json);
-  } else if (ignore_empty)
-	qDebug() << "Database not found, creating a new one (ignoreEmpty=true)";
-  else
+  } else
 	throw Exception("Error reading database from file: " +
-					file_path_.toSystemAbsolute() + " (ignoreEmpty=false)");
-
-  if (settings.value("check", false).toBool()) checkIntegrity();
+					file_path_.toSystemAbsolute());
 }
 
 Database::~Database() { saveToFile(); }
@@ -65,6 +80,17 @@ void Database::autosave() {
 
 void Database::autosaveSkipped() {
   qDebug() << "Skipped Autosave (no changes)";
+}
+
+ResourcePath Database::findPath(const QSettings& s) {
+  if (!s.contains("path")) throw Exception("Missing setting: database.path");
+  QString str = s.value("path").toString();
+  if (str.isEmpty()) throw Exception("Empty setting: database.path");
+  str += "database.json";
+  if (str.startsWith("/"))
+	return ResourcePath::fromSystemAbsolute(str);
+  else
+	return ResourcePath::fromServerRelative(str);
 }
 
 Database::JobTable& Database::jobs() {

@@ -1,4 +1,5 @@
 #include "Main/dtor_callback.h"
+
 #include <QtGlobal>
 #include <exception>
 

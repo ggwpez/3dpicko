@@ -153,7 +153,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoColony() {
 	  plate_socket_profile_.depthOfCutoutSourcePlateLiesIn() +
 	  plate_profile_.cultureMediumThicknessSourcePlate() +
 	  printer_profile_.filamentExtrusionLengthOnPick() -
-	  1  // push a little into the culture medium
+	  1	 // push a little into the culture medium
   );
 }
 
@@ -163,7 +163,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeLowerFilamentOntoMaster() {
 	  plate_socket_profile_.depthOfCutoutMasterPlateLiesIn() +
 	  plate_profile_.cultureMediumThicknessMasterPlate() +
 	  printer_profile_.filamentExtrusionLengthOnPutOntoMaster() -
-	  1  // push a little into the culture medium
+	  1	 // push a little into the culture medium
   );
 }
 
@@ -244,7 +244,7 @@ GcodeInstruction GcodeGenerator::CreateGcodeExtrudeFilamentToCutLength() {
   return GcodeInstruction::ExtrudeFilament(
 	  printer_profile_.filamentExtrusionLengthAfterCut() +
 	  printer_profile_
-		  .lengthOfRemovedFilament());  // length of filament's tip are cut
+		  .lengthOfRemovedFilament());	// length of filament's tip are cut
 }
 
 GcodeInstruction GcodeGenerator::CreateGcodeExtrusionLengthOnMoveCutToPick() {
@@ -341,6 +341,6 @@ void GcodeGenerator::ComputeGlobalCoordinatesLastRowFirstColumnOrientation(
 
 int GcodeGenerator::ComputeStartingWell(int row, int column) const {
   return (column - 1) * plate_profile_.numberOfRows() + row -
-		 1;  // -1 to accomodate to vector iterating starting from 0
+		 1;	 // -1 to accomodate to vector iterating starting from 0
 }
 }  // namespace c3picko

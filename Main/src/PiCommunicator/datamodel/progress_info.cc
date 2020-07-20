@@ -1,4 +1,5 @@
 #include "PiCommunicator/datamodel/progress_info.h"
+
 #include <QJsonObject>
 #include <QJsonValue>
 #include <cstring>

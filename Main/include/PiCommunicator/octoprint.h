@@ -43,4 +43,4 @@ class OctoPrint : public QObject {
 }  // namespace c3picko
 
 // TODO QNetworkAccessManager::networkAccessibleChanged()
-#endif  // OCTOPRINT_H_
+#endif	// OCTOPRINT_H_

@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QSet>
 #include <QUrlQuery>
+
 #include "response.h"
 
 namespace c3picko {
@@ -92,4 +93,4 @@ class Command : public QObject {
 }  // namespace pi
 }  // namespace c3picko
 #include "command.inc.h"
-#endif  // COMMAND_H_
+#endif	// COMMAND_H_

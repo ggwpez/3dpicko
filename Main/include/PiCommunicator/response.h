@@ -20,4 +20,4 @@ struct Response {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // RESPONSE_H_
+#endif	// RESPONSE_H_

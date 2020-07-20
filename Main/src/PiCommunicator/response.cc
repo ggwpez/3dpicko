@@ -1,4 +1,5 @@
 #include "PiCommunicator/response.h"
+
 #include <QJsonDocument>
 
 namespace c3picko {

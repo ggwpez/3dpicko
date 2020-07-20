@@ -1,4 +1,5 @@
 #include "PiCommunicator/datamodel/abridged_file_info.h"
+
 #include <QJsonArray>
 #include <QJsonObject>
 

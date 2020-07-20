@@ -1,7 +1,9 @@
 #include "GUI/api_output.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QVariant>
+
 #include "GUI/api_commands.h"
 #include "GUI/api_controller.h"
 #include "ImageRecognition/colony.h"
@@ -42,7 +44,7 @@ void APIOutput::JobCreated(Job::ID id, QObject* client) {
   QJsonObject json(Marshalling::toJson(job));
 
   emit op->toClient(client, APICommands::CREATE_JOB, json);
-  emit op->toAllExClient(client, APICommands::GET_JOB_LIST, json);  // TODO lazy
+  emit op->toAllExClient(client, APICommands::GET_JOB_LIST, json);	// TODO lazy
 }
 
 void APIOutput::JobCreateError(QString id, QObject* client) {
@@ -145,7 +147,7 @@ void APIOutput::SetColoniesToPick(Job::ID job, QSet<Colony::ID> colonies,
   QJsonArray cols;
 
   for (auto it = colonies.begin(); it != colonies.end(); ++it)
-	cols << QJsonValue::fromVariant(QVariant::fromValue(*it));  // Qt pls
+	cols << QJsonValue::fromVariant(QVariant::fromValue(*it));	// Qt pls
 
   emit op->toClient(client, APICommands::SET_COLONIES_TO_PICK,
 					{{"job", job}, {"ids", cols}});

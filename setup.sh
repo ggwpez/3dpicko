@@ -36,6 +36,7 @@ chmod +x $ROOT/start.sh
 DOCROOT=source/server/docroot
 sed -i "s#%docroot#${DOCROOT}#g" $ROOT/serverconfig.ini
 sed -i "s#%branch#${2}#g" $ROOT/serverconfig.ini
+sed -i "s#%db#./#g" $ROOT/serverconfig.ini
 # configure it
 echo "working_dir=\"$ROOT\"" >> $ROOT/serverconfig.ini
 cd $BUILDS

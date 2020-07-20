@@ -111,7 +111,7 @@ void StaticFileController::service(HttpRequest& request,
 		response.write("403 forbidden", true);
 	  } else {
 		response.setStatus(404, "not found");
-		response.write("404 not found", true);
+		response.write(("404 not found: " +docroot + (path)).toUtf8(), true);
 	  }
 	}
   }

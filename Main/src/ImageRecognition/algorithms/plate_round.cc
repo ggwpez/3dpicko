@@ -1,9 +1,11 @@
 #include "ImageRecognition/algorithms/plate_round.h"
+
 #include <memory>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
+
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithms/colonies1.h"
 #include "ImageRecognition/algorithms/helper.h"
@@ -68,12 +70,12 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
 
   double inner_r =
 	  (inner_e.size.width + inner_e.size.height) / 4;  // /4 b its the diameter
-  double outer_r = (inner_r / 82.9) * 91.1;  // FIXME get values from profile
+  double outer_r = (inner_r / 82.9) * 91.1;	 // FIXME get values from profile
   double margin_r = 1.03;
   // Calculate markers
   std::array<cv::Point, 3> markers;
   {
-	std::vector<cv::Point2f> outer_points;  // kmeans only works with floats
+	std::vector<cv::Point2f> outer_points;	// kmeans only works with floats
 	std::vector<std::vector<cv::Point>> marker_data(3);
 	std::vector<int> labels;
 	// Cluster points of the outer contour
@@ -106,7 +108,6 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   // Create the plates
   std::unique_ptr<RoundPlate> unrotated(
 	  std::make_unique<RoundPlate>(edges[outer], edges[inner], markers));
-  std::unique_ptr<RoundPlate> rotated(unrotated->rotated());
 
   // Draw the inner ellipse and markers (optional)
   {
@@ -120,11 +121,10 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   }
 
   // Rotate/Cut the final image
-  Plate::crop(*unrotated, *rotated, output, output);
+  unrotated->crop(output, output);
 
   // Set result output
   result->original() = std::move(unrotated);
-  result->rotated() = std::move(rotated);
 }
 }  // namespace algorithms
 }  // namespace c3picko

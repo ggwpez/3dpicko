@@ -1,4 +1,13 @@
 #include "GUI/api_controller.h"
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QJsonArray>
+#include <QMetaMethod>
+#include <functional>
+#include <memory>
+#include <random>
+
 #include "GUI/reporter.h"
 #include "GUI/types/well.h"
 #include "Gcode/gcodegenerator.h"
@@ -11,14 +20,6 @@
 #include "Main/version_manager.h"
 #include "PiCommunicator/commands/arbitrary_command.h"
 #include "PiCommunicator/octoprint.h"
-
-#include <QCoreApplication>
-#include <QDebug>
-#include <QJsonArray>
-#include <QMetaMethod>
-#include <functional>
-#include <memory>
-#include <random>
 
 using namespace c3picko::pi;
 namespace c3picko {
@@ -156,6 +157,7 @@ void APIController::UploadImage(Image image, QObject* client) {
   AlgorithmJob* ajob =
 	  plate_detector_->createJob(aid, jid, result, QJsonObject());
   ajob->pushInput(raw.get());
+  ajob->setProfile(plate);
 
   if (!ajob)
 	emit OnImageCreateError("Internal Error: Algorithm not found (" + aid + ")",
@@ -184,7 +186,7 @@ void APIController::UploadImage(Image image, QObject* client) {
 			  else {
 				db_->images().add(cropped.id(), cropped);
 				db_->detectedPlates().add(cropped.id(),
-										  std::move(result->rotated()));
+										  std::move(result->original()));
 			  }
 
 			  emit this->OnImageCreated(cropped.id(), client);
@@ -308,11 +310,11 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
   Job& job = db_->jobs().get(id);
   if (!job.resultJob() || !job.resultJob()->result())
 	return emit OnSetColoniesToPickError(
-		"Job " + id + " has no detected colonies attatched to it", client);
+		"Job " + id + " has no detected colonies attached to it", client);
 
   DetectionResult* result =
 	  static_cast<DetectionResult*>(job.resultJob()->result().get());
-  QSet<Colony::ID> suitable;
+  QSet<Colony::ID> eligible, selected;
   QSet<Colony::ID> in_algo, ex_algo;
   {
 	for (auto it = result->includedBegin(); it != result->includedEnd(); ++it)
@@ -346,23 +348,19 @@ void APIController::setColoniesToPick(Job::ID id, QSet<Colony::ID> ex_user,
 		  "Cant include and exclude a colony at the same time", client);
   }
 
-  // Calculte all suitable colonies and remove all-'number' many of them
-  // randomly
-  suitable = (in_algo - ex_user) - (ex_algo - in_user);
-  quint32 all = suitable.size();
-
-  if (number > all)
-	return emit OnSetColoniesToPickError(
-		"Cant pick more colonies than available", client);
+  eligible = in_algo - ex_user;
+  selected = in_user;
 
   std::mt19937_64 gen(1234);  // same seed for determinism
-  for (quint32 i = 0; i < all - number; ++i) {
-	std::uniform_int_distribution<> dis(0, suitable.size() - 1);
-	suitable.erase(suitable.begin() + dis(gen));
+  while ((selected.size() < number) && eligible.size()) {
+	std::uniform_int_distribution<> dis(0, eligible.size() - 1);
+	auto it = eligible.begin() + dis(gen);
+	selected.insert(*it);
+	eligible.erase(it);
   }
 
-  job.setcoloniesToPick(suitable);
-  emit OnSetColoniesToPick(id, suitable, client);
+  job.setcoloniesToPick(selected);
+  emit OnSetColoniesToPick(id, selected, client);
 }
 
 void APIController::createJob(Job& job, QObject* client) {
@@ -399,7 +397,7 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
 	  emit OnColonyDetectionError("Image not found", client);
 	} else {
 	  Image& img = db_->images().get(
-		  img_id);  // Non const& bc readCvMat() can set the cache
+		  img_id);	// Non const& bc readCvMat() can set the cache
 	  std::shared_ptr<cv::Mat> image(std::make_shared<cv::Mat>());
 
 	  if (!img.readCvMat(*image)) {
@@ -438,7 +436,6 @@ std::shared_ptr<AlgorithmJob> APIController::detectColonies(
 		  // Keep the shared pointer until the job is done. I doubt that this is
 		  // good style...
 		  connect(raw, &AlgorithmJob::OnFinished, raw, [image] {});
-
 		  return algo_job;
 		}
 	  }
@@ -492,23 +489,15 @@ QString APIController::calculateGcode(
   {
 	for (auto it = selected.begin(); it != selected.end(); ++it) {
 	  auto colony =
-		  std::find_if(result->includedBegin(), result->includedEnd(),
+		  std::find_if(result->colonies().begin(), result->colonies().end(),
 					   [&it](Colony const& c) { return c.id() == *it; });
 
-	  if (colony == result->includedEnd())
+	  if (colony == result->colonies().end())
 		return "Internal error: Cant find selected colony";
-
-	  // Assert that they are within the inner border
-	  if (!detectedPlate->isPixelPickable(colony->x() * image.width(),
-										  colony->y() * image.height())) {
-		qWarning() << "cant not pick detected colony (id=" << colony->id()
-				   << ")";
-		continue;
-	  }
 
 	  // Map the image coordinate
 	  coords.push_back(
-		  detectedPlate->mapImageToGlobal(colony->x(), colony->y()));
+		  detectedPlate->mapImageToGlobal(plate, colony->x(), colony->y()));
 	  pick_positions->emplace(well, *it);
 	  if (it + 1 != selected.end()) ++well;
 	}
@@ -577,7 +566,7 @@ QJsonObject APIController::createImageList() const {
   std::vector<std::reference_wrapper<Image const>> pairs;
   for (auto const& pair : db_->images())
 	pairs.push_back(
-		std::cref<Image>(pair.second));  // Copy here bc reference_wrapper does
+		std::cref<Image>(pair.second));	 // Copy here bc reference_wrapper does
 										 // not have move ctor ?!
   std::sort(pairs.begin(), pairs.end(),
 			[](std::reference_wrapper<Image const> a,

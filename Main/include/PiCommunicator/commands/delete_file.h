@@ -28,4 +28,4 @@ class DeleteFile : public Command {
 }  // namespace pi
 }  // namespace c3picko
 
-#endif  // DELETE_FILE_H
+#endif	// DELETE_FILE_H

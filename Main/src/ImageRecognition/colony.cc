@@ -23,7 +23,7 @@ Colony Marshalling::fromJson(const QJsonObject& obj) {
 				obj["area"].toDouble(), obj["circumference"].toDouble(),
 				obj["major_length"].toDouble(), obj["brightness"].toDouble(),
 				obj["id"].toInt(),
-				obj["excluded_by"].toString());  // no HTML-escape needed
+				obj["excluded_by"].toString());	 // no HTML-escape needed
 }
 
 Colony::Colony(double x, double y, double area, double circumference,

@@ -184,13 +184,13 @@ LIBS += -L/usr/local/lib/ \
 		-lopencv_core \
 		-lopencv_imgproc \
 		-lopencv_highgui \
-		-lopencv_imgcodecs
+		-lopencv_imgcodecs \
+		-lopencv_calib3d
 
 # Updater defines
 DEFINES += GIT_HASH="'\"$$system('git log --pretty=format:\'%H\' --max-count=1')\"'"
 DEFINES += GIT_DATE="'\"$$system('git log --pretty=format:\'%H\' --pretty=format:\'%ad\' --date=rfc2822 --max-count=1')\"'"
 DEFINES += BUILD_DATE="'\"$$system('date --iso-8601=seconds')\"'"
-message($$DEFINES)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QSet>
 #include <opencv2/core.hpp>
+
 #include "Main/global.h"
 
 #if __cplusplus <= 201703L

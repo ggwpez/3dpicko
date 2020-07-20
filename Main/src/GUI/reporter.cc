@@ -1,4 +1,5 @@
 #include "GUI/reporter.h"
+
 #include "GUI/database.h"
 #include "GUI/types/well.h"
 #include "Gcode/gcodeinstruction.h"

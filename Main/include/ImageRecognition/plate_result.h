@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include "ImageRecognition/matrix_result.h"
 #include "ImageRecognition/plates/plate.h"
 

@@ -1,6 +1,8 @@
 #include "GUI/types/profile.h"
+
 #include <QDebug>
 #include <QJsonArray>
+
 #include "Gcode/plateprofile.h"
 #include "Gcode/platesocketprofile.h"
 #include "Gcode/printerprofile.h"
@@ -247,7 +249,18 @@ QJsonObject Profile::plateTemplate() {
 	   makeNumberField("culture_medium_thickness_master_plate",
 					   "Master medium thickness", "", 0, 200, .01, 0, 0, "mm"),
 	   makeNumberField("times_to_lower_filament_into_well",
-					   "# Lower filament into Well", "", 1, 100, 1, 2, 2, "")}};
+					   "# Lower filament into Well",
+					   "The number of times that the filament should be "
+					   "lowered into the well.",
+					   1, 100, 1, 2, 2, ""),
+	   makeNumberField(
+		   "red_frame_width", "Red Frame width",
+		   "Width of the red frame that is placed on the source plate.", 1,
+		   1000, 0.01, 128, 128, "mm"),
+	   makeNumberField(
+		   "red_frame_height", "Red Frame height",
+		   "Height of the red frame that is placed on the source plate.", 1,
+		   1000, 0.01, 128, 128, "mm")}};
 
   return json;
 }
@@ -275,7 +288,7 @@ c3picko::Profile::operator PlateSocketProfile*() const { return socket_.get(); }
 
 c3picko::Profile::operator PrinterProfile*() const { return printer_.get(); }
 
-c3picko::Profile::operator pi::OctoConfig*() const { return octoprint_.get(); }
+c3picko::Profile::operator pi::OctoConfig *() const { return octoprint_.get(); }
 
 template <>
 QJsonObject Marshalling::toJson(const Profile& value) {

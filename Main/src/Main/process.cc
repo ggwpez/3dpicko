@@ -1,7 +1,9 @@
 #include "Main/process.h"
+
 #include <QCoreApplication>
 #include <QProcess>
 #include <QThread>
+
 #include "Main/exception.h"
 #include "Main/version.h"
 
@@ -91,7 +93,7 @@ void Process::start() {
 				   "): " + git_->readAllStandardError());
   else {
 	QString output = git_->readAllStandardOutput().replace(
-		"\"", "");  // FIXME why is this needed?
+		"\"", "");	// FIXME why is this needed?
 	emit OnSuccess(output);
   }
 

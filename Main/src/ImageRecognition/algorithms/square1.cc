@@ -2,6 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/photo.hpp>
+
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithms/normal1.h"
 #include "ImageRecognition/algorithms/plate1.h"
@@ -100,7 +101,7 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
 	throw std::runtime_error("Could not approximate inner edge");
 
   double eps = .1;
-  double plate_ratio = 128. / 85.9;  // FIXME get data from plate profile
+  double plate_ratio = 128. / 85.9;	 // FIXME get data from plate profile
   double optimal = 1 / plate_ratio;
   math::Range<double> outer_side_ratio(optimal - eps, optimal + eps);
 

@@ -3,6 +3,7 @@
 
 #include <QJsonObject>
 #include <QJsonValueRef>
+
 #include "Main/global.h"
 
 namespace c3picko {
@@ -16,4 +17,4 @@ class JsonConvertable {
 };
 }  // namespace c3picko
 
-#endif  // JSON_CONVERTABLE_H
+#endif	// JSON_CONVERTABLE_H

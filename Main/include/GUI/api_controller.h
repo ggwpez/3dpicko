@@ -4,6 +4,7 @@
 #include <QPointer>
 #include <QSignalMapper>
 #include <QString>
+
 #include "GUI/api_input.h"
 #include "GUI/api_output.h"
 #include "GUI/types/job.h"
