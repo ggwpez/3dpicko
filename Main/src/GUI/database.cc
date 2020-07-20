@@ -11,10 +11,27 @@ Database::Database(const QSettings& settings, QObject* parent)
 	  read_only_(!settings.value("saveChanges", true).toBool()),
 	  job_id_(200),
 	  profile_id_(300) {
-  qDebug() << "Database path:" << file_path_.toSystemAbsolute();
   const bool ignore_empty = settings.value("ignoreEmpty", true).toBool();
-  QFile file(file_path_.toSystemAbsolute());
 
+  try {
+	readFromFile();
+  } catch (Exception const& e) {
+	if (ignore_empty) {
+	  qWarning() << "Database not found, using default (ignoreEmpty=true):"
+				 << e.what();
+	  QFile::copy("server/database-default.json",
+				  file_path_.toSystemAbsolute());
+	  readFromFile();
+	} else
+	  throw Exception("Database not found (ignoreEmpty=false): " +
+					  QString(e.what()));
+  }
+
+  if (settings.value("check", false).toBool()) checkIntegrity();
+}
+
+void Database::readFromFile() {
+  QFile file(file_path_.toSystemAbsolute());
   if (file.open(QIODevice::ReadOnly)) {
 	QByteArray data = file.readAll();
 	QJsonParseError error;
@@ -24,13 +41,9 @@ Database::Database(const QSettings& settings, QObject* parent)
 	  throw Exception("Cannot parse JSON database: " + error.errorString());
 	else
 	  read(json);
-  } else if (ignore_empty)
-	qDebug() << "Database not found, creating a new one (ignoreEmpty=true)";
-  else
+  } else
 	throw Exception("Error reading database from file: " +
-					file_path_.toSystemAbsolute() + " (ignoreEmpty=false)");
-
-  if (settings.value("check", false).toBool()) checkIntegrity();
+					file_path_.toSystemAbsolute());
 }
 
 Database::~Database() { saveToFile(); }

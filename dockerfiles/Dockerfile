@@ -2,13 +2,13 @@ ARG DEPS
 ARG OS
 FROM $DEPS AS build
 
-MAINTAINER oliver@tasty.limo
+MAINTAINER oliver.tale@web.de
 
 COPY ./depend /3dpicko/source/depend
-COPY 3DpickO.pro /3dpicko/source
-COPY ./Main /3dpicko/source/Main
 COPY ./.git /3dpicko/source/.git
 COPY ./.gitmodules /3dpicko/source/.gitmodules
+COPY 3DpickO.pro /3dpicko/source
+COPY ./Main /3dpicko/source/Main
 RUN cd /3dpicko/source && git submodule init && git submodule update
 WORKDIR /3dpicko/build
 RUN qmake -spec linux-clang ../source && \
@@ -21,7 +21,7 @@ COPY ./Doxyfile /3dpicko/source
 WORKDIR /3dpicko/install
 COPY ./server/ ./server/
 # Copy config files and replace template entries.
-RUN sed -i "s#%docroot#docroot#g" server/serverconfig.ini \
+RUN sed -i "s#%docroot#/docroot#g" server/serverconfig.ini \
 	&& sed -i "s#%db#/db#g" server/serverconfig.ini
 WORKDIR /3dpicko/install/libs
 RUN ldd /3dpicko/build/Main/Main | tr -s '[:blank:]' '\n' | grep '^/' | xargs -I % sh -c 'cp % $(basename "%");' \
@@ -37,7 +37,10 @@ CMD [ "zip", "-r", "-", "." ]
 
 FROM $OS as image
 COPY --from=build /3dpicko/install/ /3dpicko/install/
+# Move docroot to / for shorter paths.
+RUN mv /3dpicko/install/server/docroot /docroot
 ENV LD_LIBRARY_PATH=/3dpicko/install/libs/
+WORKDIR /3dpicko/install/
 CMD [ "/3dpicko/install/Main", "/3dpicko/install/server/serverconfig.ini" ]
 EXPOSE 8080
 EXPOSE 8888

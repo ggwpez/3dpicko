@@ -8,7 +8,17 @@ ResourcePath::ResourcePath(QString system_absolute_path)
 
 ResourcePath::ResourcePath() {}
 
-ResourcePath ResourcePath::fromSystemAbsolute(QString path) { return path; }
+ResourcePath ResourcePath::fromSystemAbsolute(QString path) {
+  if (!path.startsWith("/"))
+	throw Exception("System absolute path must start with /");
+  return path;
+}
+
+ResourcePath ResourcePath::fromSystemRelative(QString path) {
+  if (path.startsWith("/"))
+	throw Exception("System absolute path must not start with /");
+  return path;
+}
 
 // We have two // now, but the operator+ manages that
 ResourcePath ResourcePath::fromServerAbsolute(QString path) {

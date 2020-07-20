@@ -34,7 +34,9 @@ deps:docker:
 build:docker:
   stage: build
   script:
-    - docker build -f dockerfiles/Dockerfile --target=build --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3dpicko-dev:ubuntu-18.04 .
+    - docker pull registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 || true
+    - docker build -f dockerfiles/Dockerfile --target=build --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t registry.gitlab.com/ggwpez/3dpicko:dev-ubuntu-18.04 .
+    - docker push registry.gitlab.com/ggwpez/3dpicko:dev-ubuntu-18.04
 
 #test:docker:
 #  stage: test
@@ -44,20 +46,20 @@ build:docker:
 static-check:docker:
   stage: check
   script:
-    #- docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
-    - docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
+    #- docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3dpicko:dev-ubuntu-18.04 grep -ril ">>>>>>>" --exclude=".gitlab-ci.yml" . && (echo "Found at least one Merge Marker, abort" && exit 1)
+    - docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3dpicko:dev-ubuntu-18.04 cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
 
 format:docker:
   stage: format
   script:
-    - docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 bash check.sh
+    - docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3dpicko:dev-ubuntu-18.04 bash check.sh
   allow_failure:
     true
 
 document:docker:
   stage: document
   script:
-    - docker run --rm -w="/3dpicko/source" 3dpicko-dev:ubuntu-18.04 doxygen Doxyfile > /dev/null 2>&1
+    - docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3dpicko:dev-ubuntu-18.04 doxygen Doxyfile > /dev/null 2>&1
 
 zip:docker:
   stage: deploy

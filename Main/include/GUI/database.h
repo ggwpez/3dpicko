@@ -73,6 +73,7 @@ class Database : public QObject, JsonConvertable {
   void OnDataChanged();
 
  public slots:
+  void readFromFile();
   void saveToFile();
   void autosave();
   void autosaveSkipped();
