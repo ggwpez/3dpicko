@@ -213,6 +213,8 @@ static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
 #endif
 
   Logger::instance()->log(html_string);
+  if (type == QtMsgType::QtFatalMsg)
+	std::abort();
 }
 
 void setMessageHandler(const std::function<void(QString)>& handler) {

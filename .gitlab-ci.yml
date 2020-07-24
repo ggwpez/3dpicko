@@ -1,16 +1,13 @@
-image: docker:19.03.12
+image: google/cloud-sdk
 
 services:
-  - docker:19.03.12-dind
-
+  - docker:19.03.11-dind
 
 variables:
   OCKER_DRIVER: overlay2
-  # Create the certificates inside this directory for both the server
-  # and client. The certificates used by the client will be created in
-  # /certs/client so we only need to share this directory with the
-  # volume mount in `config.toml`.
-  DOCKER_TLS_CERTDIR: "/certs"
+  # TLS disabled
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375/
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -18,10 +15,7 @@ before_script:
 stages:
   - deps
   - build
-  - test
   - check
-  - format
-  - document
   - deploy
 
 deps:docker:
@@ -34,6 +28,7 @@ deps:docker:
 build:docker:
   stage: build
   script:
+    - git submodule init && git submodule update
     - docker pull registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 || true
     - docker build --cache-from registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 -f dockerfiles/Dockerfile --target=build --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 .
     - docker push registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04
@@ -50,21 +45,23 @@ static-check:docker:
     - docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 cppcheck --error-exitcode=1 --force Main/src/ > /dev/null
 
 format:docker:
-  stage: format
+  stage: check
   script:
     - docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 bash check.sh
   allow_failure:
     true
 
 document:docker:
-  stage: document
+  stage: check
   script:
     - docker run --rm -w="/3dpicko/source" registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 doxygen Doxyfile > /dev/null 2>&1
 
 zip:docker:
   stage: deploy
+  only:
+    - master
   script:
-    - docker build -f dockerfiles/Dockerfile --target=zip --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3cpicko-zip:ubuntu-18.04 .
+    - docker build --cache-from registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 -f dockerfiles/Dockerfile --target=zip --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3cpicko-zip:ubuntu-18.04 .
     - docker run --rm 3cpicko-zip:ubuntu-18.04 > 3DPicko.zip
   artifacts:
     paths:
@@ -73,7 +70,16 @@ zip:docker:
 
 container:docker:
   stage: deploy
+  only: 
+    - master
   script:
-    - docker build -f dockerfiles/Dockerfile --target=image --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3cpicko:dev .
+    - docker build --cache-from registry.gitlab.com/ggwpez/3cpicko:dev-ubuntu-18.04 -f dockerfiles/Dockerfile --target=image --build-arg OS="ubuntu:18.04" --build-arg DEPS="registry.gitlab.com/ggwpez/3cpicko:deps-ubuntu-18.04" -t 3cpicko:dev .
     - docker tag 3cpicko:dev registry.gitlab.com/ggwpez/3cpicko:dev
     - docker push registry.gitlab.com/ggwpez/3cpicko:dev
+
+setup-test:docker:
+  stage: deploy
+  script:
+    - git submodule init && git submodule update
+    - docker build --build-arg OS="ubuntu:20.04" -f dockerfiles/Dockerfile.setup-test -t setup-test .
+    - (docker run setup-test || true) 2>&1 | grep -qwE "WebSocket  0.0.0.0:8888"

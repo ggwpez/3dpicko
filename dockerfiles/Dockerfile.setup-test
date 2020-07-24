@@ -1,0 +1,24 @@
+ARG OS
+FROM $OS AS build
+ARG VERSION
+
+MAINTAINER oliver.tale@web.de
+
+# Install tzdata, sudo + git so they dont not annoy us later
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+	&& apt-get update && apt-get install -y sudo tzdata git
+RUN useradd -ms /bin/bash docker \
+	&& su docker
+
+ENV CPICKO_ENV=docker
+WORKDIR /src/
+COPY . .
+RUN bash dependencies.sh \
+	&& bash opencv.sh \
+	&& mkdir /install \
+	&& bash setup.sh /install $VERSION \
+	&& cp -R server /install/server
+
+ENV LD_LIBRARY_PATH=/install/
+CMD [ "timeout", "5", "/install/main", "/install/serverconfig.ini" ]

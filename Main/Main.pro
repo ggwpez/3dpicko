@@ -188,8 +188,8 @@ LIBS += -L/usr/local/lib/ \
 		-lopencv_calib3d
 
 # Updater defines
-DEFINES += GIT_HASH="'\"$$system('git log --pretty=format:\'%H\' --max-count=1')\"'"
-DEFINES += GIT_DATE="'\"$$system('git log --pretty=format:\'%H\' --pretty=format:\'%ad\' --date=rfc2822 --max-count=1')\"'"
+DEFINES += GIT_HASH="'\"$$system('command -v git && git log --pretty=format:\'%H\' --max-count=1')\"'"
+DEFINES += GIT_DATE="'\"$$system('command -v git && git log --pretty=format:\'%H\' --pretty=format:\'%ad\' --date=rfc2822 --max-count=1')\"'"
 DEFINES += BUILD_DATE="'\"$$system('date --iso-8601=seconds')\"'"
 
 # Default rules for deployment.

@@ -4,12 +4,12 @@ FROM $DEPS AS build
 
 MAINTAINER oliver.tale@web.de
 
-COPY ./depend /3dpicko/source/depend
-COPY ./.git /3dpicko/source/.git
-COPY ./.gitmodules /3dpicko/source/.gitmodules
-COPY 3DpickO.pro /3dpicko/source
-COPY ./Main /3dpicko/source/Main
-RUN cd /3dpicko/source && git submodule init && git submodule update
+WORKDIR /3dpicko/source
+COPY ./depend ./depend/
+COPY ./.git ./.git/
+COPY ./.gitmodules ./.gitmodules/
+COPY 3DpickO.pro .
+COPY ./Main ./Main/
 WORKDIR /3dpicko/build
 RUN qmake -spec linux-clang ../source && \
 	make -j$(nproc)
