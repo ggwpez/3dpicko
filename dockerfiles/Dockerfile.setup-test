@@ -1,6 +1,5 @@
 ARG OS
 FROM $OS AS build
-ARG VERSION
 
 MAINTAINER oliver.tale@web.de
 
@@ -14,11 +13,11 @@ RUN useradd -ms /bin/bash docker \
 ENV CPICKO_ENV=docker
 WORKDIR /src/
 COPY . .
-RUN bash dependencies.sh \
-	&& bash opencv.sh \
-	&& mkdir /install \
-	&& bash setup.sh /install $VERSION \
+RUN bash dependencies.sh
+RUN bash opencv.sh
+RUN bash setup.sh /install \
 	&& cp -R server /install/server
 
+WORKDIR /install/
 ENV LD_LIBRARY_PATH=/install/
-CMD [ "timeout", "5", "/install/main", "/install/serverconfig.ini" ]
+CMD [ "timeout", "5", "bash", "start.sh" ]

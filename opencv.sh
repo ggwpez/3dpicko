@@ -53,6 +53,8 @@ mkdir build
 cd build
 cmake -D CMAKE_BUILD_TYPE=Release -DBUILD_LIST=core,imgproc,highgui,photo,calib3d ..
 make -j$(nproc) 2> /dev/null
+# GCC likes to sigsegv, retry.
+make -j$(nproc) 2> /dev/null
 sudo make install
 sudo ldconfig
 

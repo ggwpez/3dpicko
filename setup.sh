@@ -15,6 +15,7 @@ fi
 
 INSTALL="$(realpath $1)"
 mkdir -p build/
+mkdir -p "$INSTALL"
 
 cp -n server/database-default.json $INSTALL/database.json
 cp -n server/serverconfig.ini $INSTALL
@@ -29,7 +30,7 @@ echo "working_dir=\"$INSTALL\"" >> $INSTALL/serverconfig.ini
 cd build/
 
 qmake ../
-make -j$(nproc)
+make -j$(nproc) > /dev/null
 
 cp -n Main/Main $INSTALL/main
 cp -n depend/quazip/quazip/libquazip.so.1 $INSTALL/libquazip.so.1

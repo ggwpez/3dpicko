@@ -82,4 +82,4 @@ setup-test:docker:
   script:
     - git submodule init && git submodule update
     - docker build --build-arg OS="ubuntu:20.04" -f dockerfiles/Dockerfile.setup-test -t setup-test .
-    - (docker run setup-test || true) 2>&1 | grep -qwE "WebSocket  0.0.0.0:8888"
+    - (docker run --rm setup-test || true) 2>&1 | grep -qwE "WebSocket  0.0.0.0:8888"
