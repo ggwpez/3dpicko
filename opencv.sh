@@ -6,6 +6,7 @@
 # |------------------------------------------------------|
 # | OS               | OpenCV       | Test | Last test   |
 # |------------------|--------------|------|-------------|
+# | Ubuntu 20.04 LTS | OpenCV 3.4.10| OK   | 24 Jul 2020 |
 # | Ubuntu 18.04 LTS | OpenCV 3.4.2 | OK   | 18 Jul 2018 |
 # | Debian 9.5       | OpenCV 3.4.2 | OK   | 18 Jul 2018 |
 # |----------------------------------------------------- |
@@ -15,17 +16,19 @@
 
 # Save path, so we can restore it
 
+set -e
 gwd=$(pwd)
 cd ~
 
 # VERSION TO BE INSTALLED
 
-OPENCV_VERSION='3.4.3'
+OPENCV_VERSION='3.4.10'
 
-opencv_version=`pkg-config --modversion opencv | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{3\}$/\1/"`
+if command -v COMMAND &> /dev/null; then
+	opencv_version=`pkg-config --modversion opencv | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{3\}$/\1/"`
+fi
 
-if [ -z "$opencv_version" ]
-then
+if [ -z "$opencv_version" ]; then
     echo "OpenCV is NOT installed"
 else
 	echo "OpenCV is installed"
@@ -37,28 +40,21 @@ fi
 # 2. INSTALL THE DEPENDENCIES
 
 # Build tools:
-sudo apt-get install -y cmake
-
-# GUI (if you want to use GTK instead of Qt, replace 'qt5-default' with 'libgtkglext1-dev' and remove '-DWITH_QT=ON' option in CMake):
-
-# Media I/O:
-sudo apt-get install -y zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libjasper-dev libopenexr-dev libgdal-dev
-
-# Parallelism and linear algebra libraries:
-sudo apt-get install -y libtbb-dev
+sudo apt-get install -y cmake zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libopenexr-dev libgdal-dev libtbb-dev unzip wget
 
 # 3. INSTALL THE LIBRARY
 
-sudo apt-get install -y unzip wget
-wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip
+wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip
 unzip -qq opencv-${OPENCV_VERSION}.zip
 rm opencv-${OPENCV_VERSION}.zip
 mv opencv-${OPENCV_VERSION} OpenCV
 cd OpenCV
 mkdir build
 cd build
-cmake -DWITH_QT=OFF -DWITH_GTK=ON -DWITH_TBB=ON -DENABLE_PRECOMPILED_HEADERS=OFF -DWITH_CUDA=OFF -DWITH_MATLAB=OFF -DBUILD_opencv_apps=OFF -DBUILD_ANDROID_EXAMPLES=OFF -DBUILD_DOCS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_FAT_JAVA_LIB=OFF -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_opencv_videostab=OFF -DBUILD_opencv_matlab=OFF ..
-make -j6
+cmake -D CMAKE_BUILD_TYPE=Release -DBUILD_LIST=core,imgproc,highgui,photo,calib3d ..
+make -j$(nproc) 2> /dev/null
+# GCC likes to sigsegv, retry.
+make -j$(nproc) 2> /dev/null
 sudo make install
 sudo ldconfig
 
