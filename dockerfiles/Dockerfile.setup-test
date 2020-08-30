@@ -11,12 +11,12 @@ RUN useradd -ms /bin/bash docker \
 	&& su docker
 
 ENV CPICKO_ENV=docker
+ENV CPICKO_USER=docker
 WORKDIR /src/
 COPY . .
-RUN bash dependencies.sh
-RUN bash opencv.sh
-RUN bash setup.sh /install \
-	&& cp -R server /install/server
+RUN bash dependencies.sh \
+ && bash opencv.sh \
+ && bash setup.sh /install
 
 WORKDIR /install/
 ENV LD_LIBRARY_PATH=/install/
