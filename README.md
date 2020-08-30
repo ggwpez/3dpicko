@@ -1,9 +1,11 @@
-## Installation
+## Abstract
+3DPicko converts 3D printers into colony pickers.
 
+## Installation
 There are three ways of setting it up:  
   - Docker container (recommended)
   - Binary release (Ubuntu 18.04 & 20.04)
-  - From source
+  - Compile from source
 
 #### Docker
 For quick tryout:
@@ -26,9 +28,9 @@ Available binaries:
 - Ubuntu 18.04/AMD64
 - Ubuntu 20.04/AMD64
 
-Links not aavailable yet.
+Links not available yet.
 
-#### From Source
+#### Compile from source
 (Debian/Ubuntu):
 ```sh
 git clone https://gitlab.com/ggwpez/3cpicko
@@ -54,3 +56,16 @@ docker pull ggwpez/3dpicko:dev
 #### From Source
 Once upon a time there was a small *auto-updater* deeply buried in the source code…… it was not seen for a long time and nobody cared about it. It was able to update the software by downloading the new code and compiling it. The configuration options in the *serverconfig.ini* are the only remnants of its former glory.  
 __TLDR__: The *auto-updater* does currently not work.
+
+## License
+This project is licensed under GPLv3, see [LICENSE](LICENSE).
+<br/>
+<br/>
+`depend/QtWebApp` contains a modified version of `QtWebApp`, for these files applies:
+```
+  License: LGPLv3
+  Author and Copyright owner: Stefan Frings
+  stefan@stefanfrings.de
+  http://www.stefanfrings.de
+```
+`depend/quazip` references [QuaZip v0.9.1](https://github.com/stachenov/quazip). Thanks to [Sergey A. Tachenov](https://github.com/stachenov) for the *cute* wrapper.

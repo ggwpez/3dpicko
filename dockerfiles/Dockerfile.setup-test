@@ -1,7 +1,11 @@
+# SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
 ARG OS
 FROM $OS AS build
 
-MAINTAINER oliver.tale@web.de
+LABEL maintainer "Oliver Tale-Yazdi <oliver@tasty.limo>"
 
 # Install tzdata, sudo + git so they dont not annoy us later
 ENV TZ=Europe/Berlin

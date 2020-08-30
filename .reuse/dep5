@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: 3DPickO
+Upstream-Contact: Oliver Tale-Yazdi <oliver@tasty.limo>
+Source: gitlab.com/ggwpez/3dpicko
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...

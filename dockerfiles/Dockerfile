@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
 ARG DEPS
 ARG OS
 FROM $DEPS AS build
 
-MAINTAINER oliver.tale@web.de
+LABEL maintainer "Oliver Tale-Yazdi <oliver@tasty.limo>"
 
 WORKDIR /3dpicko/source
 COPY ./depend ./depend/

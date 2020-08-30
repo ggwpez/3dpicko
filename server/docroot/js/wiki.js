@@ -1,3 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Harald Gültig <hgueltig@gmail.com>
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ * SPDX-FileCopyrightText: 2018-2020 Patrick Mayer <patrick.mayer@posteo.de>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 // This file can be included in index.js it is a seperate file to make development easier.
 
 //loads front page#

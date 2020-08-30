@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 #ifndef APIKEY_H_
 #define APIKEY_H_
 
