@@ -13,7 +13,7 @@
 #include "ImageRecognition/colony.h"
 #include "ImageRecognition/detection_result.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Image detection algorithm for normal light, more description in the
  * wiki.
@@ -39,4 +39,4 @@ class Normal1 : public Algorithm {
 
  private:
 };
-}  // namespace c3picko
+}  // namespace d3picko

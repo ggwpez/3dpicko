@@ -9,7 +9,7 @@
 #include "GUI/database.h"
 #include "Gcode/plateprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 Report::Report(Job::ID job, ResourcePath data) : job_(job), data_(data) {}
 
 Job::ID Report::job() const { return job_; }
@@ -27,4 +27,4 @@ Report Marshalling::fromJson(const QJsonObject& obj) {
 				ResourcePath::fromDocRootAbsolute(obj["path"].toString()));
 }
 
-}  // namespace c3picko
+}  // namespace d3picko

@@ -19,7 +19,7 @@
 #include "Main/json_convertable.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * A Database Table in the ordinary sense.
  * Sadly this is not a QObject since templates do not work with it.
@@ -170,4 +170,4 @@ class Table : public JsonConvertable {
  private:
   MapType entries_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

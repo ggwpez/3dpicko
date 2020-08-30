@@ -6,6 +6,6 @@
 
 #include "GUI/table.h"
 
-namespace c3picko {
+namespace d3picko {
 /* STUB */
 }

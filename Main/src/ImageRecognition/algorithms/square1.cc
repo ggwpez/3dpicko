@@ -16,7 +16,7 @@
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/rect_plate.h"
 
-namespace c3picko {
+namespace d3picko {
 Plate1::Plate1()
 	: Algorithm("1", "Plate1", "Detects a plate with red frame attached",
 				{(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
@@ -199,4 +199,4 @@ void Plate1::detect(AlgorithmJob* base, PlateResult* result) {
 	  static_cast<RectPlate*>(result->original_->rotated()));
   Plate::crop(*result->original_, *result->rotated_, ret, ret);
 }
-}  // namespace c3picko
+}  // namespace d3picko

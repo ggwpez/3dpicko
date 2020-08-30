@@ -14,7 +14,7 @@
 #include "Main/resource_path.h"
 
 class QSettings;
-namespace c3picko {
+namespace d3picko {
 class Process;
 class VersionManager;
 /**
@@ -84,4 +84,4 @@ class Updater : public QObject {
   VersionManager* mng_;
   QMutex mtx_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

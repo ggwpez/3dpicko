@@ -12,7 +12,7 @@
 #include <QSet>
 class QSocketNotifier;
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Class for intercepting UNIX signals and making them accessible for Qt.
  * See https://doc.qt.io/qt-5/unix-signals.html
@@ -41,4 +41,4 @@ class SignalDaemon : public QObject {
   QSocketNotifier* notifier_;
   QSet<int> registered_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

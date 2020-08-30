@@ -9,7 +9,7 @@
 
 class QString;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 ///
@@ -20,6 +20,6 @@ enum class FileType : char { NONE, MODEL, MACHINECODE, FOLDER };
 FileType FileTypeFromString(QString const& str);
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// FILE_TYPE_H

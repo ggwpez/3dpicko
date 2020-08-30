@@ -11,7 +11,7 @@
 #include "PiCommunicator/datamodel/abridged_file_info.h"
 #include "PiCommunicator/datamodel/location.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 /**
@@ -41,6 +41,6 @@ class FileOperation : public Command {
 };
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// FILE_OPERATION_H

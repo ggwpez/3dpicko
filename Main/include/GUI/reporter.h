@@ -8,7 +8,7 @@
 
 #include "GUI/types/report.h"
 
-namespace c3picko {
+namespace d3picko {
 class GcodeInstruction;
 class Profile;
 class Well;
@@ -93,4 +93,4 @@ class Reporter {
   Profile const& octoprint_;
   std::vector<GcodeInstruction> gcode_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

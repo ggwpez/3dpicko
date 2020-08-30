@@ -6,7 +6,7 @@
 
 #include "PiCommunicator/commands/delete_file.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 DeleteFile* DeleteFile::Delete(data::Location location, QString path) {
@@ -15,4 +15,4 @@ DeleteFile* DeleteFile::Delete(data::Location location, QString path) {
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

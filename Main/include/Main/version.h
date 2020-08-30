@@ -9,7 +9,7 @@
 #include "Main/marshalling.h"
 #include "Main/resource_path.h"
 
-namespace c3picko {
+namespace d3picko {
 class Version {
  public:
   enum class State {
@@ -64,4 +64,4 @@ QString toString(Version::State state);	 // TODO
 Version::State versionStateFromString(QString string);
 
 MAKE_MARSHALLABLE(Version)
-}  // namespace c3picko
+}  // namespace d3picko

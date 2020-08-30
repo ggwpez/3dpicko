@@ -13,7 +13,7 @@
 #include "Main/global.h"
 #include "Main/resource_path.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a cached image. Internal format is cv::Mat.
  */
@@ -81,4 +81,4 @@ class Image {
   ID id_;
 };
 MAKE_MARSHALLABLE(Image);
-}  // namespace c3picko
+}  // namespace d3picko

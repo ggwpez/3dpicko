@@ -10,7 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
-namespace c3picko {
+namespace d3picko {
 Database::Database(const QSettings& settings, QObject* parent)
 	: QObject(parent),
 	  file_path_(findPath(settings)),
@@ -270,4 +270,4 @@ void Database::setDefaultOctoprint(const Profile::ID& default_octo) {
   default_octoprint_ = default_octo;
   emit OnDataChanged();
 }
-}  // namespace c3picko
+}  // namespace d3picko

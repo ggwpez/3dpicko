@@ -7,7 +7,7 @@
 
 #include "ImageRecognition/matrix_result.h"
 
-namespace c3picko {
+namespace d3picko {
 MatrixResult::MatrixResult(AlgorithmResult&& base)
 	: AlgorithmResult(std::move(base)) {}
 
@@ -54,4 +54,4 @@ const cv::Mat& MatrixResult::oldMat() const {
 void MatrixResult::cleanup() { stack_.clear(); }
 
 const std::list<cv::Mat>& MatrixResult::stack() const { return stack_; }
-}  // namespace c3picko
+}  // namespace d3picko

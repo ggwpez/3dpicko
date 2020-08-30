@@ -13,7 +13,7 @@
 
 #include "PiCommunicator/octoconfig.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 class Command;
 /**
@@ -46,7 +46,7 @@ class OctoPrint : public QObject {
   QUrl resolved_address_;
 };
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 // TODO QNetworkAccessManager::networkAccessibleChanged()
 #endif	// OCTOPRINT_H_

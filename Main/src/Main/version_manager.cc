@@ -10,7 +10,7 @@
 #include "Main/exception.h"
 #include "Main/process.h"
 
-namespace c3picko {
+namespace d3picko {
 VersionManager::VersionManager(ResourcePath working_dir, QString repo_url,
 							   QString repo_branch, Database& db,
 							   QObject* _parent)
@@ -267,4 +267,4 @@ void VersionManager::unregisterProcess(Version::ID id) {
   if (to_be_installed_.size() && to_be_installed_.head() == id)
 	emit OnInstallError(id, "Canceled");
 }
-}  // namespace c3picko
+}  // namespace d3picko

@@ -11,7 +11,7 @@
 #include "GUI/types/profile_type.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 class PrinterProfile;
 class PlateSocketProfile;
 class PlateProfile;
@@ -102,4 +102,4 @@ class Profile {
   std::shared_ptr<pi::OctoConfig> octoprint_;
 };
 MAKE_MARSHALLABLE(Profile)
-}  // namespace c3picko
+}  // namespace d3picko

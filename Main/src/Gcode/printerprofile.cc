@@ -7,7 +7,7 @@
 
 #include "Gcode/printerprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 
 PrinterProfile::PrinterProfile(
 	int movement_speed, const Point& cut_filament_position_above_trigger,
@@ -99,4 +99,4 @@ bool PrinterProfile::skipTarget() const { return skip_target_; }
 
 bool PrinterProfile::skipCutoff() const { return skip_cutoff_; }
 
-}  // namespace c3picko
+}  // namespace d3picko

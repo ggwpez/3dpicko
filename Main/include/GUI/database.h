@@ -17,7 +17,7 @@
 // Cant forward declare bc type traits check in class Table<typename T>
 #include "GUI/types/profile.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief A Database. Can be saved and loaded into/from a file.
  * Consists of multiple Tables.
@@ -125,4 +125,4 @@ class Database : public QObject, JsonConvertable {
   Profile::ID default_octoprint_;
   Version::ID default_version_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

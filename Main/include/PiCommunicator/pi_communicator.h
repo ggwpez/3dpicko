@@ -17,7 +17,7 @@
 #include "PiCommunicator/octoprint.h"
 #include "PiCommunicator/print_job.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 /**
  * @brief Connect and send GCode to an Octoprint printer.
@@ -86,6 +86,6 @@ class PiCommunicator : public QObject {
   const int tick_time_ms_ = 1000;
 };
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// PICOMMUNICATOR_INCLUDE_PI_COMMUNICATOR_H_

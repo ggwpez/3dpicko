@@ -14,7 +14,7 @@
 #include "ImageRecognition/algorithm_job.h"
 
 class QThreadPool;
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Saves a List of algorithms, which can then be accessed by algos().
  */
@@ -37,4 +37,4 @@ class AlgorithmManager : public QObject {
   QThreadPool* pool_;
   QList<Algorithm*> algos_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

@@ -9,7 +9,7 @@
 #include <QMutex>
 #include <QObject>
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Singelton
  */
@@ -42,4 +42,4 @@ class Logger : public QObject {
   QStringList backlog_;
   QMutex lock_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

@@ -10,7 +10,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 FileType FileTypeFromString(QString const& str) {
@@ -23,4 +23,4 @@ FileType FileTypeFromString(QString const& str) {
 }
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

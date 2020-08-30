@@ -13,7 +13,7 @@
 #include "ImageRecognition/algorithms/helper.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a detected plate.
  *
@@ -74,4 +74,4 @@ class Plate {
 };
 MAKE_MARSHALLABLE(Plate*);
 MAKE_MARSHALLABLE(std::unique_ptr<Plate>);
-}  // namespace c3picko
+}  // namespace d3picko

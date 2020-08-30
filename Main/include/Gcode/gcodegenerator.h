@@ -14,7 +14,7 @@
 #include "Gcode/point.h"
 #include "Gcode/printerprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @file gcodeinstruction.h
@@ -268,5 +268,5 @@ class GcodeGenerator {
    */
   std::vector<GlobalMasterCoordinates> global_master_xy_coordinates_;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// GCODEGENERATOR_H

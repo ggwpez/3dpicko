@@ -9,7 +9,7 @@
 #include "GUI/types/job.h"
 #include "GUI/types/report.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Holds all information about the exucution of a pick job.
  */
@@ -18,4 +18,4 @@ class History {
   Job::ID job_;
   // Report::ID report_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

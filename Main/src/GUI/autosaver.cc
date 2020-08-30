@@ -13,7 +13,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 Autosaver::Autosaver(const QSettings& settings, QObject* _parent)
 	: QObject(_parent),
 	  interval_ms_(0),
@@ -82,4 +82,4 @@ void Autosaver::dataChanged() {
 }
 
 void Autosaver::resetDataChanged() { data_changed_ = false; }
-}  // namespace c3picko
+}  // namespace d3picko

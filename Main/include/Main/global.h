@@ -16,7 +16,7 @@
 
 class QCoreApplication;
 class QSslConfiguration;
-namespace c3picko {
+namespace d3picko {
 class ResourcePath;
 class Version;
 /**
@@ -90,4 +90,4 @@ int exitCodeSuccess();
  * Returns the default image extension for saving images.
  */
 char const* defaultImageExtension();
-}  // namespace c3picko
+}  // namespace d3picko

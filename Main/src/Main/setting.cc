@@ -10,7 +10,7 @@
 #include "Main/exception.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 
 Setting::ID Setting::id() const { return id_; }
 
@@ -123,4 +123,4 @@ void Setting::setValue(const QJsonValue& value) {
 	  throw Exception(Q_FUNC_INFO, "Unreachable");
   }
 }
-}  // namespace c3picko
+}  // namespace d3picko

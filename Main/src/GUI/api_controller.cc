@@ -27,8 +27,8 @@
 #include "PiCommunicator/commands/arbitrary_command.h"
 #include "PiCommunicator/octoprint.h"
 
-using namespace c3picko::pi;
-namespace c3picko {
+using namespace d3picko::pi;
+namespace d3picko {
 APIController::APIController(AlgorithmManager* colony_detector,
 							 AlgorithmManager* plate_detector,
 							 VersionManager* version_manager, Database* db,
@@ -674,8 +674,8 @@ void APIController::request(QJsonObject request, QString raw_request,
   try {
 	input_->serviceRequest(request, raw_request, client);
   } catch (Exception const& e) {
-	output_->Error("c3picko::exception", e.what(), client);
-	qWarning("c3picko::exception %s", e.what());
+	output_->Error("d3picko::exception", e.what(), client);
+	qWarning("d3picko::exception %s", e.what());
   } catch (std::exception const& e) {
 	output_->Error("std::exception", e.what(), client);
 	qWarning("std::exception %s", e.what());
@@ -686,4 +686,4 @@ void APIController::request(QJsonObject request, QString raw_request,
 }
 
 Database& APIController::db() const { return *db_; }
-}  // namespace c3picko
+}  // namespace d3picko

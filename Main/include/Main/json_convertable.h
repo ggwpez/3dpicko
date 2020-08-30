@@ -12,7 +12,7 @@
 
 #include "Main/global.h"
 
-namespace c3picko {
+namespace d3picko {
 class JsonConvertable {
  public:
   virtual ~JsonConvertable();
@@ -21,6 +21,6 @@ class JsonConvertable {
   virtual void read(const QJsonObject&) = 0;
   virtual void write(QJsonObject&) const = 0;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// JSON_CONVERTABLE_H

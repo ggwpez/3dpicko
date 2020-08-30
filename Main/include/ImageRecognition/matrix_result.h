@@ -12,7 +12,7 @@
 
 #include "ImageRecognition/algorithm_result.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief A stack based class to access all stages of an algorithm returning
  * cv::Mat
@@ -37,4 +37,4 @@ class MatrixResult : public AlgorithmResult {
   // MatrixResult is copyable
   std::list<cv::Mat> stack_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

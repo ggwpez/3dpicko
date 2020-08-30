@@ -13,7 +13,7 @@
 
 #include "Gcode/plateprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 // TODO im not proud
 RectPlate::RectPlate(const OuterBorder& outer_border,
 					 const InnerBorder& inner_border)
@@ -199,4 +199,4 @@ RectPlate* Marshalling::fromJson(const QJsonObject& obj) {
 
   return new RectPlate(outer, inner);
 }
-}  // namespace c3picko
+}  // namespace d3picko

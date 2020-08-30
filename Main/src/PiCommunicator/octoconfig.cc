@@ -6,7 +6,7 @@
 
 #include "PiCommunicator/octoconfig.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 OctoConfig::OctoConfig(QString address, ApiKey const& key, QString protocol,
 					   quint16 port)
@@ -40,4 +40,4 @@ pi::OctoConfig Marshalling::fromJson(const QJsonObject& obj) {
 						Marshalling::fromJson<QString>(obj["protocol"]),
 						obj["port"].toInt());
 }
-}  // namespace c3picko
+}  // namespace d3picko

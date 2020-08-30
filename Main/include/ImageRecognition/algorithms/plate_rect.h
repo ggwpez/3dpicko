@@ -10,7 +10,7 @@
 #include "ImageRecognition/algorithm.h"
 #include "ImageRecognition/colony.h"
 
-namespace c3picko {
+namespace d3picko {
 class PlateResult;
 namespace algorithms {
 /**
@@ -34,4 +34,4 @@ class PlateRect : public Algorithm {
  private:
 };
 }  // namespace algorithms
-}  // namespace c3picko
+}  // namespace d3picko

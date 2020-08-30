@@ -10,7 +10,7 @@
 #include "Main/marshalling.h"
 #include "PiCommunicator/apikey.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 /**
  * @brief Saves the configuration for class OctoPrint
@@ -42,6 +42,6 @@ class OctoConfig {
 };
 }  // namespace pi
 MAKE_MARSHALLABLE(pi::OctoConfig);
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// OCTO_PROFILE_H

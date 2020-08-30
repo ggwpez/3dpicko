@@ -10,7 +10,7 @@
 #include <opencv2/imgproc.hpp>
 #include <tuple>
 
-namespace c3picko {
+namespace d3picko {
 cv::Mat const* PlateResult::rotatedImage() const {
   if (stack_.empty()) return nullptr;
 
@@ -28,4 +28,4 @@ std::unique_ptr<Plate> const& PlateResult::original() const {
 }
 
 std::unique_ptr<Plate> const& PlateResult::rotated() const { return rotated_; }
-}  // namespace c3picko
+}  // namespace d3picko

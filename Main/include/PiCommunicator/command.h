@@ -16,7 +16,7 @@
 
 #include "response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 class Command : public QObject {
   Q_OBJECT
@@ -97,6 +97,6 @@ class Command : public QObject {
   QString content_type_;
 };
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 #include "command.inc.h"
 #endif	// COMMAND_H_

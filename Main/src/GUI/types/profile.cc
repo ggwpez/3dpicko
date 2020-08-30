@@ -15,7 +15,7 @@
 #include "Main/marshalling.h"
 #include "PiCommunicator/octoconfig.h"
 
-namespace c3picko {
+namespace d3picko {
 Profile::Profile(ProfileType type, QString name, ID id,
 				 QJsonObject const& settings)
 	: type_(type), name_(name), id_(id) {
@@ -288,13 +288,13 @@ QJsonObject Profile::octoprintTemplate() {
   return json;
 }
 
-c3picko::Profile::operator PlateProfile*() const { return plate_.get(); }
+d3picko::Profile::operator PlateProfile*() const { return plate_.get(); }
 
-c3picko::Profile::operator PlateSocketProfile*() const { return socket_.get(); }
+d3picko::Profile::operator PlateSocketProfile*() const { return socket_.get(); }
 
-c3picko::Profile::operator PrinterProfile*() const { return printer_.get(); }
+d3picko::Profile::operator PrinterProfile*() const { return printer_.get(); }
 
-c3picko::Profile::operator pi::OctoConfig *() const { return octoprint_.get(); }
+d3picko::Profile::operator pi::OctoConfig *() const { return octoprint_.get(); }
 
 template <>
 QJsonObject Marshalling::toJson(const Profile& value) {
@@ -329,4 +329,4 @@ Profile Marshalling::fromJson(const QJsonObject& obj) {
 				 obj["settings"].toObject());
 }
 
-}  // namespace c3picko
+}  // namespace d3picko

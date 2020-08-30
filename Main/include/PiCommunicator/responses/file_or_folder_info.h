@@ -15,7 +15,7 @@
 #include "PiCommunicator/datamodel/reference.h"
 #include "PiCommunicator/response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 /**
@@ -50,4 +50,4 @@ struct FileOrFolderInfo : public Response {
 };
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

@@ -18,7 +18,7 @@ using namespace stefanfrings;
 
 class QWebSocket;
 class QWebSocketServer;
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @brief Websocket Server. Handles websocket connections and API requests for
@@ -115,4 +115,4 @@ class WsServer : public QObject {
   quint16 port_;
 };
 
-}  // namespace c3picko
+}  // namespace d3picko

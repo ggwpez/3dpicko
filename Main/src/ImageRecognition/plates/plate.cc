@@ -13,7 +13,7 @@
 #include "ImageRecognition/plates/rect_plate.h"
 #include "ImageRecognition/plates/round_plate.h"
 
-namespace c3picko {
+namespace d3picko {
 Plate::Plate(cv::Point2d center, double angle, cv::Rect bb)
 	: center_(center),
 	  angle_(angle),
@@ -65,4 +65,4 @@ Plate* Marshalling::fromJson(const QJsonObject& obj) {
   else
 	Q_UNREACHABLE();
 }
-}  // namespace c3picko
+}  // namespace d3picko

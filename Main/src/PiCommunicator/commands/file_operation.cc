@@ -6,7 +6,7 @@
 
 #include "PiCommunicator/commands/file_operation.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 FileOperation* FileOperation::select(data::Location location, QString path,
@@ -40,4 +40,4 @@ void FileOperation::OnReplyFinished(QNetworkReply* reply) {
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

@@ -21,7 +21,7 @@
 #include "ImageRecognition/colony.h"
 #include "ImageRecognition/plates/plate.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace algorithms {
 Colonies1::Colonies1()
 	: Algorithm(
@@ -306,4 +306,4 @@ void Colonies1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
   }
 }
 }  // namespace algorithms
-}  // namespace c3picko
+}  // namespace d3picko

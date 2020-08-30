@@ -9,7 +9,7 @@
 
 #include <QString>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 /**
@@ -19,6 +19,6 @@ namespace data {
 typedef QString GCodeAnalysis;	// TODO
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// GCODE_ANALYSIS_H

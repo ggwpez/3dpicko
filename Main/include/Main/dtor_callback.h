@@ -8,7 +8,7 @@
 
 #include <functional>
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Executes a callback in its destructor.
  * Use to execute stuff in exception stack unwinding .
@@ -32,4 +32,4 @@ class DtorCallback {
   std::function<void(void)> const cb_;
   CallType const type_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

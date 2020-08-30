@@ -9,7 +9,7 @@
 #include "GUI/api_commands.h"
 #include "GUI/api_controller.h"
 
-namespace c3picko {
+namespace d3picko {
 APIInput::APIInput(APIController* parent) : QObject(parent), api(parent) {}
 
 void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
@@ -112,4 +112,4 @@ void APIInput::serviceRequest(QJsonObject& request, QString const& raw_request,
 	emit api->OnUnknownRequest(path, client);
   }
 }
-}  // namespace c3picko
+}  // namespace d3picko

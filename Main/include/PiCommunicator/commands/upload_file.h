@@ -13,7 +13,7 @@
 
 class QFile;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 class UploadFile : public Command {
@@ -62,6 +62,6 @@ class UploadFile : public Command {
 };
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// UPLOAD_COMMAND_H_

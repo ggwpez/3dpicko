@@ -10,7 +10,7 @@
 
 class QTimer;
 class QSettings;
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Can be used to send autosave notifications to all types derivates of
  * QObject .
@@ -55,4 +55,4 @@ class Autosaver : public QObject {
   bool data_changed_;
   QTimer* timer_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

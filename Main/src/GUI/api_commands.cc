@@ -6,7 +6,7 @@
 
 #include "GUI/api_commands.h"
 
-namespace c3picko {
+namespace d3picko {
 QString APICommands::GET_IMAGE_LIST = "getimagelist";
 QString APICommands::GET_PROFILE_LIST = "getprofilelist";
 QString APICommands::GET_VERSION_LIST = "getversionlist";
@@ -31,4 +31,4 @@ QString APICommands::UPDATE_DETECTION_SETTINGS = "updatedetectionsettings";
 QString APICommands::SHUTDOWN = "shutdown";
 QString APICommands::RESTART = "restart";
 QString APICommands::BACKUP = "backup";
-}  // namespace c3picko
+}  // namespace d3picko

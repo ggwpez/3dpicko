@@ -8,7 +8,7 @@
 
 #include <QJsonObject>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 Reference::Reference(const QJsonObject& obj) {
@@ -19,4 +19,4 @@ Reference::Reference(const QJsonObject& obj) {
 }
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

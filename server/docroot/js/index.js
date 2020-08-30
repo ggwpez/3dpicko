@@ -27,7 +27,7 @@ $(function Setup()
     WsSetup(
         () =>
         {
-            document.title = "Connected - 3CPicko";
+            document.title = "Connected - 3DPickO";
             global_alert.css('display', 'none');
             ShowAlert("Connected to server", "success", 500);
             api("getimagelist");
@@ -209,7 +209,7 @@ $(function Setup()
             DisableDropzone();
             global_alert.addClass('alert alert-danger');
             global_alert.css('display', 'block');
-            document.title = "No connection - 3CPicko";
+            document.title = "No connection - 3DPickO";
             connected = false;
         });
 });

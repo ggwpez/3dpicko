@@ -10,7 +10,7 @@
 #include "GUI/types/well.h"
 #include "Gcode/gcodeinstruction.h"
 #include "ImageRecognition/algorithm.h"
-#ifndef C3PICKO_NO_QUAZIP
+#ifndef D3PICKO_NO_QUAZIP
 #include <JlCompress.h>
 #endif
 
@@ -20,7 +20,7 @@
 #include <QTextTable>
 #include <QTextTableFormat>
 
-namespace c3picko {
+namespace d3picko {
 Reporter::Reporter(const Job& job, QDateTime creation,
 				   const std::map<Well, Colony::ID>& pick_positions,
 				   Image const& image, const DetectionResult* result,
@@ -133,7 +133,7 @@ Report Reporter::createReport() const {
 	  ts << QString::fromStdString(ins.ToString()) << "\r\n";
   }
 
-#ifndef C3PICKO_NO_ZLIB
+#ifndef D3PICKO_NO_ZLIB
   // Compress the html + gcode + txt_coords
   JlCompress::compressFiles(
 	  output.toSystemAbsolute(),
@@ -257,4 +257,4 @@ QString Reporter::createProlog() const {
 QString Reporter::createTitle() const { return "Report for Job #" + job_.id(); }
 
 QString Reporter::createEpilog() const { return "</tt></body></html>"; }
-}  // namespace c3picko
+}  // namespace d3picko

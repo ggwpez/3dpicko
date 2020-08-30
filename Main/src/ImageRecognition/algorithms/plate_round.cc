@@ -20,7 +20,7 @@
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/round_plate.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace algorithms {
 PlateRound::PlateRound()
 	: Algorithm("kROUND", "Round1",
@@ -134,4 +134,4 @@ void PlateRound::detect(AlgorithmJob* base, PlateResult* result) {
   result->original() = std::move(unrotated);
 }
 }  // namespace algorithms
-}  // namespace c3picko
+}  // namespace d3picko

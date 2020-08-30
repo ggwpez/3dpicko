@@ -14,7 +14,7 @@
 #include "Gcode/printerprofile.h"
 #include "PiCommunicator/octoconfig.h"
 
-namespace c3picko {
+namespace d3picko {
 template <>
 QJsonObject Marshalling::toJson(const PrinterProfile& value) {
   QJsonObject obj;
@@ -274,4 +274,4 @@ QJsonObject Marshalling::toJson(const QSet<QString>& value) {
   obj["elements"] = elements;
   return obj;
 }
-}  // namespace c3picko
+}  // namespace d3picko

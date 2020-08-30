@@ -8,7 +8,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 Version::Version(Version::ID id, QDateTime date)
 	: id_(id), date_(date), state_(State::NEW) {}
 
@@ -118,4 +118,4 @@ Version::State versionStateFromString(QString string) {
   throw Exception("Unknown value '" + string + "' for enum Version::State");
 }
 
-}  // namespace c3picko
+}  // namespace d3picko

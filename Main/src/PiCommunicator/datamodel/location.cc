@@ -10,7 +10,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 Location LocationFromString(const QString& str) {
@@ -30,4 +30,4 @@ QString ToString(Location val) {
 
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

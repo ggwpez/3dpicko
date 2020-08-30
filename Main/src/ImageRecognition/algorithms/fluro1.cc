@@ -12,7 +12,7 @@
 #include "ImageRecognition/algorithm_result.h"
 #include "ImageRecognition/algorithms/colonies1.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace algorithms {
 Fluro1::Fluro1()
 	: Algorithm(
@@ -61,4 +61,4 @@ void Fluro1::threshold(AlgorithmJob*, DetectionResult* result) {
 				cv::THRESH_BINARY);	 // flour TODO tryp Otsu's method
 }
 }  // namespace algorithms
-}  // namespace c3picko
+}  // namespace d3picko

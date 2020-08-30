@@ -16,7 +16,7 @@
 #include "ImageRecognition/algorithm_result.h"
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 
 Algorithm::~Algorithm() {}
 
@@ -113,4 +113,4 @@ QJsonObject Marshalling::toJson(const Algorithm& value) {
 
   return obj;
 }
-}  // namespace c3picko
+}  // namespace d3picko

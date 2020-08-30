@@ -7,7 +7,7 @@
 
 #include "Gcode/platetype.h"
 
-namespace c3picko {
+namespace d3picko {
 QString toString(PlateType type) {
   switch (type) {
 	case PlateType::kRECT:
@@ -35,4 +35,4 @@ template <>
 PlateType Marshalling::fromJson(const QJsonObject& obj) {
   return plateTypeFromString(obj["enum"].toString());
 }
-}  // namespace c3picko
+}  // namespace d3picko

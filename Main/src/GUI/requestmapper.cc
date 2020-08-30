@@ -14,7 +14,7 @@
 #include "Main/global.h"
 #include "httpsession.h"
 
-namespace c3picko {
+namespace d3picko {
 
 RequestMapper::RequestMapper(StaticFileController* file_controller,
 							 QObject* parent)
@@ -35,4 +35,4 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response) {
 
   qInfo("RequestMapper: finished request");
 }
-}  // namespace c3picko
+}  // namespace d3picko

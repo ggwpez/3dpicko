@@ -10,11 +10,11 @@
 
 #include "Main/global.h"
 
-namespace c3picko {
+namespace d3picko {
 Logger::Logger(int backlog_length)
 	: backlog_length_(backlog_length), lock_(QMutex::Recursive) {}
 
-Logger* c3picko::Logger::instance() {
+Logger* d3picko::Logger::instance() {
   static Logger* obj = new Logger;
   return obj;
 }
@@ -52,4 +52,4 @@ void Logger::log(QStringList lines) {
   guard.unlock();
   for (QString line : lines) emit OnNewLine(line);
 }
-}  // namespace c3picko
+}  // namespace d3picko

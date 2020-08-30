@@ -11,7 +11,7 @@
 
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 struct ApiKey {
   ApiKey(QString const& key);
@@ -23,6 +23,6 @@ struct ApiKey {
 };
 }  // namespace pi
 MAKE_MARSHALLABLE(pi::ApiKey);
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// APIKEY_H_

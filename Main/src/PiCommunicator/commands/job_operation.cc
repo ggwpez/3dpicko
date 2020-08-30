@@ -6,7 +6,7 @@
 
 #include "PiCommunicator/commands/job_operation.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 
@@ -51,4 +51,4 @@ void JobOperation::OnReplyFinished(QNetworkReply* reply) {
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @file gcodeinstruction.h
@@ -192,5 +192,5 @@ class GcodeInstruction {
    */
   std::vector<GcodeField> fields_;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// GCODEINSTRUCTION_H

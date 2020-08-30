@@ -8,7 +8,7 @@
 
 #include <QJsonValue>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 JobInfo::JobInfo(const QJsonObject& obj) : Response(obj) {
@@ -17,4 +17,4 @@ JobInfo::JobInfo(const QJsonObject& obj) : Response(obj) {
 }
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

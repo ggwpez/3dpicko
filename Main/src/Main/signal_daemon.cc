@@ -15,7 +15,7 @@
 #include <QSocketNotifier>
 #include <iostream>
 
-namespace c3picko {
+namespace d3picko {
 SignalDaemon::SignalDaemon(QObject* _parent) : QObject(_parent) {
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, socketpair_))
 	qFatal("Couldn't create Signal socketpair");
@@ -68,4 +68,4 @@ void SignalDaemon::socketNotify(int socket_fd) {
 }
 
 int SignalDaemon::socketpair_[2];
-}  // namespace c3picko
+}  // namespace d3picko

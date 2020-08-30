@@ -11,7 +11,7 @@
 
 #include "Main/version.h"
 
-namespace c3picko {
+namespace d3picko {
 class Process;
 class Database;
 /**
@@ -92,4 +92,4 @@ class VersionManager : public QObject {
   int make_retries_ = 0;
   int const max_make_retries_ = 3;
 };
-}  // namespace c3picko
+}  // namespace d3picko

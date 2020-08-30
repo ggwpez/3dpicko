@@ -6,4 +6,4 @@
 
 #include "GUI/types/history.h"
 
-namespace c3picko {}
+namespace d3picko {}

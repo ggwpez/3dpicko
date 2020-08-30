@@ -10,7 +10,7 @@
 #include "ImageRecognition/algorithm.h"
 #include "ImageRecognition/colony.h"
 
-namespace c3picko {
+namespace d3picko {
 class PlateResult;
 /**
  * @brief Algorithm for detecting a round Plate on an image under normal
@@ -27,4 +27,4 @@ class Plate2 : public Algorithm {
 
   virtual inline Algorithm* cloneEmpty() const override { return new Plate2(); }
 };
-}  // namespace c3picko
+}  // namespace d3picko

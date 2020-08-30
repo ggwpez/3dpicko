@@ -9,7 +9,7 @@
 
 #include "ImageRecognition/matrix_result.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents the colonies that were detected by the detection
  * algorithms.
@@ -46,4 +46,4 @@ class DetectionResult : public MatrixResult {
   std::size_t included_end_;
 };
 MAKE_MARSHALLABLE(DetectionResult);
-}  // namespace c3picko
+}  // namespace d3picko

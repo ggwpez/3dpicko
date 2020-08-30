@@ -10,7 +10,7 @@
 #include <QJsonValue>
 #include <cstring>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 ProgressInfo::ProgressInfo(const QJsonObject& obj) {
@@ -27,4 +27,4 @@ bool ProgressInfo::operator!=(const ProgressInfo& other) {
 }
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

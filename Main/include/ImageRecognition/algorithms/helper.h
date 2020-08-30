@@ -20,7 +20,7 @@
 
 class QByteArray;
 class QString;
-namespace c3picko {
+namespace d3picko {
 class Colony;
 namespace math {
 typedef double UnitValue;  // value in range [0,1]
@@ -177,13 +177,13 @@ void drawText(cv::Mat& output, cv::Point pos, QString string,
 			  cv::Scalar color = cv::Scalar::all(255), double scale = 1,
 			  int thickness = 1);
 }  // namespace math
-}  // namespace c3picko
+}  // namespace d3picko
 #include <QMetaType>
-template struct c3picko::math::Range<double>;
+template struct d3picko::math::Range<double>;
 // This forward declaration works, but the compiler does not create linkage?
 // TODO readelf -s --wide helper.o | xargs -I% sh -c "echo % | grep -o '[^ ]*$'
 // | grep -i 'range' | c++filt" template <> template <> bool
-// c3picko::math::Range<double>::contains<double>(double const&) const; template
-// <> template <> bool c3picko::math::Range<double>::excludes<double>(double
+// d3picko::math::Range<double>::contains<double>(double const&) const; template
+// <> template <> bool d3picko::math::Range<double>::excludes<double>(double
 // const&) const;
-Q_DECLARE_METATYPE(c3picko::math::Range<double>);
+Q_DECLARE_METATYPE(d3picko::math::Range<double>);

@@ -8,7 +8,7 @@
 
 #include <QJsonArray>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 ConnectionInfo::ConnectionInfo(const QJsonObject& obj) : Response(obj) {
@@ -39,4 +39,4 @@ ConnectionInfo::ConnectionInfo(const QJsonObject& obj) : Response(obj) {
 }
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

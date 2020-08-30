@@ -11,7 +11,7 @@
 #include "Main/global.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 
 class Colony {
  public:
@@ -86,4 +86,4 @@ class Colony {
 };
 
 MAKE_MARSHALLABLE(Colony);
-}  // namespace c3picko
+}  // namespace d3picko

@@ -10,7 +10,7 @@
 #include <QVariantMap>
 #include <vector>
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a setting that will be displayed in the Web GUI.
  */
@@ -83,4 +83,4 @@ class Setting {
    */
   std::vector<Setting> sub_settings_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

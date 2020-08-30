@@ -12,7 +12,7 @@
 #include <QHttpPart>
 #include <QJsonValue>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 UploadFile* UploadFile::CreateFile(QByteArray content, data::Location location,
@@ -94,4 +94,4 @@ void UploadFile::OnReplyFinished(QNetworkReply* reply) {
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

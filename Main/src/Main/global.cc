@@ -19,7 +19,7 @@
 #include "Main/signal_daemon.h"
 #endif
 
-namespace c3picko {
+namespace d3picko {
 static ResourcePath root_path;
 static ResourcePath doc_root_path;
 static ResourcePath report_path, upload_path;
@@ -212,7 +212,7 @@ static void handleQtMessage(QtMsgType type, const QMessageLogContext& context,
   QString html_string = time + htmlTextColor(type) + message + "</font>";
 
   // TODO bad style to write everything to stderr
-#if defined(Q_OS_LINUX) || defined(C3PICKO_TEXT_COLORS_OFF)
+#if defined(Q_OS_LINUX) || defined(D3PICKO_TEXT_COLORS_OFF)
   fprintf(stderr, "%s\n", qPrintable(console_string));
 #else
   fprintf(stderr, "%s%s\n", qPrintable(time), qPrintable(message));
@@ -266,4 +266,4 @@ void cleanupGlobal() {
   /*QMetaType::registerConverter<math::Range<double>, QString>(
 	  math::rangeToString);*/
 }
-}  // namespace c3picko
+}  // namespace d3picko

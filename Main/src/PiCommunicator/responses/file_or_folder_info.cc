@@ -8,7 +8,7 @@
 
 #include <QJsonArray>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 FileOrFolderInfo::FileOrFolderInfo(const QJsonObject& obj) : Response(obj) {
@@ -52,4 +52,4 @@ void FileOrFolderInfo::ReadFolderMember(const QJsonObject& obj) {
 }
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

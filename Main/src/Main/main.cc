@@ -27,8 +27,8 @@
 #include "staticfilecontroller.h"
 
 using namespace stefanfrings;
-using namespace c3picko;
-using namespace c3picko::algorithms;
+using namespace d3picko;
+using namespace d3picko::algorithms;
 
 static int start(int argc, char** argv) {
 #ifdef Q_OS_LINUX

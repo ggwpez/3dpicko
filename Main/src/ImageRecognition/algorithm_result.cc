@@ -15,7 +15,7 @@
 #include "ImageRecognition/colony.h"
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 AlgorithmResult::AlgorithmResult(ID id)
 	: id_(id),
 	  created_(QDateTime::currentDateTime()),
@@ -58,4 +58,4 @@ QJsonObject Marshalling::toJson(const AlgorithmResult& value) {
 
   return obj;
 }
-}  // namespace c3picko
+}  // namespace d3picko

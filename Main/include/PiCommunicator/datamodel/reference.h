@@ -10,7 +10,7 @@
 #include <QUrl>
 class QJsonObject;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 /**
@@ -25,6 +25,6 @@ struct Reference {
 };
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// REFERENCE_H

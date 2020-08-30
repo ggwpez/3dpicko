@@ -9,7 +9,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 ArbitraryCommand* ArbitraryCommand::SingleCommand(QString command) {
@@ -27,4 +27,4 @@ ArbitraryCommand* ArbitraryCommand::MultiCommand(QStringList commands) {
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
