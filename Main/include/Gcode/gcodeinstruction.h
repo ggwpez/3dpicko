@@ -1,4 +1,11 @@
-﻿#ifndef GCODEINSTRUCTION_H
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ * SPDX-FileCopyrightText: 2018-2020 flopicko flobotic@protonmail.com
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
+#ifndef GCODEINSTRUCTION_H
 #define GCODEINSTRUCTION_H
 
 #include <string>

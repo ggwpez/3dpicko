@@ -1,4 +1,10 @@
-﻿#ifndef JOB_OPERATION_H
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
+#ifndef JOB_OPERATION_H
 #define JOB_OPERATION_H
 
 #include "PiCommunicator/command.h"

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 #include "PiCommunicator/responses/file_or_folder_info.h"
 
 #include <QJsonArray>

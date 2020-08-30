@@ -1,4 +1,11 @@
-﻿#include "Gcode/plateprofile.h"
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ * SPDX-FileCopyrightText: 2018-2020 flopicko flobotic@protonmail.com
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
+#include "Gcode/plateprofile.h"
 
 namespace c3picko {
 PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,

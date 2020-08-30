@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 #ifndef GET_ALL_FILES_H_
 #define GET_ALL_FILES_H_
 
