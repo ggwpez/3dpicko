@@ -25,9 +25,10 @@ Database::Database(const QSettings& settings, QObject* parent)
 	if (ignore_empty) {
 	  qWarning() << "Database not found, using default (ignoreEmpty=true):"
 				 << e.what();
-	  if (!QFile::copy("server/database-default.json",
-				  file_path_.toSystemAbsolute()))
-		  throw Exception("Could not find backup: server/database-default.json");
+	  auto backup = ResourcePath::fromServerRelative("database-default.json");
+	  if (!QFile::copy(backup.toSystemAbsolute(),
+					   file_path_.toSystemAbsolute()))
+		throw Exception("Could not find backup: " + backup.toSystemAbsolute());
 	  readFromFile();
 	} else
 	  throw Exception("Database not found (ignoreEmpty=false): " +

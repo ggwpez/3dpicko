@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+
+SPDX-License-Identifier: GFDL-1.3-only
+-->
+
 ## Abstract
 3DPickO converts 3D printers into colony pickers.
 

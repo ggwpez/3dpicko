@@ -6,31 +6,31 @@
  */
 
 // TODO subclasses colony and well
-class Circle{
-    constructor(options){
+class Circle {
+    constructor(options) {
         this.options = options;
     }
 
-    exclude(){
+    exclude() {
         this.options.excluded_by = "user";
         delete this.options.included_by;
         this.set('linecolor', 'red');
         return this;
     }
 
-    include(){
+    include() {
         this.options.excluded_by = "";
         this.options.included_by = "user";
         this.set('linecolor', 'white');
         return this;
     }
 
-    toggleSelect(){
-        if (this.options.selected == true){
+    toggleSelect() {
+        if (this.options.selected == true) {
             this.options.selected = false;
             this.set('linecolor', this.options.defaultLinecolor);
         }
-        else{
+        else {
             this.options.selected = true;
             this.set('linecolor', 'red');
         }
@@ -38,56 +38,56 @@ class Circle{
     }
 
     // This function implies that a null value is as good as a nonexistent one.
-    set(what, value){
-        if (value == null){
+    set(what, value) {
+        if (value == null) {
             console.error("Cant set option ", what, " to null");
             return;
         }
-        if (this.options[what] != value){
+        if (this.options[what] != value) {
             this.options[what] = value;
             this.draw();
         }
         return this;
     }
 
-    get(what){
+    get(what) {
         return this.options[what];
     }
 
-    draw(ctx, line_width){
+    draw(ctx, line_width) {
         let context = ctx || this.options.canvas.getContext('2d');
 
         context.beginPath();
         context.lineWidth = line_width || 2;
         context.strokeStyle = this.options.linecolor;
-        if(!this.options.excluded_by || this.options.excluded_by == ""){
+        if (!this.options.excluded_by || this.options.excluded_by == "") {
             context.arc(this.options.x, this.options.y, this.options.radius, 0, 2 * Math.PI);
-            if(this.options.background){
+            if (this.options.background) {
                 context.fillStyle = this.options.background;
                 context.fill();
             }
             context.stroke();
         }
-        else{
+        else {
             // cross out colony
             context.lineWidth = line_width || 1;
             // 0.71 = sin(45deg)...
             let offset = 0.71 * this.options.radius;
-            context.moveTo(this.options.x+offset, this.options.y+offset);
-            context.lineTo(this.options.x-offset, this.options.y-offset);
-            context.moveTo(this.options.x-offset, this.options.y+offset);
-            context.lineTo(this.options.x+offset, this.options.y-offset);
+            context.moveTo(this.options.x + offset, this.options.y + offset);
+            context.lineTo(this.options.x - offset, this.options.y - offset);
+            context.moveTo(this.options.x - offset, this.options.y + offset);
+            context.lineTo(this.options.x + offset, this.options.y - offset);
             context.stroke();
         }
 
         return this;
     }
 
-    getRadius(){
+    getRadius() {
         return this.options.radius;
     }
 
-    getPosition(){
+    getPosition() {
         var position = {
             x: this.options.x,
             y: this.options.y
@@ -96,11 +96,11 @@ class Circle{
         return position;
     }
 
-    getColor(){
+    getColor() {
         return this.options.linecolor;
     }
 
-    isMouseOver(x, y){
+    isMouseOver(x, y) {
         // TODO review this
         var distanceX = x - this.options.x;
         var distanceY = y - this.options.y;
