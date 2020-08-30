@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Harald Gültig <hgueltig@gmail.com>
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 // id => profile-object
 var all_profiles = {};
 // *-profile => *-profile-template

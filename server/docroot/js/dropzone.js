@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2018-2020 Harald Gültig <hgueltig@gmail.com>
+ * SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 var upload_timeout_id;
 var dropZone = document.getElementById('dropZone');
 $(function(){
