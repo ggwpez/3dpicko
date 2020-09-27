@@ -9,6 +9,7 @@
 #include "GUI/database.h"
 #include "GUI/types/well.h"
 #include "Gcode/gcodeinstruction.h"
+#include "Gcode/plateprofile.h"
 #include "ImageRecognition/algorithm.h"
 #ifndef D3PICKO_NO_QUAZIP
 #include <JlCompress.h>
@@ -19,6 +20,7 @@
 #include <QTextDocument>
 #include <QTextTable>
 #include <QTextTableFormat>
+#include <memory>
 
 namespace d3picko {
 Reporter::Reporter(const Job& job, QDateTime creation,
@@ -114,8 +116,9 @@ Report Reporter::createReport() const {
 	  Colony const& colony =
 		  *std::find_if(colonies.begin(), colonies.end(),
 						[it](Colony const& c) { return c.id() == it->second; });
-	  cv::Point pos(colony.x() * img_data.cols, colony.y() * img_data.rows);
 
+	  cv::Point2f pos(colony.x() * plate_.plate()->redFrameWidth(),
+					  colony.y() * plate_.plate()->redFrameHeight());
 	  ts << colony.id() << "," << pos.x << "," << pos.y << ",null,null,null\n";
 	}
   }
