@@ -9,7 +9,7 @@
 #include <QtGlobal>
 #include <exception>
 
-namespace c3picko {
+namespace d3picko {
 DtorCallback::DtorCallback(const std::function<void()>& cb, CallType type)
 	: cb_(cb), type_(type) {}
 
@@ -35,4 +35,4 @@ void DtorCallback::invoke() const noexcept {
   } catch (...) {
   }
 }
-}  // namespace c3picko
+}  // namespace d3picko

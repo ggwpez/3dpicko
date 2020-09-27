@@ -16,7 +16,7 @@
 #include "ImageRecognition/colony.h"
 #include "ImageRecognition/plates/plate.h"
 
-namespace c3picko {
+namespace d3picko {
 Normal1::Normal1()
 	: Algorithm(
 		  "1", "Normal1", "Detects colonies with standard illumination",
@@ -294,4 +294,4 @@ void Normal1::relativeFiltering(AlgorithmJob* base, DetectionResult* result) {
 	  ++it;
   }
 }
-}  // namespace c3picko
+}  // namespace d3picko

@@ -10,7 +10,7 @@
 #include <QJsonValue>
 #include <QVariant>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 RetriveResponse::RetriveResponse(const QJsonObject& obj) : Response(obj) {
@@ -28,4 +28,4 @@ RetriveResponse::RetriveResponse(const QJsonObject& obj) : Response(obj) {
 }
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

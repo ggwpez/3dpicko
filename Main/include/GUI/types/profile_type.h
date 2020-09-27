@@ -8,8 +8,8 @@
 
 #include <QString>
 
-namespace c3picko {
+namespace d3picko {
 enum class ProfileType { PRINTER, PLATE, SOCKET, OCTOPRINT };
 QString profileToString(ProfileType);
 ProfileType profileFromString(QString);
-}  // namespace c3picko
+}  // namespace d3picko

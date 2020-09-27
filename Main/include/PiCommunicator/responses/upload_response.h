@@ -13,7 +13,7 @@
 #include "PiCommunicator/datamodel/location.h"
 #include "PiCommunicator/response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 /**
@@ -33,6 +33,6 @@ struct UploadResponse : public Response {
 };
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// RETRIVE_RESPONSE_H_

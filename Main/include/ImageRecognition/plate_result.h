@@ -12,7 +12,7 @@
 #include "ImageRecognition/matrix_result.h"
 #include "ImageRecognition/plates/plate.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents the detected and the corrected plate after a plate
  * detection algorithm
@@ -41,4 +41,4 @@ class PlateResult : public MatrixResult {
   std::unique_ptr<Plate> rotated_;
 };
 MAKE_MARSHALLABLE(PlateResult);
-}  // namespace c3picko
+}  // namespace d3picko

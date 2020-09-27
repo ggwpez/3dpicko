@@ -10,7 +10,7 @@
 
 #include "Gcode/point.h"
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @file printerprofile.h
@@ -168,5 +168,5 @@ class PrinterProfile {
    */
   const bool skip_cutoff_;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// PRINTERPROFILE_H

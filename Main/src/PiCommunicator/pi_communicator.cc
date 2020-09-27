@@ -10,7 +10,7 @@
 
 #include "PiCommunicator/commands/all.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 PiCommunicator::PiCommunicator(OctoConfig const& config, QObject* _parent)
 	: QObject(_parent),
@@ -111,7 +111,7 @@ QString PiCommunicator::GenerateFilename() const {
   QByteArray data(16, 0);
   for (int i = 0; i < data.length(); ++i) data[i] = (qrand() % 26) + 'a';
 
-  return "_3cpicko-" + QString(data.toHex()) + ".gcode";
+  return "_3dpicko-" + QString(data.toHex()) + ".gcode";
 }
 
 void PiCommunicator::Transition(State t) {
@@ -121,4 +121,4 @@ void PiCommunicator::Transition(State t) {
   emit OnTransition(old, state_);
 }
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

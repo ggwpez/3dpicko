@@ -9,7 +9,7 @@
 
 class QString;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 ///
@@ -21,6 +21,6 @@ Location LocationFromString(QString const& str);
 QString ToString(Location val);
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// ORIGIN_H

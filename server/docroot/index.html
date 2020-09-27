@@ -3,31 +3,40 @@ SPDX-FileCopyrightText: 2018-2020 Harald Gültig <hgueltig@gmail.com>
 SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
 SPDX-FileCopyrightText: 2018-2020 Patrick Mayer <patrick.mayer@posteo.de>
 
-SPDX-License-Identifier: GPL-3.0-only
+SPDX-License-Identifier: GFDL-1.3-only
 -->
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/vendor/bootstrap.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/custom.css">
-  <title>3CPickO</title>
+  <title>3DPickO</title>
 </head>
+
 <body>
-  <div id="overlay"><div class="spinner-border text-primary overlay-spinner"></div></div>
+  <div id="overlay">
+    <div class="spinner-border text-primary overlay-spinner"></div>
+  </div>
   <nav>
     <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
-      <a class="nav-item nav-link active" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab" aria-controls="nav-wiki" aria-selected="true">Wiki</a>
-      <a class="nav-item nav-link" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab" aria-controls="nav-new-job" aria-selected="false">New Job</a>
-      <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab" aria-controls="nav-all-jobs" aria-selected="false">All Jobs</a>
-      <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</a>
-      <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab" aria-controls="nav-admin" aria-selected="false">Admin</a>
+      <a class="nav-item nav-link active" id="nav-wiki-tab" data-toggle="tab" href="#nav-wiki" role="tab"
+        aria-controls="nav-wiki" aria-selected="true">Wiki</a>
+      <a class="nav-item nav-link" id="nav-new-job-tab" data-toggle="tab" href="#nav-new-job" role="tab"
+        aria-controls="nav-new-job" aria-selected="false">New Job</a>
+      <a class="nav-item nav-link" id="nav-all-jobs-tab" data-toggle="tab" href="#nav-all-jobs" role="tab"
+        aria-controls="nav-all-jobs" aria-selected="false">All Jobs</a>
+      <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab"
+        aria-controls="nav-settings" aria-selected="false">Settings</a>
+      <a class="nav-item nav-link" id="nav-admin-tab" data-toggle="tab" href="#nav-admin" role="tab"
+        aria-controls="nav-admin" aria-selected="false">Admin</a>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -50,13 +59,15 @@ SPDX-License-Identifier: GPL-3.0-only
               <div class="tab-pane fade show active col" id="browse">
                 <div class="row mb-4">
                   <div class="col-md-6 col-lg-4 heading-box" style="min-width: 400px;">
-                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_image')">Choose Image</a></h2>
+                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help"
+                        onclick="loadHelp('choose_image')">Choose Image</a></h2>
                     <h6 id="img-name"></h6>
                     <form><input id="classicUpload" type="file" style="display: none;"></form>
                     <div id="dropZone" class="empty"></div>
                     <div id="chosen-image" style="display: none;">
                       <div id="selectedimage-description" class="float-left"></div>
-                      <button id="continue-1" class="btn btn-success next-step float-right mt-1" onclick="attributesTab()">Continue</button>
+                      <button id="continue-1" class="btn btn-success next-step float-right mt-1"
+                        onclick="attributesTab()">Continue</button>
                     </div>
                   </div>
                 </div>
@@ -64,12 +75,14 @@ SPDX-License-Identifier: GPL-3.0-only
                 <div class="row">
                   <div class="col">
                     <div id="all-images" style="display: none;"></div>
-                    <div id="show-more-images"><button type="button" class="btn btn-primary" onclick="ShowMoreImages()">Load more images</button></div>
+                    <div id="show-more-images"><button type="button" class="btn btn-primary"
+                        onclick="ShowMoreImages()">Load more images</button></div>
                   </div>
                 </div>
               </div>
               <div class="tab-pane fade col-md-6 col-xl-4 heading-box" id="attributes" style="padding-bottom: 50px;">
-                <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('pickjob_attributes')">Pickjob Attributes</a></h2>
+                <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help"
+                    onclick="loadHelp('pickjob_attributes')">Pickjob Attributes</a></h2>
                 <form id="attributes-form" name="attributes-form" action="javascript:void(0);">
                   <div class="form-group">
                     <label for="staticImgName">Image:</label><span id="staticImgName"></span>
@@ -97,40 +110,53 @@ SPDX-License-Identifier: GPL-3.0-only
                     <textarea class="form-control" id="description-input" rows="5" placeholder="optional"></textarea>
                   </div>
                 </form>
-                <button id="enter-selection-button" class="btn btn-success next-step" onclick="selectionTab()">Continue</button>
+                <button id="enter-selection-button" class="btn btn-success next-step"
+                  onclick="selectionTab()">Continue</button>
               </div>
               <div class="tab-pane col-12 fade" id="selection">
                 <div class="row">
                   <div id="colony-layers">
                     <h2>
-<a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number" class="text-primary">0</span><input id="selected-colony-color" type="color" value="#ffffff">
+                      <a class="textLink" data-toggle="modal" data-target="#colony-detection-help"
+                        onclick="loadHelp('detect_colonies')">Selected Colonies:</a> <span id="detected-colonies-number"
+                        class="text-primary">0</span><input id="selected-colony-color" type="color" value="#ffffff">
                     </h2>
                     <div id="layer_parent">
                       <div class="btn-toolbar" id="layer-control">
                         <h4 class="mr-2">Toggle Layers:</h4>
                         <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
-                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox" id="show-selected" autocomplete="off" checked>Selected</label>
-                          <label class="btn btn-secondary"><input type="checkbox" id="show-excluded" autocomplete="off">Excluded</label>
+                          <label id="show-selected-button" class="btn btn-secondary active"><input type="checkbox"
+                              id="show-selected" autocomplete="off" checked>Selected</label>
+                          <label class="btn btn-secondary"><input type="checkbox" id="show-excluded"
+                              autocomplete="off">Excluded</label>
                         </div>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray" autocomplete="off" checked>X-Ray</label>
+                          <label id="x-ray-button" class="btn btn-secondary"><input type="checkbox" id="x-ray"
+                              autocomplete="off" checked>X-Ray</label>
                         </div>
                       </div>
                       <canvas id="layer0" style="z-index: 0;"></canvas> <!-- For colony image -->
-                      <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas> <!-- For colony circles -->
-                      <canvas id="layer2" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas> <!-- For tooltips -->
-                      <canvas id="layer3" style="position: absolute; left: 0; top: 0; z-index: 3;"></canvas> <!-- For safety-margin -->
+                      <canvas id="layer1" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+                      <!-- For colony circles -->
+                      <canvas id="layer2" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas>
+                      <!-- For tooltips -->
+                      <canvas id="layer3" style="position: absolute; left: 0; top: 0; z-index: 3;"></canvas>
+                      <!-- For safety-margin -->
                     </div>
                     <div id="buttons">
-                      <div id="legend" style="display: none; float: left;"><h4>Legend:</h4></div>
-                      <button id="strategy-tab-button" class="btn btn-success next-step mt-1" onclick="strategyTab()" disabled>Continue</button>
+                      <div id="legend" style="display: none; float: left;">
+                        <h4>Legend:</h4>
+                      </div>
+                      <button id="strategy-tab-button" class="btn btn-success next-step mt-1" onclick="strategyTab()"
+                        disabled>Continue</button>
                     </div>
                     <div id="showCoordinates"></div>
                   </div>
                   <div id="detection-settings-div" class="heading-box" style="padding-left: 15px; padding-right: 15px;">
                     <h2 class="box-heading">Detection Settings</h2>
                     <div class="form-group">
-                      <label><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('algorithm')">Algorithm:</a></label>
+                      <label><a class="textLink" data-toggle="modal" data-target="#colony-detection-help"
+                          onclick="loadHelp('algorithm')">Algorithm:</a></label>
                       <select class="form-control" id="select-algorithm" name="select-algorithm"></select>
                     </div>
                     <div id="detection-settings"></div>
@@ -143,18 +169,24 @@ SPDX-License-Identifier: GPL-3.0-only
                     <h2 class="box-heading">Choose Target Plate</h2>
                     <form id="strategy-form" style="margin-bottom: 2em;" action="javascript:void(0);">
                       <div class="form-group">
-                        <label for="select-plate-profile"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_plates')">Target Plate: </a></label>
+                        <label for="select-plate-profile"><a class="textLink" data-toggle="modal"
+                            data-target="#colony-detection-help" onclick="loadHelp('choose_plates')">Target Plate:
+                          </a></label>
                         <select class="form-control" id="select-plate-profile"></select>
                       </div>
                       <div id="number-of-colonies-slider"></div>
-                      <small id="number-of-colonies-warning" class="form-text text-muted mb-2" style="display: none;"><span class="text-danger">Note: Colonies will be chosen randomly.</span></small>
+                      <small id="number-of-colonies-warning" class="form-text text-muted mb-2"
+                        style="display: none;"><span class="text-danger">Note: Colonies will be chosen
+                          randomly.</span></small>
                     </form>
                     <button id="enter-overview-button" class="btn btn-success next-step">Continue</button>
                   </div>
                   <div class="col-auto heading-box">
                     <h2 class="box-heading">
-<a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('choose_starting_well')">Choose Starting Well: </a><span id="starting-well" class="text-primary"></span>
-</h2>
+                      <a class="textLink" data-toggle="modal" data-target="#colony-detection-help"
+                        onclick="loadHelp('choose_starting_well')">Choose Starting Well: </a><span id="starting-well"
+                        class="text-primary"></span>
+                    </h2>
                     <canvas id="pickstrategy-canvas"></canvas>
                     <br>
                   </div>
@@ -163,7 +195,8 @@ SPDX-License-Identifier: GPL-3.0-only
               <div class="tab-pane fade col-xl-10" id="overview">
                 <div class="row">
                   <div class="col heading-box" style="min-width: 500px">
-                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help" onclick="loadHelp('overview')">Overview</a></h2>
+                    <h2 class="box-heading"><a class="textLink" data-toggle="modal" data-target="#colony-detection-help"
+                        onclick="loadHelp('overview')">Overview</a></h2>
                     <div class="row">
                       <div class="col-md-8">
                         <div id="overview-image" style="position: relative;">
@@ -199,7 +232,8 @@ SPDX-License-Identifier: GPL-3.0-only
                     </div>
                   </form>
                   <button class="btn btn-success m-2" id="execute-button" onclick="executeTab()">Start picking</button>
-                  <button class="btn btn-success m-1" id="pickjob-running" disabled style="display: none">Picking in process <span class="spinner-border spinner-border-sm"></span></button>
+                  <button class="btn btn-success m-1" id="pickjob-running" disabled style="display: none">Picking in
+                    process <span class="spinner-border spinner-border-sm"></span></button>
                 </div>
               </div>
               <div class="tab-pane fade col-md-8" id="execute">
@@ -250,7 +284,7 @@ SPDX-License-Identifier: GPL-3.0-only
       <button type="button" class="btn btn-success" onclick="api('backup')">Backup</button>
       <button type="button" class="btn btn-success" onclick="api('updatesoftware')">Update</button>
       <tt>
-      <div id="debug-output"></div>
+        <div id="debug-output"></div>
       </tt>
     </div>
     <!-- inserted Wiki -->
@@ -261,102 +295,117 @@ SPDX-License-Identifier: GPL-3.0-only
             <div class="sticky-top">
               <h5 class="py-1">Introduction</h5>
               <div class="row">
-                <button class="btn btn-primary btn-sm ml-2 wiki-link" id="About" onclick="loadWiki('About','./docs/wiki.html #introduction');document.getElementById('About-Section').scrollIntoView()">About</button>
+                <button class="btn btn-primary btn-sm ml-2 wiki-link" id="About"
+                  onclick="loadWiki('About','./docs/wiki.html #introduction');document.getElementById('About-Section').scrollIntoView()">About</button>
               </div>
               <div class="row">
-                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Nomenclature" onclick="loadWiki('Nomenclature','./docs/wiki.html #introduction');document.getElementById('Nomenclature-Section').scrollIntoView()">Nomenclature of Hardware</button>
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Nomenclature"
+                  onclick="loadWiki('Nomenclature','./docs/wiki.html #introduction');document.getElementById('Nomenclature-Section').scrollIntoView()">Nomenclature
+                  of Hardware</button>
               </div>
               <h5 class="py-1"> User Manual</h5>
               <div class="row">
-               <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-First-Steps" onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First Steps</button>
-             </div>
-             <div class="row">
-               <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Example-Picking-Process" onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')">Guide through the Picking Process</button>
-             </div>
-             <div class="row">
-              <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Advanced-Settings" onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')">Advanced Settings</button>
-            </div>
-			      <h5 class="py-1">Administration</h5>
-            <div class="row">
-              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Hardware" onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')">Hardware</button>
-            </div>
-            <div class="row">
-              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Software" onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')">Software</button>
-            </div>
-			<div class="row">
-              <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Configure-Picker" onclick="loadWiki('Administration-Configure-Picker','./docs/wiki.html #administration_configure-picker')">Configure Picker</button>
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-First-Steps"
+                  onclick="loadWiki('User-Manual-First-Steps','./docs/wiki.html #user_manual_first_steps')">First
+                  Steps</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Example-Picking-Process"
+                  onclick="loadWiki('User-Manual-Example-Picking-Process','./docs/wiki.html #user_manual_example_picking_process')">Guide
+                  through the Picking Process</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="User-Manual-Advanced-Settings"
+                  onclick="loadWiki('User-Manual-Advanced-Settings','./docs/wiki.html #user_manual_advanced_settings')">Advanced
+                  Settings</button>
+              </div>
+              <h5 class="py-1">Administration</h5>
+              <div class="row">
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Hardware"
+                  onclick="loadWiki('Administration-Hardware','./docs/wiki.html #administration_hardware')">Hardware</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Software"
+                  onclick="loadWiki('Administration-Software','./docs/wiki.html #administration_software')">Software</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-link btn-sm ml-2 wiki-link" id="Administration-Configure-Picker"
+                  onclick="loadWiki('Administration-Configure-Picker','./docs/wiki.html #administration_configure-picker')">Configure
+                  Picker</button>
+              </div>
             </div>
           </div>
+          <div class="col col-lg-5">
+            <p id="wiki-content">Error: Page not found</p>
+          </div>
         </div>
-        <div class="col col-lg-5">
-          <p id="wiki-content">Error: Page not found</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info-Dialog -->
+  <div class="modal fade" id="info-dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="info-dialog-title"></h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
         </div>
       </div>
     </div>
   </div>
-</div>
+  <!-- Delete-Dialog -->
+  <div class="modal fade" id="delete-dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="delete-dialog-title"></h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Global Alert: call ShowAlert(message, type) -->
+  <div id="alert-window">
+    <div id="global-alert" style="display: none;">Disconnected from server.</div>
+  </div>
+  <div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="help-body">Error: Help not found </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<!-- Info-Dialog -->
-<div class="modal fade" id="info-dialog" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="info-dialog-title"></h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Delete-Dialog -->
-<div class="modal fade" id="delete-dialog" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="delete-dialog-title"></h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <!-- <div class="modal-body" id="delete-dialog-body"></div> -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" id="delete-button">Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Global Alert: call ShowAlert(message, type) -->
-<div id="alert-window">
-  <div id="global-alert" style="display: none;">Disconnected from server.</div>
-</div>
-<div class="modal fade" id="colony-detection-help" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="help-headline">Error: Headline not found</h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p id="help-body">Error: Help not found </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Bootstrap JS -->
-<script src="js/jquery-3.3.1.js"></script>
-<script src="js/bootstrap.bundle.js"></script>
-<script type="text/javascript" src="js/multirange.js"></script>
-<script type="text/javascript" src="js/formgroup.js"></script>
-<script type="text/javascript" src="js/dropzone.js"></script>
-<script type="text/javascript" src="js/wiki.js"></script>
-<script type="text/javascript" src="js/colonydetection.js"></script>
-<script type="text/javascript" src="js/pickstrategy.js"></script>
-<script type="text/javascript" src="js/circle.js"></script>
-<script type="text/javascript" src="js/api.js"></script>
-<script type="text/javascript" src="js/config.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Bootstrap JS -->
+  <script src="js/vendor/jquery-3.3.1.js"></script>
+  <script src="js/vendor/bootstrap.bundle.js"></script>
+  <script type="text/javascript" src="js/multirange.js"></script>
+  <script type="text/javascript" src="js/formgroup.js"></script>
+  <script type="text/javascript" src="js/dropzone.js"></script>
+  <script type="text/javascript" src="js/wiki.js"></script>
+  <script type="text/javascript" src="js/colonydetection.js"></script>
+  <script type="text/javascript" src="js/pickstrategy.js"></script>
+  <script type="text/javascript" src="js/circle.js"></script>
+  <script type="text/javascript" src="js/api.js"></script>
+  <script type="text/javascript" src="js/config.js"></script>
+  <script type="text/javascript" src="js/index.js"></script>
 </body>
+
 </html>

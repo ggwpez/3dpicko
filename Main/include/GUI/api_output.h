@@ -14,7 +14,7 @@
 #include "Main/global.h"
 #include "Main/version.h"
 
-namespace c3picko {
+namespace d3picko {
 class Colony;
 class AlgorithmManager;
 class APIInput;
@@ -97,4 +97,4 @@ class APIOutput : public QObject {
   // TODO change name
   APIController* op;
 };
-}  // namespace c3picko
+}  // namespace d3picko

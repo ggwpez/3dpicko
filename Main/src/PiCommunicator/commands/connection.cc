@@ -6,7 +6,7 @@
 
 #include "PiCommunicator/commands/connection.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 Connection* Connection::GetInfo() {
@@ -58,4 +58,4 @@ QJsonObject Connection::CreateConnectJson(QString port, qint32 baudrate,
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

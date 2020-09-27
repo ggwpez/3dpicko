@@ -13,7 +13,7 @@
 
 #include "Gcode/plateprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 // TODO im not proud
 RectPlate::RectPlate(const OuterBorder& outer_border,
 					 const InnerBorder& inner_border)
@@ -156,7 +156,7 @@ void RectPlate::crop(const cv::Mat& in, cv::Mat& out) const {
   std::array<cv::Point2f, 4> border{
 	  {outer_border_[a1_], outer_border_[(a1_ + 1) % 4],
 	   outer_border_[(a1_ + 2) % 4], outer_border_[(a1_ + 3) % 4]}};
-  std::array<cv::Point2f, 4> pts = {{{0, 0}, {w, 0}, {w, h}, {0, h}}};
+  std::array<cv::Point2f, 4> pts = {{{0, h}, {w, h}, {w, 0}, {0, 0}}};
 
   cv::Mat T = cv::findHomography(border, pts);
   cv::warpPerspective(in, out, T, cv::Size(w, h));
@@ -199,4 +199,4 @@ RectPlate* Marshalling::fromJson(const QJsonObject& obj) {
 
   return new RectPlate(outer, inner);
 }
-}  // namespace c3picko
+}  // namespace d3picko

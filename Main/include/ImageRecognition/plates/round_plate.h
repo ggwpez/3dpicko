@@ -10,7 +10,7 @@
 #include "ImageRecognition/plates/plate.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a rectangular plate.
  */
@@ -79,4 +79,4 @@ class RoundPlate : public Plate {
   std::size_t const m1_;
 };
 MAKE_MARSHALLABLE(RoundPlate*);
-}  // namespace c3picko
+}  // namespace d3picko

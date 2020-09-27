@@ -15,7 +15,7 @@
 
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 class AlgorithmResult;
 class AlgoSetting;
 class AlgorithmJob;
@@ -87,4 +87,4 @@ class Algorithm : public QObject, public QRunnable {
   qint64 max_ms_;
 };
 MAKE_SERIALIZABLE(Algorithm);
-}  // namespace c3picko
+}  // namespace d3picko

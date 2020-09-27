@@ -9,7 +9,7 @@
 #include <QMetaEnum>
 #include <QVariant>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 Command::Command(QString api_url, QSet<int> status_ok, Command::HTTPType type)
 	: api_url_(api_url),
@@ -106,4 +106,4 @@ void Command::OnReplyError(QNetworkReply::NetworkError error) {
   emit OnNetworkErr(menum.valueToKey(error));
 }
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

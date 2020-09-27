@@ -10,7 +10,7 @@
 #include "PiCommunicator/command.h"
 #include "PiCommunicator/responses/connection_info.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 /**
@@ -45,6 +45,6 @@ class Connection : public Command {
 };
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// CONNECT_H

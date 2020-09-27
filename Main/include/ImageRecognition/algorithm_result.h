@@ -15,7 +15,7 @@
 namespace cv {
 class Mat;
 }
-namespace c3picko {
+namespace d3picko {
 class Colony;
 /**
  * @brief Represents a failed or succeeded AlgorithmJob.
@@ -65,4 +65,4 @@ class AlgorithmResult {
   QDateTime created() const;
 };
 MAKE_SERIALIZABLE(AlgorithmResult);
-}  // namespace c3picko
+}  // namespace d3picko

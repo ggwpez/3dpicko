@@ -12,9 +12,9 @@
 #include "ImageRecognition/algorithm_job.h"
 #include "ImageRecognition/algorithm_result.h"
 
-using namespace c3picko;
+using namespace d3picko;
 
-namespace c3picko {
+namespace d3picko {
 AlgorithmManager::AlgorithmManager(QThreadPool* pool, QList<Algorithm*> algos,
 								   QObject* _parent)
 	: QObject(_parent), pool_(pool), algos_(algos) {
@@ -47,4 +47,4 @@ AlgorithmJob* AlgorithmManager::createJob(
 
 QList<Algorithm*> AlgorithmManager::algos() const { return algos_; }
 
-}  // namespace c3picko
+}  // namespace d3picko

@@ -9,7 +9,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 AbridgedFileInfo::AbridgedFileInfo(const QJsonObject& obj)
@@ -23,4 +23,4 @@ AbridgedFileInfo::AbridgedFileInfo(const QJsonObject& obj)
 }
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

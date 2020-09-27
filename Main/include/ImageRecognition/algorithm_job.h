@@ -15,7 +15,7 @@
 #include "ImageRecognition/algorithm_result.h"
 
 class QThreadPool;
-namespace c3picko {
+namespace d3picko {
 class Algorithm;
 class AlgorithmResult;
 class AlgorithmManager;
@@ -114,4 +114,4 @@ class AlgorithmJob : public QObject {
   QDateTime start_, end_;
 };
 MAKE_MARSHALLABLE(AlgorithmJob);
-}  // namespace c3picko
+}  // namespace d3picko

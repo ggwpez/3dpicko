@@ -8,3 +8,11 @@ Source: gitlab.com/ggwpez/3dpicko
 # Files: src/*
 # Copyright: $YEAR $NAME <$CONTACT>
 # License: ...
+
+Files: depend/QtWebApp/qtservice/*
+Copyright: 2013 Digia Plc and/or its subsidiary(-ies)
+License: BSD-3-Clause
+
+Files: depend/QtWebApp/*
+Copyright: Stefan Frings <stefan@stefanfrings.de>
+License: LGPL-3.0-only

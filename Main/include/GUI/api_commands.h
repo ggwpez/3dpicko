@@ -8,7 +8,7 @@
 
 #include <QString>
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief List of all permitted API commands to eliminate spelling mistakes.
  */
@@ -38,4 +38,4 @@ struct APICommands {
   static QString RESTART;
   static QString BACKUP;
 };
-}  // namespace c3picko
+}  // namespace d3picko

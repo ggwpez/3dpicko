@@ -10,7 +10,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 QString profileToString(ProfileType val) {
   switch (val) {
 	case ProfileType::OCTOPRINT:
@@ -35,4 +35,4 @@ ProfileType profileFromString(QString val) {
   throw Exception("Unknown profile type: " + val);
 }
 
-}  // namespace c3picko
+}  // namespace d3picko

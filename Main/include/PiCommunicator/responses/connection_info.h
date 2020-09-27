@@ -12,7 +12,7 @@
 
 #include "PiCommunicator/response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 /**
@@ -48,6 +48,6 @@ struct ConnectionInfo : public Response {
 };
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// CONNECTION_H

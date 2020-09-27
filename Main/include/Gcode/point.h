@@ -8,7 +8,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @file point.h
@@ -43,5 +43,5 @@ using LocalWellCoordinates = Point;
 using GlobalColonyCoordinates = Point;
 using GlobalMasterCoordinates = Point;
 using GlobalWellCoordinates = Point;
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// POINT_H

@@ -14,7 +14,7 @@
 #include "GUI/api_controller.h"
 #include "ImageRecognition/colony.h"
 
-namespace c3picko {
+namespace d3picko {
 APIOutput::APIOutput(APIController* parent)
 	: QObject((QObject*)parent), op(parent) {}
 
@@ -195,4 +195,4 @@ void APIOutput::Error(QString where, QString what, QObject* client) {
   qCritical("Error %s: %s", qPrintable(where), qPrintable(what));
   emit op->toClient(client, "error", {{"where", where}, {"what", what}});
 }
-}  // namespace c3picko
+}  // namespace d3picko

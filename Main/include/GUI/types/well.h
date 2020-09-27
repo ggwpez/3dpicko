@@ -8,7 +8,7 @@
 
 #include <QtGlobal>
 
-namespace c3picko {
+namespace d3picko {
 class PlateProfile;
 /**
  * @brief Represents a PCR well position.
@@ -40,4 +40,4 @@ class Well {
   quint8 row_, col_;
   PlateProfile* plate_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

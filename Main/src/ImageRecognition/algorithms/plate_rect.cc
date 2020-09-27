@@ -19,7 +19,7 @@
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/rect_plate.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace algorithms {
 PlateRect::PlateRect()
 	: Algorithm("kRECT", "Rect1", "Detects a plate with red frame attached",
@@ -201,4 +201,4 @@ void PlateRect::detect(AlgorithmJob* base, PlateResult* result) {
   result->original() = std::move(unrotated);
 }
 }  // namespace algorithms
-}  // namespace c3picko
+}  // namespace d3picko

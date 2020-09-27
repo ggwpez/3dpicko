@@ -10,7 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 GetAllFiles* GetAllFiles::AllFiles() {
@@ -27,4 +27,4 @@ void GetAllFiles::OnReplyFinished(QNetworkReply* reply) {
 }
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

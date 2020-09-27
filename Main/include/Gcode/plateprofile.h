@@ -13,7 +13,7 @@
 #include "Gcode/platetype.h"
 #include "Gcode/point.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @file plateprofile.h
  * @author flopicko
@@ -145,5 +145,5 @@ class PlateProfile {
    */
   const float red_frame_height_;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// PLATEPROFILE_H

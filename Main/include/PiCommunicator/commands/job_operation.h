@@ -12,7 +12,7 @@
 //#include "datamodel/job_pause_action.h"
 #include "PiCommunicator/responses/job_info.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 /**
@@ -41,6 +41,6 @@ class JobOperation : public Command {
 };
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// JOB_OPERATION_H

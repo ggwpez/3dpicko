@@ -9,7 +9,7 @@
 
 #include <QJsonArray>
 
-namespace c3picko {
+namespace d3picko {
 
 template <>
 QJsonObject Marshalling::toJson(const DetectionResult& value) {
@@ -75,4 +75,4 @@ const std::vector<Colony>& DetectionResult::colonies() const {
 }
 
 std::vector<Colony>& DetectionResult::colonies() { return colonies_; }
-}  // namespace c3picko
+}  // namespace d3picko

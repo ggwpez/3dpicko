@@ -17,7 +17,7 @@
 #include "Main/process.h"
 #include "Main/version_manager.h"
 
-namespace c3picko {
+namespace d3picko {
 Updater::Updater(const QSettings& settings, Database& db, QObject* _parent)
 	: QObject(_parent),
 	  db_(db),
@@ -185,4 +185,4 @@ VersionManager* Updater::mng() const { return mng_; }
 
 qint32 Updater::defaultInterval = 60;
 bool Updater::defaultEnabled = false;
-}  // namespace c3picko
+}  // namespace d3picko

@@ -12,7 +12,7 @@
 #include "PiCommunicator/datamodel/progress_info.h"
 #include "PiCommunicator/gcode.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 class PrintJob : public QObject {
   Q_OBJECT
@@ -61,6 +61,6 @@ class PrintJob : public QObject {
   data::ProgressInfo progress;
 };
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// PRINT_JOB_H

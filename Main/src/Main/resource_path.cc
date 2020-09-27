@@ -8,7 +8,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 ResourcePath::ResourcePath(QString system_absolute_path)
 	: system_absolute_(QDir::cleanPath(system_absolute_path)) {}
 
@@ -105,4 +105,4 @@ QJsonObject Marshalling::toJson(const ResourcePath& value) {
 
   return obj;
 }
-}  // namespace c3picko
+}  // namespace d3picko

@@ -14,7 +14,7 @@
 
 #include "Main/resource_path.h"
 
-namespace c3picko {
+namespace d3picko {
 Image::Image(Image::ID id, QString original_name, QString description,
 			 ResourcePath path, QDateTime uploaded, int width, int height)
 	: original_name_(original_name),
@@ -185,4 +185,4 @@ Image Marshalling::fromJson(const QJsonObject& obj) {
 			   Marshalling::fromJson<QDateTime>(obj["uploaded"].toObject()),
 			   obj["width"].toInt(), obj["height"].toInt());
 }
-}  // namespace c3picko
+}  // namespace d3picko

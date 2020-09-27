@@ -9,7 +9,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 JobGeneralInfo::JobGeneralInfo(QJsonObject const& obj) {
@@ -28,4 +28,4 @@ JobGeneralInfo::JobGeneralInfo(QJsonObject const& obj) {
 }
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

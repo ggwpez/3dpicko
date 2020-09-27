@@ -10,7 +10,7 @@
 #include "ImageRecognition/plates/plate.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a rectangular plate.
  */
@@ -105,4 +105,4 @@ class RectPlate : public Plate {
   math::UnitValue center_error_;
 };
 MAKE_MARSHALLABLE(RectPlate*);
-}  // namespace c3picko
+}  // namespace d3picko

@@ -16,7 +16,7 @@
 
 using namespace stefanfrings;
 
-namespace c3picko {
+namespace d3picko {
 class APIController;
 /**
  * @brief Class for accepting user input and calling the proper response
@@ -50,4 +50,4 @@ class APIInput : public QObject {
   // TODO change name
   APIController* api;
 };
-}  // namespace c3picko
+}  // namespace d3picko

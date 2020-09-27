@@ -12,7 +12,7 @@
 #include "PiCommunicator/response.h"
 #include "PiCommunicator/responses/file_or_folder_info.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 /**
@@ -31,6 +31,6 @@ struct RetriveResponse : public Response {
 };
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// RETRIVE_RESPONSE_H_

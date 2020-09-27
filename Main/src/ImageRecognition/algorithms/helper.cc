@@ -21,7 +21,7 @@
 
 #include "ImageRecognition/colony.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace math {
 
 double brightness(std::vector<cv::Point> const& contour, cv::Mat const& mat) {
@@ -182,4 +182,4 @@ QByteArray matToBase64(const cv::Mat& mat) {
   return data.toBase64();
 }
 }  // namespace math
-}  // namespace c3picko
+}  // namespace d3picko

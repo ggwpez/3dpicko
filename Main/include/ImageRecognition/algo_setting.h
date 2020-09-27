@@ -16,7 +16,7 @@
 #include "Main/exception.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a single option/threshold for an Algorithm.
  *
@@ -155,4 +155,4 @@ class AlgoSetting {
   QVariant value_;
 };
 MAKE_MARSHALLABLE(AlgoSetting);
-}  // namespace c3picko
+}  // namespace d3picko

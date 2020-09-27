@@ -20,7 +20,7 @@
 
 class QThreadPool;
 class ColonyDetector;
-namespace c3picko {
+namespace d3picko {
 class Well;
 class VersionManager;
 class AlgorithmJob;
@@ -214,7 +214,7 @@ class APIController : public QObject {
 											   QJsonObject settings,
 											   QObject* client);
   QString calculateGcode(Job::ID id, std::vector<GcodeInstruction>* gcode,
-						 std::map<c3picko::Well, Colony::ID>*);
+						 std::map<d3picko::Well, Colony::ID>*);
 
  protected:
   AlgorithmManager *colony_detector_, *plate_detector_;
@@ -225,4 +225,4 @@ class APIController : public QObject {
   APIInput* input_;
   APIOutput* output_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

@@ -9,7 +9,7 @@
 
 #include <QJsonObject>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 struct Response {
@@ -24,6 +24,6 @@ struct Response {
 };
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// RESPONSE_H_

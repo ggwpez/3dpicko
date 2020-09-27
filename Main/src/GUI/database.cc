@@ -10,7 +10,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
-namespace c3picko {
+namespace d3picko {
 Database::Database(const QSettings& settings, QObject* parent)
 	: QObject(parent),
 	  file_path_(findPath(settings)),
@@ -25,9 +25,12 @@ Database::Database(const QSettings& settings, QObject* parent)
 	if (ignore_empty) {
 	  qWarning() << "Database not found, using default (ignoreEmpty=true):"
 				 << e.what();
-	  if (!QFile::copy("server/database-default.json",
-				  file_path_.toSystemAbsolute()))
-		  throw Exception("Could not find backup: server/database-default.json");
+	  auto fallback = ResourcePath::fromServerRelative("database-default.json");
+	  if (!QFile::copy(fallback.toSystemAbsolute(),
+					   file_path_.toSystemAbsolute()))
+		throw Exception(QString("Could not copy fallback %1 to %2")
+							.arg(fallback.toSystemAbsolute(),
+								 file_path_.toSystemAbsolute()));
 	  readFromFile();
 	} else
 	  throw Exception("Database not found (ignoreEmpty=false): " +
@@ -270,4 +273,4 @@ void Database::setDefaultOctoprint(const Profile::ID& default_octo) {
   default_octoprint_ = default_octo;
   emit OnDataChanged();
 }
-}  // namespace c3picko
+}  // namespace d3picko

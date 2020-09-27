@@ -15,7 +15,7 @@
 #include "ImageRecognition/algorithm_result.h"
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 class AlgorithmJob;
 /**
  * @brief A pick job, will be filled with data step by step by the use throught
@@ -87,4 +87,4 @@ class Job {
   qint32 step_ = 0;
 };
 MAKE_MARSHALLABLE(Job);
-}  // namespace c3picko
+}  // namespace d3picko

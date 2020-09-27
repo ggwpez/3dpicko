@@ -15,7 +15,7 @@
 
 #include "PiCommunicator/command.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 OctoPrint::OctoPrint(OctoConfig const& config, QObject* _parent)
 	: QObject(_parent),
@@ -75,4 +75,4 @@ void OctoPrint::SendCommand(Command* cmd) {
 
 void OctoPrint::Resolve() {}
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

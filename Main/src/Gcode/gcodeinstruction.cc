@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @brief Class for creating g-code command fields in RepRap style.
@@ -224,4 +224,4 @@ std::string GcodeInstruction::ToString() const {
   for (const GcodeField& field : fields_) ss << field.ToString() << " ";
   return ss.str();
 }
-}  // namespace c3picko
+}  // namespace d3picko

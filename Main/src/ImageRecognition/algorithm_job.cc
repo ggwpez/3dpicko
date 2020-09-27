@@ -13,7 +13,7 @@
 #include "ImageRecognition/algorithm.h"
 #include "ImageRecognition/algorithm_result.h"
 
-namespace c3picko {
+namespace d3picko {
 AlgorithmJob::AlgorithmJob(AlgorithmJob::ID id, Algorithm* algo,
 						   QJsonObject settings,
 						   std::shared_ptr<AlgorithmResult> result,
@@ -145,4 +145,4 @@ QJsonObject Marshalling::toJson(const AlgorithmJob& value) {
 
 // template <>
 // AlgorithmJob Marshalling::fromJson(const QJsonObject &obj) {}
-}  // namespace c3picko
+}  // namespace d3picko

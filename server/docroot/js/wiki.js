@@ -9,11 +9,11 @@
 // This file can be included in index.js it is a seperate file to make development easier.
 
 //loads front page#
-$(function(){
-  $("#wiki-content").load("./docs/wiki.html #introduction");
+$(function () {
+    $("#wiki-content").load("./docs/wiki.html #introduction");
 });
 
-function loadWiki(id, site){
+function loadWiki(id, site) {
     $("#wiki-content").load(site);
     //moveWiki(id);
 
@@ -23,20 +23,20 @@ function loadWiki(id, site){
     element.classList.add("btn-primary");
 }
 
-function moveWiki(position){
+function moveWiki(position) {
     var element = document.getElementById(position);
     element.scrollIntoView();
 }
 
-function resetButtons(){
+function resetButtons() {
     $('.wiki-link').removeClass("btn-primary");
     $('.wiki-link').addClass("btn-link")
 }
 
-function loadHelp(id, headline){
-	let path = './docs/wiki.html';
-	console.log(path+" #"+id);
-	if(headline) $("#help-headline").text(headline);  
-	else $("#help-headline").load(path+" #"+id+"-h");
-    $("#help-body").load(path+" #"+id);
+function loadHelp(id, headline) {
+    let path = './docs/wiki.html';
+    console.log(path + " #" + id);
+    if (headline) $("#help-headline").text(headline);
+    else $("#help-headline").load(path + " #" + id + "-h");
+    $("#help-body").load(path + " #" + id);
 }

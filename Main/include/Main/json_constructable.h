@@ -11,7 +11,7 @@
 
 #include "Main/global.h"
 
-namespace c3picko {
+namespace d3picko {
 class JsonConstructable {
  public:
   inline JsonConstructable(QJsonObject const&) {}
@@ -25,4 +25,4 @@ class JsonConstructable {
 
   virtual void write(QJsonObject&) const = 0;
 };
-}  // namespace c3picko
+}  // namespace d3picko

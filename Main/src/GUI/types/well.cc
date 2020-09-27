@@ -9,7 +9,7 @@
 #include "Gcode/plateprofile.h"
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 Well::Well(quint8 row, quint8 col, PlateProfile* plate)
 	: row_(row), col_(col), plate_(plate) {
   if (plate->numberOfRows() > 16 || plate->numberOfColumns() > 24)
@@ -50,4 +50,4 @@ quint8 Well::col() const { return col_; }
 quint16 Well::index() const {
   return quint16((col_ - 1) * plate_->numberOfRows() + (row_ - 1));
 }
-}  // namespace c3picko
+}  // namespace d3picko

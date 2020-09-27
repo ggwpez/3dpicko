@@ -27,7 +27,7 @@ struct type_identity {
 }  // namespace std
 #endif
 
-namespace c3picko {
+namespace d3picko {
 class Marshalling {
  public:
   template <typename T>
@@ -94,4 +94,4 @@ template <>
 inline QString Marshalling::fromJson<QString>(QJsonValue const& val) {
   return val.toString().toHtmlEscaped();
 }
-}  // namespace c3picko
+}  // namespace d3picko

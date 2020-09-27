@@ -10,7 +10,7 @@
 #include "PiCommunicator/command.h"
 #include "PiCommunicator/responses/retrive_response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 /**
@@ -33,6 +33,6 @@ class GetAllFiles : public Command {
 };
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// GET_ALL_FILES_H_

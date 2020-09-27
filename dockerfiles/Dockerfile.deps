@@ -11,8 +11,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=Europe/Berlin
 WORKDIR /tmp/ocv
 RUN apt-get update && \
-	apt -y install qt5-default git libqt5websockets5-dev clang libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config cmake zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libopenexr-dev libgdal-dev libtbb-dev unzip wget
-RUN apt-get purge -y gcc g++
+	apt -y install qt5-default git libqt5websockets5-dev clang libxml2-utils build-essential doxygen graphviz cppcheck clang-format pkg-config cmake zlib1g-dev libjpeg-dev libwebp-dev libpng-dev libtiff5-dev libopenexr-dev libgdal-dev libtbb-dev unzip wget && \
+	apt-get purge -y gcc g++
 
 ARG OPENCV_VERSION='3.4.10'
 RUN wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv-${OPENCV_VERSION}.zip \
@@ -24,10 +24,11 @@ RUN wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O op
 	&& cd build \
 	&& cmake -D CMAKE_BUILD_TYPE=Release -DBUILD_LIST=core,imgproc,highgui,photo,calib3d ..
 WORKDIR /tmp/ocv/OpenCV/build
-RUN make -j$(nproc) \
-	&& make install \
-	&& ldconfig
+RUN make -j$(nproc) && \
+	make install && \
+	ldconfig
 
-RUN apt-get autoremove -y && rm -rf "/var/lib/apt/lists/*"
 WORKDIR /root
-RUN rm -rf /tmp/ocv
+RUN apt-get autoremove -y && \
+	rm -rf "/var/lib/apt/lists/*" && \
+	rm -rf /tmp/ocv

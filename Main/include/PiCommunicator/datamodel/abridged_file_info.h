@@ -15,7 +15,7 @@
 
 class QJsonObject;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 /**
@@ -37,6 +37,6 @@ namespace responses {
 typedef data::AbridgedFileInfo AbridgedFileInfo;
 }
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// ABRIDGED_FILE_INFORMATION_H_

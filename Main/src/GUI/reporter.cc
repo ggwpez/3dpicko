@@ -9,8 +9,9 @@
 #include "GUI/database.h"
 #include "GUI/types/well.h"
 #include "Gcode/gcodeinstruction.h"
+#include "Gcode/plateprofile.h"
 #include "ImageRecognition/algorithm.h"
-#ifndef C3PICKO_NO_QUAZIP
+#ifndef D3PICKO_NO_QUAZIP
 #include <JlCompress.h>
 #endif
 
@@ -19,8 +20,9 @@
 #include <QTextDocument>
 #include <QTextTable>
 #include <QTextTableFormat>
+#include <memory>
 
-namespace c3picko {
+namespace d3picko {
 Reporter::Reporter(const Job& job, QDateTime creation,
 				   const std::map<Well, Colony::ID>& pick_positions,
 				   Image const& image, const DetectionResult* result,
@@ -114,8 +116,9 @@ Report Reporter::createReport() const {
 	  Colony const& colony =
 		  *std::find_if(colonies.begin(), colonies.end(),
 						[it](Colony const& c) { return c.id() == it->second; });
-	  cv::Point pos(colony.x() * img_data.cols, colony.y() * img_data.rows);
 
+	  cv::Point2f pos(colony.x() * plate_.plate()->redFrameWidth(),
+					  colony.y() * plate_.plate()->redFrameHeight());
 	  ts << colony.id() << "," << pos.x << "," << pos.y << ",null,null,null\n";
 	}
   }
@@ -133,7 +136,7 @@ Report Reporter::createReport() const {
 	  ts << QString::fromStdString(ins.ToString()) << "\r\n";
   }
 
-#ifndef C3PICKO_NO_ZLIB
+#ifndef D3PICKO_NO_ZLIB
   // Compress the html + gcode + txt_coords
   JlCompress::compressFiles(
 	  output.toSystemAbsolute(),
@@ -257,4 +260,4 @@ QString Reporter::createProlog() const {
 QString Reporter::createTitle() const { return "Report for Job #" + job_.id(); }
 
 QString Reporter::createEpilog() const { return "</tt></body></html>"; }
-}  // namespace c3picko
+}  // namespace d3picko

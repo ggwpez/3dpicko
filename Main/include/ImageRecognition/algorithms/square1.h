@@ -10,7 +10,7 @@
 #include "ImageRecognition/algorithm.h"
 #include "ImageRecognition/colony.h"
 
-namespace c3picko {
+namespace d3picko {
 class PlateResult;
 /**
  * @brief Algorithm for detecting a rectangular Plate on an image under normal
@@ -32,4 +32,4 @@ class Plate1 : public Algorithm {
 
  private:
 };
-}  // namespace c3picko
+}  // namespace d3picko

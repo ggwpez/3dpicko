@@ -8,7 +8,7 @@
 
 #include <QJsonDocument>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 Response::Response(const QJsonObject& obj) : raw(obj) {}
@@ -19,4 +19,4 @@ QString Response::ToString() {
 }
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

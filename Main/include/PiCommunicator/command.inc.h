@@ -10,7 +10,7 @@
 #include <QJsonObject>
 #include <QJsonParseError>
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 template <typename T>
 inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply) {
@@ -34,4 +34,4 @@ inline void Command::CheckStatusCodeAndResponse(QNetworkReply* reply) {
   CheckStatusCode(reply, response);
 }
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

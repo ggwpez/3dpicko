@@ -12,7 +12,7 @@
 #include "Main/resource_path.h"
 
 class QProcess;
-namespace c3picko {
+namespace d3picko {
 class Process : public QObject {
   Q_OBJECT
  public:
@@ -61,4 +61,4 @@ class Process : public QObject {
   QStringList args_;
   ResourcePath exec_dir_;
 };
-}  // namespace c3picko
+}  // namespace d3picko

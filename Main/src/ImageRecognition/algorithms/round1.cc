@@ -17,7 +17,7 @@
 #include "ImageRecognition/plate_result.h"
 #include "ImageRecognition/plates/round_plate.h"
 
-namespace c3picko {
+namespace d3picko {
 Plate2::Plate2()
 	: Algorithm("2", "Plate2", "Detects a round plate with red frame attached",
 				{(AlgoStep)Plate1::cvt, (AlgoStep)Plate1::threshold,
@@ -131,4 +131,4 @@ void Plate2::detect(AlgorithmJob* base, PlateResult* result) {
   result->original_ = std::move(original);
   result->rotated_ = std::move(rotated);
 }
-}  // namespace c3picko
+}  // namespace d3picko

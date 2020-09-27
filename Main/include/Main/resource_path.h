@@ -8,7 +8,7 @@
 
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Represents a file path.
  */
@@ -22,12 +22,12 @@ class ResourcePath {
   ResourcePath();
   /**
    * @brief Absolute path
-   * ex: /home/user/Code/3cpicko/GUI/uploads/test.jpg
+   * ex: /home/user/Code/3dpicko/GUI/uploads/test.jpg
    */
   static ResourcePath fromSystemAbsolute(QString path);
   /**
    * @brief Absolute path, relative to execution directory
-   * ex: ../../3cpicko/GUI/uploads/test.jpg
+   * ex: ../../3dpicko/GUI/uploads/test.jpg
    */
   static ResourcePath fromSystemRelative(QString path);
 
@@ -69,4 +69,4 @@ class ResourcePath {
   QString system_absolute_;
 };
 MAKE_MARSHALLABLE(ResourcePath);
-}  // namespace c3picko
+}  // namespace d3picko

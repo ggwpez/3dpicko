@@ -7,7 +7,7 @@
 
 #include "Gcode/plateprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 PlateProfile::PlateProfile(int number_of_rows, int number_of_columns,
 						   PlateType plate_type, float a1_row_offset,
 						   float a1_column_offset,
@@ -76,4 +76,4 @@ int PlateProfile::timesToLowerFilamentIntoWell() const {
 float PlateProfile::redFrameWidth() const { return red_frame_width_; }
 
 float PlateProfile::redFrameHeight() const { return red_frame_height_; }
-}  // namespace c3picko
+}  // namespace d3picko

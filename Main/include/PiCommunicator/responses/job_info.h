@@ -11,7 +11,7 @@
 #include "PiCommunicator/datamodel/progress_info.h"
 #include "PiCommunicator/response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 /**
@@ -27,6 +27,6 @@ struct JobInfo : public Response {
 };
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// JOB_INFO_H

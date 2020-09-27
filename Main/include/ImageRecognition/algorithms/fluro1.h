@@ -10,7 +10,7 @@
 #include "ImageRecognition/algorithm.h"
 #include "ImageRecognition/detection_result.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace algorithms {
 class Fluro1 : public Algorithm {
   Q_OBJECT
@@ -22,4 +22,4 @@ class Fluro1 : public Algorithm {
   virtual inline Algorithm* cloneEmpty() const override { return new Fluro1(); }
 };
 }  // namespace algorithms
-}  // namespace c3picko
+}  // namespace d3picko

@@ -9,7 +9,7 @@
 
 #include "PiCommunicator/command.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace commands {
 /**
@@ -30,6 +30,6 @@ class ArbitraryCommand : public Command {
 };
 }  // namespace commands
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// ARBITRARY_COMMAND_H_

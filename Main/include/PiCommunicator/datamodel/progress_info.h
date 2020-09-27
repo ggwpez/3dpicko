@@ -10,7 +10,7 @@
 #include <QtGlobal>
 class QJsonObject;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 /**
@@ -42,6 +42,6 @@ struct ProgressInfo {
 };
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 
 #endif	// PROGRESS_INFO_H

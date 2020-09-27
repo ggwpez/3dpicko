@@ -13,7 +13,7 @@
 #include "Main/exception.h"
 #include "Main/version.h"
 
-namespace c3picko {
+namespace d3picko {
 Process::Process(QString binary, QStringList args, QObject* _parent)
 	: QObject(_parent),
 	  binary_(binary),
@@ -107,4 +107,4 @@ void Process::start() {
 }
 
 void Process::kill() { git_->kill(); }
-}  // namespace c3picko
+}  // namespace d3picko

@@ -11,7 +11,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 static QVariant empty_qv = QJsonValue();
 
 AlgoSetting AlgoSetting::make_checkbox(ID id, QString name, QString description,
@@ -222,4 +222,4 @@ Q_DECL_DEPRECATED AlgoSetting Marshalling::fromJson(const QJsonObject& obj) {
 }
 
 const QColor AlgoSetting::DefaultColor = QColor::fromRgb(0, 0, 0, 0);
-}  // namespace c3picko
+}  // namespace d3picko

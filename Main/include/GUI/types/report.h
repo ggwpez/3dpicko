@@ -12,7 +12,7 @@
 #include "Main/resource_path.h"
 
 class QPdfWriter;
-namespace c3picko {
+namespace d3picko {
 class Database;
 /**
  * @brief Contains information about a planned pick job.
@@ -33,4 +33,4 @@ class Report {
   ResourcePath data_;
 };
 MAKE_MARSHALLABLE(Report)
-}  // namespace c3picko
+}  // namespace d3picko

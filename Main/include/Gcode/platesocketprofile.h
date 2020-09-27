@@ -10,7 +10,7 @@
 
 #include "Gcode/point.h"
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @brief The GoalPlateOrientation enum Specifying which corner
@@ -129,5 +129,5 @@ class PlateSocketProfile {
    */
   const float socket_origin_offset_z_;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// PLATESOCKETPROFILE_H

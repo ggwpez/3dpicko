@@ -7,7 +7,7 @@
 
 #include "ImageRecognition/colony.h"
 
-namespace c3picko {
+namespace d3picko {
 template <>
 QJsonObject Marshalling::toJson(const Colony& value) {
   QJsonObject obj;
@@ -67,4 +67,4 @@ void Colony::setExcludedBy(const AlgoSetting::ID& excluded_by) {
 
 double Colony::brightness() const { return brightness_; }
 
-}  // namespace c3picko
+}  // namespace d3picko

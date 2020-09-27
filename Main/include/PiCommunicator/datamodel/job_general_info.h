@@ -11,7 +11,7 @@
 
 class QJsonObject;
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace data {
 /**
@@ -33,5 +33,5 @@ struct JobGeneralInfo {
 };
 }  // namespace data
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// JOBGENERALINFO_H

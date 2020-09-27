@@ -12,7 +12,7 @@
 
 #include "Main/exception.h"
 
-namespace c3picko {
+namespace d3picko {
 RoundPlate::RoundPlate(const RoundPlate::OuterBorder& outer_border,
 					   const RoundPlate::InnerBorder& inner_border,
 					   const RoundPlate::Markers& markers)
@@ -148,4 +148,4 @@ RoundPlate* Marshalling::fromJson(const QJsonObject& obj) {
 
   return new RoundPlate(outer, inner, markers);
 }
-}  // namespace c3picko
+}  // namespace d3picko

@@ -9,18 +9,18 @@ LABEL maintainer "Oliver Tale-Yazdi <oliver@tasty.limo>"
 
 # Install tzdata, sudo + git so they dont not annoy us later
 ENV TZ=Europe/Berlin
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
-	&& apt-get update && apt-get install -y sudo tzdata git
-RUN useradd -ms /bin/bash docker \
-	&& su docker
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+	apt-get update && apt-get install -y sudo tzdata git
+RUN useradd -ms /bin/bash docker && \
+	su docker
 
 ENV CPICKO_ENV=docker
 ENV CPICKO_USER=docker
 WORKDIR /src/
 COPY . .
-RUN bash dependencies.sh \
- && bash opencv.sh \
- && bash setup.sh /install
+RUN bash dependencies.sh && \
+	bash opencv.sh && \
+	bash setup.sh /install
 
 WORKDIR /install/
 ENV LD_LIBRARY_PATH=/install/

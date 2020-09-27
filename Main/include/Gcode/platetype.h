@@ -9,7 +9,7 @@
 
 #include "Main/marshalling.h"
 
-namespace c3picko {
+namespace d3picko {
 /**
  * @brief Type of the plate, currently plates can be round or rectangular
  */
@@ -19,4 +19,4 @@ QString toString(PlateType);
 PlateType plateTypeFromString(QString const&);
 
 MAKE_MARSHALLABLE(PlateType);
-}  // namespace c3picko
+}  // namespace d3picko

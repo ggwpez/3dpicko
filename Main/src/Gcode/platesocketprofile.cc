@@ -7,7 +7,7 @@
 
 #include "Gcode/platesocketprofile.h"
 
-namespace c3picko {
+namespace d3picko {
 PlateSocketProfile::PlateSocketProfile(
 	const Point& global_origin_of_source_plate,
 	const Point& global_origin_of_master_plate,
@@ -70,4 +70,4 @@ Point PlateSocketProfile::originOfGoalPlate() const {
 GoalPlateOrientation PlateSocketProfile::orientationOfGoalPlate() const {
   return orientation_of_goal_plate_;
 }
-}  // namespace c3picko
+}  // namespace d3picko

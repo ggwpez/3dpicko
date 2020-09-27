@@ -6,7 +6,7 @@
 
 #include "PiCommunicator/responses/upload_response.h"
 
-namespace c3picko {
+namespace d3picko {
 namespace pi {
 namespace responses {
 UploadResponse::UploadResponse(const QJsonObject& obj) : Response(obj) {
@@ -31,4 +31,4 @@ UploadResponse::UploadResponse(const QJsonObject& obj) : Response(obj) {
 }
 }  // namespace responses
 }  // namespace pi
-}  // namespace c3picko
+}  // namespace d3picko

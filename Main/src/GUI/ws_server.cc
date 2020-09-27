@@ -15,7 +15,7 @@
 #include "GUI/api_controller.h"
 #include "Main/global.h"
 
-namespace c3picko {
+namespace d3picko {
 
 WsServer::WsServer(QSettings& settings, QSslConfiguration* ssl,
 				   QObject* _parent)
@@ -187,4 +187,4 @@ WsServer::~WsServer() {
   server_->deleteLater();
   qDeleteAll(clients_);
 }
-}  // namespace c3picko
+}  // namespace d3picko

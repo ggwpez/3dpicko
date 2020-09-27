@@ -1,5 +1,11 @@
+<!--
+SPDX-FileCopyrightText: 2018-2020 Oliver Tale-Yazdi <oliver@tasty.limo>
+
+SPDX-License-Identifier: GFDL-1.3-only
+-->
+
 ## Abstract
-3DPicko converts 3D printers into colony pickers.
+3DPickO converts 3D printers into colony pickers.
 
 ## Installation
 There are three ways of setting it up:  
@@ -33,13 +39,13 @@ Links not available yet.
 #### Compile from source
 (Debian/Ubuntu):
 ```sh
-git clone https://gitlab.com/ggwpez/3cpicko
-cd 3cpicko && git submodule init && git submodule update
+git clone https://gitlab.com/ggwpez/3dpicko
+cd 3dpicko && git submodule init && git submodule update
 # Installs qt5-default libqt5websockets5-dev g++ build-essential pkg-config zlib1g-dev
 ./dependencies.sh
 # Installs OpenCV 3.4.10
 ./opencv.sh
-# Pass it the directory where you want to install 3cpicko
+# Pass it the directory where you want to install 3dpicko
 ./setup.sh installation/
 ```
 

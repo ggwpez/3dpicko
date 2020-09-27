@@ -8,7 +8,7 @@
 
 #include <QJsonArray>
 
-namespace c3picko {
+namespace d3picko {
 Job::Job(ID id, Image::ID img_id, QString name, QString description,
 		 QDateTime job_created, QStack<AlgorithmResult::ID> results,
 		 Profile::ID printer, Profile::ID octoprint, Profile::ID socket,
@@ -131,4 +131,4 @@ Job Marshalling::fromJson(const QJsonObject& obj) {
 			 obj["starting_row"].toInt(), obj["starting_col"].toInt(),
 			 obj["step"].toInt());
 }
-}  // namespace c3picko
+}  // namespace d3picko

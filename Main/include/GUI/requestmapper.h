@@ -13,7 +13,7 @@
 
 using namespace stefanfrings;
 
-namespace c3picko {
+namespace d3picko {
 
 /**
  * @brief Forwards requests to the StaticFileController
@@ -28,5 +28,5 @@ class RequestMapper : public HttpRequestHandler {
  private:
   StaticFileController* staticFileController;
 };
-}  // namespace c3picko
+}  // namespace d3picko
 #endif	// REQUESTMAPPER_H

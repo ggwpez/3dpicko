@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-namespace c3picko {
+namespace d3picko {
 
 GcodeGenerator::GcodeGenerator(const PlateSocketProfile& plate_socket_profile,
 							   const PrinterProfile& printer_profile,
@@ -350,4 +350,4 @@ int GcodeGenerator::ComputeStartingWell(int row, int column) const {
   return (column - 1) * plate_profile_.numberOfRows() + row -
 		 1;	 // -1 to accomodate to vector iterating starting from 0
 }
-}  // namespace c3picko
+}  // namespace d3picko
